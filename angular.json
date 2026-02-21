@@ -8,7 +8,16 @@
   "projects": {
     "angular-zurich": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": { "type": "component" },
+        "@schematics/angular:directive": { "type": "directive" },
+        "@schematics/angular:service": { "type": "service" },
+        "@schematics/angular:guard": { "typeSeparator": "." },
+        "@schematics/angular:interceptor": { "typeSeparator": "." },
+        "@schematics/angular:module": { "typeSeparator": "." },
+        "@schematics/angular:pipe": { "typeSeparator": "." },
+        "@schematics/angular:resolver": { "typeSeparator": "." }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -27,6 +36,7 @@
             "styles": [
               "src/styles.css"
             ],
+            "scripts": ["node_modules/preline/dist/index.js"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
