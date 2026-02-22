@@ -1,37 +1,16 @@
-import { Component, signal, inject, DOCUMENT, afterNextRender } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { BannerComponent } from './core/banner/banner.component';
+import { NavbarComponent } from './core/navbar/navbar.component';
 import { HeroComponent } from './core/hero/hero.component';
+import { UpcomingTalksComponent } from './core/upcoming-talks/upcoming-talks.component';
+import { TeamComponent } from './core/team/team.component';
+import { PartnersComponent } from './core/partners/partners.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HeroComponent],
+  imports: [RouterOutlet, BannerComponent, NavbarComponent, HeroComponent, UpcomingTalksComponent, TeamComponent, PartnersComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('angular-zurich');
-  protected readonly dark = signal(false);
-
-  private doc = inject(DOCUMENT);
-
-  constructor() {
-    afterNextRender(() => {
-      const stored = localStorage.getItem('theme-dark');
-      const prefersDark = stored
-        ? stored === 'true'
-        : window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (prefersDark) {
-        this.dark.set(true);
-        this.doc.documentElement.classList.add('dark');
-      }
-    });
-  }
-
-  protected toggleDarkMode(): void {
-    const next = !this.dark();
-    this.dark.set(next);
-    this.doc.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('theme-dark', String(next));
-  }
-}
+export class App {}

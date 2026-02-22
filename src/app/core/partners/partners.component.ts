@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
 
-interface Sponsor {
+interface Partner {
   name: string;
   url: string;
   logo: string;
 }
 
 @Component({
-  selector: 'app-hero',
+  selector: 'app-partners',
   imports: [],
-  templateUrl: './hero.component.html',
-  styleUrl: './hero.component.css',
+  templateUrl: './partners.component.html',
+  styleUrl: './partners.component.css',
 })
-export class HeroComponent {
-  protected readonly sponsors: Sponsor[] = [
+export class PartnersComponent {
+  protected readonly partners: Partner[] = [
     {
       name: 'Syncrea',
       url: 'https://syncrea.com',

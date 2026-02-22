@@ -1,0 +1,19 @@
+<section class="upcoming-talks">
+  <div class="upcoming-talks__container">
+    <h2 class="upcoming-talks__heading">Upcoming Talks</h2>
+    <div class="upcoming-talks__grid">
+      @for (talk of talks; track talk.speakerName) {
+        <div class="talk-card">
+          <div class="talk-card__speaker">
+            <img [src]="talk.speakerImage" [alt]="talk.speakerName" class="talk-card__avatar" />
+            <div class="talk-card__info">
+              <span class="talk-card__name">{{ talk.speakerName }}</span>
+              <span class="talk-card__position">{{ talk.speakerPosition }}</span>
+            </div>
+          </div>
+          <h3 class="talk-card__title">{{ talk.title }}</h3>
+        </div>
+      }
+    </div>
+  </div>
+</section>

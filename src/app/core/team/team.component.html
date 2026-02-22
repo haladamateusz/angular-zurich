@@ -1,0 +1,25 @@
+<section class="team">
+  <div class="team__container">
+    <h2 class="team__heading">Meet the Team</h2>
+    <div class="team__grid">
+      @for (member of team; track member.name) {
+        <div class="member-card">
+          <img [src]="member.image" [alt]="member.name" class="member-card__avatar" />
+          <h3 class="member-card__name">{{ member.name }}</h3>
+          <span class="member-card__role">{{ member.role }}</span>
+        </div>
+      }
+    </div>
+
+    <h3 class="team__subheading">Hall of Fame</h3>
+    <div class="team__grid">
+      @for (member of hallOfFame; track member.name) {
+        <div class="member-card member-card--faded">
+          <img [src]="member.image" [alt]="member.name" class="member-card__avatar" />
+          <h3 class="member-card__name">{{ member.name }}</h3>
+          <span class="member-card__role">{{ member.role }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
