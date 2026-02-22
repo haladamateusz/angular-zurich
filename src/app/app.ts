@@ -1,9 +1,10 @@
 import { Component, signal, inject, DOCUMENT, afterNextRender } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeroComponent } from './core/hero/hero.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HeroComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

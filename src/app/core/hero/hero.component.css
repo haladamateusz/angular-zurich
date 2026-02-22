@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.hero {
+  --_banner: 40px;
+  --_navbar: 73px;
+
+  position: relative;
+  width: 100%;
+  height: calc(100svh - var(--_banner) - var(--_navbar));
+  background: linear-gradient(to bottom, var(--color-zuerich-blue-gray-100), var(--color-zuerich-blue-gray-200));
+  overflow: hidden;
+}
+
+.cross-overlay {
+  position: absolute;
+  inset: 15px 0 0 0;
+  color: black;
+  opacity: 0.075;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem 5%;
+  gap: 2rem;
+}
+
+.hero-title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--color-foreground);
+  text-align: center;
+  margin: 0;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.hero-btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.hero-btn--primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.hero-btn--secondary {
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+  background-color: var(--color-zuerich-blue-gray-200);
+}
+
+.hero-btn--secondary:hover {
+  background-color: var(--color-layer-hover);
+}
+
+:host-context(.dark) .hero-btn--secondary {
+  background-color: var(--color-zuerich-blue-gray-800);
+}
+
+.hero-btn-icon {
+  height: 1.1rem;
+  width: auto;
+}
+
+.hero-btn-icon--dark {
+  display: none;
+}
+
+:host-context(.dark) .hero-btn-icon--light {
+  display: none;
+}
+
+:host-context(.dark) .hero-btn-icon--dark {
+  display: inline;
+}
+
+:host-context(.dark) .hero {
+  background: linear-gradient(to top, var(--color-zuerich-blue-gray-800), var(--color-zuerich-blue-gray-900));
+}
+
+:host-context(.dark) .cross-overlay {
+  color: var(--color-zuerich-blue-gray-600);
+  opacity: 0.1;
+}
