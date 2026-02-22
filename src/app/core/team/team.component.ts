@@ -15,27 +15,27 @@ interface TeamMember {
 export class TeamComponent {
   protected readonly team: TeamMember[] = [
     {
-      name: 'Mateusz Halada',
-      role: 'Organizer & Frontend Engineer',
-      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=mateusz',
-    },
-    {
-      name: 'Sophie Berger',
-      role: 'Co-Organizer & Developer Advocate',
+      name: 'Tomas Trajan',
+      role: 'GDE',
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=sophie',
     },
+    {
+      name: 'Mateusz Halada',
+      role: 'Senior Frontend Developer',
+      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=john',
+    }
   ];
 
   protected readonly hallOfFame: TeamMember[] = [
     {
       name: 'Thomas Keller',
       role: 'Founder & Former Organizer',
-      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=thomas',
+      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=skrrt',
     },
     {
-      name: 'Julia Schneider',
+      name: 'Bro Schneider',
       role: 'Former Co-Organizer & GDE',
-      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=julia',
+      image: 'https://api.dicebear.com/9.x/notionists/svg?seed=broski',
     },
   ];
 }

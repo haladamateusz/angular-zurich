@@ -41,6 +41,7 @@
   mask-size: 2000px 100%;
   mask-repeat: no-repeat;
   animation: wave-sweep 15s ease-in-out infinite;
+  will-change: mask-position;
 }
 
 @keyframes wave-sweep {
@@ -95,22 +96,18 @@
 
 .sponsors__track {
   display: flex;
-  gap: 3rem;
   width: max-content;
   animation: marquee 25s linear infinite;
+  user-select: none;
+  will-change: transform;
 }
 
-.sponsors__track:hover {
-  animation-play-state: paused;
-}
-
-.sponsors__link {
+.sponsors__item {
   display: flex;
   align-items: center;
   flex-shrink: 0;
   padding: 0.375rem 0.75rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.3s;
+  margin-right: 3rem;
 }
 
 .sponsors__logo {
@@ -118,12 +115,18 @@
   width: auto;
   filter: grayscale(100%);
   opacity: 0.4;
-  transition: filter 0.3s, opacity 0.3s;
 }
 
-.sponsors__link:hover .sponsors__logo {
-  filter: none;
-  opacity: 1;
+.sponsors__logo--dark-only {
+  display: none;
+}
+
+:host-context(.dark) .sponsors__logo--light-only {
+  display: none;
+}
+
+:host-context(.dark) .sponsors__logo--dark-only {
+  display: block;
 }
 
 @keyframes marquee {
@@ -136,17 +139,8 @@
 }
 
 :host-context(.dark) .sponsors__logo {
-  filter: grayscale(100%);
-  opacity: 0.4;
-}
-
-:host-context(.dark) .sponsors__link:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-:host-context(.dark) .sponsors__link:hover .sponsors__logo {
-  filter: none;
-  opacity: 1;
+  filter: grayscale(100%) invert();
+  opacity: 0.5;
 }
 
 :host-context(.dark) .hero {

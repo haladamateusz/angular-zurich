@@ -41,4 +41,5 @@
 .animate-gradient {
   background-size: 200% 100%;
   animation: gradient-shift 6s ease infinite;
+  will-change: background-position;
 }

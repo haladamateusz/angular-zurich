@@ -61,3 +61,8 @@
   width: auto;
   object-fit: contain;
 }
+
+:host-context(.dark) .partner-card__logo {
+  filter: grayscale(100%) invert();
+  opacity: 0.5;
+}

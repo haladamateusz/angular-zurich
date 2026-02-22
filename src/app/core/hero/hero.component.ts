@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 
 interface Sponsor {
   name: string;
-  url: string;
   logo: string;
 }
 
@@ -14,25 +13,9 @@ interface Sponsor {
 })
 export class HeroComponent {
   protected readonly sponsors: Sponsor[] = [
-    {
-      name: 'Syncrea',
-      url: 'https://syncrea.com',
-      logo: 'partners/syncrea.svg',
-    },
-    {
-      name: 'Angular Day',
-      url: 'https://angularday.it',
-      logo: 'partners/angular-day.svg',
-    },
-    {
-      name: 'Coalist',
-      url: 'https://coalist.io',
-      logo: 'partners/coalist.svg',
-    },
-    {
-      name: 'Angular Experts',
-      url: 'https://angularexperts.io',
-      logo: 'partners/angular-experts.svg',
-    },
+    { name: 'Syncrea', logo: 'partners/syncrea.svg' },
+    { name: 'Angular Day', logo: 'partners/angular-day.svg' },
+    { name: 'Coalist', logo: 'partners/coalist.svg' },
+    { name: 'Angular Experts', logo: 'partners/angular-experts.svg' },
   ];
 }

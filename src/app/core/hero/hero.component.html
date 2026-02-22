@@ -74,14 +74,14 @@
       <div class="sponsors__marquee">
         <div class="sponsors__track">
           @for (sponsor of sponsors; track sponsor.name) {
-            <a [href]="sponsor.url" target="_blank" rel="noopener noreferrer" class="sponsors__link">
-              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" />
-            </a>
+            <span class="sponsors__item">
+              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" draggable="false" width="120" height="28" />
+            </span>
           }
           @for (sponsor of sponsors; track sponsor.name) {
-            <a [href]="sponsor.url" target="_blank" rel="noopener noreferrer" class="sponsors__link" aria-hidden="true">
-              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" />
-            </a>
+            <span class="sponsors__item" aria-hidden="true">
+              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" draggable="false" width="120" height="28" />
+            </span>
           }
         </div>
       </div>

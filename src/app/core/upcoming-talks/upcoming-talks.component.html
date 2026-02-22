@@ -5,7 +5,7 @@
       @for (talk of talks; track talk.speakerName) {
         <div class="talk-card">
           <div class="talk-card__speaker">
-            <img [src]="talk.speakerImage" [alt]="talk.speakerName" class="talk-card__avatar" />
+            <img [src]="talk.speakerImage" [alt]="talk.speakerName" class="talk-card__avatar" width="48" height="48" />
             <div class="talk-card__info">
               <span class="talk-card__name">{{ talk.speakerName }}</span>
               <span class="talk-card__position">{{ talk.speakerPosition }}</span>
