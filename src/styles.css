@@ -43,3 +43,26 @@
   animation: gradient-shift 6s ease infinite;
   will-change: background-position;
 }
+
+.footer-social {
+  color: var(--color-muted-foreground-1);
+  opacity: 0.5;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.footer-social:hover {
+  opacity: 1;
+}
+
+.footer-social--linkedin:hover {
+  color: #0A66C2;
+}
+
+.footer-social--meetup:hover {
+  color: #ED1C40;
+}
+
+.dark .footer-social--linkedin:hover,
+.dark .footer-social--meetup:hover {
+  color: var(--color-muted-foreground-1);
+}
