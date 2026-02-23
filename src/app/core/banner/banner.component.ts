@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-banner',
@@ -7,5 +7,14 @@ import { Component } from '@angular/core';
   styleUrl: './banner.component.css',
 })
 export class BannerComponent {
-
+  eventDetails = input(
+    {
+      venue: {
+        companyName: 'Constructor Nexademy',
+        street: 'Foerrlibuckstrasse 150',
+        postalCode: '8005',
+        city: 'Zürich',
+      }
+    }
+  )
 }

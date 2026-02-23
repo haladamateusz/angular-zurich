@@ -16,25 +16,25 @@ export class TeamComponent {
   protected readonly team: TeamMember[] = [
     {
       name: 'Tomas Trajan',
-      role: 'GDE',
+      role: 'Architect, Consultant and Trainer, GDE, AngularExperts.io',
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=sophie',
     },
     {
       name: 'Mateusz Halada',
-      role: 'Senior Frontend Developer',
+      role: 'Senior Frontend Developer @ Involve',
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=john',
     }
   ];
 
   protected readonly hallOfFame: TeamMember[] = [
     {
-      name: 'Thomas Keller',
+      name: 'Carlos Morales',
       role: 'Founder & Former Organizer',
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=skrrt',
     },
     {
-      name: 'Bro Schneider',
-      role: 'Former Co-Organizer & GDE',
+      name: 'Gion Kunz',
+      role: 'Former Organizer',
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=broski',
     },
   ];

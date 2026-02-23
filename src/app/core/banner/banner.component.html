@@ -1,3 +1,4 @@
+@let event = eventDetails();
 <div
   class="sticky top-0 z-50 bg-[linear-gradient(to_right,#0B5CAD,#1565C0,#1E88E5,#42A5F5)] animate-gradient text-white px-6 py-2.5 text-sm shadow-md shadow-black/10">
   <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-y-2">
@@ -11,7 +12,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
         </svg>
-        Constructor Nexademy, Foerrlibuckstrasse 150, 8005 Z&uuml;rich
+        {{ event.venue.companyName }}, {{ event.venue.street }}<span class="hidden sm:inline">, {{ event.venue.postalCode }} {{ event.venue.city }}</span>
       </a>
       <span class="hidden sm:inline text-white/40">&middot;</span>
       <span class="inline-flex items-center gap-1 text-white/90">
@@ -22,7 +23,7 @@
       </span>
     </div>
     <a href="#"
-      class="border border-white/60 text-white px-3.5 py-1 rounded-full text-xs font-medium hover:bg-white/10 transition-colors">
+      class="border border-white/60 text-white px-4 py-2 sm:py-1 rounded-full text-xs font-medium hover:bg-white/10 transition-colors">
       Sign up
     </a>
   </div>

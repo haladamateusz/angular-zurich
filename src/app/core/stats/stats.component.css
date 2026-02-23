@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.stats {
+  padding: 3rem 1.5rem;
+}
+
+.stats__container {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
+
+.stats__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 3rem;
+  position: relative;
+}
+
+.stats__item + .stats__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2.5rem;
+  width: 1px;
+  background-color: var(--color-border);
+}
+
+.stats__value {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  color: var(--color-primary);
+}
+
+.stats__label {
+  font-size: 0.9rem;
+  color: var(--color-muted-foreground-1);
+}
+
+@media (max-width: 640px) {
+  .stats__item {
+    padding: 0 1.5rem;
+  }
+}

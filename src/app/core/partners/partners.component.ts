@@ -16,7 +16,7 @@ export class PartnersComponent {
   protected readonly partners: Partner[] = [
     {
       name: 'Syncrea',
-      url: 'https://syncrea.com',
+      url: 'https://syncrea.ch',
       logo: 'partners/syncrea.svg',
     },
     {
@@ -26,7 +26,7 @@ export class PartnersComponent {
     },
     {
       name: 'Coalist',
-      url: 'https://coalist.io',
+      url: 'https://coalist.ch',
       logo: 'partners/coalist.svg',
     },
     {
