@@ -5,6 +5,7 @@
 
 .upcoming-talks {
   padding: 0 1.5rem 4rem;
+  overflow-x: hidden;
 }
 
 .upcoming-talks__container {
@@ -78,9 +79,8 @@
 .talk-card__position {
   font-size: 0.8rem;
   color: var(--color-muted-foreground-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .talk-card__title {
