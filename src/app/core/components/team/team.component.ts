@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, resource } from '@angular/core';
+import { SupabaseService } from '../../services/supabase/supabase.service';
+import { JsonPipe } from '@angular/common';
 
 interface TeamMember {
   name: string;
@@ -8,11 +10,15 @@ interface TeamMember {
 
 @Component({
   selector: 'app-team',
-  imports: [],
+  imports: [
+    JsonPipe
+  ],
   templateUrl: './team.component.html',
   styleUrl: './team.component.css',
 })
 export class TeamComponent {
+  supabaseService = inject(SupabaseService);
+
   protected readonly team: TeamMember[] = [
     {
       name: 'Tomas Trajan',
@@ -38,4 +44,9 @@ export class TeamComponent {
       image: 'https://api.dicebear.com/9.x/notionists/svg?seed=broski',
     },
   ];
+
+  formerOrganizersResource = resource({
+    params: () => ({}),
+    loader: async () => this.supabaseService.getFormerOrganizers()
+  })
 }

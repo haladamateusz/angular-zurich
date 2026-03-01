@@ -21,5 +21,9 @@
         </div>
       }
     </div>
+
+    @if(formerOrganizersResource.hasValue()){
+      {{formerOrganizersResource.value()|json}}
+    }
   </div>
 </section>
