@@ -4,7 +4,21 @@ These instructions apply to work in this repository.
 
 ## Workflow
 
-- All commits must use the Conventional Commits format.
+- All commits must use this Conventional Commits format:
+
+  `<type>(<scope>): <short summary>`
+
+- The `<type>` and `<short summary>` fields are required.
+- The `(<scope>)` field is optional.
+- The `<type>` must be one of:
+  - `build`: Changes that affect the build system or external dependencies.
+  - `ci`: Changes to CI configuration files and scripts.
+  - `docs`: Documentation-only changes.
+  - `feat`: A new feature.
+  - `fix`: A bug fix.
+  - `perf`: A code change that improves performance.
+  - `refactor`: A code change that neither fixes a bug nor adds a feature.
+  - `test`: Adding missing tests or correcting existing tests.
 
 ## TypeScript Best Practices
 
