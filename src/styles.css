@@ -62,7 +62,22 @@
   color: #ED1C40;
 }
 
+.footer-social--github:hover {
+  color: var(--color-foreground);
+}
+
+.footer-social--x:hover {
+  color: var(--color-foreground);
+}
+
+.footer-social--website:hover {
+  color: var(--color-primary);
+}
+
 .dark .footer-social--linkedin:hover,
-.dark .footer-social--meetup:hover {
+.dark .footer-social--meetup:hover,
+.dark .footer-social--github:hover,
+.dark .footer-social--x:hover,
+.dark .footer-social--website:hover {
   color: var(--color-muted-foreground-1);
 }

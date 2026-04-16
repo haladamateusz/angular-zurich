@@ -1,12 +1,10 @@
-<app-banner />
-
 <div class="min-h-screen bg-background text-foreground">
 
-  <app-navbar />
+  <app-navbar [eventDetails]="latestEvent.value()" />
 
   <app-hero />
 
-  <app-upcoming-talks/>
+  <app-upcoming-talks [talks]="latestEvent.value().talks" />
 
   <app-stats/>
 

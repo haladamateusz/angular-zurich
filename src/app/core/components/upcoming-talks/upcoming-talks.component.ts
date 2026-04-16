@@ -1,11 +1,5 @@
-import { Component } from '@angular/core';
-
-interface Talk {
-  speakerName: string;
-  speakerPosition: string;
-  speakerImage: string;
-  title: string;
-}
+import { Component, computed, input } from '@angular/core';
+import { Event } from '../../interfaces/event.interface';
 
 @Component({
   selector: 'app-upcoming-talks',
@@ -14,24 +8,22 @@ interface Talk {
   styleUrl: './upcoming-talks.component.css',
 })
 export class UpcomingTalksComponent {
-  protected readonly talks: Talk[] = [
-    {
-      speakerName: 'Anna Müller',
-      speakerPosition: 'Senior Frontend Engineer at Google',
-      speakerImage: 'https://api.dicebear.com/9.x/notionists/svg?seed=anna',
-      title: 'Signals in Depth: Reactivity Reimagined',
-    },
-    {
-      speakerName: 'Marco Rossi',
-      speakerPosition: 'GDE for Angular, Freelance Consultant',
-      speakerImage: 'https://api.dicebear.com/9.x/notionists/svg?seed=marco',
-      title: 'Building Scalable Micro-Frontends with Angular',
-    },
-    {
-      speakerName: 'Lena Fischer',
-      speakerPosition: 'Staff Engineer at Zühlke',
-      speakerImage: 'https://api.dicebear.com/9.x/notionists/svg?seed=lena',
-      title: 'From NgModules to Standalone: A Migration Story',
-    },
-  ];
+  readonly talks = input.required<Event['talks']>();
+
+  protected readonly talkCards = computed(() =>
+    this.talks().map((talk) => {
+      const primarySpeaker = talk.speaker_links[0]?.speaker ?? null;
+      const speakerName = [primarySpeaker?.first_name, primarySpeaker?.last_name]
+        .filter((value): value is string => Boolean(value))
+        .join(' ');
+
+      return {
+        id: talk.id,
+        title: talk.title,
+        speakerName: speakerName || 'TBA',
+        speakerPosition: primarySpeaker?.label ?? primarySpeaker?.company_name ?? '',
+        speakerImage: primarySpeaker?.picture_url ?? '',
+      };
+    }),
+  );
 }

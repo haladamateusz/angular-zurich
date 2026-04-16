@@ -73,6 +73,19 @@
   margin: 0;
 }
 
+.member-card__links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.member-card__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .member-card__role {
   font-size: 0.85rem;
   color: var(--color-muted-foreground-1);
@@ -80,8 +93,4 @@
 
 .member-card--faded {
   opacity: 0.7;
-}
-
-.member-card--faded:hover {
-  opacity: 1;
 }
