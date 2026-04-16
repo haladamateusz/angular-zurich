@@ -1,9 +1,5 @@
-import { Component } from '@angular/core';
-
-interface Sponsor {
-  name: string;
-  logo: string;
-}
+import { Component, input } from '@angular/core';
+import { Sponsor } from '../../interfaces/sponsor.interface';
 
 @Component({
   selector: 'app-hero',
@@ -12,10 +8,5 @@ interface Sponsor {
   styleUrl: './hero.component.css',
 })
 export class HeroComponent {
-  protected readonly sponsors: Sponsor[] = [
-    { name: 'Syncrea', logo: 'partners/syncrea.svg' },
-    { name: 'Angular Day', logo: 'partners/angular-day.svg' },
-    { name: 'Coalist', logo: 'partners/coalist.svg' },
-    { name: 'Angular Experts', logo: 'partners/angular-experts.svg' },
-  ];
+  readonly sponsors = input.required<Sponsor[]>();
 }

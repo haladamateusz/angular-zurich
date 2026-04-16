@@ -2,7 +2,7 @@
 
   <app-navbar [eventDetails]="latestEvent.value()" />
 
-  <app-hero />
+  <app-hero [sponsors]="sponsors.value()" />
 
   <app-upcoming-talks [talks]="latestEvent.value().talks" />
 
@@ -10,7 +10,7 @@
 
   <app-team />
 
-  <app-partners />
+  <app-partners [partners]="sponsors.value()" />
 
 
   <!-- Footer -->

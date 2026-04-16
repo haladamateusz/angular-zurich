@@ -9,6 +9,7 @@ import { TeamComponent } from './core/components/team/team.component';
 import { PartnersComponent } from './core/components/partners/partners.component';
 import { StatsComponent } from './core/components/stats/stats.component';
 import { Person } from './core/interfaces/person.interface';
+import { Sponsor } from './core/interfaces/sponsor.interface';
 
 const DEFAULT_EVENT: Event = {
   title: '',
@@ -25,6 +26,8 @@ const DEFAULT_EVENT: Event = {
   starts_at: '',
   venue_id: ''
 };
+
+const DEFAULT_SPONSORS: Sponsor[] = [];
 
 @Component({
   selector: 'app-root',
@@ -44,5 +47,18 @@ export class App {
         if (error) throw error;
         return data ?? DEFAULT_EVENT;
       },
-    })
+    });
+
+  protected readonly sponsors = resource<Sponsor[], void>({
+    defaultValue: DEFAULT_SPONSORS,
+    loader: async () => {
+      const { data, error } = await this.supabaseService.getSponsors();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ?? DEFAULT_SPONSORS;
+    },
+  });
 }

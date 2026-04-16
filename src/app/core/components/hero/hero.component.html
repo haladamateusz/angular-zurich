@@ -73,14 +73,14 @@
       <span class="sponsors__label">Supported by</span>
       <div class="sponsors__marquee">
         <div class="sponsors__track">
-          @for (sponsor of sponsors; track sponsor.name) {
+          @for (sponsor of sponsors(); track sponsor.id) {
             <span class="sponsors__item">
-              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" draggable="false" width="120" height="28" />
+              <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
             </span>
           }
-          @for (sponsor of sponsors; track sponsor.name) {
+          @for (sponsor of sponsors(); track sponsor.id) {
             <span class="sponsors__item" aria-hidden="true">
-              <img [src]="sponsor.logo" [alt]="sponsor.name" class="sponsors__logo" draggable="false" width="120" height="28" />
+              <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
             </span>
           }
         </div>
