@@ -1,6 +1,6 @@
 <section class="stats">
   <div class="stats__container">
-    @for (stat of stats; track stat.label) {
+    @for (stat of stats(); track stat.label) {
       <div class="stats__item">
         <span class="stats__value">{{ stat.value }}</span>
         <span class="stats__label">{{ stat.label }}</span>

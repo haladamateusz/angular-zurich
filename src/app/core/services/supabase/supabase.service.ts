@@ -6,11 +6,17 @@ import { Person } from '../../interfaces/person.interface';
 import { Sponsor } from '../../interfaces/sponsor.interface';
 import { Talk } from '../../interfaces/talk.interface';
 
+export interface StatsCounts {
+  speakers: number;
+  talks: number;
+  events: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey)
+  private supabase: SupabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
 
   async getFormerOrganizers(): Promise<PostgrestResponse<Person>> {
     return this.supabase.from('former_organizers_public').select('*');
@@ -98,5 +104,31 @@ export class SupabaseService {
       .from('Sponsors')
       .select('id, title, logo_url, website_url, created_by')
       .order('title', { ascending: true });
+  }
+
+  async getStatsCounts(): Promise<StatsCounts> {
+    const [speakerResponse, talksResponse, eventsResponse] = await Promise.all([
+      this.supabase.from('SpeakerOnTalk').select('speaker_id'),
+      this.supabase.from('Talks').select('*', { count: 'exact', head: true }),
+      this.supabase.from('Events').select('*', { count: 'exact', head: true }),
+    ]);
+
+    if (speakerResponse.error) {
+      throw speakerResponse.error;
+    }
+
+    if (talksResponse.error) {
+      throw talksResponse.error;
+    }
+
+    if (eventsResponse.error) {
+      throw eventsResponse.error;
+    }
+
+    return {
+      speakers: new Set(speakerResponse.data.map(({ speaker_id }) => speaker_id)).size,
+      talks: talksResponse.count ?? 0,
+      events: eventsResponse.count ?? 0,
+    };
   }
 }
