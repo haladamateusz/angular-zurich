@@ -2,6 +2,10 @@
 
 These instructions apply to work in this repository.
 
+## Workflow
+
+- All commits must use the Conventional Commits format.
+
 ## TypeScript Best Practices
 
 - Use strict type checking.
