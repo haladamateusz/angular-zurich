@@ -44,40 +44,40 @@
   will-change: background-position;
 }
 
-.footer-social {
+.icon-link {
   color: var(--color-muted-foreground-1);
   opacity: 0.5;
   transition: color 0.2s, opacity 0.2s;
 }
 
-.footer-social:hover {
+.icon-link:hover {
   opacity: 1;
 }
 
-.footer-social--linkedin:hover {
+.icon-link--linkedin:hover {
   color: #0A66C2;
 }
 
-.footer-social--meetup:hover {
+.icon-link--meetup:hover {
   color: #ED1C40;
 }
 
-.footer-social--github:hover {
+.icon-link--github:hover {
   color: var(--color-foreground);
 }
 
-.footer-social--x:hover {
+.icon-link--x:hover {
   color: var(--color-foreground);
 }
 
-.footer-social--website:hover {
+.icon-link--website:hover {
   color: var(--color-primary);
 }
 
-.dark .footer-social--linkedin:hover,
-.dark .footer-social--meetup:hover,
-.dark .footer-social--github:hover,
-.dark .footer-social--x:hover,
-.dark .footer-social--website:hover {
+.dark .icon-link--linkedin:hover,
+.dark .icon-link--meetup:hover,
+.dark .icon-link--github:hover,
+.dark .icon-link--x:hover,
+.dark .icon-link--website:hover {
   color: var(--color-muted-foreground-1);
 }
