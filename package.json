@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "node ./scripts/sync-production-env.mjs && ng build",
+    "build": "node ./scripts/sync-production-env.mjs && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:angular-zurich": "node dist/angular-zurich/server/server.mjs"
