@@ -43,6 +43,6 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-environment.ts
 environment.*.ts
+!src/environments/environment.ts
 !src/environments/environment.production.ts
