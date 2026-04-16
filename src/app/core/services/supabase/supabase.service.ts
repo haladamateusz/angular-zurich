@@ -3,6 +3,7 @@ import { createClient, PostgrestResponse, PostgrestSingleResponse, SupabaseClien
 import { environment } from '../../../../environments/environment';
 import { Event } from '../../interfaces/event.interface';
 import { Person } from '../../interfaces/person.interface';
+import { Sponsor } from '../../interfaces/sponsor.interface';
 import { Talk } from '../../interfaces/talk.interface';
 
 @Injectable({
@@ -89,6 +90,13 @@ export class SupabaseService {
           )
         )
       `)
+      .order('title', { ascending: true });
+  }
+
+  async getSponsors(): Promise<PostgrestResponse<Sponsor>> {
+    return this.supabase
+      .from('Sponsors')
+      .select('id, title, logo_url, website_url, created_by')
       .order('title', { ascending: true });
   }
 }

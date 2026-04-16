@@ -1,10 +1,6 @@
-import { Component } from '@angular/core';
-
-interface Partner {
-  name: string;
-  url: string;
-  logo: string;
-}
+import { Component, inject, resource } from '@angular/core';
+import { Sponsor } from '../../interfaces/sponsor.interface';
+import { SupabaseService } from '../../services/supabase/supabase.service';
 
 @Component({
   selector: 'app-partners',
@@ -13,26 +9,18 @@ interface Partner {
   styleUrl: './partners.component.css',
 })
 export class PartnersComponent {
-  protected readonly partners: Partner[] = [
-    {
-      name: 'Syncrea',
-      url: 'https://syncrea.ch',
-      logo: 'partners/syncrea.svg',
+  private readonly supabaseService = inject(SupabaseService);
+
+  protected readonly partners = resource<Sponsor[], void>({
+    defaultValue: [],
+    loader: async () => {
+      const { data, error } = await this.supabaseService.getSponsors();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ?? [];
     },
-    {
-      name: 'Angular Day',
-      url: 'https://angularday.it',
-      logo: 'partners/angular-day.svg',
-    },
-    {
-      name: 'Coalist',
-      url: 'https://coalist.ch',
-      logo: 'partners/coalist.svg',
-    },
-    {
-      name: 'Angular Experts',
-      url: 'https://angularexperts.io',
-      logo: 'partners/angular-experts.svg',
-    },
-  ];
+  });
 }

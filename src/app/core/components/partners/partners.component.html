@@ -2,9 +2,9 @@
   <div class="partners__container">
     <h2 class="partners__heading">Our Partners</h2>
     <div class="partners__grid">
-      @for (partner of partners; track partner.name) {
-        <a [href]="partner.url" target="_blank" rel="noopener noreferrer" class="partner-card">
-          <img [src]="partner.logo" [alt]="partner.name" class="partner-card__logo" width="160" height="40" />
+      @for (partner of partners.value(); track partner.id) {
+        <a [href]="partner.website_url" target="_blank" rel="noopener noreferrer" class="partner-card">
+          <img [src]="partner.logo_url" [alt]="partner.title" class="partner-card__logo" width="160" height="40" />
         </a>
       }
     </div>
