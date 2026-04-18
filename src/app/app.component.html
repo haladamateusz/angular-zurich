@@ -1,10 +1,12 @@
 <div class="min-h-screen bg-background text-foreground">
 
-  <app-navbar [eventDetails]="latestEvent.value()" />
+  <app-navbar [eventDetails]="upcomingEvent()" />
 
   <app-hero [sponsors]="sponsors.value()" />
 
-  <app-upcoming-talks [talks]="latestEvent.value().talks" />
+  @if (upcomingEvent(); as event) {
+    <app-upcoming-talks [talks]="event.talks" />
+  }
 
   <app-stats/>
 

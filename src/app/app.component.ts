@@ -1,4 +1,4 @@
-import { Component, inject, resource } from '@angular/core';
+import { Component, computed, inject, resource } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Event } from './core/interfaces/event.interface';
 import { SupabaseService } from './core/services/supabase/supabase.service';
@@ -60,5 +60,16 @@ export class App {
 
       return data ?? DEFAULT_SPONSORS;
     },
+  });
+
+  protected readonly upcomingEvent = computed(() => {
+    const event = this.latestEvent.value();
+    const startsAt = Date.parse(event.starts_at);
+
+    if (!Number.isFinite(startsAt) || startsAt <= Date.now()) {
+      return null;
+    }
+
+    return event;
   });
 }
