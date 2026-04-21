@@ -79,6 +79,8 @@
 
 .talk-card__position {
   font-size: 0.8rem;
+  line-height: 1.35;
+  min-height: 2.7em;
   color: var(--color-muted-foreground-1);
   white-space: normal;
   word-break: break-word;
