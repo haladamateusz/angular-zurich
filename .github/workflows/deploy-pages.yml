@@ -53,6 +53,9 @@ jobs:
       - name: Add custom domain
         run: echo "angularzurich.dev" > "${{ steps.output.outputs.dir }}/CNAME"
 
+      - name: Add SPA 404 fallback
+        run: cp "${{ steps.output.outputs.dir }}/index.html" "${{ steps.output.outputs.dir }}/404.html"
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
