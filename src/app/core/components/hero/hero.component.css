@@ -70,6 +70,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 1.5rem;
+  min-width: 0;
 }
 
 .hero-title {
@@ -82,6 +83,7 @@
   letter-spacing: -0.05em;
   color: var(--color-foreground);
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .hero-description {
@@ -90,6 +92,7 @@
   color: var(--color-muted-foreground-1);
   font-size: clamp(1rem, 1.6vw, 1.15rem);
   line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 .hero-actions {
@@ -195,6 +198,7 @@
   position: relative;
   display: grid;
   gap: 1.5rem;
+  min-width: 0;
   padding: 1.5rem;
   border: 1px solid color-mix(in srgb, var(--color-foreground) 9%, transparent);
   border-radius: 1.75rem;
@@ -227,6 +231,7 @@
   line-height: 1.15;
   letter-spacing: -0.03em;
   color: var(--color-foreground);
+  overflow-wrap: anywhere;
 }
 
 .event-preview__facts {
@@ -256,6 +261,7 @@
   color: var(--color-foreground);
   font-size: 0.95rem;
   line-height: 1.5;
+  min-width: 0;
 }
 
 .event-preview__fact-value {
@@ -263,6 +269,7 @@
   grid-template-columns: auto 1fr;
   align-items: start;
   gap: 0.425rem;
+  min-width: 0;
 }
 
 .event-preview__fact-icon {
@@ -276,6 +283,11 @@
 .event-preview__fact a {
   color: inherit;
   text-decoration-thickness: 1px;
+}
+
+.event-preview__fact-value > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .event-preview__agenda {
@@ -339,11 +351,13 @@
   font-weight: 600;
   line-height: 1.4;
   color: var(--color-foreground);
+  overflow-wrap: anywhere;
 }
 
 .event-preview__talk-copy p {
   color: var(--color-muted-foreground-1);
   font-size: 0.88rem;
+  overflow-wrap: anywhere;
 }
 
 .event-preview__actions {
@@ -432,6 +446,11 @@
   .hero-description {
     max-width: 100%;
   }
+
+  .hero-title {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 @media (max-width: 720px) {
@@ -441,29 +460,120 @@
 
   .hero-content {
     gap: 1.5rem;
-    padding: 3.25rem 1rem 4.5rem;
+    padding: 2.75rem 1rem 4rem;
   }
 
   .hero-title {
-    font-size: clamp(2.7rem, 14vw, 4rem);
+    max-width: none;
+    font-size: clamp(2.45rem, 13vw, 3.65rem);
+    line-height: 0.96;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .sponsors {
+    max-width: 100%;
+    margin-top: 1.75rem;
   }
 
   .event-preview {
+    width: 100%;
+    max-width: 100%;
     padding: 1.25rem;
     border-radius: 1.4rem;
   }
 
+  .event-preview__header {
+    gap: 0.35rem;
+  }
+
+  .event-preview__title {
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
   .event-preview__facts {
     grid-template-columns: 1fr;
+    gap: 1.15rem;
   }
 
-  .hero-actions,
-  .event-preview__actions {
-    flex-direction: column;
+  .event-preview__fact dt {
+    padding-left: calc(0.95rem + 0.425rem);
   }
 
-  .hero-action,
-  .event-preview__button {
-    width: 100%;
+  .event-preview__fact dd {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .event-preview__talk {
+    align-items: start;
+    padding: 0.85rem;
+  }
+
+  .event-preview__avatar {
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+
+  .event-preview__talk-copy h3 {
+    font-size: 0.94rem;
+    line-height: 1.35;
+  }
+
+  .event-preview__talk-copy p {
+    font-size: 0.84rem;
+  }
+
+  .hero-action {
+    width: min(100%, 22rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-content {
+    padding-inline: 0.9rem;
+  }
+
+  .hero-title {
+    max-width: none;
+    font-size: clamp(2.2rem, 12vw, 3.15rem);
+  }
+
+  .hero-description {
+    font-size: 0.92rem;
+  }
+
+  .sponsors__item {
+    margin-right: 2rem;
+  }
+
+  .event-preview {
+    padding: 1.1rem;
+  }
+
+  .event-preview__title {
+    font-size: 1rem;
+  }
+
+  .event-preview__talk {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .event-preview__avatar {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .event-preview__fact-value {
+    gap: 0.35rem;
   }
 }
