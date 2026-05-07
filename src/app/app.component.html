@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-background text-foreground">
 
-  <app-navbar [eventDetails]="upcomingEvent()" />
+  <app-navbar />
 
-  <app-hero [sponsors]="sponsors.value()" />
+  <app-hero [sponsors]="sponsors.value()" [event]="upcomingEvent()" />
 
   @if (upcomingEvent(); as event) {
     <app-upcoming-talks [talks]="event.talks" />

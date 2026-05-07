@@ -1,15 +1,13 @@
-import { Component, signal, inject, DOCUMENT, afterNextRender, input } from '@angular/core';
-import { Event } from '../../interfaces/event.interface';
-import { NavbarDateFormatPipe } from '../../pipes/navbar-date-format/navbar-date-format.pipe';
+import { ChangeDetectionStrategy, Component, signal, inject, DOCUMENT, afterNextRender } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
-  imports: [NavbarDateFormatPipe],
+  imports: [],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
-  eventDetails = input<Event | null>(null);
   protected readonly dark = signal(false);
 
   private doc = inject(DOCUMENT);
