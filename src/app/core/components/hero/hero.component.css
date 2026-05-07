@@ -120,11 +120,6 @@
     box-shadow 180ms ease;
 }
 
-.hero-action:hover,
-.event-preview__button:hover {
-  transform: translateY(-1px);
-}
-
 .hero-action--primary,
 .event-preview__button--primary {
   background: var(--color-primary);
@@ -270,6 +265,16 @@
   align-items: start;
   gap: 0.425rem;
   min-width: 0;
+}
+
+.event-preview__fact-copy {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.event-preview__fact-copy > span {
+  display: block;
 }
 
 .event-preview__fact-icon {

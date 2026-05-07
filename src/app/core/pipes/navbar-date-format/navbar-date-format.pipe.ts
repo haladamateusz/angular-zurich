@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'navbarDateFormat',
 })
 export class NavbarDateFormatPipe implements PipeTransform {
-  transform(value: string | null | undefined): string {
+  transform(value: string | null | undefined, mode: 'full' | 'date' | 'time' = 'full'): string {
     if (!value) {
       return '';
     }
@@ -37,8 +37,18 @@ export class NavbarDateFormatPipe implements PipeTransform {
 
     const month = dateParts.find((part) => part.type === 'month')?.value ?? '';
     const year = dateParts.find((part) => part.type === 'year')?.value ?? '';
+    const formattedDate = `${this.formatOrdinal(day)} ${month} ${year}`;
+    const formattedTime = `starts at ${timeFormatter.format(date)}`;
 
-    return `${this.formatOrdinal(day)} ${month} ${year} starts at ${timeFormatter.format(date)}`;
+    if (mode === 'date') {
+      return formattedDate;
+    }
+
+    if (mode === 'time') {
+      return formattedTime;
+    }
+
+    return `${formattedDate} ${formattedTime}`;
   }
 
   private formatOrdinal(day: number): string {

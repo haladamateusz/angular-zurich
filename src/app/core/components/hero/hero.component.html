@@ -131,7 +131,10 @@
                     stroke-linejoin="round"
                     d="M6.75 3v2.25m10.5-2.25v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                 </svg>
-                <span>{{ nextEvent.starts_at | navbarDateFormat }}</span>
+                <span class="event-preview__fact-copy">
+                  <span>{{ nextEvent.starts_at | navbarDateFormat: 'date' }}</span>
+                  <span>{{ nextEvent.starts_at | navbarDateFormat: 'time' }}</span>
+                </span>
               </span>
             </dd>
           </div>
