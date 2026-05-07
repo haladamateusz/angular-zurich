@@ -20,6 +20,7 @@ export class UpcomingTalksComponent {
       return {
         id: talk.id,
         title: talk.title,
+        description: talk.description,
         speakerName: speakerName || 'TBA',
         speakerPosition: primarySpeaker?.label ?? primarySpeaker?.company_name ?? '',
         speakerImage: primarySpeaker?.picture_url ?? '',

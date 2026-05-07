@@ -1,4 +1,4 @@
-<section class="upcoming-talks">
+<section id="upcoming-talks" class="upcoming-talks">
   <div class="upcoming-talks__container">
     <h2 class="upcoming-talks__heading">Upcoming Talks</h2>
     <div class="upcoming-talks__grid">
@@ -19,6 +19,10 @@
           </div>
 
           <h3 class="talk-card__title">{{ talk.title }}</h3>
+
+          @if (talk.description) {
+            <p class="talk-card__description">{{ talk.description }}</p>
+          }
         </div>
       }
     </div>

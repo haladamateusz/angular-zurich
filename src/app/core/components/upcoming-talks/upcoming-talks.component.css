@@ -93,3 +93,10 @@
   margin: 0;
   line-height: 1.4;
 }
+
+.talk-card__description {
+  margin: 0;
+  color: var(--color-muted-foreground-1);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
