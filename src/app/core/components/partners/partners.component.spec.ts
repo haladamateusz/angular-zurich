@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { PartnersComponent } from './partners.component';
+import { Sponsor } from '../../interfaces/sponsor.interface';
+
+const TEST_PARTNERS: Sponsor[] = [];
 
 describe('PartnersComponent', () => {
   let component: PartnersComponent;
@@ -8,12 +10,13 @@ describe('PartnersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PartnersComponent]
-    })
-    .compileComponents();
+      imports: [PartnersComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PartnersComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('partners', TEST_PARTNERS);
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

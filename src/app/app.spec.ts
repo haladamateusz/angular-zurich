@@ -116,7 +116,7 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('shows the sticky banner and upcoming talks for a future event', async () => {
+  it('shows the hero event preview and upcoming talks for a future event', async () => {
     const fixture = TestBed.createComponent(App);
 
     fixture.detectChanges();
@@ -127,9 +127,10 @@ describe('App', () => {
 
     expect(compiled.textContent).toContain('Upcoming Talks');
     expect(compiled.textContent).toContain(DEFAULT_EVENT.title);
+    expect(compiled.textContent).toContain('Next on Angular Zurich');
   });
 
-  it('hides the sticky banner and upcoming talks for a past event', async () => {
+  it('hides the hero event preview and upcoming talks for a past event', async () => {
     latestEventResponse = createEventResponse({
       ...DEFAULT_EVENT,
       starts_at: '2020-04-17T18:30:00.000Z',
@@ -145,5 +146,6 @@ describe('App', () => {
 
     expect(compiled.textContent).not.toContain('Upcoming Talks');
     expect(compiled.textContent).not.toContain(DEFAULT_EVENT.title);
+    expect(compiled.textContent).not.toContain('Next on Angular Zurich');
   });
 });
