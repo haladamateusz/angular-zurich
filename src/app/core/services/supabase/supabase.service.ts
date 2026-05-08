@@ -61,6 +61,7 @@ export class SupabaseService {
           )
         )
       `)
+      .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .order('starts_at', { ascending: false })
       .limit(1)
       .single();
