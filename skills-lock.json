@@ -4,7 +4,8 @@
     "preline-theme-generator": {
       "source": "htmlstreamofficial/preline",
       "sourceType": "github",
-      "computedHash": "945262531988cff7cbdf74ccf341bdc6320988b435213f1fdf0318a4ef2016a7"
+      "skillPath": "skills/theme-generator/SKILL.md",
+      "computedHash": "40ec7f5239fdb8ea5cd4c2352754a611ed8aee01fd0174beb71260f7f24f32f0"
     },
     "supabase": {
       "source": "supabase/agent-skills",
