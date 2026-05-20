@@ -1,0 +1,9 @@
+<app-hero [sponsors]="sponsors.value()" [event]="upcomingEvent()" />
+
+@if (upcomingEvent(); as event) {
+  <app-upcoming-talks [talks]="event.talks" />
+}
+
+<app-stats />
+<app-team />
+<app-partners [partners]="sponsors.value()" />

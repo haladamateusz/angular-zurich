@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import type { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { App } from './app.component';
-import { Event } from './core/interfaces/event.interface';
-import { Person } from './core/interfaces/person.interface';
-import { Sponsor } from './core/interfaces/sponsor.interface';
-import { SupabaseService } from './core/services/supabase/supabase.service';
+import { routes } from './app.routes';
+import { SupabaseService } from './core/data-access/supabase/supabase.service';
+import { Event } from './core/models/event.interface';
+import { Person } from './core/models/person.interface';
+import { Sponsor } from './core/models/sponsor.interface';
 
 const DEFAULT_EVENT: Event = {
   title: 'Angular Zurich Meetup',
@@ -91,6 +93,7 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideRouter(routes),
         {
           provide: SupabaseService,
           useValue: {
@@ -118,7 +121,9 @@ describe('App', () => {
 
   it('shows the hero event preview and upcoming talks for a future event', async () => {
     const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
 
+    await router.navigateByUrl('/');
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -137,7 +142,9 @@ describe('App', () => {
     });
 
     const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
 
+    await router.navigateByUrl('/');
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();

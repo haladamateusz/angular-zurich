@@ -38,10 +38,10 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+enterprise-architecture/
 
 # System files
 .DS_Store
 Thumbs.db
 
 environment.development.ts
-
