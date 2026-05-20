@@ -10,6 +10,7 @@ import { Event } from '../../models/event.interface';
 import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
+import { TalkSubmissionPayload, TalkSubmissionResult } from '../../models/talk-submission.interface';
 
 export interface StatsCounts {
   speakers: number;
@@ -113,6 +114,22 @@ export class SupabaseService {
       .from('Sponsors')
       .select('id, title, logo_url, website_url, created_by')
       .order('title', { ascending: true });
+  }
+
+  async submitTalk(
+    payload: TalkSubmissionPayload,
+  ): Promise<{ data: TalkSubmissionResult | null; error: Error | null }> {
+    const { data, error } = await this.supabase.functions.invoke<TalkSubmissionResult>(
+      'submit-talk',
+      {
+        body: payload,
+      },
+    );
+
+    return {
+      data: data ?? null,
+      error: error ?? null,
+    };
   }
 
   async getStatsCounts(): Promise<StatsCounts> {

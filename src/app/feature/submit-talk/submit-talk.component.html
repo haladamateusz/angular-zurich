@@ -1,0 +1,211 @@
+<main class="bg-background">
+  <section class="px-6 py-14 lg:py-18">
+    <div class="mx-auto max-w-5xl">
+      <div class="rounded-[2rem] border border-card-line bg-card p-6 shadow-sm sm:p-8 lg:p-10">
+        <div class="space-y-3">
+          <span class="inline-flex rounded-full bg-background-2 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            Submission form
+          </span>
+          <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+            Tell us about your talk
+          </h2>
+          <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
+            All fields below are required for the initial review. We use your contact details only
+            to follow up about this proposal.
+          </p>
+        </div>
+
+        @if (submissionState() === 'error') {
+          <div
+            aria-live="assertive"
+            class="mt-8 rounded-2xl border border-destructive/25 bg-destructive/10 p-5 text-destructive"
+            role="alert"
+          >
+            <h3 class="text-base font-semibold">Submission failed</h3>
+            <p class="mt-2 text-sm leading-7">{{ errorMessage() }}</p>
+          </div>
+        }
+
+        <form
+          class="mt-8 space-y-8"
+          [formGroup]="submitTalkForm"
+          (ngSubmit)="submitTalk()"
+          novalidate
+        >
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-sm font-semibold text-foreground" for="talkTitle">Talk title</label>
+              <input
+                id="talkTitle"
+                type="text"
+                formControlName="talkTitle"
+                autocomplete="off"
+                placeholder="Example: Modern Angular debugging workflows"
+                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('talkTitle')"
+              />
+              @if (fieldHasError('talkTitle')) {
+                <p class="text-sm text-destructive">
+                  Please enter a clear title between 5 and {{ maxLengths.talkTitle }} characters.
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <label class="text-sm font-semibold text-foreground" for="talkDescription">Talk description</label>
+                <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                  {{ talkDescriptionLength() }}/{{ maxLengths.talkDescription }}
+                </span>
+              </div>
+              <textarea
+                id="talkDescription"
+                formControlName="talkDescription"
+                rows="8"
+                placeholder="What problem does the talk address, what will the audience learn, and why is it worth attending?"
+                class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('talkDescription')"
+              ></textarea>
+              <p class="text-xs leading-6 text-muted-foreground-2">
+                Give us enough detail to understand the structure and value of the session.
+              </p>
+              @if (fieldHasError('talkDescription')) {
+                <p class="text-sm text-destructive">
+                  Please provide at least 40 characters describing the talk.
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-foreground" for="speakerName">Speaker name</label>
+              <input
+                id="speakerName"
+                type="text"
+                formControlName="speakerName"
+                autocomplete="name"
+                placeholder="Your full name"
+                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('speakerName')"
+              />
+              @if (fieldHasError('speakerName')) {
+                <p class="text-sm text-destructive">Please enter your name.</p>
+              }
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-foreground" for="emailAddress">Email address</label>
+              <input
+                id="emailAddress"
+                type="email"
+                formControlName="emailAddress"
+                autocomplete="email"
+                placeholder="you@example.com"
+                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('emailAddress')"
+              />
+              @if (fieldHasError('emailAddress')) {
+                <p class="text-sm text-destructive">Please enter a valid email address.</p>
+              }
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <label class="text-sm font-semibold text-foreground" for="speakerBio">Speaker bio</label>
+                <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                  {{ speakerBioLength() }}/{{ maxLengths.speakerBio }}
+                </span>
+              </div>
+              <textarea
+                id="speakerBio"
+                formControlName="speakerBio"
+                rows="6"
+                placeholder="Tell us about your background, what you work on, and why you are the right person to give this talk."
+                class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('speakerBio')"
+              ></textarea>
+              <p class="text-xs leading-6 text-muted-foreground-2">
+                This can be short, but it should help us understand your perspective.
+              </p>
+              @if (fieldHasError('speakerBio')) {
+                <p class="text-sm text-destructive">
+                  Please provide a short bio of at least 20 characters.
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 md:col-span-2">
+              <label class="text-sm font-semibold text-foreground" for="speakerContactInfo">Speaker contact info</label>
+              <textarea
+                id="speakerContactInfo"
+                formControlName="speakerContactInfo"
+                rows="4"
+                placeholder="LinkedIn, GitHub, website, X, or anything else that helps us follow up."
+                class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('speakerContactInfo')"
+              ></textarea>
+              @if (fieldHasError('speakerContactInfo')) {
+                <p class="text-sm text-destructive">
+                  Please share at least one practical contact channel.
+                </p>
+              }
+            </div>
+
+            <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+              <label for="companyWebsite">Company website</label>
+              <input
+                id="companyWebsite"
+                type="text"
+                formControlName="companyWebsite"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-3 border-t border-border pt-6">
+            <div class="space-y-2">
+              <h3 class="text-sm font-semibold text-foreground">Verification</h3>
+              <p class="text-sm leading-7 text-muted-foreground-1">
+                Please complete the verification check before submitting your proposal.
+              </p>
+            </div>
+
+            <div>
+              @if (turnstileSiteKey) {
+                <div #turnstileContainer class="min-h-16"></div>
+              } @else {
+                <p class="text-sm text-destructive">
+                  Verification is not configured yet. Please contact the maintainers before using this form.
+                </p>
+              }
+            </div>
+
+            @if (captchaError()) {
+              <p class="text-sm text-destructive">{{ captchaError() }}</p>
+            }
+          </div>
+
+          <div class="flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p class="max-w-2xl text-sm leading-7 text-muted-foreground-1">
+              By submitting, you agree that Angular Zurich can contact you about this proposal.
+              Want to explore the community first?
+              <a class="font-semibold text-primary hover:text-primary-hover" routerLink="/">Go back home</a>.
+            </p>
+
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary-focus/20 disabled:cursor-not-allowed disabled:opacity-70"
+              [disabled]="submissionState() === 'submitting'"
+            >
+              @if (submissionState() === 'submitting') {
+                <span>Submitting…</span>
+              } @else {
+                <span>Submit talk proposal</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>

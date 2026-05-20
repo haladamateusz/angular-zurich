@@ -1,4 +1,5 @@
 export interface Environment {
   supabaseUrl: string;
-  supabaseKey:string;
+  supabaseKey: string;
+  turnstileSiteKey: string;
 }

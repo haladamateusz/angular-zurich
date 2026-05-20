@@ -2,6 +2,11 @@
 
 These instructions apply to work in this repository.
 
+## Skill Priority
+
+- When both `.agents/skills/enterprise-architecture` and `.agents/skills/angular-developer` are relevant, always prioritize `enterprise-architecture` for architecture, project structure, dependency boundaries, and feature organization decisions.
+- Use `angular-developer` as the secondary source for Angular framework patterns, APIs, and implementation details when it does not conflict with `enterprise-architecture`.
+
 ## Workflow
 
 - All commits must use this Conventional Commits format:

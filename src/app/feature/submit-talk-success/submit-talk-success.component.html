@@ -1,0 +1,41 @@
+<main class="bg-background">
+  <section class="px-6 py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl">
+      <div class="rounded-[2rem] border border-card-line bg-card p-8 shadow-sm sm:p-10">
+        <div class="space-y-4">
+          <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+            Talk proposal received
+          </h1>
+          <p class="text-sm leading-8 text-foreground/85 sm:text-base">
+            Thanks for sending this over. We stored your submission in our review queue and will
+            reach out after the review, whether we decide to move forward with the talk or not.
+          </p>
+        </div>
+
+        @if (hasSubmissionId()) {
+          <div class="mt-6 rounded-2xl border border-border bg-background p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground-2">
+              Submission ID
+            </p>
+            <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
+          </div>
+        }
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a
+            class="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+            routerLink="/"
+          >
+            Back to home
+          </a>
+          <a
+            class="inline-flex items-center justify-center rounded-full border border-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-background-1 focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+            routerLink="/talk-submission"
+          >
+            Submit another talk
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
