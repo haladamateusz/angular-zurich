@@ -63,12 +63,28 @@
                 class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('talkDescription')"
               ></textarea>
-              <p class="text-xs leading-6 text-muted-foreground-2">
-                Give us enough detail to understand the structure and value of the session.
-              </p>
               @if (fieldHasError('talkDescription')) {
                 <p class="text-sm text-destructive">
                   Please provide at least 40 characters describing the talk.
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-foreground" for="slidesLink">Link to slides</label>
+              <input
+                id="slidesLink"
+                type="url"
+                formControlName="slidesLink"
+                autocomplete="url"
+                placeholder="https://speakerdeck.com/you/your-talk"
+                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                [attr.aria-invalid]="fieldHasError('slidesLink')"
+              />
+              @if (fieldHasError('slidesLink')) {
+                <p class="text-sm text-destructive">
+                  Please enter a valid URL starting with http:// or https:// (max
+                  {{ maxLengths.slidesLink }} characters).
                 </p>
               }
             </div>
@@ -122,9 +138,6 @@
                 class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('speakerBio')"
               ></textarea>
-              <p class="text-xs leading-6 text-muted-foreground-2">
-                This can be short, but it should help us understand your perspective.
-              </p>
               @if (fieldHasError('speakerBio')) {
                 <p class="text-sm text-destructive">
                   Please provide a short bio of at least 20 characters.

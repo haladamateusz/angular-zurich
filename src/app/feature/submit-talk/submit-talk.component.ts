@@ -26,9 +26,12 @@ type TurnstileApi = NonNullable<Window['turnstile']>;
 const TURNSTILE_SCRIPT_ID = 'cloudflare-turnstile-script';
 const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
+const SLIDES_LINK_PATTERN = /^https?:\/\/.+/i;
+
 const MAX_LENGTHS = {
   talkTitle: 160,
   talkDescription: 6000,
+  slidesLink: 500,
   speakerName: 120,
   emailAddress: 320,
   speakerBio: 4000,
@@ -74,6 +77,7 @@ export class SubmitTalkComponent {
         Validators.maxLength(MAX_LENGTHS.talkDescription),
       ],
     ],
+    slidesLink: ['', [Validators.maxLength(MAX_LENGTHS.slidesLink), Validators.pattern(SLIDES_LINK_PATTERN)]],
     speakerName: [
       '',
       [Validators.required, Validators.minLength(2), Validators.maxLength(MAX_LENGTHS.speakerName)],

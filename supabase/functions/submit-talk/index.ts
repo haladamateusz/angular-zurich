@@ -4,6 +4,7 @@ import postgres from 'npm:postgres@3.4.7';
 type TalkSubmissionPayload = {
   talkTitle: string;
   talkDescription: string;
+  slidesLink?: string;
   speakerName: string;
   emailAddress: string;
   speakerBio: string;
@@ -22,6 +23,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
 
 const TALK_TITLE_MAX_LENGTH = 160;
 const TALK_DESCRIPTION_MAX_LENGTH = 6000;
+const SLIDES_LINK_MAX_LENGTH = 500;
 const SPEAKER_NAME_MAX_LENGTH = 120;
 const EMAIL_ADDRESS_MAX_LENGTH = 320;
 const SPEAKER_BIO_MAX_LENGTH = 4000;
@@ -99,6 +101,26 @@ function normalizeText(value: string, maxLength: number): string {
 
 function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function normalizeOptionalUrl(value: string | undefined, maxLength: number): string | null {
+  const trimmed = (value ?? '').trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.slice(0, maxLength);
+}
+
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 function extractIpAddress(req: Request): string | null {
@@ -212,6 +234,10 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'talk_description_invalid';
   }
 
+  if (payload.slidesLink && !isValidHttpUrl(payload.slidesLink)) {
+    return 'slides_link_invalid';
+  }
+
   if (!payload.speakerName || payload.speakerName.trim().length < 2) {
     return 'speaker_name_invalid';
   }
@@ -256,6 +282,7 @@ Deno.serve(async (req) => {
     const normalizedPayload: TalkSubmissionPayload = {
       talkTitle: normalizeText(payload.talkTitle ?? '', TALK_TITLE_MAX_LENGTH),
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
+      slidesLink: normalizeOptionalUrl(payload.slidesLink, SLIDES_LINK_MAX_LENGTH) ?? undefined,
       speakerName: normalizeText(payload.speakerName ?? '', SPEAKER_NAME_MAX_LENGTH),
       emailAddress: normalizeText(payload.emailAddress ?? '', EMAIL_ADDRESS_MAX_LENGTH).toLowerCase(),
       speakerBio: normalizeText(payload.speakerBio ?? '', SPEAKER_BIO_MAX_LENGTH),
@@ -311,6 +338,7 @@ Deno.serve(async (req) => {
       insert into submissions.talk_submissions (
         talk_title,
         talk_description,
+        slides_url,
         speaker_name,
         speaker_email,
         speaker_bio,
@@ -323,6 +351,7 @@ Deno.serve(async (req) => {
       values (
         ${normalizedPayload.talkTitle},
         ${normalizedPayload.talkDescription},
+        ${normalizedPayload.slidesLink ?? null},
         ${normalizedPayload.speakerName},
         ${normalizedPayload.emailAddress},
         ${normalizedPayload.speakerBio},
