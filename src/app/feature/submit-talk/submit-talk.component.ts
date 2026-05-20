@@ -7,6 +7,7 @@ import {
   PLATFORM_ID,
   afterNextRender,
   computed,
+  effect,
   inject,
   signal,
   viewChild,
@@ -15,6 +16,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionPayload } from '../../core/models/talk-submission.interface';
+import { ThemeService } from '../../core/theme/theme.service';
 import { environment } from '../../../environments/environment';
 
 type SubmissionState = 'idle' | 'submitting' | 'error';
@@ -49,9 +51,11 @@ export class SubmitTalkComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly themeService = inject(ThemeService);
   private readonly turnstileContainer = viewChild<ElementRef<HTMLElement>>('turnstileContainer');
 
   private widgetId: string | null = null;
+  private turnstileThemeAtRender: 'light' | 'dark' | null = null;
 
   protected readonly maxLengths = MAX_LENGTHS;
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
@@ -114,6 +118,21 @@ export class SubmitTalkComponent {
       }
 
       this.renderTurnstile(turnstile);
+    });
+
+    effect(() => {
+      const theme = this.themeService.turnstileTheme();
+
+      if (
+        !isPlatformBrowser(this.platformId) ||
+        !this.widgetId ||
+        !window.turnstile ||
+        this.turnstileThemeAtRender === theme
+      ) {
+        return;
+      }
+
+      this.renderTurnstile(window.turnstile);
     });
 
     this.destroyRef.onDestroy(() => {
@@ -221,12 +240,21 @@ export class SubmitTalkComponent {
   private renderTurnstile(turnstile: TurnstileApi): void {
     const container = this.turnstileContainer()?.nativeElement;
 
-    if (!container || this.widgetId) {
+    if (!container) {
       return;
     }
 
+    if (this.widgetId) {
+      turnstile.remove(this.widgetId);
+      this.widgetId = null;
+      this.captchaToken.set(null);
+    }
+
+    const theme = this.themeService.turnstileTheme();
+
     this.widgetId = turnstile.render(container, {
       sitekey: this.turnstileSiteKey,
+      theme,
       action: 'submit_talk',
       callback: (token) => {
         this.captchaToken.set(token);
@@ -241,6 +269,8 @@ export class SubmitTalkComponent {
         this.captchaError.set('Verification failed to load. Please try again.');
       },
     });
+
+    this.turnstileThemeAtRender = theme;
   }
 
   private resetTurnstile(): void {
