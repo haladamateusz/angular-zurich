@@ -132,15 +132,6 @@ function normalizeOptionalUrl(value: string | undefined, maxLength: number): str
   return trimmed.slice(0, maxLength);
 }
 
-function hasAtLeastOneSpeakerLink(payload: TalkSubmissionPayload): boolean {
-  return !!(
-    payload.personalUrl
-    || payload.twitterUrl
-    || payload.linkedinUrl
-    || payload.githubUrl
-  );
-}
-
 function normalizeOptionalFile(file: File | null | undefined): File | null {
   if (!file || file.size === 0) {
     return null;
@@ -338,10 +329,6 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     || (payload.githubUrl && !isValidHttpUrl(payload.githubUrl))
   ) {
     return 'speaker_profile_url_invalid';
-  }
-
-  if (!hasAtLeastOneSpeakerLink(payload)) {
-    return 'speaker_links_required';
   }
 
   if (payload.speakerPicture) {

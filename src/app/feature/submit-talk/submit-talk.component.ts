@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
-  FormGroup,
   FormControl,
   NonNullableFormBuilder,
   ReactiveFormsModule,
@@ -68,20 +67,6 @@ function optionalImageFileValidator(control: AbstractControl<File | null>): Vali
   }
 
   return null;
-}
-
-function atLeastOneSpeakerLinkValidator(
-  control: AbstractControl,
-): ValidationErrors | null {
-  const group = control as FormGroup;
-  const personalUrl = group.get('personalUrl')?.value?.toString().trim() ?? '';
-  const twitterUrl = group.get('twitterUrl')?.value?.toString().trim() ?? '';
-  const linkedinUrl = group.get('linkedinUrl')?.value?.toString().trim() ?? '';
-  const githubUrl = group.get('githubUrl')?.value?.toString().trim() ?? '';
-
-  return personalUrl || twitterUrl || linkedinUrl || githubUrl
-    ? null
-    : { speakerLinksRequired: true };
 }
 
 let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
@@ -147,8 +132,6 @@ export class SubmitTalkComponent {
       validators: [optionalImageFileValidator],
     }),
     companyWebsite: ['', [Validators.maxLength(MAX_LENGTHS.companyWebsite)]],
-  }, {
-    validators: [atLeastOneSpeakerLinkValidator],
   });
 
   protected readonly talkDescriptionLength = computed(
@@ -250,11 +233,6 @@ export class SubmitTalkComponent {
     const control = this.submitTalkForm.controls[controlName];
 
     return control.invalid && (control.dirty || control.touched);
-  }
-
-  protected speakerLinksHaveError(): boolean {
-    return !!this.submitTalkForm.errors?.['speakerLinksRequired']
-      && (this.submitTalkForm.dirty || this.submitTalkForm.touched);
   }
 
   protected onSpeakerPictureSelected(event: Event): void {
