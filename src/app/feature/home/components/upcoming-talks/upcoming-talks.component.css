@@ -89,11 +89,11 @@
 .talk-card__avatar {
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 1.05rem;
-  background-color: var(--color-primary-100);
+  border-radius: 0.8rem;
   object-fit: cover;
+  object-position: center;
   flex-shrink: 0;
-  box-shadow: 0 8px 22px color-mix(in srgb, black 10%, transparent);
+  display: block;
 }
 
 .talk-card__info {

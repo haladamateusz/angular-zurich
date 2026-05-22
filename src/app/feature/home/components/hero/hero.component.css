@@ -322,8 +322,9 @@
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 999px;
+  border-radius: 0.95rem;
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, white 14%, color-mix(in srgb, var(--color-foreground) 10%, transparent));
   color: var(--color-primary);
   font-size: 0.82rem;
   font-weight: 700;
@@ -331,13 +332,15 @@
 }
 
 .event-preview__avatar--image {
-  background: color-mix(in srgb, var(--color-background) 88%, transparent);
+  background: transparent;
 }
 
 .event-preview__avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
 }
 
 .event-preview__talk-copy {
