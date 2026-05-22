@@ -41,6 +41,12 @@ These instructions apply to work in this repository.
 - Use `NgOptimizedImage` for all static images.
 - `NgOptimizedImage` does not work for inline base64 images.
 
+## Preline Usage
+
+- Prefer Preline CSS, theme tokens, and utility classes without loading the global Preline JavaScript bundle.
+- Do not add `node_modules/preline/dist/index.js` to the global Angular `scripts` array unless a task explicitly requires JS-driven Preline components.
+- If a JS-driven Preline component is needed, import only the smallest specific module required instead of bundling all Preline JS globally.
+
 ## Accessibility Requirements
 
 - It must pass all AXE checks.

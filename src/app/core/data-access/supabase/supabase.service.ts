@@ -24,20 +24,29 @@ export interface StatsCounts {
 export class SupabaseService {
   private readonly supabaseUrl = environment.supabaseUrl.trim();
   private readonly supabaseKey = environment.supabaseKey.trim();
-  private readonly supabase: SupabaseClient = createClient(
-    this.supabaseUrl,
-    this.supabaseKey,
-  );
+  private readonly supabase = this.createSupabaseClient();
 
   async getFormerOrganizers(): Promise<PostgrestResponse<Person>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<Person>([]);
+    }
+
     return this.supabase.from('former_organizers_public').select('*');
   }
 
   async getOrganizers(): Promise<PostgrestResponse<Person>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<Person>([]);
+    }
+
     return this.supabase.from('organizers_public').select('*');
   }
 
   async getLatestEvent(): Promise<PostgrestSingleResponse<Event>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<Event>(null);
+    }
+
     return this.supabase
       .from('Events')
       .select(`
@@ -79,6 +88,10 @@ export class SupabaseService {
   }
 
   async getTalks(): Promise<PostgrestResponse<Talk>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<Talk>([]);
+    }
+
     return this.supabase
       .from('Talks')
       .select(`
@@ -112,6 +125,10 @@ export class SupabaseService {
   }
 
   async getSponsors(): Promise<PostgrestResponse<Sponsor>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<Sponsor>([]);
+    }
+
     return this.supabase
       .from('Sponsors')
       .select('id, title, logo_url, website_url, created_by')
@@ -121,6 +138,13 @@ export class SupabaseService {
   async submitTalk(
     payload: TalkSubmissionPayload,
   ): Promise<{ data: TalkSubmissionResult | null; error: Error | null }> {
+    if (this.supabase === null) {
+      return {
+        data: null,
+        error: new Error('supabase_not_configured'),
+      };
+    }
+
     const formData = new FormData();
 
     formData.set('talkTitle', payload.talkTitle);
@@ -191,6 +215,14 @@ export class SupabaseService {
   }
 
   async getStatsCounts(): Promise<StatsCounts> {
+    if (this.supabase === null) {
+      return {
+        speakers: 0,
+        talks: 0,
+        events: 0,
+      };
+    }
+
     const [speakerResponse, talksResponse, eventsResponse] = await Promise.all([
       this.supabase.from('SpeakerOnTalk').select('speaker_id'),
       this.supabase.from('Talks').select('*', { count: 'exact', head: true }),
@@ -214,5 +246,33 @@ export class SupabaseService {
       talks: talksResponse.count ?? 0,
       events: eventsResponse.count ?? 0,
     };
+  }
+
+  private createSupabaseClient(): SupabaseClient | null {
+    if (!this.supabaseUrl || !this.supabaseKey) {
+      return null;
+    }
+
+    return createClient(this.supabaseUrl, this.supabaseKey);
+  }
+
+  private createEmptyListResponse<T>(data: T[]): PostgrestResponse<T> {
+    return {
+      data,
+      error: null,
+      count: data.length,
+      status: 200,
+      statusText: 'OK',
+    } as PostgrestResponse<T>;
+  }
+
+  private createEmptySingleResponse<T>(data: T | null): PostgrestSingleResponse<T> {
+    return {
+      data,
+      error: null,
+      count: data === null ? 0 : 1,
+      status: 200,
+      statusText: 'OK',
+    } as PostgrestSingleResponse<T>;
   }
 }

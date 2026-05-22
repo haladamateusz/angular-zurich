@@ -55,9 +55,6 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/preline/dist/index.js"
-            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
