@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { signal } from '@angular/core';
 import type { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { App } from './app.component';
 import { routes } from './app.routes';
+import { AuthService } from './core/auth/auth.service';
 import { SupabaseService } from './core/data-access/supabase/supabase.service';
 import { Event } from './core/models/event.interface';
 import { Person } from './core/models/person.interface';
@@ -51,6 +53,7 @@ const EMPTY_SPONSORS_RESPONSE = {
   count: null,
   status: 200,
   statusText: 'OK',
+  success: true,
 } satisfies PostgrestResponse<Sponsor>;
 
 const EMPTY_PEOPLE_RESPONSE = {
@@ -59,6 +62,7 @@ const EMPTY_PEOPLE_RESPONSE = {
   count: null,
   status: 200,
   statusText: 'OK',
+  success: true,
 } satisfies PostgrestResponse<Person>;
 
 function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
@@ -68,14 +72,17 @@ function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
     count: null,
     status: 200,
     statusText: 'OK',
+    success: true,
   };
 }
 
 describe('App', () => {
   let latestEventResponse = createEventResponse(DEFAULT_EVENT);
+  const isAuthenticated = signal(false);
 
   beforeEach(async () => {
     latestEventResponse = createEventResponse(DEFAULT_EVENT);
+    isAuthenticated.set(false);
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: vi.fn().mockReturnValue({
@@ -108,6 +115,13 @@ describe('App', () => {
             }),
           },
         },
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated,
+            signOut: vi.fn().mockResolvedValue(undefined),
+          },
+        },
       ],
     }).compileComponents();
   });
@@ -130,7 +144,7 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('Upcoming Talks');
+    expect(compiled.textContent).toContain('Upcoming talks');
     expect(compiled.textContent).toContain(DEFAULT_EVENT.title);
     expect(compiled.textContent).toContain('Next on Angular Zurich');
   });

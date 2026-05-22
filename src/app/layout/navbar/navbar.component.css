@@ -1,0 +1,11 @@
+:host ::ng-deep summary::-webkit-details-marker {
+  display: none;
+}
+
+:host ::ng-deep summary::marker {
+  content: '';
+}
+
+:host ::ng-deep details[open] .navbar-dropdown__icon {
+  transform: rotate(180deg);
+}
