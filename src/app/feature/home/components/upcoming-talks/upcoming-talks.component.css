@@ -114,7 +114,7 @@
   font-size: 0.82rem;
   line-height: 1.45;
   white-space: normal;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .talk-card__title {

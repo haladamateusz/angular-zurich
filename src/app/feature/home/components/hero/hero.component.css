@@ -16,7 +16,7 @@
 
 .cross-overlay {
   position: absolute;
-  inset: 15px 0 0 0;
+  inset: 15px 0 0;
   color: black;
   opacity: 0.075;
   pointer-events: none;
