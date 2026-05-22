@@ -65,14 +65,6 @@
   padding: clamp(4rem, 8vw, 7rem) 1.5rem clamp(5rem, 10vw, 7rem);
 }
 
-.hero-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.5rem;
-  min-width: 0;
-}
-
 .hero-title {
   max-width: 12ch;
   margin: 0;
@@ -93,12 +85,6 @@
   font-size: clamp(1rem, 1.6vw, 1.15rem);
   line-height: 1.7;
   overflow-wrap: anywhere;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.875rem;
 }
 
 .hero-action,
@@ -141,17 +127,6 @@
 .hero-action--secondary:hover,
 .event-preview__button--secondary:hover {
   background: color-mix(in srgb, var(--color-background) 92%, transparent);
-}
-
-.sponsors {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-  width: 100%;
-  max-width: 34rem;
-  margin-top: 2.5rem;
-  margin-bottom: 2rem;
 }
 
 .sponsors__label {
@@ -206,11 +181,6 @@
   backdrop-filter: blur(10px);
 }
 
-.event-preview__header {
-  display: grid;
-  gap: 0.45rem;
-}
-
 .event-preview__kicker,
 .event-preview__agenda-label {
   color: var(--color-muted-foreground-1);
@@ -229,19 +199,6 @@
   overflow-wrap: anywhere;
 }
 
-.event-preview__facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  gap: 1rem;
-  margin: 0;
-}
-
-.event-preview__fact {
-  display: grid;
-  gap: 0.35rem;
-}
-
 .event-preview__fact dt {
   padding-left: calc(1rem + 0.625rem);
   color: var(--color-muted-foreground-1);
@@ -256,20 +213,6 @@
   color: var(--color-foreground);
   font-size: 0.95rem;
   line-height: 1.5;
-  min-width: 0;
-}
-
-.event-preview__fact-value {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: start;
-  gap: 0.425rem;
-  min-width: 0;
-}
-
-.event-preview__fact-copy {
-  display: grid;
-  gap: 0.1rem;
   min-width: 0;
 }
 
@@ -293,16 +236,6 @@
 .event-preview__fact-value > span:last-child {
   min-width: 0;
   overflow-wrap: anywhere;
-}
-
-.event-preview__agenda {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.event-preview__talks {
-  display: grid;
-  gap: 0.75rem;
 }
 
 .event-preview__talk {
@@ -341,12 +274,6 @@
   object-fit: cover;
   object-position: center;
   border-radius: inherit;
-}
-
-.event-preview__talk-copy {
-  display: grid;
-  gap: 0.2rem;
-  min-width: 0;
 }
 
 .event-preview__talk-copy h3,
@@ -446,10 +373,6 @@
     padding-top: 3.75rem;
   }
 
-  .hero-copy {
-    gap: 1.25rem;
-  }
-
   .hero-title,
   .hero-description {
     max-width: 100%;
@@ -467,7 +390,6 @@
   }
 
   .hero-content {
-    gap: 1.5rem;
     padding: 2.75rem 1rem 4rem;
   }
 
@@ -482,15 +404,6 @@
     line-height: 1.6;
   }
 
-  .hero-actions {
-    width: 100%;
-  }
-
-  .sponsors {
-    max-width: 100%;
-    margin-top: 1.75rem;
-  }
-
   .event-preview {
     width: 100%;
     max-width: 100%;
@@ -498,18 +411,9 @@
     border-radius: 1.4rem;
   }
 
-  .event-preview__header {
-    gap: 0.35rem;
-  }
-
   .event-preview__title {
     font-size: 1.1rem;
     line-height: 1.2;
-  }
-
-  .event-preview__facts {
-    grid-template-columns: 1fr;
-    gap: 1.15rem;
   }
 
   .event-preview__fact dt {

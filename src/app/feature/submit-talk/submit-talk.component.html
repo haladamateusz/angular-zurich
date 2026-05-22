@@ -21,8 +21,8 @@
           aria-labelledby="talk-details-heading"
           class="submission-card submission-card--talk rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
         >
-          <div class="submission-card__header space-y-3">
-            <div class="submission-card__eyebrow-row">
+          <div class="submission-card__header relative z-[1] space-y-3">
+            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
               <p class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
                 Step 1
               </p>
@@ -36,7 +36,7 @@
             </p>
           </div>
 
-          <div class="submission-card__body mt-7 flex flex-col gap-5">
+          <div class="submission-card__body relative z-[1] mt-7 flex flex-col gap-5">
             <div class="space-y-2">
               <label class="text-sm font-semibold text-foreground" for="talkTitle">Talk title *</label>
               <input
@@ -108,8 +108,8 @@
           aria-labelledby="speaker-details-heading"
           class="submission-card submission-card--speaker speaker-card rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
         >
-          <div class="submission-card__header speaker-card__header space-y-3">
-            <div class="submission-card__eyebrow-row">
+          <div class="submission-card__header speaker-card__header relative z-[1] space-y-3">
+            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
               <p class="submission-card__eyebrow speaker-card__step text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
                 Step 2
               </p>
@@ -122,8 +122,8 @@
             </p>
           </div>
 
-          <div class="submission-card__body speaker-card__layout mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:items-start">
-            <div class="speaker-card__form-column flex flex-col gap-5">
+          <div class="submission-card__body speaker-card__layout relative z-[1] mt-7 grid items-start gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]">
+            <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
               <div class="space-y-2">
                 <label class="text-sm font-semibold text-foreground" for="speakerName">Speaker name *</label>
                 <input
@@ -271,9 +271,9 @@
               </div>
             </div>
 
-            <aside class="speaker-card__portrait-panel">
-              <div class="speaker-card__preview-block">
-                <div class="speaker-card__portrait-header">
+            <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
+              <div class="speaker-card__preview-block flex flex-col gap-3.5">
+                <div class="speaker-card__portrait-header flex flex-col gap-[0.45rem]">
                   <label class="text-sm font-semibold text-foreground" for="speakerPicture">
                     Speaker photo
                     <span class="font-normal text-muted-foreground-1">(optional)</span>
@@ -308,7 +308,7 @@
                     <div class="speaker-card__preview-empty">
                       <div class="speaker-card__empty-state">
                         <div class="speaker-card__upload-shell speaker-card__upload-shell--inline">
-                          <div class="speaker-card__filled-upload-row">
+                          <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
                             <button
                               type="button"
                               class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
@@ -334,7 +334,7 @@
                             aria-describedby="speakerPictureHint"
                           />
 
-                          <div class="speaker-card__upload-meta speaker-card__upload-meta--compact">
+                          <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
                             <p id="speakerPictureHint" class="text-sm leading-7 text-muted-foreground-1">
                               Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
                             </p>
@@ -347,9 +347,9 @@
               </div>
 
               @if (speakerPicturePreviewUrl()) {
-                <div class="speaker-card__upload-block">
+                <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
                   <div class="speaker-card__upload-shell">
-                    <div class="speaker-card__filled-upload-row">
+                    <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
                       <button
                         type="button"
                         class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
@@ -375,7 +375,7 @@
                       aria-describedby="speakerPictureHintFilled"
                     />
 
-                    <div class="speaker-card__upload-meta speaker-card__upload-meta--compact">
+                    <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
                       <p id="speakerPictureHintFilled" class="text-sm leading-7 text-muted-foreground-1">
                         Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
                       </p>
@@ -404,8 +404,8 @@
           aria-labelledby="submission-heading"
           class="submission-card submission-card--submit rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
         >
-          <div class="submission-card__header space-y-3">
-            <div class="submission-card__eyebrow-row">
+          <div class="submission-card__header relative z-[1] space-y-3">
+            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
               <p class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
                 Step 3
               </p>
@@ -429,7 +429,7 @@
             </div>
           }
 
-          <div class="submission-card__body mt-7 space-y-5">
+          <div class="submission-card__body relative z-[1] mt-7 space-y-5">
             <div class="submission-card__verification-panel space-y-3">
               <div class="space-y-2">
                 <h4 class="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground-2">Verification</h4>

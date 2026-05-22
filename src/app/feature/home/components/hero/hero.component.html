@@ -68,14 +68,14 @@
   </svg>
 
   @let nextEvent = event();
-  <div class="hero-content">
-    <div class="hero-copy">
+  <div class="hero-content max-[720px]:gap-6">
+    <div class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5">
       <h1 class="hero-title">Meet. Learn. Ship&nbsp;Angular.</h1>
       <p class="hero-description">
         Learn with local Angular engineers, discover practical ideas you can ship the next day, and build momentum with the Zurich community.
       </p>
 
-      <div class="hero-actions">
+      <div class="hero-actions flex flex-wrap gap-3.5 max-[720px]:w-full">
         @if (nextEvent?.meetup_url) {
           <a
             class="inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-[0_12px_30px_color-mix(in_srgb,var(--color-primary)_24%,transparent)] transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
@@ -87,7 +87,7 @@
         }
       </div>
 
-      <div class="sponsors">
+      <div class="sponsors mt-10 mb-8 flex w-full max-w-[34rem] flex-col items-start gap-4 max-[720px]:mt-7 max-[720px]:max-w-full">
         <span class="sponsors__label">Supported by</span>
         <div class="sponsors__marquee">
           <div class="sponsors__track">
@@ -108,13 +108,13 @@
 
     @if (nextEvent) {
       <aside class="event-preview" aria-label="Next event preview">
-        <div class="event-preview__header">
+        <div class="event-preview__header grid gap-[0.45rem] max-[720px]:gap-[0.35rem]">
           <span class="event-preview__kicker">Next on Angular Zurich</span>
           <h2 class="event-preview__title">{{ nextEvent.title }}</h2>
         </div>
 
-        <dl class="event-preview__facts">
-          <div class="event-preview__fact">
+        <dl class="event-preview__facts grid grid-cols-2 items-start gap-4 m-0 max-[720px]:grid-cols-1 max-[720px]:gap-[1.15rem]">
+          <div class="event-preview__fact grid gap-[0.35rem]">
             <dt>Date</dt>
             <dd>
               <span class="event-preview__fact-value">
@@ -131,7 +131,7 @@
                     stroke-linejoin="round"
                     d="M6.75 3v2.25m10.5-2.25v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                 </svg>
-                <span class="event-preview__fact-copy">
+                <span class="event-preview__fact-copy grid min-w-0 gap-[0.1rem]">
                   <span>{{ nextEvent.starts_at | navbarDateFormat: 'date' }}</span>
                   <span>{{ nextEvent.starts_at | navbarDateFormat: 'time' }}</span>
                 </span>
@@ -140,12 +140,12 @@
           </div>
 
           @if (nextEvent.venue) {
-            <div class="event-preview__fact">
+            <div class="event-preview__fact grid gap-[0.35rem]">
               <dt>Venue</dt>
               <dd>
                 @if (nextEvent.venue.google_maps_url) {
                   <a [attr.href]="nextEvent.venue.google_maps_url" target="_blank" rel="noopener noreferrer">
-                    <span class="event-preview__fact-value">
+                    <span class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]">
                       <svg
                         class="event-preview__fact-icon"
                         xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +167,7 @@
                     </span>
                   </a>
                 } @else {
-                  <span class="event-preview__fact-value">
+                  <span class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]">
                     <svg
                       class="event-preview__fact-icon"
                       xmlns="http://www.w3.org/2000/svg"
@@ -194,9 +194,9 @@
         </dl>
 
         @if (previewTalks().length) {
-          <div class="event-preview__agenda">
+          <div class="event-preview__agenda grid gap-[0.85rem]">
             <span class="event-preview__agenda-label">Program preview</span>
-            <div class="event-preview__talks">
+            <div class="event-preview__talks grid gap-3">
               @for (talk of previewTalks(); track talk.id) {
                 <article class="event-preview__talk">
                   <div class="event-preview__avatar" [class.event-preview__avatar--image]="!!talk.speakerImage">
@@ -207,7 +207,7 @@
                     }
                   </div>
 
-                  <div class="event-preview__talk-copy">
+                  <div class="event-preview__talk-copy grid min-w-0 gap-[0.2rem]">
                     <h3>{{ talk.title }}</h3>
                     <p>{{ talk.speakerName }}</p>
                   </div>
