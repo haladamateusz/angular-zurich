@@ -311,10 +311,10 @@
                           <div class="speaker-card__filled-upload-row">
                             <button
                               type="button"
-                              class="speaker-card__browse-button"
+                              class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
                               (click)="openSpeakerPicturePicker()"
                             >
-                              Browse...
+                              Browse
                             </button>
 
                             <p class="speaker-card__selected-file text-sm text-foreground">
@@ -352,10 +352,10 @@
                     <div class="speaker-card__filled-upload-row">
                       <button
                         type="button"
-                        class="speaker-card__browse-button"
+                        class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
                         (click)="openSpeakerPicturePicker()"
                       >
-                        Browse...
+                        Browse
                       </button>
 
                       <p class="speaker-card__selected-file text-sm text-foreground">
@@ -466,7 +466,7 @@
 
               <button
                 type="submit"
-                class="submission-card__submit-button inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-primary-focus/20 disabled:cursor-not-allowed disabled:opacity-70"
+                class="submission-card__submit-button inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70"
                 [disabled]="submissionState() === 'submitting'"
               >
                 @if (submissionState() === 'submitting') {
