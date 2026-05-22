@@ -50,4 +50,22 @@ describe('UpcomingTalksComponent', () => {
 
     expect(compiled.textContent).toContain('How signals make state easier to manage.');
   });
+
+  it('renders each sentence in its own paragraph', () => {
+    fixture.componentRef.setInput('talks', [
+      {
+        ...TEST_TALKS[0],
+        description: 'First sentence. Second sentence.',
+      },
+    ]);
+    fixture.detectChanges();
+
+    const paragraphs = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      '.talk-card__description-paragraph',
+    );
+
+    expect(paragraphs.length).toBe(2);
+    expect(paragraphs[0]?.textContent).toContain('First sentence.');
+    expect(paragraphs[1]?.textContent).toContain('Second sentence.');
+  });
 });

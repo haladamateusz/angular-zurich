@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
+import { splitTextIntoParagraphs } from '../../../../core/utils/split-text-into-paragraphs';
 
 @Component({
   selector: 'app-upcoming-talks',
@@ -21,7 +22,7 @@ export class UpcomingTalksComponent {
       return {
         id: talk.id,
         title: talk.title,
-        description: talk.description,
+        descriptionParagraphs: splitTextIntoParagraphs(talk.description),
         speakerName: speakerName || 'TBA',
         speakerPosition: primarySpeaker?.label ?? primarySpeaker?.company_name ?? '',
         speakerImage: primarySpeaker?.picture_url ?? '',

@@ -22,9 +22,11 @@ export interface StatsCounts {
   providedIn: 'root',
 })
 export class SupabaseService {
+  private readonly supabaseUrl = environment.supabaseUrl.trim();
+  private readonly supabaseKey = environment.supabaseKey.trim();
   private readonly supabase: SupabaseClient = createClient(
-    environment.supabaseUrl,
-    environment.supabaseKey,
+    this.supabaseUrl,
+    this.supabaseKey,
   );
 
   async getFormerOrganizers(): Promise<PostgrestResponse<Person>> {
@@ -119,16 +121,72 @@ export class SupabaseService {
   async submitTalk(
     payload: TalkSubmissionPayload,
   ): Promise<{ data: TalkSubmissionResult | null; error: Error | null }> {
-    const { data, error } = await this.supabase.functions.invoke<TalkSubmissionResult>(
-      'submit-talk',
-      {
-        body: payload,
+    const formData = new FormData();
+
+    formData.set('talkTitle', payload.talkTitle);
+    formData.set('talkDescription', payload.talkDescription);
+    formData.set('speakerName', payload.speakerName);
+    formData.set('emailAddress', payload.emailAddress);
+    formData.set('speakerBio', payload.speakerBio);
+
+    if (payload.slidesLink?.trim()) {
+      formData.set('slidesLink', payload.slidesLink.trim());
+    }
+
+    if (payload.personalUrl?.trim()) {
+      formData.set('personalUrl', payload.personalUrl.trim());
+    }
+
+    if (payload.twitterUrl?.trim()) {
+      formData.set('twitterUrl', payload.twitterUrl.trim());
+    }
+
+    if (payload.linkedinUrl?.trim()) {
+      formData.set('linkedinUrl', payload.linkedinUrl.trim());
+    }
+
+    if (payload.githubUrl?.trim()) {
+      formData.set('githubUrl', payload.githubUrl.trim());
+    }
+
+    if (payload.captchaToken?.trim()) {
+      formData.set('captchaToken', payload.captchaToken.trim());
+    }
+
+    if (payload.speakerPicture) {
+      formData.set('speakerPicture', payload.speakerPicture);
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/submit-talk`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
       },
-    );
+      body: formData,
+    });
+
+    let body: TalkSubmissionResult | { error?: string } | null = null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage = body && 'error' in body && body.error
+        ? body.error
+        : 'submit_talk_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
 
     return {
-      data: data ?? null,
-      error: error ?? null,
+      data: body && 'status' in body ? body : null,
+      error: null,
     };
   }
 

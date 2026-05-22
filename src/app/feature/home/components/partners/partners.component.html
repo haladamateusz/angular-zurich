@@ -1,6 +1,12 @@
 <section class="partners">
   <div class="partners__container">
-    <h2 class="partners__heading">Our Partners</h2>
+    <div class="partners__header">
+      <h2 class="partners__heading">Our partners</h2>
+      <p class="partners__intro">
+        Companies and community allies helping keep Angular Zurich open, welcoming, and sustainable.
+      </p>
+    </div>
+
     <div class="partners__grid">
       @for (partner of partners(); track partner.id) {
         <a [href]="partner.website_url" target="_blank" rel="noopener noreferrer" class="partner-card">

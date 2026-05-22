@@ -1,9 +1,15 @@
 <section id="upcoming-talks" class="upcoming-talks">
   <div class="upcoming-talks__container">
-    <h2 class="upcoming-talks__heading">Upcoming Talks</h2>
+    <div class="upcoming-talks__header">
+      <h2 class="upcoming-talks__heading">Upcoming talks</h2>
+      <p class="upcoming-talks__intro">
+        A quick look at the speakers and sessions lined up for the next Angular Zurich night.
+      </p>
+    </div>
+
     <div class="upcoming-talks__grid">
       @for (talk of talkCards(); track talk.id) {
-        <div class="talk-card">
+        <article class="talk-card">
           <div class="talk-card__speaker">
             @if (talk.speakerImage) {
               <img [src]="talk.speakerImage" [alt]="talk.speakerName" class="talk-card__avatar" width="48" height="48" />
@@ -20,10 +26,14 @@
 
           <h3 class="talk-card__title">{{ talk.title }}</h3>
 
-          @if (talk.description) {
-            <p class="talk-card__description">{{ talk.description }}</p>
+          @if (talk.descriptionParagraphs.length) {
+            <div class="talk-card__description">
+              @for (paragraph of talk.descriptionParagraphs; track $index) {
+                <p class="talk-card__description-paragraph">{{ paragraph }}</p>
+              }
+            </div>
           }
-        </div>
+        </article>
       }
     </div>
   </div>

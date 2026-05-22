@@ -1,5 +1,9 @@
 <section class="stats">
   <div class="stats__container">
+    <div class="stats__header">
+      <p class="stats__eyebrow">Angular Zurich in numbers</p>
+    </div>
+
     @for (stat of stats(); track stat.label) {
       <div class="stats__item">
         <span class="stats__value">{{ stat.value }}</span>

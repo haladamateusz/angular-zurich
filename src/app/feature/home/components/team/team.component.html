@@ -1,12 +1,34 @@
 <section class="team">
   <div class="team__container">
-    <h2 class="team__heading">Meet the Team</h2>
+    <div class="team__header">
+      <h2 class="team__heading">Meet the team</h2>
+      <p class="team__intro">
+        The organizers shaping the program, partnerships, and community energy around Angular Zurich.
+      </p>
+    </div>
+
     <div class="team__grid">
       @for (member of organizersResource.value(); track member.first_name) {
-        <div class="member-card">
-          <img [src]="member.picture_url" [alt]="member.first_name" class="member-card__avatar" width="80" height="80" />
-          <h3 class="member-card__name">{{ `${member.first_name} ${member.last_name}` }}</h3>
-          <div class="member-card__links">
+        <article class="member-card">
+          <div class="member-card__profile">
+            <img
+              [src]="member.picture_url"
+              [alt]="`${member.first_name} ${member.last_name}`"
+              class="member-card__avatar"
+              width="64"
+              height="64"
+            />
+
+            <div class="member-card__info">
+              <div class="member-card__identity">
+                <h3 class="member-card__name">{{ `${member.first_name} ${member.last_name}` }}</h3>
+
+                @if (member.label ?? member.company_name) {
+                  <p class="member-card__label">{{ member.label ?? member.company_name }}</p>
+                }
+              </div>
+
+              <div class="member-card__links">
             @if (member.linkedin_url) {
               <a [href]="member.linkedin_url" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
                 class="icon-link icon-link--linkedin member-card__link">
@@ -39,18 +61,34 @@
                 </svg>
               </a>
             }
+              </div>
+            </div>
           </div>
-        </div>
+        </article>
       }
     </div>
 
-    <h3 class="team__subheading">Hall of Fame</h3>
+    <div class="team__archive-header">
+      <h3 class="team__subheading">Hall of Fame</h3>
+      <p class="team__archive-intro">Former organizers who helped build the community over the years.</p>
+    </div>
+
     <div class="team__grid">
       @for (member of formerOrganizersResource.value(); track member.first_name) {
-        <div class="member-card member-card--faded">
-          <img [src]="member.picture_url" [alt]="member.first_name" class="member-card__avatar" width="80" height="80" />
-          <h3 class="member-card__name">{{ `${member.first_name} ${member.last_name}` }}</h3>
-          <div class="member-card__links">
+        <article class="member-card member-card--faded">
+          <div class="member-card__profile">
+            <img
+              [src]="member.picture_url"
+              [alt]="`${member.first_name} ${member.last_name}`"
+              class="member-card__avatar"
+              width="64"
+              height="64"
+            />
+
+            <div class="member-card__info">
+              <h3 class="member-card__name">{{ `${member.first_name} ${member.last_name}` }}</h3>
+
+              <div class="member-card__links">
             @if (member.linkedin_url) {
               <a [href]="member.linkedin_url" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
                 class="icon-link icon-link--linkedin member-card__link">
@@ -83,8 +121,10 @@
                 </svg>
               </a>
             }
+              </div>
+            </div>
           </div>
-        </div>
+        </article>
       }
     </div>
   </div>

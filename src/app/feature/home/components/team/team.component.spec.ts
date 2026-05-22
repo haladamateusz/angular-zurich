@@ -10,6 +10,7 @@ const EMPTY_PEOPLE_RESPONSE = {
   count: null,
   status: 200,
   statusText: 'OK',
+  success: true,
 } satisfies PostgrestResponse<Person>;
 
 describe('TeamComponent', () => {
@@ -38,5 +39,52 @@ describe('TeamComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('renders organizer label under the name', async () => {
+    const getOrganizers = vi.fn().mockResolvedValue({
+      data: [
+        {
+          first_name: 'Mateusz',
+          last_name: 'Halada',
+          slug: 'mateusz-halada',
+          picture_url: 'https://example.com/mateusz.jpg',
+          label: 'Angular & Nx architecture specialist',
+          company_name: null,
+          personal_url: null,
+          github_url: null,
+          twitter_url: null,
+          linkedin_url: null,
+        },
+      ],
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK',
+      success: true,
+    } satisfies PostgrestResponse<Person>);
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [TeamComponent],
+      providers: [
+        {
+          provide: SupabaseService,
+          useValue: {
+            getOrganizers,
+            getFormerOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    const labelFixture = TestBed.createComponent(TeamComponent);
+    labelFixture.detectChanges();
+    await labelFixture.whenStable();
+    labelFixture.detectChanges();
+
+    const label = (labelFixture.nativeElement as HTMLElement).querySelector('.member-card__label');
+
+    expect(label?.textContent).toContain('Angular & Nx architecture specialist');
   });
 });

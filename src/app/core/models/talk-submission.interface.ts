@@ -5,7 +5,11 @@ export interface TalkSubmissionPayload {
   speakerName: string;
   emailAddress: string;
   speakerBio: string;
-  speakerContactInfo: string;
+  personalUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  speakerPicture?: File | null;
   captchaToken?: string;
 }
 

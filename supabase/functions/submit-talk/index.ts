@@ -1,4 +1,5 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 import postgres from 'npm:postgres@3.4.7';
 
 type TalkSubmissionPayload = {
@@ -8,7 +9,11 @@ type TalkSubmissionPayload = {
   speakerName: string;
   emailAddress: string;
   speakerBio: string;
-  speakerContactInfo: string;
+  personalUrl?: string;
+  twitterUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  speakerPicture?: File | null;
   captchaToken?: string;
 };
 
@@ -27,16 +32,30 @@ const SLIDES_LINK_MAX_LENGTH = 500;
 const SPEAKER_NAME_MAX_LENGTH = 120;
 const EMAIL_ADDRESS_MAX_LENGTH = 320;
 const SPEAKER_BIO_MAX_LENGTH = 4000;
-const SPEAKER_CONTACT_INFO_MAX_LENGTH = 1000;
+const PROFILE_URL_MAX_LENGTH = 500;
+const SPEAKER_PICTURE_PATH_MAX_LENGTH = 1024;
 const USER_AGENT_MAX_LENGTH = 512;
 const ORIGIN_MAX_LENGTH = 255;
 
 const IP_RATE_LIMIT_MAX = 5;
 const EMAIL_RATE_LIMIT_MAX = 3;
+const SPEAKER_PICTURE_BUCKET = 'talk-submission-assets';
+const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
+const SPEAKER_PICTURE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 const sql = postgres(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '', {
   prepare: false,
 });
+
+const SUPABASE_SECRET_KEYS = Deno.env.get('SUPABASE_SECRET_KEYS');
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const supabaseServiceKey = SUPABASE_SECRET_KEYS
+  ? (JSON.parse(SUPABASE_SECRET_KEYS) as Record<string, string>).default
+  : SUPABASE_SERVICE_ROLE_KEY;
+
+const supabaseAdmin = Deno.env.get('SUPABASE_URL') && supabaseServiceKey
+  ? createClient(Deno.env.get('SUPABASE_URL')!, supabaseServiceKey)
+  : null;
 
 function jsonResponse(
   status: number,
@@ -113,6 +132,23 @@ function normalizeOptionalUrl(value: string | undefined, maxLength: number): str
   return trimmed.slice(0, maxLength);
 }
 
+function hasAtLeastOneSpeakerLink(payload: TalkSubmissionPayload): boolean {
+  return !!(
+    payload.personalUrl
+    || payload.twitterUrl
+    || payload.linkedinUrl
+    || payload.githubUrl
+  );
+}
+
+function normalizeOptionalFile(file: File | null | undefined): File | null {
+  if (!file || file.size === 0) {
+    return null;
+  }
+
+  return file;
+}
+
 function isValidHttpUrl(value: string): boolean {
   try {
     const url = new URL(value);
@@ -121,6 +157,51 @@ function isValidHttpUrl(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+function hasValidSpeakerPictureType(file: File): boolean {
+  return SPEAKER_PICTURE_ALLOWED_TYPES.includes(
+    file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number],
+  );
+}
+
+function getSpeakerPictureExtension(file: File): string {
+  switch (file.type) {
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/webp':
+      return 'webp';
+    default:
+      return 'bin';
+  }
+}
+
+async function parseSubmissionPayload(req: Request): Promise<TalkSubmissionPayload> {
+  const contentType = req.headers.get('content-type') ?? '';
+
+  if (contentType.includes('multipart/form-data')) {
+    const formData = await req.formData();
+    const speakerPictureField = formData.get('speakerPicture');
+
+    return {
+      talkTitle: String(formData.get('talkTitle') ?? ''),
+      talkDescription: String(formData.get('talkDescription') ?? ''),
+      slidesLink: String(formData.get('slidesLink') ?? '') || undefined,
+      speakerName: String(formData.get('speakerName') ?? ''),
+      emailAddress: String(formData.get('emailAddress') ?? ''),
+      speakerBio: String(formData.get('speakerBio') ?? ''),
+      personalUrl: String(formData.get('personalUrl') ?? '') || undefined,
+      twitterUrl: String(formData.get('twitterUrl') ?? '') || undefined,
+      linkedinUrl: String(formData.get('linkedinUrl') ?? '') || undefined,
+      githubUrl: String(formData.get('githubUrl') ?? '') || undefined,
+      speakerPicture: speakerPictureField instanceof File ? speakerPictureField : null,
+      captchaToken: String(formData.get('captchaToken') ?? '') || undefined,
+    };
+  }
+
+  return await req.json() as TalkSubmissionPayload;
 }
 
 function extractIpAddress(req: Request): string | null {
@@ -250,8 +331,27 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'speaker_bio_invalid';
   }
 
-  if (!payload.speakerContactInfo || payload.speakerContactInfo.trim().length < 5) {
-    return 'speaker_contact_info_invalid';
+  if (
+    (payload.personalUrl && !isValidHttpUrl(payload.personalUrl))
+    || (payload.twitterUrl && !isValidHttpUrl(payload.twitterUrl))
+    || (payload.linkedinUrl && !isValidHttpUrl(payload.linkedinUrl))
+    || (payload.githubUrl && !isValidHttpUrl(payload.githubUrl))
+  ) {
+    return 'speaker_profile_url_invalid';
+  }
+
+  if (!hasAtLeastOneSpeakerLink(payload)) {
+    return 'speaker_links_required';
+  }
+
+  if (payload.speakerPicture) {
+    if (!hasValidSpeakerPictureType(payload.speakerPicture)) {
+      return 'speaker_picture_invalid_type';
+    }
+
+    if (payload.speakerPicture.size > SPEAKER_PICTURE_MAX_SIZE_BYTES) {
+      return 'speaker_picture_too_large';
+    }
   }
 
   return null;
@@ -278,7 +378,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const payload = (await req.json()) as Partial<TalkSubmissionPayload>;
+    const payload = await parseSubmissionPayload(req);
     const normalizedPayload: TalkSubmissionPayload = {
       talkTitle: normalizeText(payload.talkTitle ?? '', TALK_TITLE_MAX_LENGTH),
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
@@ -286,10 +386,11 @@ Deno.serve(async (req) => {
       speakerName: normalizeText(payload.speakerName ?? '', SPEAKER_NAME_MAX_LENGTH),
       emailAddress: normalizeText(payload.emailAddress ?? '', EMAIL_ADDRESS_MAX_LENGTH).toLowerCase(),
       speakerBio: normalizeText(payload.speakerBio ?? '', SPEAKER_BIO_MAX_LENGTH),
-      speakerContactInfo: normalizeText(
-        payload.speakerContactInfo ?? '',
-        SPEAKER_CONTACT_INFO_MAX_LENGTH,
-      ),
+      personalUrl: normalizeOptionalUrl(payload.personalUrl, PROFILE_URL_MAX_LENGTH) ?? undefined,
+      twitterUrl: normalizeOptionalUrl(payload.twitterUrl, PROFILE_URL_MAX_LENGTH) ?? undefined,
+      linkedinUrl: normalizeOptionalUrl(payload.linkedinUrl, PROFILE_URL_MAX_LENGTH) ?? undefined,
+      githubUrl: normalizeOptionalUrl(payload.githubUrl, PROFILE_URL_MAX_LENGTH) ?? undefined,
+      speakerPicture: normalizeOptionalFile(payload.speakerPicture),
       captchaToken: payload.captchaToken,
     };
 
@@ -334,28 +435,80 @@ Deno.serve(async (req) => {
       return jsonResponse(429, { error: 'rate_limit_exceeded' }, corsHeaders);
     }
 
+    const submissionId = crypto.randomUUID();
+    let speakerPicturePath: string | null = null;
+
+    if (normalizedPayload.speakerPicture) {
+      if (!supabaseAdmin) {
+        console.error('submit-talk storage client is not configured');
+
+        return jsonResponse(500, { error: 'storage_not_configured' }, corsHeaders);
+      }
+
+      const speakerPictureExtension = getSpeakerPictureExtension(normalizedPayload.speakerPicture);
+      const nowDateSegment = now.toISOString().slice(0, 10);
+
+      speakerPicturePath = [
+        'speaker-pictures',
+        nowDateSegment,
+        `${submissionId}.${speakerPictureExtension}`,
+      ].join('/');
+
+      if (speakerPicturePath.length > SPEAKER_PICTURE_PATH_MAX_LENGTH) {
+        return jsonResponse(400, { error: 'speaker_picture_path_invalid' }, corsHeaders);
+      }
+
+      const uploadResult = await supabaseAdmin.storage
+        .from(SPEAKER_PICTURE_BUCKET)
+        .upload(
+          speakerPicturePath,
+          new Uint8Array(await normalizedPayload.speakerPicture.arrayBuffer()),
+          {
+            contentType: normalizedPayload.speakerPicture.type,
+            cacheControl: '3600',
+            upsert: false,
+          },
+        );
+
+      if (uploadResult.error) {
+        console.error('submit-talk speaker picture upload failed', uploadResult.error);
+
+        return jsonResponse(500, { error: 'speaker_picture_upload_failed' }, corsHeaders);
+      }
+    }
+
     const rows = await sql<{ id: string }[]>`
       insert into submissions.talk_submissions (
+        id,
         talk_title,
         talk_description,
         slides_url,
         speaker_name,
         speaker_email,
         speaker_bio,
-        speaker_contact_info,
+        personal_url,
+        twitter_url,
+        linkedin_url,
+        github_url,
+        speaker_picture_path,
         source_ip_hash,
         email_hash,
         user_agent,
         origin
       )
       values (
+        ${submissionId}::uuid,
         ${normalizedPayload.talkTitle},
         ${normalizedPayload.talkDescription},
         ${normalizedPayload.slidesLink ?? null},
         ${normalizedPayload.speakerName},
         ${normalizedPayload.emailAddress},
         ${normalizedPayload.speakerBio},
-        ${normalizedPayload.speakerContactInfo},
+        ${normalizedPayload.personalUrl ?? null},
+        ${normalizedPayload.twitterUrl ?? null},
+        ${normalizedPayload.linkedinUrl ?? null},
+        ${normalizedPayload.githubUrl ?? null},
+        ${speakerPicturePath},
         ${ipHash},
         ${emailHash},
         ${req.headers.get('user-agent')?.slice(0, USER_AGENT_MAX_LENGTH) ?? null},
@@ -373,7 +526,11 @@ Deno.serve(async (req) => {
       corsHeaders,
     );
   } catch (error) {
-    console.error('submit-talk failed', error);
+    if (error instanceof Error) {
+      console.error('submit-talk failed', error.message, error.stack);
+    } else {
+      console.error('submit-talk failed', error);
+    }
 
     return jsonResponse(500, { error: 'internal_error' }, corsHeaders);
   }

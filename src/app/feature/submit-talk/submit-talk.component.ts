@@ -12,7 +12,15 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  FormControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionPayload } from '../../core/models/talk-submission.interface';
@@ -27,6 +35,8 @@ const TURNSTILE_SCRIPT_ID = 'cloudflare-turnstile-script';
 const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
 const SLIDES_LINK_PATTERN = /^https?:\/\/.+/i;
+const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
+const SPEAKER_PICTURE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 const MAX_LENGTHS = {
   talkTitle: 160,
@@ -35,9 +45,44 @@ const MAX_LENGTHS = {
   speakerName: 120,
   emailAddress: 320,
   speakerBio: 4000,
-  speakerContactInfo: 1000,
+  personalUrl: 500,
+  twitterUrl: 500,
+  linkedinUrl: 500,
+  githubUrl: 500,
   companyWebsite: 200,
 } as const;
+
+function optionalImageFileValidator(control: AbstractControl<File | null>): ValidationErrors | null {
+  const file = control.value;
+
+  if (!file) {
+    return null;
+  }
+
+  if (!SPEAKER_PICTURE_ALLOWED_TYPES.includes(file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number])) {
+    return { invalidFileType: true };
+  }
+
+  if (file.size > SPEAKER_PICTURE_MAX_SIZE_BYTES) {
+    return { fileTooLarge: true };
+  }
+
+  return null;
+}
+
+function atLeastOneSpeakerLinkValidator(
+  control: AbstractControl,
+): ValidationErrors | null {
+  const group = control as FormGroup;
+  const personalUrl = group.get('personalUrl')?.value?.toString().trim() ?? '';
+  const twitterUrl = group.get('twitterUrl')?.value?.toString().trim() ?? '';
+  const linkedinUrl = group.get('linkedinUrl')?.value?.toString().trim() ?? '';
+  const githubUrl = group.get('githubUrl')?.value?.toString().trim() ?? '';
+
+  return personalUrl || twitterUrl || linkedinUrl || githubUrl
+    ? null
+    : { speakerLinksRequired: true };
+}
 
 let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
 
@@ -56,16 +101,20 @@ export class SubmitTalkComponent {
   private readonly supabaseService = inject(SupabaseService);
   private readonly themeService = inject(ThemeService);
   private readonly turnstileContainer = viewChild<ElementRef<HTMLElement>>('turnstileContainer');
+  private readonly speakerPictureInput = viewChild<ElementRef<HTMLInputElement>>('speakerPictureInput');
 
   private widgetId: string | null = null;
   private turnstileThemeAtRender: 'light' | 'dark' | null = null;
 
   protected readonly maxLengths = MAX_LENGTHS;
+  protected readonly maxSpeakerPictureSizeInMegabytes = SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
   protected readonly submissionState = signal<SubmissionState>('idle');
   protected readonly captchaError = signal('');
   protected readonly errorMessage = signal('');
   protected readonly captchaToken = signal<string | null>(null);
+  protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
+  protected readonly speakerPictureFileName = signal('');
 
   protected readonly submitTalkForm = this.formBuilder.group({
     talkTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(MAX_LENGTHS.talkTitle)]],
@@ -90,15 +139,16 @@ export class SubmitTalkComponent {
       '',
       [Validators.required, Validators.minLength(20), Validators.maxLength(MAX_LENGTHS.speakerBio)],
     ],
-    speakerContactInfo: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(5),
-        Validators.maxLength(MAX_LENGTHS.speakerContactInfo),
-      ],
-    ],
+    personalUrl: ['', [Validators.maxLength(MAX_LENGTHS.personalUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    twitterUrl: ['', [Validators.maxLength(MAX_LENGTHS.twitterUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    linkedinUrl: ['', [Validators.maxLength(MAX_LENGTHS.linkedinUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    githubUrl: ['', [Validators.maxLength(MAX_LENGTHS.githubUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    speakerPicture: new FormControl<File | null>(null, {
+      validators: [optionalImageFileValidator],
+    }),
     companyWebsite: ['', [Validators.maxLength(MAX_LENGTHS.companyWebsite)]],
+  }, {
+    validators: [atLeastOneSpeakerLinkValidator],
   });
 
   protected readonly talkDescriptionLength = computed(
@@ -143,6 +193,8 @@ export class SubmitTalkComponent {
       if (isPlatformBrowser(this.platformId) && this.widgetId && window.turnstile) {
         window.turnstile.remove(this.widgetId);
       }
+
+      this.revokeSpeakerPicturePreviewUrl();
     });
   }
 
@@ -150,6 +202,7 @@ export class SubmitTalkComponent {
     if (this.submitTalkForm.controls.companyWebsite.value.trim().length > 0) {
       this.errorMessage.set('');
       this.submitTalkForm.reset();
+      this.resetSpeakerPictureInput();
       await this.router.navigate(['/talk-submission', 'submitted']);
       return;
     }
@@ -189,6 +242,7 @@ export class SubmitTalkComponent {
     }
 
     this.submitTalkForm.reset();
+    this.resetSpeakerPictureInput();
     await this.router.navigate(['/talk-submission', data.id ?? 'submitted']);
   }
 
@@ -196,6 +250,36 @@ export class SubmitTalkComponent {
     const control = this.submitTalkForm.controls[controlName];
 
     return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected speakerLinksHaveError(): boolean {
+    return !!this.submitTalkForm.errors?.['speakerLinksRequired']
+      && (this.submitTalkForm.dirty || this.submitTalkForm.touched);
+  }
+
+  protected onSpeakerPictureSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    const control = this.submitTalkForm.controls.speakerPicture;
+
+    this.revokeSpeakerPicturePreviewUrl();
+    control.setValue(file);
+    control.markAsDirty();
+    control.markAsTouched();
+    control.updateValueAndValidity();
+    this.speakerPictureFileName.set(file?.name ?? '');
+
+    if (file && control.valid && isPlatformBrowser(this.platformId)) {
+      this.speakerPicturePreviewUrl.set(URL.createObjectURL(file));
+    }
+  }
+
+  protected removeSpeakerPicture(): void {
+    this.resetSpeakerPictureInput();
+  }
+
+  protected openSpeakerPicturePicker(): void {
+    this.speakerPictureInput()?.nativeElement?.click();
   }
 
   private async loadTurnstile(): Promise<TurnstileApi | null> {
@@ -285,5 +369,28 @@ export class SubmitTalkComponent {
 
     window.turnstile.reset(this.widgetId);
     this.captchaToken.set(null);
+  }
+
+  private resetSpeakerPictureInput(): void {
+    this.revokeSpeakerPicturePreviewUrl();
+    this.speakerPictureFileName.set('');
+    this.submitTalkForm.controls.speakerPicture.setValue(null);
+    this.submitTalkForm.controls.speakerPicture.markAsPristine();
+    this.submitTalkForm.controls.speakerPicture.markAsUntouched();
+    const input = this.speakerPictureInput()?.nativeElement;
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  private revokeSpeakerPicturePreviewUrl(): void {
+    const previewUrl = this.speakerPicturePreviewUrl();
+
+    if (previewUrl && isPlatformBrowser(this.platformId)) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    this.speakerPicturePreviewUrl.set(null);
   }
 }
