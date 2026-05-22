@@ -204,10 +204,8 @@ export class SubmitTalkComponent {
     this.captchaError.set('');
     this.errorMessage.set('');
 
-    const {
-      companyWebsite: _companyWebsite,
-      ...payload
-    } = this.submitTalkForm.getRawValue();
+    const { companyWebsite: _honeypot, ...payload } = this.submitTalkForm.getRawValue();
+    void _honeypot;
 
     const submissionPayload: TalkSubmissionPayload = {
       ...payload,

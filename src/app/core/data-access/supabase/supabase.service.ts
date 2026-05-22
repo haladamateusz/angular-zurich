@@ -165,7 +165,7 @@ export class SupabaseService {
       body: formData,
     });
 
-    let body: TalkSubmissionResult | { error?: string } | null = null;
+    let body: TalkSubmissionResult | { error?: string } | null;
 
     try {
       body = await response.json();
