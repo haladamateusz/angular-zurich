@@ -183,6 +183,13 @@
   -webkit-line-clamp: 2;
 }
 
+@media (max-width: 767px) {
+  .member-card__label {
+    min-height: 1lh;
+    -webkit-line-clamp: 1;
+  }
+}
+
 .member-card__links {
   display: flex;
   flex-wrap: wrap;

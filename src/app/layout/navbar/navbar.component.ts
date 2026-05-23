@@ -1,6 +1,14 @@
 import { DOCUMENT } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  effect,
+  inject,
+  signal,
+  viewChildren,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { fromEvent } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
@@ -14,11 +22,15 @@ import { ThemeService } from '../../core/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
+  private readonly guestMenuAnimationDurationMs = 360;
   private readonly authService = inject(AuthService);
   private readonly themeService = inject(ThemeService);
   private readonly document = inject(DOCUMENT);
   private readonly avatarLoadFailed = signal(false);
-  private readonly userMenu = viewChild<ElementRef<HTMLDetailsElement>>('userMenu');
+  protected readonly guestMenuRendered = signal(false);
+  protected readonly guestMenuOpen = signal(false);
+  private readonly navMenus = viewChildren<ElementRef<HTMLDetailsElement>>('navMenu');
+  private guestMenuCloseTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly isAuthenticated = this.authService.isAuthenticated;
   protected readonly userProfile = this.authService.userProfile;
@@ -30,27 +42,37 @@ export class NavbarComponent {
       this.avatarLoadFailed.set(false);
     });
 
+    effect(() => {
+      this.document.body.style.overflow = this.guestMenuRendered() ? 'hidden' : '';
+    });
+
     fromEvent<MouseEvent>(this.document, 'click')
       .pipe(takeUntilDestroyed())
       .subscribe((event) => {
-        const details = this.userMenu()?.nativeElement;
         const target = event.target;
 
-        if (
-          !(details instanceof HTMLDetailsElement) ||
-          !details.open ||
-          !(target instanceof Node) ||
-          details.contains(target)
-        ) {
+        if (!(target instanceof Node)) {
           return;
         }
 
-        details.open = false;
+        for (const menuRef of this.navMenus()) {
+          const details = menuRef.nativeElement;
+
+          if (!details.open || details.contains(target)) {
+            continue;
+          }
+
+          details.open = false;
+        }
       });
   }
 
   protected get shouldShowAvatarImage(): boolean {
     return !!this.userProfile()?.avatarUrl && !this.avatarLoadFailed();
+  }
+
+  protected get mobileThemeLabel(): string {
+    return this.dark() ? 'Theme: Dark mode' : 'Theme: Light mode';
   }
 
   protected handleAvatarLoadError(): void {
@@ -61,11 +83,37 @@ export class NavbarComponent {
     await this.authService.signOut();
   }
 
+  protected async signOutAndCloseGuestMenu(): Promise<void> {
+    await this.signOut();
+    this.closeGuestMenu();
+  }
+
   protected closeMenu(event: Event): void {
     const details = (event.currentTarget as HTMLElement | null)?.closest('details');
     if (details instanceof HTMLDetailsElement) {
       details.open = false;
     }
+  }
+
+  protected closeGuestMenu(): void {
+    clearTimeout(this.guestMenuCloseTimeoutId);
+    this.guestMenuOpen.set(false);
+    this.guestMenuCloseTimeoutId = setTimeout(() => {
+      this.guestMenuRendered.set(false);
+    }, this.guestMenuAnimationDurationMs);
+  }
+
+  protected toggleGuestMenu(): void {
+    if (this.guestMenuRendered()) {
+      this.closeGuestMenu();
+      return;
+    }
+
+    clearTimeout(this.guestMenuCloseTimeoutId);
+    this.guestMenuRendered.set(true);
+    setTimeout(() => {
+      this.guestMenuOpen.set(true);
+    });
   }
 
   protected toggleDarkMode(): void {

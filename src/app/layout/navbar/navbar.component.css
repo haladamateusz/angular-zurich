@@ -9,3 +9,36 @@
 :host ::ng-deep details[open] .navbar-dropdown__icon {
   transform: rotate(180deg);
 }
+
+.navbar-mobile-backdrop {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.navbar-mobile-backdrop--open {
+  opacity: 1;
+}
+
+.navbar-mobile-panel {
+  opacity: 0;
+  transform: translateX(100%);
+  transition:
+    transform 360ms ease-in-out,
+    opacity 360ms ease-in-out;
+  will-change: transform, opacity;
+}
+
+.navbar-mobile-panel--open {
+  transition:
+    transform 240ms ease-in-out,
+    opacity 180ms ease-in-out 70ms;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-mobile-backdrop,
+  .navbar-mobile-panel {
+    transition-duration: 1ms;
+  }
+}

@@ -52,4 +52,21 @@ describe('NavbarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('renders a mobile guest navigation slide-over with theme, sign in, and submit talk actions', () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const guestMenuButton = host.querySelector('button[aria-controls="guest-mobile-menu"]');
+
+    expect(guestMenuButton).toBeTruthy();
+
+    guestMenuButton?.dispatchEvent(new MouseEvent('click'));
+    fixture.detectChanges();
+
+    const guestMenu = host.querySelector('#guest-mobile-menu');
+
+    expect(guestMenu).toBeTruthy();
+    expect(guestMenu?.textContent).toContain('Theme: Light mode');
+    expect(guestMenu?.textContent).toContain('Sign in');
+    expect(guestMenu?.textContent).toContain('Submit Talk');
+  });
 });
