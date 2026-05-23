@@ -21,10 +21,7 @@
                 <div class="member-card__info">
                   <div class="member-card__identity">
                     <h3 class="member-card__name">{{ `${member.first_name} ${member.last_name}` }}</h3>
-
-                    @if (member.label ?? member.company_name) {
-                      <p class="member-card__label">{{ member.label ?? member.company_name }}</p>
-                    }
+                    <p class="member-card__label">{{ member.label ?? member.company_name ?? '' }}</p>
                   </div>
 
                   <div class="member-card__links">

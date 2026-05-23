@@ -173,9 +173,14 @@
 
 .member-card__label {
   margin: 0;
+  min-height: calc(2 * 1lh);
   color: var(--color-muted-foreground-1);
   font-size: 0.82rem;
   line-height: 1.45;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .member-card__links {
