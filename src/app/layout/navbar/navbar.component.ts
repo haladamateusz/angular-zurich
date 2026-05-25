@@ -113,7 +113,7 @@ export class NavbarComponent {
     this.guestMenuRendered.set(true);
     setTimeout(() => {
       this.guestMenuOpen.set(true);
-    });
+    },0);
   }
 
   protected toggleDarkMode(): void {
