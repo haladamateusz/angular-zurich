@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
@@ -16,7 +16,7 @@ import { ThemeService } from '../../core/theme/theme.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [NgClass, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -61,6 +61,7 @@ These instructions apply to work in this repository.
 - Prefer inline templates for small components.
 - Prefer reactive forms instead of template-driven forms.
 - Do not use `ngClass`; use `class` bindings instead.
+- Exception: any Tailwind class that contains `:`, `/`, `[`, `]`, `%`, `(`, or `)` must be written using `ngClass` object syntax. This is the only general exception to the `ngClass` rule.
 - Do not use `ngStyle`; use `style` bindings instead.
 - When using external templates or styles, use paths relative to the component TypeScript file.
 

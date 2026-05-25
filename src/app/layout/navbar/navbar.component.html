@@ -14,13 +14,11 @@
         class="relative hidden h-9 w-9 items-center justify-center rounded-full bg-transparent transition-colors min-[721px]:inline-flex"
         [class.text-primary]="!dark()"
         [class.text-primary-300]="dark()"
-        [class.bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_12\%\,transparent\)\]]="
-          dark()
-        "
-        [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_20\%\,transparent\)\]]="
-          dark()
-        "
-        [class.hover\:text-primary-200]="dark()"
+        [ngClass]="{
+          'bg-[color:color-mix(in_srgb,var(--color-primary)_12%,transparent)]': dark(),
+          'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]': dark(),
+          'hover:text-primary-200': dark(),
+        }"
         [attr.aria-label]="dark() ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         @if (dark()) {
@@ -64,13 +62,13 @@
         [attr.aria-expanded]="guestMenuOpen()"
         aria-controls="guest-mobile-menu"
         aria-label="Open navigation menu"
-        [class.border-primary/15]="!dark()"
-        [class.bg-primary/5]="!dark()"
         [class.text-primary]="!dark()"
-        [class.border-primary/30]="dark()"
-        [class.bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_14\%\,var\(--color-card\)_86\%)\]]="
-          dark()
-        "
+        [ngClass]="{
+          'border-primary/15': !dark(),
+          'bg-primary/5': !dark(),
+          'border-primary/30': dark(),
+          'bg-[color:color-mix(in_srgb,var(--color-primary)_14%,var(--color-card)_86%)]': dark(),
+        }"
         [class.text-primary-100]="dark()"
       >
         <svg
@@ -91,14 +89,14 @@
           <details #navMenu class="relative hidden min-[721px]:block">
             <summary
               class="flex list-none items-center gap-3 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-              [class.border-primary/15]="!dark()"
-              [class.bg-primary/5]="!dark()"
               [class.text-foreground]="!dark()"
-              [class.border-primary/30]="dark()"
-              [class.bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_14\%\,var\(--color-card\)_86\%)\]]="
-                dark()
-              "
-              [class.shadow-\[0_16px_36px_-24px_rgba\(0\,0\,0\,0\.75\)\]]="dark()"
+              [ngClass]="{
+                'border-primary/15': !dark(),
+                'bg-primary/5': !dark(),
+                'border-primary/30': dark(),
+                'bg-[color:color-mix(in_srgb,var(--color-primary)_14%,var(--color-card)_86%)]': dark(),
+                'shadow-[0_16px_36px_-24px_rgba(0,0,0,0.75)]': dark(),
+              }"
               [class.text-primary-100]="dark()"
             >
               <span class="max-w-40 truncate">{{ profile.displayName }}</span>
@@ -114,9 +112,11 @@
               } @else {
                 <div
                   class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold"
-                  [class.bg-primary/10]="!dark()"
                   [class.text-primary]="!dark()"
-                  [class.bg-primary/20]="dark()"
+                  [ngClass]="{
+                    'bg-primary/10': !dark(),
+                    'bg-primary/20': dark(),
+                  }"
                   [class.text-primary-100]="dark()"
                 >
                   {{ profile.displayName.charAt(0).toUpperCase() }}
@@ -139,24 +139,25 @@
               class="absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-2xl border p-2 shadow-[0_18px_48px_-24px_rgba(15,23,42,0.5)] backdrop-blur-sm"
               [class.border-navbar-line]="!dark()"
               [class.bg-card]="!dark()"
-              [class.border-primary/30]="dark()"
-              [class.bg-\[linear-gradient\(180deg\,color-mix\(in_srgb\,var\(--color-card\)_92\%\,black_8\%\)\,color-mix\(in_srgb\,var\(--color-card\)_84\%\,black_16\%\)\)\]]="
-                dark()
-              "
-              [class.shadow-\[0_24px_60px_-20px_rgba\(0\,0\,0\,0\.82\)\]]="dark()"
+              [ngClass]="{
+                'border-primary/30': dark(),
+                'bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-card)_92%,black_8%),color-mix(in_srgb,var(--color-card)_84%,black_16%))]':
+                  dark(),
+                'shadow-[0_24px_60px_-20px_rgba(0,0,0,0.82)]': dark(),
+                'ring-white/8': dark(),
+              }"
               [class.ring-1]="dark()"
-              [class.ring-white/8]="dark()"
             >
               <a
                 routerLink="/talk-submission"
                 (click)="closeMenu($event)"
                 class="flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors"
                 [class.text-primary]="!dark()"
-                [class.hover\:bg-primary\/10]="!dark()"
                 [class.text-primary-100]="dark()"
-                [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                  dark()
-                "
+                [ngClass]="{
+                  'hover:bg-primary/10': !dark(),
+                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                }"
               >
                 Submit Talk
               </a>
@@ -165,11 +166,11 @@
                 (click)="signOut(); closeMenu($event)"
                 class="mt-1 flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors"
                 [class.text-primary]="!dark()"
-                [class.hover\:bg-primary\/10]="!dark()"
                 [class.text-primary-100]="dark()"
-                [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                  dark()
-                "
+                [ngClass]="{
+                  'hover:bg-primary/10': !dark(),
+                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                }"
               >
                 Log out
               </button>
@@ -182,11 +183,11 @@
             routerLink="/login"
             class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
             [class.text-primary]="!dark()"
-            [class.hover\:bg-primary\/10]="!dark()"
             [class.text-primary-100]="dark()"
-            [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_28\%\,transparent\)\]]="
-              dark()
-            "
+            [ngClass]="{
+              'hover:bg-primary/10': !dark(),
+              'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_28%,transparent)]': dark(),
+            }"
           >
             Sign in
           </a>
@@ -195,13 +196,13 @@
             class="inline-flex items-center rounded-lg border px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
             [class.border-primary]="!dark()"
             [class.text-primary]="!dark()"
-            [class.hover\:bg-primary\/10]="!dark()"
             [class.border-primary-300]="dark()"
             [class.text-primary-100]="dark()"
-            [class.hover\:border-primary-200]="dark()"
-            [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_20\%\,transparent\)\]]="
-              dark()
-            "
+            [ngClass]="{
+              'hover:bg-primary/10': !dark(),
+              'hover:border-primary-200': dark(),
+              'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]': dark(),
+            }"
           >
             Submit Talk
           </a>
@@ -222,14 +223,18 @@
             class="navbar-mobile-panel absolute right-0 top-0 flex h-dvh w-[min(24rem,calc(100vw-1rem))] flex-col border-l px-5 pb-6 pt-5 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.45)]"
             [class.border-navbar-line]="!dark()"
             [class.bg-background]="!dark()"
-            [class.border-primary/30]="dark()"
+            [ngClass]="{
+              'border-primary/30': dark(),
+            }"
             [class.bg-card]="dark()"
             [class.navbar-mobile-panel--open]="guestMenuOpen()"
           >
             <div
               class="flex items-center justify-between gap-4 border-b pb-4"
               [class.border-navbar-line]="!dark()"
-              [class.border-primary/20]="dark()"
+              [ngClass]="{
+                'border-primary/20': dark(),
+              }"
             >
               <div class="min-w-0 px-4">
                 <p
@@ -253,9 +258,11 @@
                     } @else {
                       <div
                         class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold"
-                        [class.bg-primary/10]="!dark()"
                         [class.text-primary]="!dark()"
-                        [class.bg-primary/20]="dark()"
+                        [ngClass]="{
+                          'bg-primary/10': !dark(),
+                          'bg-primary/20': dark(),
+                        }"
                         [class.text-primary-100]="dark()"
                       >
                         {{ profile.displayName.charAt(0).toUpperCase() }}
@@ -274,7 +281,9 @@
                   <p
                     class="mt-1 text-sm"
                     [class.text-muted-foreground-1]="!dark()"
-                    [class.text-primary-100/80]="dark()"
+                    [ngClass]="{
+                      'text-primary-100/80': dark(),
+                    }"
                   >
                     Quick actions for Angular Zurich
                   </p>
@@ -287,11 +296,11 @@
                 (click)="closeGuestMenu()"
                 aria-label="Close navigation menu"
                 [class.text-primary]="!dark()"
-                [class.hover\:bg-primary\/10]="!dark()"
                 [class.text-primary-100]="dark()"
-                [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_22\%\,transparent\)\]]="
-                  dark()
-                "
+                [ngClass]="{
+                  'hover:bg-primary/10': !dark(),
+                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_22%,transparent)]': dark(),
+                }"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -315,12 +324,12 @@
                   class="flex min-h-16 items-center border-b px-4 text-base font-medium transition-colors"
                   [class.border-navbar-line]="!dark()"
                   [class.text-primary]="!dark()"
-                  [class.hover\:bg-primary\/10]="!dark()"
-                  [class.border-primary/20]="dark()"
                   [class.text-primary-100]="dark()"
-                  [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                    dark()
-                  "
+                  [ngClass]="{
+                    'hover:bg-primary/10': !dark(),
+                    'border-primary/20': dark(),
+                    'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                  }"
                 >
                   Submit Talk
                 </a>
@@ -331,12 +340,12 @@
                   class="flex min-h-16 w-full items-center justify-between border-b px-4 text-left text-base font-medium transition-colors"
                   [class.border-navbar-line]="!dark()"
                   [class.text-primary]="!dark()"
-                  [class.hover\:bg-primary\/10]="!dark()"
-                  [class.border-primary/20]="dark()"
                   [class.text-primary-100]="dark()"
-                  [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                    dark()
-                  "
+                  [ngClass]="{
+                    'hover:bg-primary/10': !dark(),
+                    'border-primary/20': dark(),
+                    'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                  }"
                 >
                   <span>{{ mobileThemeLabel }}</span>
                   @if (!dark()) {
@@ -380,11 +389,11 @@
                     (click)="closeGuestMenu()"
                     class="flex min-h-16 items-center px-4 text-base font-medium transition-colors"
                     [class.text-primary]="!dark()"
-                    [class.hover\:bg-primary\/10]="!dark()"
                     [class.text-primary-100]="dark()"
-                    [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                      dark()
-                    "
+                    [ngClass]="{
+                      'hover:bg-primary/10': !dark(),
+                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                    }"
                   >
                     Sign in
                   </a>
@@ -396,11 +405,11 @@
                     (click)="signOutAndCloseGuestMenu()"
                     class="flex min-h-16 w-full items-center px-4 text-left text-base font-medium transition-colors"
                     [class.text-primary]="!dark()"
-                    [class.hover\:bg-primary\/10]="!dark()"
                     [class.text-primary-100]="dark()"
-                    [class.hover\:bg-\[color\:color-mix\(in_srgb\,var\(--color-primary\)_24\%\,transparent\)\]]="
-                      dark()
-                    "
+                    [ngClass]="{
+                      'hover:bg-primary/10': !dark(),
+                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                    }"
                   >
                     Log out
                   </button>
