@@ -79,10 +79,12 @@ function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
 describe('App', () => {
   let latestEventResponse = createEventResponse(DEFAULT_EVENT);
   const isAuthenticated = signal(false);
+  const userProfile = signal<{ avatarUrl: string | null; displayName: string } | null>(null);
 
   beforeEach(async () => {
     latestEventResponse = createEventResponse(DEFAULT_EVENT);
     isAuthenticated.set(false);
+    userProfile.set(null);
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
       value: vi.fn().mockReturnValue({
@@ -119,6 +121,8 @@ describe('App', () => {
           provide: AuthService,
           useValue: {
             isAuthenticated,
+            userProfile,
+            waitUntilInitialized: vi.fn().mockResolvedValue(undefined),
             signOut: vi.fn().mockResolvedValue(undefined),
           },
         },
@@ -168,5 +172,43 @@ describe('App', () => {
     expect(compiled.textContent).not.toContain('Upcoming Talks');
     expect(compiled.textContent).not.toContain(DEFAULT_EVENT.title);
     expect(compiled.textContent).not.toContain('Next on Angular Zurich');
+  });
+
+  it('redirects unauthenticated users away from the dashboard route', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/dashboard');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(router.url).toBe('/login');
+    expect(compiled.textContent).toContain('Organizer access');
+  });
+
+  it('renders the dashboard for authenticated users', async () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/dashboard');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(router.url).toBe('/dashboard');
+    expect(router.url).toBe('/dashboard');
+    expect(compiled.textContent).toContain('Incoming proposals');
+    expect(compiled.textContent).toContain('No talk submissions yet.');
   });
 });

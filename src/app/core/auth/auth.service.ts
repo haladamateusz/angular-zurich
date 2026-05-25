@@ -141,6 +141,23 @@ export class AuthService {
     return message;
   }
 
+  async waitUntilInitialized(): Promise<void> {
+    if (this.isInitialized()) {
+      return;
+    }
+
+    await new Promise<void>((resolve) => {
+      const intervalId = window.setInterval(() => {
+        if (!this.isInitialized()) {
+          return;
+        }
+
+        window.clearInterval(intervalId);
+        resolve();
+      }, 16);
+    });
+  }
+
   private createSupabaseClient(): SupabaseClient | null {
     const supabaseUrl = environment.supabaseUrl.trim();
     const supabaseKey = environment.supabaseKey.trim();

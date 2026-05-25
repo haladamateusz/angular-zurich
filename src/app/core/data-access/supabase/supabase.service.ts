@@ -7,6 +7,7 @@ import {
 } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 import { Event } from '../../models/event.interface';
+import { OrganizerTalkSubmission } from '../../models/organizer-talk-submission.interface';
 import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
@@ -133,6 +134,17 @@ export class SupabaseService {
       .from('Sponsors')
       .select('id, title, logo_url, website_url, created_by')
       .order('title', { ascending: true });
+  }
+
+  async getOrganizerTalkSubmissions(): Promise<PostgrestResponse<OrganizerTalkSubmission>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<OrganizerTalkSubmission>([]);
+    }
+
+    return this.supabase
+      .from('organizer_talk_submissions')
+      .select('id, created_at, status, talk_title, speaker_name, speaker_label')
+      .order('created_at', { ascending: false });
   }
 
   async submitTalk(

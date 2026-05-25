@@ -87,6 +87,21 @@ describe('NavbarComponent', () => {
     const guestMenu = host.querySelector('#guest-mobile-menu');
 
     expect(guestMenu?.textContent).toContain('Mateusz Halada');
+    expect(guestMenu?.textContent).toContain('Dashboard');
     expect(guestMenu?.textContent).toContain('Log out');
+  });
+
+  it('renders dashboard and submit talk as visible desktop actions for authenticated users', () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.textContent).toContain('Dashboard');
+    expect(host.textContent).toContain('Submit Talk');
   });
 });

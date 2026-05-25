@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { organizerAuthGuard } from './core/auth/organizer-auth.guard';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,12 @@ export const routes: Routes = [
     path: 'talk-submission',
     loadChildren: () =>
       import('./feature/submit-talk/submit-talk.routes').then((m) => m.SUBMIT_TALK_ROUTES),
+  },
+  {
+    path: 'dashboard',
+    canActivate: [organizerAuthGuard],
+    loadChildren: () =>
+      import('./feature/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
   },
   {
     path: 'theme-showcase',

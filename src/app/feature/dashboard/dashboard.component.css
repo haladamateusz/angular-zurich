@@ -1,0 +1,180 @@
+:host {
+  display: block;
+}
+
+.dashboard-table__heading {
+  padding: 0.95rem 1.25rem;
+  text-align: left;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
+  white-space: nowrap;
+}
+
+.dashboard-table__sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.dashboard-table__sort-button:hover,
+.dashboard-table__sort-button:focus-visible {
+  color: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
+  outline: none;
+}
+
+.dashboard-table__sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.8rem;
+  font-size: 0.88rem;
+  line-height: 1;
+}
+
+.dashboard-table__heading--details {
+  width: 4.25rem;
+}
+
+.dashboard-table__row {
+  transition: background-color 160ms ease;
+}
+
+.dashboard-table__row:nth-child(odd) {
+  background: color-mix(in srgb, var(--color-background) 86%, transparent);
+}
+
+.dashboard-table__row:nth-child(even) {
+  background: color-mix(in srgb, var(--color-card) 58%, var(--color-background) 42%);
+}
+
+:host-context(.dark) .dashboard-table__row:nth-child(odd) {
+  background: color-mix(in srgb, var(--color-card) 78%, black 22%);
+}
+
+:host-context(.dark) .dashboard-table__row:nth-child(even) {
+  background: color-mix(in srgb, var(--color-card) 90%, black 10%);
+}
+
+.dashboard-table__row:hover {
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-background) 94%);
+}
+
+.dashboard-table__cell {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+  color: color-mix(in srgb, var(--color-foreground) 78%, transparent);
+}
+
+.dashboard-table__cell--title {
+  min-width: 16rem;
+}
+
+.dashboard-table__cell--details {
+  text-align: right;
+}
+
+.dashboard-table__title,
+.dashboard-table__author,
+.dashboard-table__author-label {
+  margin: 0;
+}
+
+.dashboard-table__title {
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--color-foreground);
+}
+
+.dashboard-table__author {
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.dashboard-table__author-label {
+  margin-top: 0.2rem;
+  font-size: 0.92rem;
+  color: color-mix(in srgb, var(--color-foreground) 58%, transparent);
+}
+
+.dashboard-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.75rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-status--pending {
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+  color: color-mix(in srgb, #b45309 82%, var(--color-foreground) 18%);
+}
+
+.dashboard-status--reviewing {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
+}
+
+.dashboard-status--accepted {
+  background: color-mix(in srgb, #10b981 13%, transparent);
+  color: color-mix(in srgb, #047857 78%, var(--color-foreground) 22%);
+}
+
+.dashboard-status--rejected {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
+}
+
+.dashboard-table__details-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);
+  background: color-mix(in srgb, var(--color-background) 92%, transparent);
+  color: var(--color-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.dashboard-table__details-button:hover,
+.dashboard-table__details-button:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 44%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  outline: none;
+  transform: translateX(1px);
+}
+
+@media (max-width: 767px) {
+  .dashboard-table__heading,
+  .dashboard-table__cell {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .dashboard-table__title {
+    min-width: 14rem;
+  }
+}

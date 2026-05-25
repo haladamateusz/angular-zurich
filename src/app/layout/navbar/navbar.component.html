@@ -86,6 +86,33 @@
 
       @if (isAuthenticated()) {
         @if (userProfile(); as profile) {
+          <div class="hidden items-center gap-2 min-[721px]:flex">
+            <a
+              routerLink="/talk-submission"
+              class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
+              [class.text-primary]="!dark()"
+              [class.text-primary-100]="dark()"
+              [ngClass]="{
+                'hover:bg-primary/10': !dark(),
+                'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+              }"
+            >
+              Submit Talk
+            </a>
+            <a
+              routerLink="/dashboard"
+              class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
+              [class.text-primary]="!dark()"
+              [class.text-primary-100]="dark()"
+              [ngClass]="{
+                'hover:bg-primary/10': !dark(),
+                'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+              }"
+            >
+              Dashboard
+            </a>
+          </div>
+
           <details #navMenu class="relative hidden min-[721px]:block">
             <summary
               class="flex list-none items-center gap-3 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
@@ -148,19 +175,6 @@
               }"
               [class.ring-1]="dark()"
             >
-              <a
-                routerLink="/talk-submission"
-                (click)="closeMenu($event)"
-                class="flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors"
-                [class.text-primary]="!dark()"
-                [class.text-primary-100]="dark()"
-                [ngClass]="{
-                  'hover:bg-primary/10': !dark(),
-                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                }"
-              >
-                Submit Talk
-              </a>
               <button
                 type="button"
                 (click)="signOut(); closeMenu($event)"
@@ -318,6 +332,24 @@
 
             <div class="flex flex-1 flex-col">
               <div>
+                @if (isAuthenticated()) {
+                  <a
+                    routerLink="/dashboard"
+                    (click)="closeGuestMenu()"
+                    class="flex min-h-16 items-center border-b px-4 text-base font-medium transition-colors"
+                    [class.border-navbar-line]="!dark()"
+                    [class.text-primary]="!dark()"
+                    [class.text-primary-100]="dark()"
+                    [ngClass]="{
+                      'hover:bg-primary/10': !dark(),
+                      'border-primary/20': dark(),
+                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
+                    }"
+                  >
+                    Dashboard
+                  </a>
+                }
+
                 <a
                   routerLink="/talk-submission"
                   (click)="closeGuestMenu()"
