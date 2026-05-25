@@ -294,15 +294,11 @@
             </div>
 
             <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
-              <div class="speaker-card__preview-block flex flex-col gap-3.5">
-                <div class="speaker-card__portrait-header flex flex-col gap-[0.45rem]">
+              <div class="speaker-card__preview-block flex flex-col gap-2">
+                <div class="speaker-card__portrait-header flex flex-col">
                   <label class="text-sm font-semibold text-foreground" for="speakerPicture">
                     Speaker photo *
                   </label>
-                  <p class="text-sm leading-7 text-muted-foreground-1">
-                    A portrait helps the review queue feel more personal and can be reused later if
-                    the talk is accepted.
-                  </p>
                 </div>
 
                 <div
@@ -406,17 +402,17 @@
               }
 
               <div class="field-error-slot" aria-live="polite">
-                @if (submitTalkForm.controls.speakerPicture.hasError('required')) {
+                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('required')) {
                   <p class="text-sm text-destructive">
                     Please upload a speaker photo.
                   </p>
                 }
-                @if (submitTalkForm.controls.speakerPicture.hasError('invalidFileType')) {
+                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('invalidFileType')) {
                   <p class="text-sm text-destructive">
                     Please upload a JPG, PNG, or WebP image.
                   </p>
                 }
-                @if (submitTalkForm.controls.speakerPicture.hasError('fileTooLarge')) {
+                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('fileTooLarge')) {
                   <p class="text-sm text-destructive">
                     Please upload an image smaller than {{ maxSpeakerPictureSizeInMegabytes }} MB.
                   </p>
