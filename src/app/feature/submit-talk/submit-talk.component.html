@@ -82,7 +82,7 @@
             </div>
 
             <div class="space-y-2">
-              <label class="text-sm font-semibold text-foreground" for="slidesLink">Link to slides</label>
+              <label class="text-sm font-semibold text-foreground" for="slidesLink">Link to slides *</label>
               <input
                 id="slidesLink"
                 type="url"
@@ -95,7 +95,7 @@
               <div class="field-error-slot" aria-live="polite">
                 @if (fieldHasError('slidesLink')) {
                   <p class="text-sm text-destructive">
-                    Please enter a valid URL starting with http:// or https:// (max
+                    Please enter a valid slides URL starting with http:// or https:// (max
                     {{ maxLengths.slidesLink }} characters).
                   </p>
                 }
@@ -124,21 +124,43 @@
 
           <div class="submission-card__body speaker-card__layout relative z-[1] mt-7 grid items-start gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]">
             <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
-              <div class="space-y-2">
-                <label class="text-sm font-semibold text-foreground" for="speakerName">Speaker name *</label>
-                <input
-                  id="speakerName"
-                  type="text"
-                  formControlName="speakerName"
-                  autocomplete="name"
-                  placeholder="Your full name"
-                class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                [attr.aria-invalid]="fieldHasError('speakerName')"
-              />
-                <div class="field-error-slot" aria-live="polite">
-                  @if (fieldHasError('speakerName')) {
-                    <p class="text-sm text-destructive">Please enter your name.</p>
-                  }
+              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.62fr)] md:items-start">
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-foreground" for="speakerName">Speaker name *</label>
+                  <input
+                    id="speakerName"
+                    type="text"
+                    formControlName="speakerName"
+                    autocomplete="name"
+                    placeholder="Your full name"
+                    class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    [attr.aria-invalid]="fieldHasError('speakerName')"
+                  />
+                  <div class="field-error-slot" aria-live="polite">
+                    @if (fieldHasError('speakerName')) {
+                      <p class="text-sm text-destructive">Please enter your name.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-foreground" for="speakerLabel">Speaker label</label>
+                  <input
+                    id="speakerLabel"
+                    type="text"
+                    formControlName="speakerLabel"
+                    autocomplete="off"
+                    placeholder="Architect, GDE, Consultant"
+                    class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    [attr.aria-invalid]="fieldHasError('speakerLabel')"
+                  />
+                  <div class="field-error-slot" aria-live="polite">
+                    @if (fieldHasError('speakerLabel')) {
+                      <p class="text-sm text-destructive">
+                        Keep the label under {{ maxLengths.speakerLabel }} characters.
+                      </p>
+                    }
+                  </div>
                 </div>
               </div>
 
@@ -275,8 +297,7 @@
               <div class="speaker-card__preview-block flex flex-col gap-3.5">
                 <div class="speaker-card__portrait-header flex flex-col gap-[0.45rem]">
                   <label class="text-sm font-semibold text-foreground" for="speakerPicture">
-                    Speaker photo
-                    <span class="font-normal text-muted-foreground-1">(optional)</span>
+                    Speaker photo *
                   </label>
                   <p class="text-sm leading-7 text-muted-foreground-1">
                     A portrait helps the review queue feel more personal and can be reused later if
@@ -385,6 +406,11 @@
               }
 
               <div class="field-error-slot" aria-live="polite">
+                @if (submitTalkForm.controls.speakerPicture.hasError('required')) {
+                  <p class="text-sm text-destructive">
+                    Please upload a speaker photo.
+                  </p>
+                }
                 @if (submitTalkForm.controls.speakerPicture.hasError('invalidFileType')) {
                   <p class="text-sm text-destructive">
                     Please upload a JPG, PNG, or WebP image.

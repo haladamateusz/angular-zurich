@@ -1,15 +1,16 @@
 export interface TalkSubmissionPayload {
   talkTitle: string;
   talkDescription: string;
-  slidesLink?: string;
+  slidesLink: string;
   speakerName: string;
+  speakerLabel?: string;
   emailAddress: string;
   speakerBio: string;
   personalUrl?: string;
   twitterUrl?: string;
   linkedinUrl?: string;
   githubUrl?: string;
-  speakerPicture?: File | null;
+  speakerPicture: File | null;
   captchaToken?: string;
 }
 

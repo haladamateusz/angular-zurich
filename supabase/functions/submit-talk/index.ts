@@ -5,15 +5,16 @@ import postgres from 'npm:postgres@3.4.7';
 type TalkSubmissionPayload = {
   talkTitle: string;
   talkDescription: string;
-  slidesLink?: string;
+  slidesLink: string;
   speakerName: string;
+  speakerLabel?: string;
   emailAddress: string;
   speakerBio: string;
   personalUrl?: string;
   twitterUrl?: string;
   linkedinUrl?: string;
   githubUrl?: string;
-  speakerPicture?: File | null;
+  speakerPicture: File | null;
   captchaToken?: string;
 };
 
@@ -30,6 +31,7 @@ const TALK_TITLE_MAX_LENGTH = 160;
 const TALK_DESCRIPTION_MAX_LENGTH = 6000;
 const SLIDES_LINK_MAX_LENGTH = 500;
 const SPEAKER_NAME_MAX_LENGTH = 120;
+const SPEAKER_LABEL_MAX_LENGTH = 160;
 const EMAIL_ADDRESS_MAX_LENGTH = 320;
 const SPEAKER_BIO_MAX_LENGTH = 4000;
 const PROFILE_URL_MAX_LENGTH = 500;
@@ -132,6 +134,16 @@ function normalizeOptionalUrl(value: string | undefined, maxLength: number): str
   return trimmed.slice(0, maxLength);
 }
 
+function normalizeOptionalText(value: string | undefined, maxLength: number): string | null {
+  const trimmed = (value ?? '').trim();
+
+  if (!trimmed) {
+    return null;
+  }
+
+  return trimmed.replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
 function normalizeOptionalFile(file: File | null | undefined): File | null {
   if (!file || file.size === 0) {
     return null;
@@ -179,8 +191,9 @@ async function parseSubmissionPayload(req: Request): Promise<TalkSubmissionPaylo
     return {
       talkTitle: String(formData.get('talkTitle') ?? ''),
       talkDescription: String(formData.get('talkDescription') ?? ''),
-      slidesLink: String(formData.get('slidesLink') ?? '') || undefined,
+      slidesLink: String(formData.get('slidesLink') ?? ''),
       speakerName: String(formData.get('speakerName') ?? ''),
+      speakerLabel: String(formData.get('speakerLabel') ?? '') || undefined,
       emailAddress: String(formData.get('emailAddress') ?? ''),
       speakerBio: String(formData.get('speakerBio') ?? ''),
       personalUrl: String(formData.get('personalUrl') ?? '') || undefined,
@@ -306,7 +319,7 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'talk_description_invalid';
   }
 
-  if (payload.slidesLink && !isValidHttpUrl(payload.slidesLink)) {
+  if (!payload.slidesLink || !isValidHttpUrl(payload.slidesLink)) {
     return 'slides_link_invalid';
   }
 
@@ -331,14 +344,16 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'speaker_profile_url_invalid';
   }
 
-  if (payload.speakerPicture) {
-    if (!hasValidSpeakerPictureType(payload.speakerPicture)) {
-      return 'speaker_picture_invalid_type';
-    }
+  if (!payload.speakerPicture) {
+    return 'speaker_picture_required';
+  }
 
-    if (payload.speakerPicture.size > SPEAKER_PICTURE_MAX_SIZE_BYTES) {
-      return 'speaker_picture_too_large';
-    }
+  if (!hasValidSpeakerPictureType(payload.speakerPicture)) {
+    return 'speaker_picture_invalid_type';
+  }
+
+  if (payload.speakerPicture.size > SPEAKER_PICTURE_MAX_SIZE_BYTES) {
+    return 'speaker_picture_too_large';
   }
 
   return null;
@@ -371,6 +386,7 @@ Deno.serve(async (req) => {
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
       slidesLink: normalizeOptionalUrl(payload.slidesLink, SLIDES_LINK_MAX_LENGTH) ?? undefined,
       speakerName: normalizeText(payload.speakerName ?? '', SPEAKER_NAME_MAX_LENGTH),
+      speakerLabel: normalizeOptionalText(payload.speakerLabel, SPEAKER_LABEL_MAX_LENGTH) ?? undefined,
       emailAddress: normalizeText(payload.emailAddress ?? '', EMAIL_ADDRESS_MAX_LENGTH).toLowerCase(),
       speakerBio: normalizeText(payload.speakerBio ?? '', SPEAKER_BIO_MAX_LENGTH),
       personalUrl: normalizeOptionalUrl(payload.personalUrl, PROFILE_URL_MAX_LENGTH) ?? undefined,
@@ -471,6 +487,7 @@ Deno.serve(async (req) => {
         talk_description,
         slides_url,
         speaker_name,
+        speaker_label,
         speaker_email,
         speaker_bio,
         personal_url,
@@ -489,6 +506,7 @@ Deno.serve(async (req) => {
         ${normalizedPayload.talkDescription},
         ${normalizedPayload.slidesLink ?? null},
         ${normalizedPayload.speakerName},
+        ${normalizedPayload.speakerLabel ?? null},
         ${normalizedPayload.emailAddress},
         ${normalizedPayload.speakerBio},
         ${normalizedPayload.personalUrl ?? null},

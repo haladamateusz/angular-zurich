@@ -150,6 +150,11 @@ export class SupabaseService {
     formData.set('talkTitle', payload.talkTitle);
     formData.set('talkDescription', payload.talkDescription);
     formData.set('speakerName', payload.speakerName);
+
+    if (payload.speakerLabel?.trim()) {
+      formData.set('speakerLabel', payload.speakerLabel.trim());
+    }
+
     formData.set('emailAddress', payload.emailAddress);
     formData.set('speakerBio', payload.speakerBio);
 

@@ -42,6 +42,7 @@ const MAX_LENGTHS = {
   talkDescription: 6000,
   slidesLink: 500,
   speakerName: 120,
+  speakerLabel: 160,
   emailAddress: 320,
   speakerBio: 4000,
   personalUrl: 500,
@@ -111,11 +112,15 @@ export class SubmitTalkComponent {
         Validators.maxLength(MAX_LENGTHS.talkDescription),
       ],
     ],
-    slidesLink: ['', [Validators.maxLength(MAX_LENGTHS.slidesLink), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    slidesLink: [
+      '',
+      [Validators.required, Validators.maxLength(MAX_LENGTHS.slidesLink), Validators.pattern(SLIDES_LINK_PATTERN)],
+    ],
     speakerName: [
       '',
       [Validators.required, Validators.minLength(2), Validators.maxLength(MAX_LENGTHS.speakerName)],
     ],
+    speakerLabel: ['', [Validators.maxLength(MAX_LENGTHS.speakerLabel)]],
     emailAddress: [
       '',
       [Validators.required, Validators.email, Validators.maxLength(MAX_LENGTHS.emailAddress)],
@@ -129,7 +134,7 @@ export class SubmitTalkComponent {
     linkedinUrl: ['', [Validators.maxLength(MAX_LENGTHS.linkedinUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
     githubUrl: ['', [Validators.maxLength(MAX_LENGTHS.githubUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
     speakerPicture: new FormControl<File | null>(null, {
-      validators: [optionalImageFileValidator],
+      validators: [Validators.required, optionalImageFileValidator],
     }),
     companyWebsite: ['', [Validators.maxLength(MAX_LENGTHS.companyWebsite)]],
   });
