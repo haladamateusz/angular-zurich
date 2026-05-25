@@ -231,7 +231,7 @@
               [class.border-navbar-line]="!dark()"
               [class.border-primary/20]="dark()"
             >
-              <div class="min-w-0">
+              <div class="min-w-0 px-4">
                 <p
                   class="text-xs font-semibold uppercase tracking-[0.24em]"
                   [class.text-primary]="!dark()"
@@ -239,13 +239,46 @@
                 >
                   Menu
                 </p>
-                <p
-                  class="mt-1 text-sm"
-                  [class.text-muted-foreground-1]="!dark()"
-                  [class.text-primary-100/80]="dark()"
-                >
-                  Quick actions for Angular Zurich
-                </p>
+                @if (isAuthenticated() && userProfile(); as profile) {
+                  <div class="mt-2 flex items-center gap-2.5">
+                    @if (shouldShowAvatarImage) {
+                      <img
+                        [src]="profile.avatarUrl"
+                        [alt]="profile.displayName"
+                        (error)="handleAvatarLoadError()"
+                        class="h-5 w-5 shrink-0 rounded-md object-cover object-center"
+                        width="20"
+                        height="20"
+                      />
+                    } @else {
+                      <div
+                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold"
+                        [class.bg-primary/10]="!dark()"
+                        [class.text-primary]="!dark()"
+                        [class.bg-primary/20]="dark()"
+                        [class.text-primary-100]="dark()"
+                      >
+                        {{ profile.displayName.charAt(0).toUpperCase() }}
+                      </div>
+                    }
+
+                    <p
+                      class="min-w-0 truncate text-sm font-semibold"
+                      [class.text-foreground]="!dark()"
+                      [class.text-primary-50]="dark()"
+                    >
+                      {{ profile.displayName }}
+                    </p>
+                  </div>
+                } @else {
+                  <p
+                    class="mt-1 text-sm"
+                    [class.text-muted-foreground-1]="!dark()"
+                    [class.text-primary-100/80]="dark()"
+                  >
+                    Quick actions for Angular Zurich
+                  </p>
+                }
               </div>
 
               <button
@@ -274,7 +307,7 @@
               </button>
             </div>
 
-            <div class="flex flex-1 flex-col justify-between gap-6">
+            <div class="flex flex-1 flex-col">
               <div>
                 <a
                   routerLink="/talk-submission"
@@ -373,14 +406,6 @@
                   </button>
                 }
               </div>
-
-              <p
-                class="text-sm leading-6"
-                [class.text-muted-foreground-1]="!dark()"
-                [class.text-primary-100/72]="dark()"
-              >
-                Join the community or send us your next talk proposal in a couple of taps.
-              </p>
             </div>
           </div>
         </div>

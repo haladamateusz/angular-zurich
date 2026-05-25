@@ -69,4 +69,24 @@ describe('NavbarComponent', () => {
     expect(guestMenu?.textContent).toContain('Sign in');
     expect(guestMenu?.textContent).toContain('Submit Talk');
   });
+
+  it('renders signed-in identity in the mobile menu header for authenticated users', () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const guestMenuButton = host.querySelector('button[aria-controls="guest-mobile-menu"]');
+
+    guestMenuButton?.dispatchEvent(new MouseEvent('click'));
+    fixture.detectChanges();
+
+    const guestMenu = host.querySelector('#guest-mobile-menu');
+
+    expect(guestMenu?.textContent).toContain('Mateusz Halada');
+    expect(guestMenu?.textContent).toContain('Log out');
+  });
 });
