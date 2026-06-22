@@ -68,8 +68,8 @@
   </svg>
 
   @let nextEvent = event();
-  <div class="hero-content max-[720px]:gap-6">
-    <div class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5">
+  <div class="hero-content max-[720px]:gap-6" [class.hero-content--solo]="!nextEvent">
+    <div class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5" [class.hero-copy--solo]="!nextEvent">
       <h1 class="hero-title">Meet. Learn. Ship&nbsp;Angular.</h1>
       <p class="hero-description">
         Learn with local Angular engineers, discover practical ideas you can ship the next day, and build momentum with the Zurich community.
@@ -87,21 +87,31 @@
         }
       </div>
 
-      <div class="sponsors mt-10 mb-8 flex w-full max-w-[34rem] flex-col items-start gap-4 max-[720px]:mt-7 max-[720px]:max-w-full">
+      <div class="sponsors mt-10 mb-8 flex w-full max-w-[34rem] flex-col items-start gap-4 max-[720px]:mt-7 max-[720px]:max-w-full" [class.sponsors--solo]="!nextEvent">
         <span class="sponsors__label">Supported by</span>
         <div class="sponsors__marquee">
-          <div class="sponsors__track">
-            @for (sponsor of sponsors(); track sponsor.id) {
-              <span class="sponsors__item">
-                <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
-              </span>
-            }
-            @for (sponsor of sponsors(); track sponsor.id) {
-              <span class="sponsors__item" aria-hidden="true">
-                <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
-              </span>
-            }
-          </div>
+          @if (sponsorsLoading() && !sponsors().length) {
+            <div class="sponsors__placeholder-row" aria-hidden="true">
+              @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+                <span class="sponsors__item">
+                  <span class="sponsors__placeholder"></span>
+                </span>
+              }
+            </div>
+          } @else {
+            <div class="sponsors__track">
+              @for (sponsor of sponsors(); track sponsor.id) {
+                <span class="sponsors__item">
+                  <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
+                </span>
+              }
+              @for (sponsor of sponsors(); track sponsor.id) {
+                <span class="sponsors__item" aria-hidden="true">
+                  <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
+                </span>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>

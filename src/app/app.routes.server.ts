@@ -6,6 +6,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'events/:slug',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'dashboard/**',
     renderMode: RenderMode.Client,
   },

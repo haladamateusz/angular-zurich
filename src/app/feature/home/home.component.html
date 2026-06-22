@@ -1,7 +1,11 @@
-<app-hero [sponsors]="sponsors.value()" [event]="upcomingEvent()" />
+<app-hero [sponsors]="sponsors.value()" [sponsorsLoading]="sponsors.isLoading()" [event]="upcomingEvent()" />
 
 @if (upcomingEvent(); as event) {
   <app-upcoming-talks [talks]="event.talks" />
+}
+
+@if (pastEvents.isLoading() || pastEvents.value().length) {
+  <app-past-events [events]="pastEvents.value()" [loading]="pastEvents.isLoading()" />
 }
 
 <app-stats />

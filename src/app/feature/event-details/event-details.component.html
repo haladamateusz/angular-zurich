@@ -1,0 +1,206 @@
+<section class="event-details">
+  <div class="event-details__container">
+
+    @if (eventResource.isLoading()) {
+      <section class="event-details__loading" aria-label="Loading event details" aria-busy="true">
+        <div class="event-details__hero event-details__hero--loading">
+          <div class="event-details__hero-content event-details__hero-content--loading">
+            <div class="event-details__skeleton event-details__skeleton--title"></div>
+
+            <div class="event-details__meta">
+              <div class="event-details__meta-item event-details__meta-item--loading">
+                <div class="event-details__skeleton event-details__skeleton--icon"></div>
+                <div class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-date"></div>
+              </div>
+
+              <div class="event-details__meta-item event-details__meta-item--loading">
+                <div class="event-details__skeleton event-details__skeleton--icon"></div>
+                <div class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-time"></div>
+              </div>
+
+              <div class="event-details__meta-item event-details__meta-item--loading">
+                <div class="event-details__skeleton event-details__skeleton--icon"></div>
+                <div class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-location"></div>
+              </div>
+            </div>
+
+            <div class="event-details__actions">
+              <div class="event-details__skeleton event-details__skeleton--button"></div>
+            </div>
+          </div>
+
+          <div class="event-details__hero-graphic-shell event-details__hero-graphic-shell--loading">
+            <div class="event-details__skeleton event-details__skeleton--graphic"></div>
+          </div>
+        </div>
+
+        <section class="event-details__talks">
+          <div class="event-details__talks-header">
+            <h2 class="event-details__talks-heading">Talks</h2>
+          </div>
+
+          <div class="event-details__talk-grid">
+            @for (card of loadingCards; track card) {
+              <article class="talk-detail-card talk-detail-card--loading" aria-hidden="true">
+                <div class="talk-detail-card__speaker talk-detail-card__speaker--loading">
+                  <div class="event-details__skeleton event-details__skeleton--avatar"></div>
+
+                  <div class="talk-detail-card__speaker-info">
+                    <div class="event-details__skeleton event-details__skeleton--speaker-name"></div>
+                    <div class="event-details__skeleton event-details__skeleton--speaker-label"></div>
+                  </div>
+                </div>
+
+                <div class="event-details__skeleton event-details__skeleton--talk-title"></div>
+
+                <div class="talk-detail-card__description talk-detail-card__description--loading">
+                  <div class="event-details__skeleton event-details__skeleton--paragraph event-details__skeleton--paragraph-full"></div>
+                  <div class="event-details__skeleton event-details__skeleton--paragraph event-details__skeleton--paragraph-medium"></div>
+                  <div class="event-details__skeleton event-details__skeleton--paragraph event-details__skeleton--paragraph-short"></div>
+                </div>
+
+                <div class="talk-detail-card__actions">
+                  <div class="event-details__skeleton event-details__skeleton--button event-details__skeleton--button-small"></div>
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      </section>
+    } @else if (eventResource.error()) {
+      <div class="event-details__state-card" role="alert">
+        We couldn’t load this event right now.
+      </div>
+    } @else {
+      @let currentEvent = event();
+
+      <div class="event-details__hero">
+        <div class="event-details__hero-content">
+          <h1 class="event-details__title">{{ pageTitle() }}</h1>
+
+          <div class="event-details__meta">
+            <span class="event-details__meta-item">
+              <svg viewBox="0 0 24 24" fill="none" class="event-details__meta-icon" aria-hidden="true">
+                <path d="M8 2.75v2.5M16 2.75v2.5M3.75 9.25h16.5M5.75 5.25h12.5A2 2 0 0 1 20.25 7.25v10A2 2 0 0 1 18.25 19.25H5.75A2 2 0 0 1 3.75 17.25v-10A2 2 0 0 1 5.75 5.25Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>{{ currentEvent.starts_at | date: 'd MMM yyyy' }}</span>
+            </span>
+
+            <span class="event-details__meta-item">
+              <svg viewBox="0 0 24 24" fill="none" class="event-details__meta-icon" aria-hidden="true">
+                <path d="M12 6.75v5.25l3 1.75M20.25 12a8.25 8.25 0 1 1-16.5 0 8.25 8.25 0 0 1 16.5 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>{{ currentEvent.starts_at | date: 'HH:mm' }}</span>
+            </span>
+
+            <span class="event-details__meta-item">
+              <svg viewBox="0 0 24 24" fill="none" class="event-details__meta-icon" aria-hidden="true">
+                <path d="M12 20.25s6-5.28 6-10.125a6 6 0 1 0-12 0c0 4.845 6 10.125 6 10.125Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 12.25a2.125 2.125 0 1 0 0-4.25 2.125 2.125 0 0 0 0 4.25Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>{{ currentEvent.venue?.title }}</span>
+            </span>
+          </div>
+
+          <div class="event-details__actions">
+            <a
+              [href]="currentEvent.meetup_url"
+              target="_blank"
+              rel="noreferrer"
+              class="event-details__meetup-button app-outline-button"
+            >
+              <span>View on Meetup</span>
+
+              <svg viewBox="0 0 24 24" fill="none" class="event-details__meetup-icon app-outline-button__icon" aria-hidden="true">
+                <path d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M19.5 13.5v4.75A1.25 1.25 0 0 1 18.25 19.5H5.75A1.25 1.25 0 0 1 4.5 18.25V5.75A1.25 1.25 0 0 1 5.75 4.5H10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="event-details__hero-graphic-shell"
+          [class.event-details__hero-graphic-shell--pending]="!!currentEvent.feature_graphic && !featureGraphicLoaded()"
+        >
+          @if (currentEvent.feature_graphic) {
+            @if (!featureGraphicLoaded()) {
+              <div class="event-details__skeleton event-details__skeleton--graphic event-details__hero-graphic-placeholder" aria-hidden="true"></div>
+            }
+            <img
+              [src]="currentEvent.feature_graphic"
+              [alt]="pageTitle()"
+              class="event-details__hero-graphic"
+              (load)="markFeatureGraphicAsLoaded()"
+            />
+          }
+        </div>
+      </div>
+
+      <section class="event-details__talks">
+        <div class="event-details__talks-header">
+          <h2 class="event-details__talks-heading">Talks</h2>
+        </div>
+
+        <div class="event-details__talk-grid">
+          @for (talk of currentEvent.talks; track talk.id) {
+            <article class="talk-detail-card">
+              <div class="talk-detail-card__speakers">
+                @for (link of talk.speaker_links; track link.speaker?.id ?? $index) {
+                  @if (link.speaker; as speaker) {
+                    <div class="talk-detail-card__speaker">
+                      @if (speaker.picture_url) {
+                        <img
+                          [src]="speaker.picture_url"
+                          [alt]="formatSpeakerName(speaker.first_name, speaker.last_name)"
+                          class="talk-detail-card__speaker-avatar"
+                        />
+                      }
+
+                      <div class="talk-detail-card__speaker-info">
+                        <span class="talk-detail-card__speaker-name">
+                          {{ formatSpeakerName(speaker.first_name, speaker.last_name) }}
+                        </span>
+
+                        @if (speaker.label || speaker.company_name) {
+                          <span class="talk-detail-card__speaker-position">
+                            {{ speaker.label ?? speaker.company_name }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+
+              <h3 class="talk-detail-card__title">{{ talk.title }}</h3>
+
+              <div class="talk-detail-card__description">
+                @for (paragraph of splitTalkDescription(talk.description); track $index) {
+                  <p class="talk-detail-card__description-paragraph">{{ paragraph }}</p>
+                }
+              </div>
+
+              @if (talk.slides_url) {
+                <div class="talk-detail-card__actions">
+                  <a
+                    [href]="talk.slides_url"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="talk-detail-card__slides-button app-outline-button"
+                  >
+                    <span>Slides</span>
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="talk-detail-card__slides-icon app-outline-button__icon" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M11.25 3.75a.75.75 0 0 0 0 1.5h2.19l-5.72 5.72a.75.75 0 1 0 1.06 1.06l5.72-5.72v2.19a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-.75-.75h-4Z" clip-rule="evenodd" />
+                      <path fill-rule="evenodd" d="M5 5.75A1.75 1.75 0 0 0 3.25 7.5v7.5c0 .966.784 1.75 1.75 1.75h7.5A1.75 1.75 0 0 0 14.25 15v-2a.75.75 0 0 0-1.5 0v2a.25.25 0 0 1-.25.25H5A.25.25 0 0 1 4.75 15V7.5A.25.25 0 0 1 5 7.25h2a.75.75 0 0 0 0-1.5H5Z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                </div>
+              }
+            </article>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</section>

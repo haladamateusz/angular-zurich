@@ -14,11 +14,14 @@ const DEFAULT_EVENT: Event = {
   title: 'Angular Zurich Meetup',
   meetup_url: 'https://www.meetup.com/angularzrh/',
   id: 'event-1',
+  slug: 'meetup',
+  feature_graphic: null,
   talks: [
     {
       id: 'talk-1',
       title: 'Signals in Practice',
       description: 'How signals make state easier to manage.',
+      slides_url: null,
       event_id: 'event-1',
       presentation_time: 30,
       created_by: 'organizer',

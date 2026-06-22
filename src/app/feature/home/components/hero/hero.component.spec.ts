@@ -6,6 +6,8 @@ import { Sponsor } from '../../../../core/models/sponsor.interface';
 const TEST_EVENT: Event = {
   id: 'event-1',
   title: 'Angular Zurich April 2026',
+  slug: 'april-2026',
+  feature_graphic: null,
   meetup_url: 'https://www.meetup.com/angularzrh/',
   starts_at: '2099-04-17T18:30:00.000Z',
   venue_id: 'venue-1',
@@ -21,6 +23,7 @@ const TEST_EVENT: Event = {
       id: 'talk-1',
       title: 'Signals in Practice',
       description: 'How signals make state easier to manage.',
+      slides_url: null,
       event_id: 'event-1',
       presentation_time: 30,
       created_by: 'organizer',

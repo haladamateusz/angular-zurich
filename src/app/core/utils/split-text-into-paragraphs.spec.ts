@@ -23,4 +23,14 @@ describe('splitTextIntoParagraphs', () => {
       'Second block sentence.',
     ]);
   });
+
+  it('keeps dotted words inside the same sentence', () => {
+    expect(
+      splitTextIntoParagraphs(
+        "You'll learn what it means to go zoneless and how to build applications without Zone.js.",
+      ),
+    ).toEqual([
+      "You'll learn what it means to go zoneless and how to build applications without Zone.js.",
+    ]);
+  });
 });

@@ -7,6 +7,7 @@ const TEST_TALKS: Event['talks'] = [
     id: 'talk-1',
     title: 'Signals in Practice',
     description: 'How signals make state easier to manage.',
+    slides_url: null,
     event_id: 'event-1',
     presentation_time: 30,
     created_by: 'organizer',

@@ -1,6 +1,8 @@
 export interface Event {
   id: string;
+  slug: string;
   title: string;
+  feature_graphic: string | null;
   meetup_url: string;
   starts_at: string;
   venue_id: string;
@@ -8,6 +10,7 @@ export interface Event {
     id: string;
     title: string;
     description: string;
+    slides_url: string | null;
     event_id: string;
     presentation_time: number;
     created_by: string;

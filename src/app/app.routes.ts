@@ -34,4 +34,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./feature/theme-showcase/theme-showcase.routes').then((m) => m.THEME_SHOWCASE_ROUTES),
   },
+  {
+    path: 'events/:slug',
+    loadComponent: () =>
+      import('./feature/event-details/event-details.component').then((m) => m.EventDetailsComponent),
+  },
 ];

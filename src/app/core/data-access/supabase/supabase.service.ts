@@ -52,6 +52,7 @@ export class SupabaseService {
       .from('Events')
       .select(`
         id,
+        slug,
         title,
         meetup_url,
         starts_at,
@@ -85,6 +86,104 @@ export class SupabaseService {
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .order('starts_at', { ascending: false })
       .limit(1)
+      .single();
+  }
+
+  async getPastEvents(limit = 3): Promise<PostgrestResponse<Event>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<Event>([]);
+    }
+
+    const response = await this.supabase
+      .from('Events')
+      .select(`
+        id,
+        slug,
+        title,
+        feature_graphic,
+        meetup_url,
+        starts_at,
+        venue_id,
+        venue:Venues(
+          title,
+          street,
+          city,
+          zip,
+          google_maps_url
+        ),
+        talks:Talks(
+          id,
+          title,
+          description,
+          slides_url,
+          event_id,
+          presentation_time,
+          created_by,
+          speaker_links:SpeakerOnTalk(
+            speaker:People(
+              id,
+              first_name,
+              last_name,
+              picture_url,
+              label,
+              company_name
+            )
+          )
+        )
+      `)
+      .lt('starts_at', new Date().toISOString())
+      .order('sort_order', { ascending: true, referencedTable: 'Talks' })
+      .order('starts_at', { ascending: false })
+      .limit(limit);
+
+    return response as PostgrestResponse<Event>;
+  }
+
+  async getEventBySlug(slug: string): Promise<PostgrestSingleResponse<Event>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<Event>(null);
+    }
+
+    return this.supabase
+      .from('Events')
+      .select(`
+        id,
+        slug,
+        title,
+        feature_graphic,
+        meetup_url,
+        starts_at,
+        venue_id,
+        venue:Venues(
+          title,
+          street,
+          city,
+          zip,
+          google_maps_url
+        ),
+        talks:Talks(
+          id,
+          title,
+          description,
+          slides_url,
+          event_id,
+          presentation_time,
+          created_by,
+          speaker_links:SpeakerOnTalk(
+            speaker:People(
+              id,
+              first_name,
+              last_name,
+              slug,
+              picture_url,
+              label,
+              company_name
+            )
+          )
+        )
+      `)
+      .eq('slug', slug)
+      .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .single();
   }
 

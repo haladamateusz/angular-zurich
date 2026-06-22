@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
+import { PastEventsComponent } from './components/past-events/past-events.component';
 import { PartnersComponent } from './components/partners/partners.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { TeamComponent } from './components/team/team.component';
@@ -10,6 +11,8 @@ import { Sponsor } from '../../core/models/sponsor.interface';
 
 const EMPTY_EVENT: Event = {
   title: '',
+  slug: '',
+  feature_graphic: null,
   meetup_url: '',
   id: '',
   talks: [],
@@ -24,11 +27,12 @@ const EMPTY_EVENT: Event = {
   venue_id: '',
 };
 
+const EMPTY_EVENTS: Event[] = [];
 const EMPTY_SPONSORS: Sponsor[] = [];
 
 @Component({
   selector: 'app-home',
-  imports: [HeroComponent, UpcomingTalksComponent, StatsComponent, TeamComponent, PartnersComponent],
+  imports: [HeroComponent, UpcomingTalksComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +63,19 @@ export class HomeComponent {
       }
 
       return data ?? EMPTY_SPONSORS;
+    },
+  });
+
+  protected readonly pastEvents = resource<Event[], void>({
+    defaultValue: EMPTY_EVENTS,
+    loader: async () => {
+      const { data, error } = await this.supabaseService.getPastEvents();
+
+      if (error) {
+        throw error;
+      }
+
+      return data ?? EMPTY_EVENTS;
     },
   });
 

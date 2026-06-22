@@ -3,6 +3,7 @@
  * Respects explicit blank-line breaks, then splits each block into sentences.
  */
 export function splitTextIntoParagraphs(text: string): string[] {
+  const dottedWordPlaceholder = '__DOT__';
   const trimmed = text.trim();
 
   if (!trimmed) {
@@ -17,10 +18,15 @@ export function splitTextIntoParagraphs(text: string): string[] {
 
   for (const block of blocks) {
     const singleLine = block.replace(/\s*\n\s*/g, ' ');
-    const sentences = singleLine.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/gu) ?? [singleLine];
+    const protectedLine = singleLine.replace(
+      /\b[\p{L}\p{N}+-]+(?:\.[\p{L}\p{N}+-]+)+\b/gu,
+      (match) => match.replaceAll('.', dottedWordPlaceholder),
+    );
+    const sentences =
+      protectedLine.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/gu) ?? [protectedLine];
 
     for (const sentence of sentences) {
-      const normalized = sentence.trim();
+      const normalized = sentence.trim().replaceAll(dottedWordPlaceholder, '.');
 
       if (normalized) {
         paragraphs.push(normalized);

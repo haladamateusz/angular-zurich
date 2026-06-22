@@ -12,6 +12,7 @@ import { NavbarDateFormatPipe } from '../../../../core/pipes/date-format/navbar-
 })
 export class HeroComponent {
   readonly sponsors = input.required<Sponsor[]>();
+  readonly sponsorsLoading = input(false);
   readonly event = input<Event | null>(null);
 
   protected readonly previewTalks = computed(() =>

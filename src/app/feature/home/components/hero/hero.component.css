@@ -60,9 +60,20 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 28rem);
   align-items: center;
   gap: clamp(2rem, 4vw, 4rem);
-  max-width: 80rem;
+  max-width: 94rem;
   margin: 0 auto;
   padding: clamp(4rem, 8vw, 7rem) 1.5rem clamp(5rem, 10vw, 7rem);
+}
+
+.hero-content--solo {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  min-height: calc(85svh - var(--_navbar));
+}
+
+.hero-copy--solo {
+  align-items: center;
+  text-align: center;
 }
 
 .hero-title {
@@ -85,6 +96,15 @@
   font-size: clamp(1rem, 1.6vw, 1.15rem);
   line-height: 1.7;
   overflow-wrap: anywhere;
+}
+
+.hero-copy--solo .hero-title,
+.hero-copy--solo .hero-description {
+  text-align: center;
+}
+
+.hero-copy--solo .hero-title {
+  max-width: none;
 }
 
 .hero-action,
@@ -141,6 +161,33 @@
   mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 }
 
+.sponsors__placeholder-row {
+  display: flex;
+}
+
+.sponsors__placeholder {
+  position: relative;
+  overflow: hidden;
+  width: 7.5rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
+}
+
+.sponsors__placeholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, white 58%, transparent) 48%,
+    transparent 100%
+  );
+  animation: hero-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
 .sponsors__track {
   display: flex;
   width: max-content;
@@ -162,6 +209,10 @@
   height: 1.75rem;
   filter: grayscale(100%);
   opacity: 0.4;
+}
+
+.sponsors--solo {
+  align-items: center;
 }
 
 .event-preview {
@@ -323,9 +374,28 @@
   }
 }
 
+@keyframes hero-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 :host-context(.dark) .sponsors__logo {
   filter: grayscale(100%) invert();
   opacity: 0.5;
+}
+
+:host-context(.dark) .sponsors__placeholder {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-card) 90%);
+}
+
+:host-context(.dark) .sponsors__placeholder::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, white 16%, transparent) 48%,
+    transparent 100%
+  );
 }
 
 :host-context(.dark) .hero {
@@ -371,6 +441,10 @@
   .hero-content {
     grid-template-columns: 1fr;
     padding-top: 3.75rem;
+  }
+
+  .hero-content--solo {
+    min-height: auto;
   }
 
   .hero-title,
