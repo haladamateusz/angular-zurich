@@ -104,6 +104,10 @@
   overflow: hidden;
   border-radius: 1.3rem;
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.event-details__hero-graphic-shell--loading,
+.event-details__hero-graphic-shell--pending {
   min-height: clamp(14rem, 30vw, 24rem);
 }
 
@@ -119,10 +123,6 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-}
-
-.event-details__hero-graphic-shell--loading {
-  min-height: clamp(14rem, 30vw, 24rem);
 }
 
 .event-details__talks {
@@ -379,6 +379,29 @@
 
   .event-details__skeleton--meta-location {
     width: min(100%, 11rem);
+  }
+
+  .event-details__talk-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+  }
+
+  .talk-detail-card {
+    min-width: 0;
+    width: 100%;
+    flex: none;
+  }
+
+  .talk-detail-card__title {
+    min-height: auto;
+  }
+
+  .talk-detail-card__description,
+  .talk-detail-card__description--loading {
+    display: none;
   }
 }
 
