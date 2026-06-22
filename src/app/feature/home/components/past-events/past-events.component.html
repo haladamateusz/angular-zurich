@@ -16,19 +16,19 @@
               <div class="past-events__skeleton past-events__skeleton--title"></div>
 
               <div class="past-event-card__meta">
-                <div class="past-event-card__pill past-event-card__pill--loading">
-                  <div class="past-events__skeleton past-events__skeleton--pill-icon"></div>
-                  <div class="past-events__skeleton past-events__skeleton--pill-text past-events__skeleton--pill-date"></div>
+                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
+                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
+                  <div class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-date"></div>
                 </div>
 
-                <div class="past-event-card__pill past-event-card__pill--loading">
-                  <div class="past-events__skeleton past-events__skeleton--pill-icon"></div>
-                  <div class="past-events__skeleton past-events__skeleton--pill-text past-events__skeleton--pill-time"></div>
+                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
+                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
+                  <div class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-time"></div>
                 </div>
 
-                <div class="past-event-card__pill past-event-card__pill--loading">
-                  <div class="past-events__skeleton past-events__skeleton--pill-icon"></div>
-                  <div class="past-events__skeleton past-events__skeleton--pill-text past-events__skeleton--pill-location"></div>
+                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
+                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
+                  <div class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-location"></div>
                 </div>
               </div>
 
@@ -78,22 +78,22 @@
               <h3 class="past-event-card__title">{{ card.title }}</h3>
 
               <div class="past-event-card__meta" aria-label="Event details">
-                <span class="past-event-card__pill">
-                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__pill-icon" aria-hidden="true">
+                <span class="past-event-card__meta-item">
+                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__meta-icon" aria-hidden="true">
                     <path d="M8 2.75v2.5M16 2.75v2.5M3.75 9.25h16.5M5.75 5.25h12.5A2 2 0 0 1 20.25 7.25v10A2 2 0 0 1 18.25 19.25H5.75A2 2 0 0 1 3.75 17.25v-10A2 2 0 0 1 5.75 5.25Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                   <span>{{ card.startsAt | date: 'd MMM yyyy' }}</span>
                 </span>
 
-                <span class="past-event-card__pill">
-                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__pill-icon" aria-hidden="true">
+                <span class="past-event-card__meta-item">
+                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__meta-icon" aria-hidden="true">
                     <path d="M12 6.75v5.25l3 1.75M20.25 12a8.25 8.25 0 1 1-16.5 0 8.25 8.25 0 0 1 16.5 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                   <span>{{ card.startsAt | date: 'HH:mm' }}</span>
                 </span>
 
-                <span class="past-event-card__pill">
-                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__pill-icon" aria-hidden="true">
+                <span class="past-event-card__meta-item">
+                  <svg viewBox="0 0 24 24" fill="none" class="past-event-card__meta-icon" aria-hidden="true">
                     <path d="M12 20.25s6-5.28 6-10.125a6 6 0 1 0-12 0c0 4.845 6 10.125 6 10.125Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M12 12.25a2.125 2.125 0 1 0 0-4.25 2.125 2.125 0 0 0 0 4.25Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>

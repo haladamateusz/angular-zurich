@@ -51,8 +51,8 @@
   pointer-events: none;
 }
 
-.past-event-card__pill--loading {
-  gap: 0.55rem;
+.past-event-card__meta-item--loading {
+  gap: 0.45rem;
 }
 
 .past-events__skeleton {
@@ -89,25 +89,25 @@
   border-radius: 0.7rem;
 }
 
-.past-events__skeleton--pill-icon {
-  width: 0.95rem;
-  height: 0.95rem;
+.past-events__skeleton--meta-icon {
+  width: 1rem;
+  height: 1rem;
   flex: none;
 }
 
-.past-events__skeleton--pill-text {
+.past-events__skeleton--meta-text {
   height: 0.95rem;
 }
 
-.past-events__skeleton--pill-date {
+.past-events__skeleton--meta-date {
   width: 6.75rem;
 }
 
-.past-events__skeleton--pill-time {
+.past-events__skeleton--meta-time {
   width: 3rem;
 }
 
-.past-events__skeleton--pill-location {
+.past-events__skeleton--meta-location {
   width: min(9rem, 40vw);
 }
 
@@ -221,28 +221,24 @@
 .past-event-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  column-gap: 1rem;
+  row-gap: 0.55rem;
 }
 
-.past-event-card__pill {
+.past-event-card__meta-item {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   max-width: 100%;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  padding: 0.52rem 0.78rem;
-  color: color-mix(in srgb, var(--color-primary) 72%, var(--color-foreground) 28%);
+  color: color-mix(in srgb, var(--color-primary) 68%, var(--color-foreground) 32%);
   font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.2;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.past-event-card__pill-icon {
-  width: 0.95rem;
-  height: 0.95rem;
+.past-event-card__meta-icon {
+  width: 1rem;
+  height: 1rem;
   flex: none;
 }
 
