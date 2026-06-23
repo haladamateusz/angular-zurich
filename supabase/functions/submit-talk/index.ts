@@ -23,8 +23,8 @@ type JsonRecord = Record<string, unknown>;
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:4200',
   'http://127.0.0.1:4200',
-  'https://angularzurich.dev',
-  'https://www.angularzurich.dev',
+  'https://angular.zuerich',
+  'https://www.angular.zuerich',
 ];
 
 const TALK_TITLE_MAX_LENGTH = 160;

@@ -15,6 +15,7 @@ if (missingVars.length > 0) {
 
 const environmentFilePath = resolve('src/environments/environment.production.ts');
 const fileContents = `export const environment = {
+  appUrl: ${JSON.stringify(process.env.APP_URL ?? 'https://angular.zuerich')},
   supabaseUrl: ${JSON.stringify(process.env.SUPABASE_URL)},
   supabaseKey: ${JSON.stringify(process.env.SUPABASE_KEY)},
   turnstileSiteKey: ${JSON.stringify(process.env.TURNSTILE_SITE_KEY)},

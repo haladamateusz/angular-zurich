@@ -61,7 +61,7 @@ export class AuthService {
       throw new Error('supabase_auth_not_configured');
     }
 
-    const redirectTo = new URL('/auth/callback', window.location.origin).toString();
+    const redirectTo = new URL('/auth/callback', this.getAppUrl()).toString();
     const { error } = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -174,6 +174,10 @@ export class AuthService {
         autoRefreshToken: this.isBrowser,
       },
     });
+  }
+
+  private getAppUrl(): string {
+    return environment.appUrl.trim() || window.location.origin;
   }
 
   private async initializeSession(): Promise<void> {

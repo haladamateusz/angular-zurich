@@ -10,6 +10,10 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'auth/callback',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'dashboard/**',
     renderMode: RenderMode.Client,
   },
