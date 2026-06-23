@@ -1,10 +1,5 @@
-import { Injectable } from '@angular/core';
-import {
-  createClient,
-  PostgrestResponse,
-  PostgrestSingleResponse,
-  SupabaseClient,
-} from '@supabase/supabase-js';
+import { Injectable, inject } from '@angular/core';
+import { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 import { Event } from '../../models/event.interface';
 import { OrganizerTalkSubmission } from '../../models/organizer-talk-submission.interface';
@@ -12,6 +7,7 @@ import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
 import { TalkSubmissionPayload, TalkSubmissionResult } from '../../models/talk-submission.interface';
+import { SupabaseClientService } from './supabase-client.service';
 
 export interface StatsCounts {
   speakers: number;
@@ -25,7 +21,7 @@ export interface StatsCounts {
 export class SupabaseService {
   private readonly supabaseUrl = environment.supabaseUrl.trim();
   private readonly supabaseKey = environment.supabaseKey.trim();
-  private readonly supabase = this.createSupabaseClient();
+  private readonly supabase = inject(SupabaseClientService).getClient();
 
   async getFormerOrganizers(): Promise<PostgrestResponse<Person>> {
     if (this.supabase === null) {
@@ -362,14 +358,6 @@ export class SupabaseService {
       talks: talksResponse.count ?? 0,
       events: eventsResponse.count ?? 0,
     };
-  }
-
-  private createSupabaseClient(): SupabaseClient | null {
-    if (!this.supabaseUrl || !this.supabaseKey) {
-      return null;
-    }
-
-    return createClient(this.supabaseUrl, this.supabaseKey);
   }
 
   private createEmptyListResponse<T>(data: T[]): PostgrestResponse<T> {

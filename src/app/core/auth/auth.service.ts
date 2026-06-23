@@ -1,7 +1,8 @@
 import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Session, SupabaseClient, User, createClient } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
+import { SupabaseClientService } from '../data-access/supabase/supabase-client.service';
 
 const GENERIC_AUTH_ERROR_MESSAGE = 'We could not complete sign-in. Please try again.';
 const UNAUTHORIZED_AUTH_ERROR_MESSAGE =
@@ -21,7 +22,7 @@ export class AuthService {
   private readonly sessionState = signal<Session | null>(null);
   private readonly initializedState = signal(false);
   private readonly errorMessageState = signal<string | null>(null);
-  private readonly supabase = this.createSupabaseClient();
+  private readonly supabase = inject(SupabaseClientService).getClient();
 
   readonly session = computed(() => this.sessionState());
   readonly user = computed(() => this.sessionState()?.user ?? null);
@@ -155,24 +156,6 @@ export class AuthService {
         window.clearInterval(intervalId);
         resolve();
       }, 16);
-    });
-  }
-
-  private createSupabaseClient(): SupabaseClient | null {
-    const supabaseUrl = environment.supabaseUrl.trim();
-    const supabaseKey = environment.supabaseKey.trim();
-
-    if (!supabaseUrl || !supabaseKey) {
-      return null;
-    }
-
-    return createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        flowType: 'pkce',
-        detectSessionInUrl: false,
-        persistSession: this.isBrowser,
-        autoRefreshToken: this.isBrowser,
-      },
     });
   }
 
