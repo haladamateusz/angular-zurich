@@ -1,5 +1,16 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, resource, signal } from '@angular/core';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  PLATFORM_ID,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  input,
+  resource,
+  signal,
+} from '@angular/core';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
@@ -34,6 +45,7 @@ export class EventDetailsComponent {
   protected readonly loadingCards = [1, 2, 3];
   protected readonly featureGraphicLoaded = signal(false);
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly supabaseService = inject(SupabaseService);
 
   protected readonly eventResource = resource<Event, string>({
@@ -59,6 +71,18 @@ export class EventDetailsComponent {
     if (this.event().feature_graphic !== undefined) {
       this.featureGraphicLoaded.set(false);
     }
+  });
+
+  private readonly scrollToTopOnSlugChange = effect(() => {
+    this.slug();
+
+    if (!this.isBrowser) {
+      return;
+    }
+
+    afterNextRender(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
   });
 
   protected formatSpeakerName(firstName: string | null, lastName: string | null): string {
