@@ -1,8 +1,8 @@
-import { DOCUMENT, Injectable, afterNextRender, computed, inject, signal } from '@angular/core';
+import { DOCUMENT, Service, afterNextRender, computed, inject, signal } from '@angular/core';
 
 const STORAGE_KEY = 'theme-dark';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ThemeService {
   private readonly doc = inject(DOCUMENT);
 

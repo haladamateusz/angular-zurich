@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { DestroyRef, PLATFORM_ID, Service, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Session, User } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
@@ -13,9 +13,7 @@ interface UserProfileSummary {
   displayName: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
   private readonly destroyRef = inject(DestroyRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));

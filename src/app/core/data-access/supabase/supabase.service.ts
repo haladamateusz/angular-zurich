@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 import { Event } from '../../models/event.interface';
@@ -15,9 +15,7 @@ export interface StatsCounts {
   events: number;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class SupabaseService {
   private readonly supabaseUrl = environment.supabaseUrl.trim();
   private readonly supabaseKey = environment.supabaseKey.trim();

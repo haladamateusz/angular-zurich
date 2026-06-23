@@ -1,11 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { PLATFORM_ID, Service, inject } from '@angular/core';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class SupabaseClientService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly client = this.createSupabaseClient();
