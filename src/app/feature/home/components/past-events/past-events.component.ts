@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 
-type PastEventCard = {
+interface PastEventCard {
   id: string;
   slug: string;
   title: string;
@@ -16,7 +16,7 @@ type PastEventCard = {
     name: string;
     image: string;
   }[];
-};
+}
 
 @Component({
   selector: 'app-past-events',

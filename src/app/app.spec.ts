@@ -7,6 +7,7 @@ import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { SupabaseService } from './core/data-access/supabase/supabase.service';
 import { Event } from './core/models/event.interface';
+import { OrganizerTalkSubmission } from './core/models/organizer-talk-submission.interface';
 import { Person } from './core/models/person.interface';
 import { Sponsor } from './core/models/sponsor.interface';
 
@@ -59,6 +60,15 @@ const EMPTY_SPONSORS_RESPONSE = {
   success: true,
 } satisfies PostgrestResponse<Sponsor>;
 
+const EMPTY_EVENTS_RESPONSE = {
+  data: [],
+  error: null,
+  count: null,
+  status: 200,
+  statusText: 'OK',
+  success: true,
+} satisfies PostgrestResponse<Event>;
+
 const EMPTY_PEOPLE_RESPONSE = {
   data: [],
   error: null,
@@ -67,6 +77,15 @@ const EMPTY_PEOPLE_RESPONSE = {
   statusText: 'OK',
   success: true,
 } satisfies PostgrestResponse<Person>;
+
+const EMPTY_TALK_SUBMISSIONS_RESPONSE = {
+  data: [],
+  error: null,
+  count: null,
+  status: 200,
+  statusText: 'OK',
+  success: true,
+} satisfies PostgrestResponse<OrganizerTalkSubmission>;
 
 function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
   return {
@@ -110,9 +129,11 @@ describe('App', () => {
           provide: SupabaseService,
           useValue: {
             getLatestEvent: vi.fn(async () => latestEventResponse),
+            getPastEvents: vi.fn().mockResolvedValue(EMPTY_EVENTS_RESPONSE),
             getSponsors: vi.fn().mockResolvedValue(EMPTY_SPONSORS_RESPONSE),
             getOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
             getFormerOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
+            getOrganizerTalkSubmissions: vi.fn().mockResolvedValue(EMPTY_TALK_SUBMISSIONS_RESPONSE),
             getStatsCounts: vi.fn().mockResolvedValue({
               speakers: 0,
               talks: 0,

@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, resource, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
@@ -57,8 +56,9 @@ export class EventDetailsComponent {
   );
 
   private readonly resetFeatureGraphicPlaceholder = effect(() => {
-    this.event().feature_graphic;
-    this.featureGraphicLoaded.set(false);
+    if (this.event().feature_graphic !== undefined) {
+      this.featureGraphicLoaded.set(false);
+    }
   });
 
   protected formatSpeakerName(firstName: string | null, lastName: string | null): string {
