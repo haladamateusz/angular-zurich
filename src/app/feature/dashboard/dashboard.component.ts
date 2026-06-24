@@ -11,6 +11,11 @@ import {
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
 type SortDirection = 'asc' | 'desc';
 
+interface DashboardTalkSubmission extends OrganizerTalkSubmission {
+  speakerInitials: string;
+  speakerPictureUrl: string | null;
+}
+
 @Component({
   selector: 'app-dashboard',
   imports: [DatePipe, RouterLink],
@@ -24,7 +29,7 @@ export class DashboardComponent {
 
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
-  protected readonly submissions = signal<OrganizerTalkSubmission[]>([]);
+  protected readonly submissions = signal<DashboardTalkSubmission[]>([]);
   protected readonly sortColumn = signal<SortColumn>('dateSent');
   protected readonly sortDirection = signal<SortDirection>('desc');
 
@@ -75,14 +80,6 @@ export class DashboardComponent {
     this.sortDirection.set(column === 'dateSent' ? 'desc' : 'asc');
   }
 
-  protected getSortIndicator(column: SortColumn): string {
-    if (this.sortColumn() !== column) {
-      return '↕';
-    }
-
-    return this.sortDirection() === 'asc' ? '↑' : '↓';
-  }
-
   protected getAriaSort(column: SortColumn): 'ascending' | 'descending' | 'none' {
     if (this.sortColumn() !== column) {
       return 'none';
@@ -92,8 +89,8 @@ export class DashboardComponent {
   }
 
   private compareSubmissions(
-    left: OrganizerTalkSubmission,
-    right: OrganizerTalkSubmission,
+    left: DashboardTalkSubmission,
+    right: DashboardTalkSubmission,
     column: SortColumn,
   ): number {
     switch (column) {
@@ -144,7 +141,28 @@ export class DashboardComponent {
       return;
     }
 
-    this.submissions.set(data ?? []);
+    this.submissions.set(await this.createDashboardSubmissions(data ?? []));
     this.isLoading.set(false);
+  }
+
+  private async createDashboardSubmissions(
+    submissions: OrganizerTalkSubmission[],
+  ): Promise<DashboardTalkSubmission[]> {
+    return Promise.all(
+      submissions.map(async (submission) => ({
+        ...submission,
+        speakerInitials: this.getSpeakerInitials(submission.speaker_name),
+        speakerPictureUrl: submission.speaker_picture_path
+          ? await this.supabaseService.getOrganizerSpeakerPictureUrl(submission.speaker_picture_path)
+          : null,
+      })),
+    );
+  }
+
+  private getSpeakerInitials(name: string): string {
+    const [firstName, secondName] = name.trim().split(/\s+/);
+    const initials = `${firstName?.charAt(0) ?? ''}${secondName?.charAt(0) ?? ''}`;
+
+    return initials ? initials.toUpperCase() : '?';
   }
 }

@@ -255,7 +255,7 @@ export class SupabaseService {
 
     return this.supabase
       .from('organizer_talk_submissions')
-      .select('id, created_at, status, talk_title, speaker_name, speaker_label')
+      .select('id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path')
       .order('created_at', { ascending: false });
   }
 

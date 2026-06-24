@@ -1,5 +1,5 @@
 <section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
-  <section class="dashboard-table-card rounded-[2rem] border border-navbar-line bg-card px-6 py-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)] sm:px-8">
+  <section>
     <p class="text-sm font-semibold uppercase tracking-[0.24em] text-primary">Talk submissions</p>
 
     @if (errorMessage()) {
@@ -11,8 +11,58 @@
         {{ errorMessage() }}
       </div>
     } @else if (isLoading()) {
-      <div class="mt-6 rounded-2xl border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70">
-        Loading submissions…
+      <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background" role="status" aria-busy="true">
+        <div class="overflow-x-auto" aria-hidden="true">
+          <table class="min-w-full divide-y divide-navbar-line">
+            <thead>
+              <tr class="bg-card/70">
+                <th class="dashboard-table__heading dashboard-table__heading--status">
+                  <div class="app-skeleton h-4 w-24"></div>
+                </th>
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton h-4 w-28"></div>
+                </th>
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton h-4 w-40"></div>
+                </th>
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton h-4 w-24"></div>
+                </th>
+                <th class="dashboard-table__heading dashboard-table__heading--details">
+                  <div class="sr-only">Details</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-navbar-line">
+              @for (row of [1, 2, 3, 4, 5]; track row) {
+                <tr class="dashboard-table__row">
+                  <td class="dashboard-table__cell dashboard-table__cell--title">
+                    <div class="app-skeleton h-5 w-56 max-w-full rounded-lg"></div>
+                  </td>
+                  <td class="dashboard-table__cell">
+                    <div class="dashboard-table__author-cell">
+                      <div class="app-skeleton size-12 rounded-[0.85rem]"></div>
+                      <div class="dashboard-table__author-copy space-y-2">
+                        <div class="app-skeleton h-5 w-36 rounded-lg"></div>
+                        <div class="app-skeleton h-4 w-52 max-w-full"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="dashboard-table__cell whitespace-nowrap">
+                    <div class="app-skeleton h-5 w-40"></div>
+                  </td>
+                  <td class="dashboard-table__cell dashboard-table__cell--status">
+                    <div class="app-skeleton h-10 w-44"></div>
+                  </td>
+                  <td class="dashboard-table__cell dashboard-table__cell--details">
+                    <div class="app-skeleton ml-auto size-9 rounded-xl"></div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <span class="sr-only">Loading talk submissions…</span>
       </div>
     } @else if (!hasSubmissions()) {
       <div class="mt-6 rounded-2xl border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70">
@@ -27,25 +77,97 @@
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('title')">
                 <button type="button" class="dashboard-table__sort-button" (click)="toggleSort('title')">
                   <span>Title</span>
-                  <span class="dashboard-table__sort-indicator" aria-hidden="true">{{ getSortIndicator('title') }}</span>
+                  <span
+                    class="dashboard-table__sort-indicator"
+                    [class.dashboard-table__sort-indicator--active]="sortColumn() === 'title'"
+                    aria-hidden="true"
+                  >
+                    @if (sortColumn() === 'title' && sortDirection() === 'asc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else if (sortColumn() === 'title' && sortDirection() === 'desc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    }
+                  </span>
                 </button>
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('author')">
                 <button type="button" class="dashboard-table__sort-button" (click)="toggleSort('author')">
                   <span>Author</span>
-                  <span class="dashboard-table__sort-indicator" aria-hidden="true">{{ getSortIndicator('author') }}</span>
+                  <span
+                    class="dashboard-table__sort-indicator"
+                    [class.dashboard-table__sort-indicator--active]="sortColumn() === 'author'"
+                    aria-hidden="true"
+                  >
+                    @if (sortColumn() === 'author' && sortDirection() === 'asc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else if (sortColumn() === 'author' && sortDirection() === 'desc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    }
+                  </span>
                 </button>
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('dateSent')">
                 <button type="button" class="dashboard-table__sort-button" (click)="toggleSort('dateSent')">
-                  <span>Date sent</span>
-                  <span class="dashboard-table__sort-indicator" aria-hidden="true">{{ getSortIndicator('dateSent') }}</span>
+                  <span>Date received</span>
+                  <span
+                    class="dashboard-table__sort-indicator"
+                    [class.dashboard-table__sort-indicator--active]="sortColumn() === 'dateSent'"
+                    aria-hidden="true"
+                  >
+                    @if (sortColumn() === 'dateSent' && sortDirection() === 'asc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else if (sortColumn() === 'dateSent' && sortDirection() === 'desc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    }
+                  </span>
                 </button>
               </th>
-              <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('status')">
+              <th class="dashboard-table__heading dashboard-table__heading--status" [attr.aria-sort]="getAriaSort('status')">
                 <button type="button" class="dashboard-table__sort-button" (click)="toggleSort('status')">
                   <span>Status</span>
-                  <span class="dashboard-table__sort-indicator" aria-hidden="true">{{ getSortIndicator('status') }}</span>
+                  <span
+                    class="dashboard-table__sort-indicator"
+                    [class.dashboard-table__sort-indicator--active]="sortColumn() === 'status'"
+                    aria-hidden="true"
+                  >
+                    @if (sortColumn() === 'status' && sortDirection() === 'asc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else if (sortColumn() === 'status' && sortDirection() === 'desc') {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    }
+                  </span>
                 </button>
               </th>
               <th class="dashboard-table__heading dashboard-table__heading--details">
@@ -59,11 +181,27 @@
                 <td class="dashboard-table__cell dashboard-table__cell--title">
                   <p class="dashboard-table__title">{{ submission.talk_title }}</p>
                 </td>
-                <td class="dashboard-table__cell">
-                  <p class="dashboard-table__author">{{ submission.speaker_name }}</p>
-                  @if (submission.speaker_label) {
-                    <p class="dashboard-table__author-label">{{ submission.speaker_label }}</p>
-                  }
+                <td class="dashboard-table__cell dashboard-table__cell--status">
+                  <div class="dashboard-table__author-cell">
+                    <div class="dashboard-table__author-avatar" aria-hidden="true">
+                      @if (submission.speakerPictureUrl) {
+                        <img
+                          [src]="submission.speakerPictureUrl"
+                          alt=""
+                          class="dashboard-table__author-image"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <span>{{ submission.speakerInitials }}</span>
+                      }
+                    </div>
+                    <div class="dashboard-table__author-copy">
+                      <p class="dashboard-table__author">{{ submission.speaker_name }}</p>
+                      @if (submission.speaker_label) {
+                        <p class="dashboard-table__author-label">{{ submission.speaker_label }}</p>
+                      }
+                    </div>
+                  </div>
                 </td>
                 <td class="dashboard-table__cell whitespace-nowrap">
                   {{ submission.created_at | date: 'd MMM yyyy, HH:mm' }}
@@ -84,10 +222,13 @@
                 <td class="dashboard-table__cell dashboard-table__cell--details">
                   <a
                     [routerLink]="['/dashboard', 'submissions', submission.id]"
-                    class="dashboard-table__details-button"
+                    class="dashboard-table__details-button app-outline-button"
                     [attr.aria-label]="'Open details for ' + submission.talk_title"
                   >
-                    >
+                    <span>Details</span>
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="dashboard-table__details-icon app-outline-button__icon" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                    </svg>
                   </a>
                 </td>
               </tr>
