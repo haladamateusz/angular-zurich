@@ -1,12 +1,22 @@
 import { Service, inject } from '@angular/core';
 import { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../auth/auth.service';
 import { Event } from '../../models/event.interface';
-import { OrganizerTalkSubmission } from '../../models/organizer-talk-submission.interface';
+import {
+  OrganizerTalkSubmission,
+  OrganizerTalkSubmissionDetail,
+  OrganizerTalkSubmissionStatusEvent,
+  TalkSubmissionReviewAction,
+} from '../../models/organizer-talk-submission.interface';
 import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
-import { TalkSubmissionPayload, TalkSubmissionResult } from '../../models/talk-submission.interface';
+import {
+  TalkSubmissionPayload,
+  TalkSubmissionResult,
+  TalkSubmissionStatusSummary,
+} from '../../models/talk-submission.interface';
 import { SupabaseClientService } from './supabase-client.service';
 
 export interface StatsCounts {
@@ -15,8 +25,17 @@ export interface StatsCounts {
   events: number;
 }
 
+interface ReviewTalkSubmissionResult {
+  id: string;
+  status: string;
+  speaker_id: string | null;
+  speaker_picture_path: string | null;
+  speaker_picture_url: string | null;
+}
+
 @Service()
 export class SupabaseService {
+  private readonly authService = inject(AuthService);
   private readonly supabaseUrl = environment.supabaseUrl.trim();
   private readonly supabaseKey = environment.supabaseKey.trim();
   private readonly supabase = inject(SupabaseClientService).getClient();
@@ -238,6 +257,123 @@ export class SupabaseService {
       .from('organizer_talk_submissions')
       .select('id, created_at, status, talk_title, speaker_name, speaker_label')
       .order('created_at', { ascending: false });
+  }
+
+  async getOrganizerTalkSubmissionById(
+    submissionId: string,
+  ): Promise<PostgrestSingleResponse<OrganizerTalkSubmissionDetail>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<OrganizerTalkSubmissionDetail>(null);
+    }
+
+    return this.supabase
+      .from('organizer_talk_submissions')
+      .select(
+        'id, created_at, status, talk_title, talk_description, slides_url, speaker_name, speaker_label, speaker_picture_path, personal_url, linkedin_url, github_url',
+      )
+      .eq('id', submissionId)
+      .single();
+  }
+
+  async getOrganizerTalkSubmissionStatusEvents(
+    submissionId: string,
+  ): Promise<PostgrestResponse<OrganizerTalkSubmissionStatusEvent>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<OrganizerTalkSubmissionStatusEvent>([]);
+    }
+
+    return this.supabase
+      .from('organizer_talk_submission_status_events')
+      .select(
+        'id, submission_id, created_at, from_status, to_status, action, actor_kind, actor_first_name, actor_last_name, message',
+      )
+      .eq('submission_id', submissionId)
+      .order('created_at', { ascending: true });
+  }
+
+  async reviewTalkSubmission(
+    submissionId: string,
+    action: TalkSubmissionReviewAction,
+    message: string | null,
+  ): Promise<{ data: ReviewTalkSubmissionResult[] | null; error: Error | null }> {
+    const accessToken = this.authService.session()?.access_token;
+
+    if (!this.supabaseUrl || !this.supabaseKey || !accessToken) {
+      return {
+        data: null,
+        error: new Error('review_talk_submission_not_configured'),
+      };
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/review-talk-submission`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+        authorization: `Bearer ${accessToken}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        submissionId,
+        action,
+        message,
+      }),
+    });
+
+    let body: ReviewTalkSubmissionResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage = body && 'error' in body && body.error
+        ? body.error
+        : 'review_talk_submission_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'status' in body ? [body] : null,
+      error: null,
+    };
+  }
+
+  async getTalkSubmissionStatusForDevice(
+    submissionId: string,
+    editToken: string,
+  ): Promise<PostgrestSingleResponse<TalkSubmissionStatusSummary | null>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<TalkSubmissionStatusSummary | null>(null);
+    }
+
+    return this.supabase
+      .rpc('get_talk_submission_status_for_device', {
+        p_submission_id: submissionId,
+        p_edit_token: editToken,
+      })
+      .maybeSingle();
+  }
+
+  async getOrganizerSpeakerPictureUrl(path: string): Promise<string | null> {
+    if (this.supabase === null || !path.trim()) {
+      return null;
+    }
+
+    const { data, error } = await this.supabase.storage
+      .from('talk-submission-assets')
+      .createSignedUrl(path, 60 * 60);
+
+    if (error || !data?.signedUrl) {
+      return null;
+    }
+
+    return data.signedUrl;
   }
 
   async submitTalk(

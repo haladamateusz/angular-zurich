@@ -2,8 +2,8 @@ export interface Talk {
   id: string;
   title: string;
   description: string;
-  event_id: string;
-  presentation_time: number;
+  event_id: string | null;
+  presentation_time: number | null;
   created_by: string;
   event: {
     id: string;

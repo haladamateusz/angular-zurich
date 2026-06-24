@@ -89,6 +89,13 @@
   padding: 1.25rem 1.25rem 1rem;
 }
 
+.submission-card__device-note {
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--color-primary) 7%, transparent);
+  padding: 1.25rem;
+}
+
 .submission-card__consent p {
   margin: 0;
 }

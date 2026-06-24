@@ -231,6 +231,17 @@ async function sha256(input: string): Promise<string> {
   );
 }
 
+function createEditToken(): string {
+  const bytes = new Uint8Array(32);
+
+  crypto.getRandomValues(bytes);
+
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
 function floorTo15MinuteBucket(date: Date): Date {
   const bucket = new Date(date);
 
@@ -439,6 +450,8 @@ Deno.serve(async (req) => {
     }
 
     const submissionId = crypto.randomUUID();
+    const editToken = createEditToken();
+    const editTokenHash = await sha256(editToken);
     let speakerPicturePath: string | null = null;
 
     if (normalizedPayload.speakerPicture) {
@@ -498,7 +511,8 @@ Deno.serve(async (req) => {
         source_ip_hash,
         email_hash,
         user_agent,
-        origin
+        origin,
+        edit_token_hash
       )
       values (
         ${submissionId}::uuid,
@@ -517,7 +531,8 @@ Deno.serve(async (req) => {
         ${ipHash},
         ${emailHash},
         ${req.headers.get('user-agent')?.slice(0, USER_AGENT_MAX_LENGTH) ?? null},
-        ${origin?.slice(0, ORIGIN_MAX_LENGTH) ?? null}
+        ${origin?.slice(0, ORIGIN_MAX_LENGTH) ?? null},
+        ${editTokenHash}
       )
       returning id
     `;
@@ -526,7 +541,8 @@ Deno.serve(async (req) => {
       201,
       {
         id: rows[0]?.id ?? null,
-        status: 'pending',
+        status: 'initially_submitted',
+        editToken,
       },
       corsHeaders,
     );

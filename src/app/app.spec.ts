@@ -232,7 +232,7 @@ describe('App', () => {
 
     expect(router.url).toBe('/dashboard');
     expect(router.url).toBe('/dashboard');
-    expect(compiled.textContent).toContain('Incoming proposals');
+    expect(compiled.textContent).toContain('Talk submissions');
     expect(compiled.textContent).toContain('No talk submissions yet.');
   });
 });

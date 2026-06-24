@@ -16,5 +16,23 @@ export interface TalkSubmissionPayload {
 
 export interface TalkSubmissionResult {
   id: string | null;
-  status: 'pending';
+  status: 'initially_submitted';
+  editToken?: string;
 }
+
+export interface TalkSubmissionStatusSummary {
+  id: string;
+  created_at: string;
+  status: TalkSubmissionStatus;
+  talk_title: string;
+  can_edit: boolean;
+}
+
+export type TalkSubmissionStatus =
+  | 'initially_submitted'
+  | 'approved'
+  | 'assigned_to_event'
+  | 'changes_requested'
+  | 'rejected'
+  | 'adjusted'
+  | 'changes_submitted';

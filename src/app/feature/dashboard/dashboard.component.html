@@ -1,16 +1,6 @@
 <section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
   <section class="dashboard-table-card rounded-[2rem] border border-navbar-line bg-card px-6 py-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)] sm:px-8">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <div class="space-y-2">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-primary">Talk submissions</p>
-        <h2 class="text-2xl font-inter-tight font-semibold tracking-[-0.03em] text-foreground">
-          Incoming proposals
-        </h2>
-      </div>
-      <p class="text-sm leading-6 text-foreground/70">
-        Review the latest talks waiting in the organizer queue.
-      </p>
-    </div>
+    <p class="text-sm font-semibold uppercase tracking-[0.24em] text-primary">Talk submissions</p>
 
     @if (errorMessage()) {
       <div
@@ -81,10 +71,12 @@
                 <td class="dashboard-table__cell">
                   <span
                     class="dashboard-status"
-                    [class.dashboard-status--pending]="submission.status === 'pending'"
-                    [class.dashboard-status--reviewing]="submission.status === 'reviewing'"
-                    [class.dashboard-status--accepted]="submission.status === 'accepted'"
+                    [class.dashboard-status--submitted]="submission.status === 'initially_submitted'"
+                    [class.dashboard-status--approved]="submission.status === 'approved'"
+                    [class.dashboard-status--assigned]="submission.status === 'assigned_to_event'"
+                    [class.dashboard-status--changes]="submission.status === 'changes_requested' || submission.status === 'changes_submitted'"
                     [class.dashboard-status--rejected]="submission.status === 'rejected'"
+                    [class.dashboard-status--adjusted]="submission.status === 'adjusted'"
                   >
                     {{ formatStatus(submission.status) }}
                   </span>

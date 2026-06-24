@@ -22,6 +22,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import { TalkSubmissionDeviceAuthService } from '../../core/data-access/talk-submission-device-auth.service';
 import { TalkSubmissionPayload } from '../../core/models/talk-submission.interface';
 import { ThemeService } from '../../core/theme/theme.service';
 import { environment } from '../../../environments/environment';
@@ -85,6 +86,7 @@ export class SubmitTalkComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly talkSubmissionDeviceAuthService = inject(TalkSubmissionDeviceAuthService);
   private readonly themeService = inject(ThemeService);
   private readonly turnstileContainer = viewChild<ElementRef<HTMLElement>>('turnstileContainer');
   private readonly speakerPictureInput = viewChild<ElementRef<HTMLInputElement>>('speakerPictureInput');
@@ -225,6 +227,10 @@ export class SubmitTalkComponent {
       );
       this.resetTurnstile();
       return;
+    }
+
+    if (data.id && data.editToken) {
+      this.talkSubmissionDeviceAuthService.storeEditToken(data.id, data.editToken);
     }
 
     this.submitTalkForm.reset();

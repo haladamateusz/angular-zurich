@@ -1,0 +1,266 @@
+<section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
+  @if (errorMessage()) {
+    <div
+      class="rounded-[2rem] border border-primary/25 bg-primary/8 px-6 py-5 text-sm text-foreground"
+      role="alert"
+      aria-live="polite"
+    >
+      {{ errorMessage() }}
+    </div>
+  } @else if (isLoading()) {
+    <div class="rounded-[2rem] border border-navbar-line bg-card px-6 py-8 text-sm text-foreground/70">
+      Loading submission details…
+    </div>
+  } @else if (submission(); as currentSubmission) {
+    <header class="dashboard-detail__page-header mb-8">
+      <div class="space-y-4">
+        <a
+          routerLink="/dashboard"
+          class="dashboard-detail__back-button"
+        >
+          <span aria-hidden="true">←</span>
+          <span>Back to submissions</span>
+        </a>
+
+        <div class="space-y-3">
+        <p class="text-xl font-semibold uppercase tracking-[0.22em] text-primary sm:text-2xl">Submission review</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
+      <section class="dashboard-detail__card rounded-[2rem] border border-navbar-line bg-card px-6 py-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)] sm:px-8 sm:py-8">
+        <div class="dashboard-detail__card-header">
+          <div class="dashboard-detail__header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="size-6">
+              <path d="M8 3.75h5.5L18 8.25V19a1.25 1.25 0 0 1-1.25 1.25h-8.5A1.25 1.25 0 0 1 7 19V5A1.25 1.25 0 0 1 8.25 3.75Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M13.5 3.75V8.5H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M9.5 12.25h5M9.5 15.5h3.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h2 class="text-[2rem] font-inter-tight font-semibold tracking-[-0.04em] text-foreground sm:text-[2.2rem]">
+              Content details
+            </h2>
+          </div>
+        </div>
+
+        <div class="mt-8 space-y-7">
+          <div class="dashboard-detail__meta-row flex flex-wrap items-center gap-3">
+            <span
+              class="dashboard-status"
+              [class.dashboard-status--submitted]="currentSubmission.status === 'initially_submitted'"
+              [class.dashboard-status--approved]="currentSubmission.status === 'approved'"
+              [class.dashboard-status--assigned]="currentSubmission.status === 'assigned_to_event'"
+              [class.dashboard-status--changes]="currentSubmission.status === 'changes_requested' || currentSubmission.status === 'changes_submitted'"
+              [class.dashboard-status--rejected]="currentSubmission.status === 'rejected'"
+              [class.dashboard-status--adjusted]="currentSubmission.status === 'adjusted'"
+            >
+              {{ formatStatus(currentSubmission.status) }}
+            </span>
+            <span class="dashboard-detail__meta-chip dashboard-detail__meta-chip--muted">
+              Sent {{ currentSubmission.created_at | date: 'd MMM yyyy, HH:mm' }}
+            </span>
+          </div>
+
+          <div class="dashboard-detail__field space-y-3">
+            <p class="dashboard-detail__field-label">Title</p>
+            <p class="dashboard-detail__title-value">{{ currentSubmission.talk_title }}</p>
+          </div>
+
+          <div class="dashboard-detail__field space-y-3">
+            <p class="dashboard-detail__field-label">Description</p>
+            <p class="dashboard-detail__body-copy">{{ currentSubmission.talk_description }}</p>
+          </div>
+
+          <div class="dashboard-detail__field space-y-3">
+            <p class="dashboard-detail__field-label">Link to slides</p>
+            <a
+              [href]="currentSubmission.slides_url"
+              target="_blank"
+              rel="noreferrer"
+              class="dashboard-detail__slides-link"
+            >
+              <span class="dashboard-detail__slides-link-text">{{ currentSubmission.slides_url | truncate: 60 }}</span>
+              <span aria-hidden="true" class="dashboard-detail__slides-link-icon">↗</span>
+            </a>
+          </div>
+
+          <div class="dashboard-detail__field dashboard-detail__field--notes space-y-2">
+            <label class="dashboard-detail__field-label" for="reviewNotes">Reviewer message</label>
+            <textarea
+              id="reviewNotes"
+              rows="6"
+              [value]="reviewNotes()"
+              (input)="updateReviewNotes($event)"
+              placeholder="Required when requesting changes or rejecting."
+              class="mt-2 dashboard-detail__notes-textarea"
+              [disabled]="reviewActionState() === 'submitting' || isFinalized()"
+            ></textarea>
+          </div>
+
+          @if (reviewErrorMessage()) {
+            <div class="dashboard-detail__review-alert dashboard-detail__review-alert--error" role="alert">
+              {{ reviewErrorMessage() }}
+            </div>
+          }
+
+          @if (successMessage()) {
+            <div class="dashboard-detail__review-alert dashboard-detail__review-alert--success" role="status">
+              {{ successMessage() }}
+            </div>
+          }
+
+          <div class="dashboard-detail__field dashboard-detail__field--actions">
+            <div class="dashboard-detail__action-row mt-2">
+              <button
+                type="button"
+                class="dashboard-detail__action-button dashboard-detail__action-button--approve"
+                [disabled]="!canSubmitReviewAction('approve')"
+                (click)="submitReviewAction('approve')"
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                class="dashboard-detail__action-button dashboard-detail__action-button--changes"
+                [disabled]="!canSubmitReviewAction('request_changes')"
+                (click)="submitReviewAction('request_changes')"
+              >
+                Request changes
+              </button>
+              <button
+                type="button"
+                class="dashboard-detail__action-button dashboard-detail__action-button--reject"
+                [disabled]="!canSubmitReviewAction('reject')"
+                (click)="submitReviewAction('reject')"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="dashboard-detail__card rounded-[2rem] border border-navbar-line bg-card px-6 py-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)] sm:px-8 sm:py-8">
+        <div class="dashboard-detail__card-header dashboard-detail__card-header--speaker">
+          <div class="dashboard-detail__header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" class="size-6">
+              <path d="M12 12a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5ZM5 19.25a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h2 class="text-[2rem] font-inter-tight font-semibold tracking-[-0.04em] text-foreground sm:text-[2.2rem]">
+              Speaker
+            </h2>
+          </div>
+        </div>
+
+        <div class="mt-8 space-y-6">
+          <div class="dashboard-detail__speaker-picture rounded-[1.6rem] border border-navbar-line bg-background">
+            @if (speakerPictureUrl()) {
+              <img
+                [src]="speakerPictureUrl()"
+                alt="Speaker portrait"
+                class="h-full w-full rounded-[1.6rem] object-cover object-center"
+              />
+            } @else {
+              <div class="flex h-full items-center justify-center px-6 text-center text-sm text-foreground/60">
+                Speaker photo unavailable.
+              </div>
+            }
+          </div>
+
+          <div class="dashboard-detail__speaker-identity">
+            <h3 class="dashboard-detail__speaker-name">
+              {{ currentSubmission.speaker_name }}
+            </h3>
+            <p class="dashboard-detail__speaker-label">
+              {{ currentSubmission.speaker_label || 'No label provided' }}
+            </p>
+          </div>
+
+          <div class="dashboard-detail__speaker-links">
+            @if (speakerProfileLinks().length > 0) {
+              @for (link of speakerProfileLinks(); track link.href) {
+                <a
+                  [href]="link.href"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="dashboard-detail__speaker-link-row"
+                >
+                  <span class="dashboard-detail__speaker-link-icon" aria-hidden="true">
+                    @switch (link.kind) {
+                      @case ('personal') {
+                        <svg viewBox="0 0 24 24" fill="none" class="size-6">
+                          <path d="M12 3.75a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5Z" stroke="currentColor" stroke-width="1.8"/>
+                          <path d="M3.75 12h16.5M12 3.75c2.2 2.2 3.25 5.09 3.25 8.25S14.2 18.05 12 20.25M12 3.75c-2.2 2.2-3.25 5.09-3.25 8.25S9.8 18.05 12 20.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                      }
+                      @case ('linkedin') {
+                        <svg viewBox="0 0 24 24" fill="none" class="size-6">
+                          <path d="M6.75 8.25A1.5 1.5 0 1 0 6.75 5.25a1.5 1.5 0 0 0 0 3ZM5.5 10.5h2.5v8H5.5v-8ZM10.5 10.5H13v1.25h.04c.35-.66 1.23-1.5 2.53-1.5 2.7 0 3.2 1.78 3.2 4.09v4.16h-2.5v-3.69c0-.88-.02-2.02-1.23-2.02-1.23 0-1.42.96-1.42 1.95v3.76h-2.5v-8Z" fill="currentColor"/>
+                        </svg>
+                      }
+                      @case ('github') {
+                        <svg viewBox="0 0 24 24" fill="none" class="size-6">
+                          <path d="M12 3.75a8.25 8.25 0 0 0-2.61 16.08c.41.07.56-.18.56-.4v-1.4c-2.28.5-2.77-.96-2.77-.96-.37-.95-.92-1.2-.92-1.2-.75-.52.06-.51.06-.51.83.06 1.27.86 1.27.86.73 1.25 1.91.89 2.38.68.08-.53.29-.89.52-1.09-1.82-.21-3.73-.91-3.73-4.04 0-.89.32-1.62.84-2.19-.08-.21-.37-1.07.08-2.22 0 0 .69-.22 2.27.84a7.73 7.73 0 0 1 4.14 0c1.58-1.06 2.27-.84 2.27-.84.45 1.15.16 2.01.08 2.22.52.57.84 1.3.84 2.19 0 3.14-1.91 3.83-3.74 4.03.3.26.55.76.55 1.53v2.27c0 .22.15.47.56.39A8.25 8.25 0 0 0 12 3.75Z" fill="currentColor"/>
+                        </svg>
+                      }
+                    }
+                  </span>
+                  <span class="dashboard-detail__speaker-link-label">{{ link.displayText }}</span>
+                  <span class="dashboard-detail__speaker-link-arrow" aria-hidden="true">↗</span>
+                </a>
+              }
+            } @else {
+              <p class="dashboard-detail__speaker-links-empty">No speaker links provided.</p>
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="dashboard-detail__card dashboard-detail__log-card mt-6 rounded-[2rem] border border-navbar-line bg-card px-6 py-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)] sm:px-8 sm:py-8">
+      <div class="dashboard-detail__card-header">
+        <div class="dashboard-detail__header-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" class="size-6">
+            <path d="M12 7.75v4.5l3 1.75M20.25 12a8.25 8.25 0 1 1-2.42-5.83" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20.25 4.75v4.5h-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="space-y-1">
+          <h2 class="text-[2rem] font-inter-tight font-semibold tracking-[-0.04em] text-foreground sm:text-[2.2rem]">
+            Status log
+          </h2>
+        </div>
+      </div>
+
+      <div class="dashboard-detail__log-list mt-7">
+        @if (statusEvents().length > 0) {
+          @for (event of statusEvents(); track event.id) {
+            <article class="dashboard-detail__log-entry">
+              <div class="dashboard-detail__log-marker" aria-hidden="true"></div>
+              <div class="min-w-0">
+                <div class="dashboard-detail__log-heading">
+                  <span class="dashboard-detail__log-action">{{ formatAction(event) }}</span>
+                  <span class="dashboard-detail__log-date">
+                    {{ event.created_at | date: 'd MMM yyyy, HH:mm' }}
+                  </span>
+                </div>
+                <p class="dashboard-detail__log-meta">
+                  {{ formatActor(event) }} changed status to {{ formatStatus(event.to_status) }}.
+                </p>
+                @if (event.message) {
+                  <p class="dashboard-detail__log-message">{{ event.message }}</p>
+                }
+              </div>
+            </article>
+          }
+        } @else {
+          <p class="dashboard-detail__speaker-links-empty">No status changes recorded yet.</p>
+        }
+      </div>
+    </section>
+  }
+</section>

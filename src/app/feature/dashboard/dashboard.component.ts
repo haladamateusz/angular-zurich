@@ -48,14 +48,20 @@ export class DashboardComponent {
 
   protected formatStatus(status: TalkSubmissionStatus): string {
     switch (status) {
-      case 'pending':
-        return 'Pending';
-      case 'reviewing':
-        return 'Reviewing';
-      case 'accepted':
-        return 'Accepted';
+      case 'initially_submitted':
+        return 'Initially submitted';
+      case 'approved':
+        return 'Approved';
+      case 'assigned_to_event':
+        return 'Assigned to event';
+      case 'changes_requested':
+        return 'Changes requested';
       case 'rejected':
         return 'Rejected';
+      case 'adjusted':
+        return 'Adjusted';
+      case 'changes_submitted':
+        return 'Changes submitted';
     }
   }
 
@@ -106,14 +112,20 @@ export class DashboardComponent {
 
   private getStatusSortValue(status: TalkSubmissionStatus): number {
     switch (status) {
-      case 'pending':
+      case 'initially_submitted':
         return 0;
-      case 'reviewing':
+      case 'adjusted':
         return 1;
-      case 'accepted':
+      case 'changes_requested':
         return 2;
-      case 'rejected':
+      case 'changes_submitted':
         return 3;
+      case 'approved':
+        return 4;
+      case 'assigned_to_event':
+        return 5;
+      case 'rejected':
+        return 6;
     }
   }
 
