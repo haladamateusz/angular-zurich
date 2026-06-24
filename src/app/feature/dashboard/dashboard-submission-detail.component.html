@@ -300,7 +300,7 @@
         @if (orderedStatusEvents().length > 0) {
           @for (event of orderedStatusEvents(); track event.id) {
             <article class="dashboard-detail__log-entry">
-              <div class="dashboard-detail__log-marker" aria-hidden="true"></div>
+              <div [class]="getStatusLogMarkerClass(event.to_status)" aria-hidden="true"></div>
               <div class="min-w-0">
                 <div class="dashboard-detail__log-heading">
                   <span class="dashboard-detail__log-action">{{ formatAction(event) }}</span>

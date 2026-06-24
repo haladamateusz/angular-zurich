@@ -109,6 +109,28 @@ export class DashboardSubmissionDetailComponent {
     }
   }
 
+  protected getStatusLogMarkerClass(status: TalkSubmissionStatus): string {
+    const modifier = (() => {
+      switch (status) {
+        case 'initially_submitted':
+          return 'dashboard-detail__log-marker--submitted';
+        case 'approved':
+          return 'dashboard-detail__log-marker--approved';
+        case 'assigned_to_event':
+          return 'dashboard-detail__log-marker--assigned';
+        case 'changes_requested':
+        case 'changes_submitted':
+          return 'dashboard-detail__log-marker--changes';
+        case 'rejected':
+          return 'dashboard-detail__log-marker--rejected';
+        case 'adjusted':
+          return 'dashboard-detail__log-marker--adjusted';
+      }
+    })();
+
+    return `dashboard-detail__log-marker ${modifier}`;
+  }
+
   protected updateReviewNotes(event: Event): void {
     const target = event.target;
 
