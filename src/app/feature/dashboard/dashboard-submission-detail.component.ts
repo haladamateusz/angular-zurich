@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import {
   OrganizerTalkSubmissionDetail,
@@ -8,7 +8,6 @@ import {
   TalkSubmissionReviewAction,
   TalkSubmissionStatus,
 } from '../../core/models/organizer-talk-submission.interface';
-import { TruncatePipe } from '../../core/pipes/text/truncate.pipe';
 
 interface SpeakerProfileLink {
   href: string;
@@ -17,10 +16,11 @@ interface SpeakerProfileLink {
 }
 
 type ReviewActionState = 'idle' | 'submitting';
+type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
 
 @Component({
   selector: 'app-dashboard-submission-detail',
-  imports: [DatePipe, RouterLink, TruncatePipe],
+  imports: [DatePipe],
   templateUrl: './dashboard-submission-detail.component.html',
   styleUrl: './dashboard-submission-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,10 +35,16 @@ export class DashboardSubmissionDetailComponent {
   protected readonly successMessage = signal('');
   protected readonly reviewErrorMessage = signal('');
   protected readonly reviewActionState = signal<ReviewActionState>('idle');
+  protected readonly activeMessageAction = signal<ReviewMessageAction | null>(null);
   protected readonly reviewNotes = signal('');
   protected readonly speakerPictureUrl = signal<string | null>(null);
   protected readonly submission = signal<OrganizerTalkSubmissionDetail | null>(null);
   protected readonly statusEvents = signal<OrganizerTalkSubmissionStatusEvent[]>([]);
+  protected readonly orderedStatusEvents = computed(() =>
+    [...this.statusEvents()].sort(
+      (left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime(),
+    ),
+  );
   protected readonly isFinalized = computed(() => {
     const status = this.submission()?.status;
 
@@ -151,7 +157,17 @@ export class DashboardSubmissionDetailComponent {
     }
   }
 
-  protected canSubmitReviewAction(action: TalkSubmissionReviewAction): boolean {
+  protected getReviewModalTitle(action: ReviewMessageAction): string {
+    return action === 'request_changes' ? 'Request changes' : 'Reject submission';
+  }
+
+  protected getReviewModalDescription(action: ReviewMessageAction): string {
+    return action === 'request_changes'
+      ? 'Write the changes the speaker should make before submitting again.'
+      : 'Write the rejection reason that will be sent to the speaker later.';
+  }
+
+  protected canStartReviewAction(action: TalkSubmissionReviewAction): boolean {
     const status = this.submission()?.status;
 
     if (this.reviewActionState() === 'submitting' || this.isFinalized()) {
@@ -166,7 +182,46 @@ export class DashboardSubmissionDetailComponent {
       return status !== 'changes_requested';
     }
 
+    return true;
+  }
+
+  protected canSubmitReviewAction(action: TalkSubmissionReviewAction): boolean {
+    if (!this.canStartReviewAction(action)) {
+      return false;
+    }
+
+    if (action === 'approve') {
+      return true;
+    }
+
     return this.reviewNotes().trim().length > 0;
+  }
+
+  protected openReviewMessageModal(action: ReviewMessageAction): void {
+    if (!this.canStartReviewAction(action)) {
+      return;
+    }
+
+    this.reviewNotes.set('');
+    this.reviewErrorMessage.set('');
+    this.successMessage.set('');
+    this.activeMessageAction.set(action);
+  }
+
+  protected closeReviewMessageModal(): void {
+    if (this.reviewActionState() === 'submitting') {
+      return;
+    }
+
+    this.activeMessageAction.set(null);
+    this.reviewErrorMessage.set('');
+    this.reviewNotes.set('');
+  }
+
+  protected closeReviewMessageModalFromBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeReviewMessageModal();
+    }
   }
 
   protected async submitReviewAction(action: TalkSubmissionReviewAction): Promise<void> {
@@ -205,6 +260,7 @@ export class DashboardSubmissionDetailComponent {
     }
 
     this.reviewNotes.set('');
+    this.activeMessageAction.set(null);
     this.successMessage.set(this.getReviewSuccessMessage(action));
     await this.loadStatusEvents();
     this.reviewActionState.set('idle');

@@ -99,6 +99,7 @@
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .dashboard-status--submitted {
@@ -129,6 +130,40 @@
 .dashboard-status--rejected {
   background: color-mix(in srgb, #ef4444 12%, transparent);
   color: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
+}
+
+.app-skeleton,
+.dashboard-detail__skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
+}
+
+.app-skeleton::after,
+.dashboard-detail__skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 58%, transparent), transparent);
+  animation: dashboard-detail-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.dark .app-skeleton,
+.dark .dashboard-detail__skeleton {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-card) 90%);
+}
+
+.dark .app-skeleton::after,
+.dark .dashboard-detail__skeleton::after {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 16%, transparent), transparent);
+}
+
+@keyframes dashboard-detail-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .icon-link {
