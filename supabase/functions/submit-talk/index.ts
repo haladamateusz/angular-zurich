@@ -1,6 +1,10 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import postgres from 'npm:postgres@3.4.7';
+import {
+  getSiteUrl,
+  sendTalkSubmissionReceivedEmail,
+} from '../_shared/talk-review-email.ts';
 
 type TalkSubmissionPayload = {
   talkTitle: string;
@@ -536,6 +540,22 @@ Deno.serve(async (req) => {
       )
       returning id
     `;
+
+    try {
+      await sendTalkSubmissionReceivedEmail({
+        submissionId,
+        talkTitle: normalizedPayload.talkTitle,
+        speakerName: normalizedPayload.speakerName,
+        speakerEmail: normalizedPayload.emailAddress,
+        siteUrl: getSiteUrl(),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('talk-submission-received-email failed', error.message, error.stack);
+      } else {
+        console.error('talk-submission-received-email failed', error);
+      }
+    }
 
     return jsonResponse(
       201,

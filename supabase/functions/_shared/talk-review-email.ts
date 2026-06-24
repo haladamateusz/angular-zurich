@@ -1,5 +1,7 @@
 import { sendEmail } from './mail.ts';
 
+const CANONICAL_SITE_URL = 'https://angular.zuerich';
+
 export type TalkReviewEmailAction = 'approve' | 'request_changes' | 'reject';
 
 export interface TalkReviewEmailContext {
@@ -115,11 +117,11 @@ function getEmailContent(context: TalkReviewEmailContext): {
   }
 }
 
-export function getSiteUrl(): string | null {
+export function getSiteUrl(): string {
   const configuredSiteUrl = Deno.env.get('TALK_SUBMISSIONS_SITE_URL')?.trim();
 
   if (configuredSiteUrl) {
-    return configuredSiteUrl;
+    return configuredSiteUrl.replace(/\/$/, '');
   }
 
   const allowedOrigins = Deno.env.get('TALK_SUBMISSIONS_ALLOWED_ORIGINS')
@@ -127,7 +129,21 @@ export function getSiteUrl(): string | null {
     .map((origin) => origin.trim())
     .filter((origin) => origin.length > 0) ?? [];
 
-  return allowedOrigins.find((origin) => origin.startsWith('https://')) ?? allowedOrigins[0] ?? null;
+  const canonicalOrigin = allowedOrigins.find(
+    (origin) => origin === 'https://angular.zuerich' || origin === 'https://www.angular.zuerich',
+  );
+
+  if (canonicalOrigin) {
+    return CANONICAL_SITE_URL;
+  }
+
+  const httpsOrigin = allowedOrigins.find((origin) => origin.startsWith('https://'));
+
+  if (httpsOrigin) {
+    return httpsOrigin.replace(/\/$/, '');
+  }
+
+  return CANONICAL_SITE_URL;
 }
 
 export async function sendTalkReviewEmail(context: TalkReviewEmailContext): Promise<void> {
@@ -150,6 +166,56 @@ export async function sendTalkReviewEmail(context: TalkReviewEmailContext): Prom
     siteUrl,
     speakerEmail,
   });
+
+  await sendEmail({
+    to: speakerEmail,
+    subject,
+    text,
+    html,
+  });
+}
+
+export interface TalkSubmissionReceivedEmailContext {
+  submissionId: string;
+  talkTitle: string;
+  speakerName: string;
+  speakerEmail: string;
+  siteUrl: string;
+}
+
+export async function sendTalkSubmissionReceivedEmail(
+  context: TalkSubmissionReceivedEmailContext,
+): Promise<void> {
+  const speakerEmail = context.speakerEmail.trim().toLowerCase();
+  const talkTitle = context.talkTitle.trim();
+  const speakerName = context.speakerName.trim();
+  const siteUrl = context.siteUrl.trim();
+
+  if (!speakerEmail) {
+    console.warn('talk-submission-received-email skipped: speaker email is missing');
+    return;
+  }
+
+  const statusUrl = getSubmissionStatusUrl(siteUrl, context.submissionId);
+  const subject = `We received your talk proposal "${talkTitle}"`;
+  const text = [
+    `Hi ${speakerName},`,
+    '',
+    `Thanks for submitting "${talkTitle}" to Angular Zurich.`,
+    '',
+    'Your proposal is now in our review queue. We will reach out after the review, whether we move forward with the talk or not.',
+    '',
+    `You can check the current status on the same browser you used to submit: ${statusUrl}`,
+    '',
+    'Thanks for sharing your talk idea with the community.',
+  ].join('\n');
+  const html = [
+    `<p>Hi ${escapeHtml(speakerName)},</p>`,
+    `<p>Thanks for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zurich.</p>`,
+    '<p>Your proposal is now in our review queue. We will reach out after the review, whether we move forward with the talk or not.</p>',
+    `<p>You can check the current status on the <a href="${escapeHtml(statusUrl)}">same browser you used to submit</a>.</p>`,
+    '<p>Thanks for sharing your talk idea with the community.</p>',
+  ].join('');
 
   await sendEmail({
     to: speakerEmail,

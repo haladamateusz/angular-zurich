@@ -214,12 +214,6 @@ async function notifySpeakerAboutReview(
   organizerMessage: string | null,
 ): Promise<void> {
   const siteUrl = getSiteUrl();
-
-  if (!siteUrl) {
-    console.warn('talk-review-email skipped: TALK_SUBMISSIONS_SITE_URL is not configured');
-    return;
-  }
-
   const submission = await getSubmissionNotificationSummary(submissionId);
 
   if (!submission) {
