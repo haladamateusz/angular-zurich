@@ -429,3 +429,9 @@ entrypoint = "./functions/submit-talk/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/submit-talk/*.html" ]
+
+[functions.review-talk-submission]
+enabled = true
+verify_jwt = true
+import_map = "./functions/review-talk-submission/deno.json"
+entrypoint = "./functions/review-talk-submission/index.ts"

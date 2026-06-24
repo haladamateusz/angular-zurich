@@ -1,4 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
+import postgres from 'postgres';
+import {
+  getSiteUrl,
+  sendTalkReviewEmail,
+  type TalkReviewEmailAction,
+} from '../_shared/talk-review-email.ts';
 
 type ReviewAction = 'approve' | 'request_changes' | 'reject';
 
@@ -18,6 +24,16 @@ interface ReviewResult {
 interface SubmissionAssetSummary {
   speaker_picture_path: string | null;
 }
+
+interface SubmissionNotificationSummary {
+  talk_title: string;
+  speaker_name: string;
+  speaker_email: string;
+}
+
+const sql = postgres(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '', {
+  prepare: false,
+});
 
 type JsonRecord = Record<string, unknown>;
 
@@ -176,6 +192,52 @@ async function promoteSpeakerImage(
   return data.publicUrl;
 }
 
+async function getSubmissionNotificationSummary(
+  submissionId: string,
+): Promise<SubmissionNotificationSummary | null> {
+  const rows = await sql<SubmissionNotificationSummary[]>`
+    select
+      talk_title,
+      speaker_name,
+      speaker_email
+    from submissions.talk_submissions
+    where id = ${submissionId}::uuid
+    limit 1
+  `;
+
+  return rows[0] ?? null;
+}
+
+async function notifySpeakerAboutReview(
+  action: TalkReviewEmailAction,
+  submissionId: string,
+  organizerMessage: string | null,
+): Promise<void> {
+  const siteUrl = getSiteUrl();
+
+  if (!siteUrl) {
+    console.warn('talk-review-email skipped: TALK_SUBMISSIONS_SITE_URL is not configured');
+    return;
+  }
+
+  const submission = await getSubmissionNotificationSummary(submissionId);
+
+  if (!submission) {
+    console.warn('talk-review-email skipped: submission not found', submissionId);
+    return;
+  }
+
+  await sendTalkReviewEmail({
+    action,
+    submissionId,
+    talkTitle: submission.talk_title,
+    speakerName: submission.speaker_name,
+    speakerEmail: submission.speaker_email,
+    organizerMessage,
+    siteUrl,
+  });
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin');
   const corsHeaders = getCorsHeaders(origin);
@@ -259,6 +321,20 @@ Deno.serve(async (req) => {
 
     if (!reviewResult) {
       return jsonResponse(500, { error: 'review_result_missing' }, corsHeaders);
+    }
+
+    try {
+      await notifySpeakerAboutReview(
+        body.action,
+        body.submissionId,
+        body.message ?? null,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('talk-review-email failed', error.message, error.stack);
+      } else {
+        console.error('talk-review-email failed', error);
+      }
     }
 
     return jsonResponse(
