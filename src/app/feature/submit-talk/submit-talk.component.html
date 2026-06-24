@@ -45,7 +45,7 @@
                 formControlName="talkTitle"
                 autocomplete="off"
                 placeholder="Example: Modern Angular debugging workflows"
-                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('talkTitle')"
               />
               <div class="field-error-slot" aria-live="polite">
@@ -69,7 +69,7 @@
                 formControlName="talkDescription"
                 rows="8"
                 placeholder="What problem does the talk address, what will the audience learn, and why is it worth attending?"
-                class="w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('talkDescription')"
               ></textarea>
               <div class="field-error-slot" aria-live="polite">
@@ -89,7 +89,7 @@
                 formControlName="slidesLink"
                 autocomplete="url"
                 placeholder="https://speakerdeck.com/you/your-talk"
-                class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('slidesLink')"
               />
               <div class="field-error-slot" aria-live="polite">
@@ -133,7 +133,7 @@
                     formControlName="speakerName"
                     autocomplete="name"
                     placeholder="Your full name"
-                    class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('speakerName')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -151,7 +151,7 @@
                     formControlName="speakerLabel"
                     autocomplete="off"
                     placeholder="Architect, GDE, Consultant"
-                    class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('speakerLabel')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -172,7 +172,7 @@
                   formControlName="emailAddress"
                   autocomplete="email"
                   placeholder="you@example.com"
-                class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('emailAddress')"
               />
                 <div class="field-error-slot" aria-live="polite">
@@ -194,7 +194,7 @@
                   formControlName="speakerBio"
                   rows="6"
                   placeholder="Tell us about your background, what you work on, and why you are the right person to give this talk."
-                  class="speaker-card__input speaker-card__bio-textarea w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                  class="speaker-card__input speaker-card__bio-textarea mt-2 w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                   [attr.aria-invalid]="fieldHasError('speakerBio')"
                 ></textarea>
                 <div class="field-error-slot" aria-live="polite">
@@ -216,7 +216,7 @@
                       formControlName="personalUrl"
                       autocomplete="url"
                       placeholder="https://your-site.dev"
-                      class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('personalUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -236,7 +236,7 @@
                       formControlName="twitterUrl"
                       autocomplete="url"
                       placeholder="https://x.com/your-handle"
-                      class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('twitterUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -258,7 +258,7 @@
                       formControlName="linkedinUrl"
                       autocomplete="url"
                       placeholder="https://www.linkedin.com/in/you"
-                      class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('linkedinUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -278,7 +278,7 @@
                       formControlName="githubUrl"
                       autocomplete="url"
                       placeholder="https://github.com/your-handle"
-                      class="speaker-card__input w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('githubUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
