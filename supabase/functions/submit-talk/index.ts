@@ -399,7 +399,7 @@ Deno.serve(async (req) => {
     const normalizedPayload: TalkSubmissionPayload = {
       talkTitle: normalizeText(payload.talkTitle ?? '', TALK_TITLE_MAX_LENGTH),
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
-      slidesLink: normalizeOptionalUrl(payload.slidesLink, SLIDES_LINK_MAX_LENGTH) ?? undefined,
+      slidesLink: normalizeOptionalUrl(payload.slidesLink, SLIDES_LINK_MAX_LENGTH) ?? '',
       speakerName: normalizeText(payload.speakerName ?? '', SPEAKER_NAME_MAX_LENGTH),
       speakerLabel: normalizeOptionalText(payload.speakerLabel, SPEAKER_LABEL_MAX_LENGTH) ?? undefined,
       emailAddress: normalizeText(payload.emailAddress ?? '', EMAIL_ADDRESS_MAX_LENGTH).toLowerCase(),
