@@ -2,6 +2,53 @@
   <section>
     <p class="text-sm font-semibold uppercase tracking-[0.24em] text-primary">Talk submissions</p>
 
+    <form class="dashboard-filters mt-6" aria-label="Filter talk submissions" (submit)="$event.preventDefault()">
+      <label class="dashboard-filters__field">
+        <span class="dashboard-filters__label">Title</span>
+        <input
+          type="search"
+          class="dashboard-filters__control"
+          placeholder="Filter by title"
+          [value]="titleFilter()"
+          (input)="updateTitleFilter($event)"
+        />
+      </label>
+
+      <label class="dashboard-filters__field">
+        <span class="dashboard-filters__label">Author</span>
+        <input
+          type="search"
+          class="dashboard-filters__control"
+          placeholder="Filter by author"
+          [value]="authorFilter()"
+          (input)="updateAuthorFilter($event)"
+        />
+      </label>
+
+      <label class="dashboard-filters__field dashboard-filters__field--status">
+        <span class="dashboard-filters__label">Status</span>
+        <select
+          class="dashboard-filters__control dashboard-filters__select"
+          [value]="statusFilter()"
+          (change)="updateStatusFilter($event)"
+        >
+          <option value="">All statuses</option>
+          @for (status of statusFilterOptions; track status) {
+            <option [value]="status">{{ formatStatus(status) }}</option>
+          }
+        </select>
+      </label>
+
+      <button
+        type="button"
+        class="dashboard-filters__clear"
+        [disabled]="!hasActiveFilters()"
+        (click)="clearFilters()"
+      >
+        Clear
+      </button>
+    </form>
+
     @if (errorMessage()) {
       <div
         class="mt-6 rounded-2xl border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
@@ -82,7 +129,7 @@
       </div>
     } @else if (!hasSubmissions()) {
       <div class="mt-6 rounded-2xl border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70">
-        No talk submissions yet.
+        {{ hasActiveFilters() ? 'No matching talk submissions.' : 'No talk submissions yet.' }}
       </div>
     } @else {
       <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background">

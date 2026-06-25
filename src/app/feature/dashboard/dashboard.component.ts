@@ -1,5 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  type WritableSignal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import {
@@ -13,7 +20,17 @@ import {
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
 type SortDirection = 'asc' | 'desc';
+type StatusFilter = TalkSubmissionStatus | '';
 const SUBMISSIONS_PAGE_SIZE = 5;
+const TALK_SUBMISSION_STATUSES: readonly TalkSubmissionStatus[] = [
+  'initially_submitted',
+  'approved',
+  'assigned_to_event',
+  'changes_requested',
+  'rejected',
+  'adjusted',
+  'changes_submitted',
+];
 
 interface DashboardTalkSubmission extends OrganizerTalkSubmission {
   speakerInitials: string;
@@ -38,12 +55,19 @@ export class DashboardComponent {
   protected readonly sortColumn = signal<SortColumn>('dateSent');
   protected readonly sortDirection = signal<SortDirection>('desc');
   protected readonly currentPage = signal(1);
+  protected readonly titleFilter = signal('');
+  protected readonly authorFilter = signal('');
+  protected readonly statusFilter = signal<StatusFilter>('');
   private latestLoadId = 0;
 
+  protected readonly statusFilterOptions = TALK_SUBMISSION_STATUSES;
   protected readonly displayName = computed(
     () => this.authService.userProfile()?.displayName ?? 'Organizer',
   );
   protected readonly hasSubmissions = computed(() => this.submissions().length > 0);
+  protected readonly hasActiveFilters = computed(() =>
+    Boolean(this.titleFilter().trim() || this.authorFilter().trim() || this.statusFilter()),
+  );
   protected readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.totalSubmissionCount() / SUBMISSIONS_PAGE_SIZE)),
   );
@@ -126,6 +150,35 @@ export class DashboardComponent {
     void this.loadTalkSubmissions();
   }
 
+  protected updateTitleFilter(event: Event): void {
+    this.updateFilter(this.titleFilter, this.getControlValue(event));
+  }
+
+  protected updateAuthorFilter(event: Event): void {
+    this.updateFilter(this.authorFilter, this.getControlValue(event));
+  }
+
+  protected updateStatusFilter(event: Event): void {
+    const value = this.getControlValue(event);
+    const status = TALK_SUBMISSION_STATUSES.includes(value as TalkSubmissionStatus)
+      ? (value as TalkSubmissionStatus)
+      : '';
+
+    this.updateFilter(this.statusFilter, status);
+  }
+
+  protected clearFilters(): void {
+    if (!this.hasActiveFilters()) {
+      return;
+    }
+
+    this.titleFilter.set('');
+    this.authorFilter.set('');
+    this.statusFilter.set('');
+    this.currentPage.set(1);
+    void this.loadTalkSubmissions();
+  }
+
   private getSortColumn(column: SortColumn): OrganizerTalkSubmissionSortColumn {
     switch (column) {
       case 'title':
@@ -150,6 +203,11 @@ export class DashboardComponent {
       pageSize: SUBMISSIONS_PAGE_SIZE,
       sortColumn: this.getSortColumn(this.sortColumn()),
       sortDirection: this.sortDirection(),
+      filters: {
+        author: this.authorFilter(),
+        status: this.statusFilter() || undefined,
+        title: this.titleFilter(),
+      },
     });
 
     if (loadId !== this.latestLoadId) {
@@ -190,5 +248,23 @@ export class DashboardComponent {
     const initials = `${firstName?.charAt(0) ?? ''}${secondName?.charAt(0) ?? ''}`;
 
     return initials ? initials.toUpperCase() : '?';
+  }
+
+  private getControlValue(event: Event): string {
+    const target = event.target;
+
+    return target instanceof HTMLInputElement || target instanceof HTMLSelectElement
+      ? target.value
+      : '';
+  }
+
+  private updateFilter<T extends string>(filter: WritableSignal<T>, value: T): void {
+    if (value === filter()) {
+      return;
+    }
+
+    filter.set(value);
+    this.currentPage.set(1);
+    void this.loadTalkSubmissions();
   }
 }

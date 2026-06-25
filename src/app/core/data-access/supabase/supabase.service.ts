@@ -7,6 +7,7 @@ import {
   OrganizerTalkSubmission,
   OrganizerTalkSubmissionDetail,
   OrganizerTalkSubmissionStatusEvent,
+  TalkSubmissionStatus,
   TalkSubmissionReviewAction,
 } from '../../models/organizer-talk-submission.interface';
 import { Person } from '../../models/person.interface';
@@ -44,6 +45,11 @@ export interface OrganizerTalkSubmissionListOptions {
   pageSize: number;
   sortColumn: OrganizerTalkSubmissionSortColumn;
   sortDirection: 'asc' | 'desc';
+  filters?: {
+    author?: string;
+    status?: TalkSubmissionStatus;
+    title?: string;
+  };
 }
 
 @Service()
@@ -271,12 +277,29 @@ export class SupabaseService {
     const from = Math.max(0, options.page - 1) * options.pageSize;
     const to = from + options.pageSize - 1;
 
-    return this.supabase
+    let query = this.supabase
       .from('organizer_talk_submissions')
       .select(
         'id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path',
         { count: 'exact' },
-      )
+      );
+
+    const titleFilter = options.filters?.title?.trim();
+    const authorFilter = options.filters?.author?.trim();
+
+    if (titleFilter) {
+      query = query.ilike('talk_title', `%${titleFilter}%`);
+    }
+
+    if (authorFilter) {
+      query = query.ilike('speaker_name', `%${authorFilter}%`);
+    }
+
+    if (options.filters?.status) {
+      query = query.eq('status', options.filters.status);
+    }
+
+    return query
       .order(options.sortColumn, { ascending: options.sortDirection === 'asc' })
       .range(from, to);
   }

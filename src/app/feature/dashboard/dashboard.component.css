@@ -2,6 +2,81 @@
   display: block;
 }
 
+.dashboard-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(12rem, 0.72fr) auto;
+  align-items: end;
+  gap: 0.85rem;
+}
+
+.dashboard-filters__field {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.dashboard-filters__label {
+  color: color-mix(in srgb, var(--color-foreground) 54%, transparent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.dashboard-filters__control,
+.dashboard-filters__clear {
+  min-height: 2.55rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--color-background) 92%, transparent);
+  color: var(--color-foreground);
+  font-size: 0.9rem;
+  font-weight: 600;
+  outline: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.dashboard-filters__control {
+  width: 100%;
+  padding: 0 0.85rem;
+}
+
+.dashboard-filters__control::placeholder {
+  color: color-mix(in srgb, var(--color-foreground) 42%, transparent);
+}
+
+.dashboard-filters__select {
+  appearance: auto;
+}
+
+.dashboard-filters__control:hover,
+.dashboard-filters__control:focus,
+.dashboard-filters__clear:not(:disabled):hover,
+.dashboard-filters__clear:not(:disabled):focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 42%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-background) 92%);
+}
+
+.dashboard-filters__control:focus,
+.dashboard-filters__clear:not(:disabled):focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.dashboard-filters__clear {
+  padding: 0 1rem;
+  color: color-mix(in srgb, var(--color-primary) 80%, var(--color-foreground) 20%);
+}
+
+.dashboard-filters__clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .dashboard-table {
   table-layout: fixed;
   width: 100%;
@@ -357,6 +432,14 @@
 }
 
 @media (max-width: 767px) {
+  .dashboard-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-filters__clear {
+    justify-self: flex-start;
+  }
+
   .dashboard-table__heading,
   .dashboard-table__cell {
     padding-left: 0.9rem;
