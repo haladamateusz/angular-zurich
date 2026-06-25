@@ -13,20 +13,27 @@
     } @else if (isLoading()) {
       <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background" role="status" aria-busy="true">
         <div class="overflow-x-auto" aria-hidden="true">
-          <table class="min-w-full divide-y divide-navbar-line">
+          <table class="dashboard-table min-w-full divide-y divide-navbar-line">
+            <colgroup>
+              <col class="dashboard-table__col-title" />
+              <col class="dashboard-table__col-author" />
+              <col class="dashboard-table__col-date" />
+              <col class="dashboard-table__col-status" />
+              <col class="dashboard-table__col-details" />
+            </colgroup>
             <thead>
               <tr class="bg-card/70">
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--heading-title"></div>
+                </th>
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--heading-author"></div>
+                </th>
+                <th class="dashboard-table__heading">
+                  <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--heading-date"></div>
+                </th>
                 <th class="dashboard-table__heading dashboard-table__heading--status">
-                  <div class="app-skeleton h-4 w-24"></div>
-                </th>
-                <th class="dashboard-table__heading">
-                  <div class="app-skeleton h-4 w-28"></div>
-                </th>
-                <th class="dashboard-table__heading">
-                  <div class="app-skeleton h-4 w-40"></div>
-                </th>
-                <th class="dashboard-table__heading">
-                  <div class="app-skeleton h-4 w-24"></div>
+                  <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--heading-status"></div>
                 </th>
                 <th class="dashboard-table__heading dashboard-table__heading--details">
                   <div class="sr-only">Details</div>
@@ -37,30 +44,39 @@
               @for (row of [1, 2, 3, 4, 5]; track row) {
                 <tr class="dashboard-table__row">
                   <td class="dashboard-table__cell dashboard-table__cell--title">
-                    <div class="app-skeleton h-5 w-56 max-w-full rounded-lg"></div>
+                    <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--title"></div>
                   </td>
                   <td class="dashboard-table__cell">
                     <div class="dashboard-table__author-cell">
-                      <div class="app-skeleton size-12 rounded-[0.85rem]"></div>
-                      <div class="dashboard-table__author-copy space-y-2">
-                        <div class="app-skeleton h-5 w-36 rounded-lg"></div>
-                        <div class="app-skeleton h-4 w-52 max-w-full"></div>
+                      <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--avatar"></div>
+                      <div class="dashboard-table__author-copy dashboard-table__skeleton-author-copy">
+                        <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--author-name"></div>
+                        <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--author-label"></div>
                       </div>
                     </div>
                   </td>
                   <td class="dashboard-table__cell whitespace-nowrap">
-                    <div class="app-skeleton h-5 w-40"></div>
+                    <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--date"></div>
                   </td>
                   <td class="dashboard-table__cell dashboard-table__cell--status">
-                    <div class="app-skeleton h-10 w-44"></div>
+                    <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--status"></div>
                   </td>
                   <td class="dashboard-table__cell dashboard-table__cell--details">
-                    <div class="app-skeleton ml-auto size-9 rounded-xl"></div>
+                    <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--details"></div>
                   </td>
                 </tr>
               }
             </tbody>
           </table>
+        </div>
+        <div class="dashboard-table__pagination dashboard-table__pagination--loading" aria-hidden="true">
+          <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--pagination-summary"></div>
+          <div class="dashboard-table__pagination-controls">
+            <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--pagination-button"></div>
+            <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--pagination-page"></div>
+            <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--pagination-page"></div>
+            <div class="app-skeleton dashboard-table__skeleton dashboard-table__skeleton--pagination-button"></div>
+          </div>
         </div>
         <span class="sr-only">Loading talk submissions…</span>
       </div>
@@ -71,7 +87,14 @@
     } @else {
       <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background">
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-navbar-line">
+          <table class="dashboard-table min-w-full divide-y divide-navbar-line">
+          <colgroup>
+            <col class="dashboard-table__col-title" />
+            <col class="dashboard-table__col-author" />
+            <col class="dashboard-table__col-date" />
+            <col class="dashboard-table__col-status" />
+            <col class="dashboard-table__col-details" />
+          </colgroup>
           <thead>
             <tr class="bg-card/70">
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('title')">
@@ -176,12 +199,12 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-navbar-line">
-            @for (submission of sortedSubmissions(); track submission.id) {
+            @for (submission of submissions(); track submission.id) {
               <tr class="dashboard-table__row">
                 <td class="dashboard-table__cell dashboard-table__cell--title">
                   <p class="dashboard-table__title">{{ submission.talk_title }}</p>
                 </td>
-                <td class="dashboard-table__cell dashboard-table__cell--status">
+                <td class="dashboard-table__cell">
                   <div class="dashboard-table__author-cell">
                     <div class="dashboard-table__author-avatar" aria-hidden="true">
                       @if (submission.speakerPictureUrl) {
@@ -206,7 +229,7 @@
                 <td class="dashboard-table__cell whitespace-nowrap">
                   {{ submission.created_at | date: 'd MMM yyyy, HH:mm' }}
                 </td>
-                <td class="dashboard-table__cell">
+                <td class="dashboard-table__cell dashboard-table__cell--status">
                   <span
                     class="dashboard-status"
                     [class.dashboard-status--submitted]="submission.status === 'initially_submitted'"
@@ -235,6 +258,48 @@
             }
           </tbody>
         </table>
+        </div>
+        <div class="dashboard-table__pagination" aria-label="Talk submissions pagination">
+          <p class="dashboard-table__pagination-summary">
+            Showing {{ currentPageStart() }}-{{ currentPageEnd() }} of {{ totalSubmissionCount() }}
+          </p>
+
+          @if (totalPages() > 1) {
+            <nav class="dashboard-table__pagination-controls" aria-label="Talk submissions pages">
+              <button
+                type="button"
+                class="dashboard-table__pagination-button"
+                [disabled]="currentPage() === 1"
+                (click)="goToPreviousPage()"
+              >
+                Previous
+              </button>
+
+              <div class="dashboard-table__pagination-pages">
+                @for (page of pageNumbers(); track page) {
+                  <button
+                    type="button"
+                    class="dashboard-table__pagination-page"
+                    [class.dashboard-table__pagination-page--active]="page === currentPage()"
+                    [attr.aria-current]="page === currentPage() ? 'page' : null"
+                    [attr.aria-label]="'Go to page ' + page"
+                    (click)="goToPage(page)"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              </div>
+
+              <button
+                type="button"
+                class="dashboard-table__pagination-button"
+                [disabled]="currentPage() === totalPages()"
+                (click)="goToNextPage()"
+              >
+                Next
+              </button>
+            </nav>
+          }
         </div>
       </div>
     }

@@ -33,6 +33,19 @@ interface ReviewTalkSubmissionResult {
   speaker_picture_url: string | null;
 }
 
+export type OrganizerTalkSubmissionSortColumn =
+  | 'created_at'
+  | 'speaker_name'
+  | 'status'
+  | 'talk_title';
+
+export interface OrganizerTalkSubmissionListOptions {
+  page: number;
+  pageSize: number;
+  sortColumn: OrganizerTalkSubmissionSortColumn;
+  sortDirection: 'asc' | 'desc';
+}
+
 @Service()
 export class SupabaseService {
   private readonly authService = inject(AuthService);
@@ -248,15 +261,24 @@ export class SupabaseService {
       .order('title', { ascending: true });
   }
 
-  async getOrganizerTalkSubmissions(): Promise<PostgrestResponse<OrganizerTalkSubmission>> {
+  async getOrganizerTalkSubmissions(
+    options: OrganizerTalkSubmissionListOptions,
+  ): Promise<PostgrestResponse<OrganizerTalkSubmission>> {
     if (this.supabase === null) {
       return this.createEmptyListResponse<OrganizerTalkSubmission>([]);
     }
 
+    const from = Math.max(0, options.page - 1) * options.pageSize;
+    const to = from + options.pageSize - 1;
+
     return this.supabase
       .from('organizer_talk_submissions')
-      .select('id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path')
-      .order('created_at', { ascending: false });
+      .select(
+        'id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path',
+        { count: 'exact' },
+      )
+      .order(options.sortColumn, { ascending: options.sortDirection === 'asc' })
+      .range(from, to);
   }
 
   async getOrganizerTalkSubmissionById(

@@ -2,7 +2,10 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
-import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import {
+  OrganizerTalkSubmissionSortColumn,
+  SupabaseService,
+} from '../../core/data-access/supabase/supabase.service';
 import {
   OrganizerTalkSubmission,
   TalkSubmissionStatus,
@@ -10,6 +13,7 @@ import {
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
 type SortDirection = 'asc' | 'desc';
+const SUBMISSIONS_PAGE_SIZE = 5;
 
 interface DashboardTalkSubmission extends OrganizerTalkSubmission {
   speakerInitials: string;
@@ -30,22 +34,33 @@ export class DashboardComponent {
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
   protected readonly submissions = signal<DashboardTalkSubmission[]>([]);
+  protected readonly totalSubmissionCount = signal(0);
   protected readonly sortColumn = signal<SortColumn>('dateSent');
   protected readonly sortDirection = signal<SortDirection>('desc');
+  protected readonly currentPage = signal(1);
+  private latestLoadId = 0;
 
   protected readonly displayName = computed(
     () => this.authService.userProfile()?.displayName ?? 'Organizer',
   );
   protected readonly hasSubmissions = computed(() => this.submissions().length > 0);
-  protected readonly sortedSubmissions = computed(() => {
-    const direction = this.sortDirection() === 'asc' ? 1 : -1;
+  protected readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.totalSubmissionCount() / SUBMISSIONS_PAGE_SIZE)),
+  );
+  protected readonly pageNumbers = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, index) => index + 1),
+  );
+  protected readonly paginatedSubmissions = computed(() => this.submissions());
+  protected readonly currentPageStart = computed(() => {
+    if (!this.totalSubmissionCount()) {
+      return 0;
+    }
 
-    return [...this.submissions()].sort((left, right) => {
-      const comparison = this.compareSubmissions(left, right, this.sortColumn());
-
-      return comparison * direction;
-    });
+    return (this.currentPage() - 1) * SUBMISSIONS_PAGE_SIZE + 1;
   });
+  protected readonly currentPageEnd = computed(() =>
+    Math.min(this.currentPage() * SUBMISSIONS_PAGE_SIZE, this.totalSubmissionCount()),
+  );
 
   constructor() {
     void this.loadTalkSubmissions();
@@ -73,11 +88,15 @@ export class DashboardComponent {
   protected toggleSort(column: SortColumn): void {
     if (this.sortColumn() === column) {
       this.sortDirection.update((direction) => (direction === 'asc' ? 'desc' : 'asc'));
+      this.currentPage.set(1);
+      void this.loadTalkSubmissions();
       return;
     }
 
     this.sortColumn.set(column);
     this.sortDirection.set(column === 'dateSent' ? 'desc' : 'asc');
+    this.currentPage.set(1);
+    void this.loadTalkSubmissions();
   }
 
   protected getAriaSort(column: SortColumn): 'ascending' | 'descending' | 'none' {
@@ -88,60 +107,67 @@ export class DashboardComponent {
     return this.sortDirection() === 'asc' ? 'ascending' : 'descending';
   }
 
-  private compareSubmissions(
-    left: DashboardTalkSubmission,
-    right: DashboardTalkSubmission,
-    column: SortColumn,
-  ): number {
-    switch (column) {
-      case 'title':
-        return left.talk_title.localeCompare(right.talk_title, undefined, { sensitivity: 'base' });
-      case 'author':
-        return left.speaker_name.localeCompare(right.speaker_name, undefined, {
-          sensitivity: 'base',
-        });
-      case 'dateSent':
-        return new Date(left.created_at).getTime() - new Date(right.created_at).getTime();
-      case 'status':
-        return this.getStatusSortValue(left.status) - this.getStatusSortValue(right.status);
-    }
+  protected goToPreviousPage(): void {
+    this.goToPage(this.currentPage() - 1);
   }
 
-  private getStatusSortValue(status: TalkSubmissionStatus): number {
-    switch (status) {
-      case 'initially_submitted':
-        return 0;
-      case 'adjusted':
-        return 1;
-      case 'changes_requested':
-        return 2;
-      case 'changes_submitted':
-        return 3;
-      case 'approved':
-        return 4;
-      case 'assigned_to_event':
-        return 5;
-      case 'rejected':
-        return 6;
+  protected goToNextPage(): void {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  protected goToPage(page: number): void {
+    const nextPage = Math.min(this.totalPages(), Math.max(1, page));
+
+    if (nextPage === this.currentPage()) {
+      return;
+    }
+
+    this.currentPage.set(nextPage);
+    void this.loadTalkSubmissions();
+  }
+
+  private getSortColumn(column: SortColumn): OrganizerTalkSubmissionSortColumn {
+    switch (column) {
+      case 'title':
+        return 'talk_title';
+      case 'author':
+        return 'speaker_name';
+      case 'dateSent':
+        return 'created_at';
+      case 'status':
+        return 'status';
     }
   }
 
   private async loadTalkSubmissions(): Promise<void> {
+    const loadId = this.latestLoadId + 1;
+    this.latestLoadId = loadId;
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const { data, error } = await this.supabaseService.getOrganizerTalkSubmissions();
+    const { count, data, error } = await this.supabaseService.getOrganizerTalkSubmissions({
+      page: this.currentPage(),
+      pageSize: SUBMISSIONS_PAGE_SIZE,
+      sortColumn: this.getSortColumn(this.sortColumn()),
+      sortDirection: this.sortDirection(),
+    });
+
+    if (loadId !== this.latestLoadId) {
+      return;
+    }
 
     if (error) {
       this.errorMessage.set(
         'We could not load talk submissions right now. Please refresh and try again.',
       );
       this.submissions.set([]);
+      this.totalSubmissionCount.set(0);
       this.isLoading.set(false);
       return;
     }
 
     this.submissions.set(await this.createDashboardSubmissions(data ?? []));
+    this.totalSubmissionCount.set(count ?? data?.length ?? 0);
     this.isLoading.set(false);
   }
 

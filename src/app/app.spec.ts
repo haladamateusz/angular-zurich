@@ -225,14 +225,14 @@ describe('App', () => {
 
     await router.navigateByUrl('/dashboard');
     fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(router.url).toBe('/dashboard');
-    expect(router.url).toBe('/dashboard');
-    expect(compiled.textContent).toContain('Talk submissions');
-    expect(compiled.textContent).toContain('No talk submissions yet.');
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(compiled.textContent).toContain('Talk submissions');
+      expect(compiled.textContent).toContain('No talk submissions yet.');
+    });
   });
 });
