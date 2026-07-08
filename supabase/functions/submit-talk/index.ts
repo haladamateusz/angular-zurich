@@ -557,6 +557,41 @@ Deno.serve(async (req) => {
       }
     }
 
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')?.trim();
+      const notifySecret = Deno.env.get('TALK_SUBMISSIONS_NOTIFY_WEBHOOK_SECRET')?.trim();
+
+      if (supabaseUrl && notifySecret) {
+        const response = await fetch(
+          `${supabaseUrl}/functions/v1/notify-talk-submission-recipients`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${notifySecret}`,
+            },
+            body: JSON.stringify({
+              submissionId,
+              talkTitle: normalizedPayload.talkTitle,
+              speakerName: normalizedPayload.speakerName,
+              speakerEmail: normalizedPayload.emailAddress,
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`notify-recipients failed:${response.status}:${text}`);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('talk-submission-organizers-notify failed', error.message, error.stack);
+      } else {
+        console.error('talk-submission-organizers-notify failed', error);
+      }
+    }
+
     return jsonResponse(
       201,
       {
