@@ -436,12 +436,6 @@ verify_jwt = true
 import_map = "./functions/review-talk-submission/deno.json"
 entrypoint = "./functions/review-talk-submission/index.ts"
 
-[functions.notify-talk-submission-recipients]
-enabled = true
-verify_jwt = false
-import_map = "./functions/notify-talk-submission-recipients/deno.json"
-entrypoint = "./functions/notify-talk-submission-recipients/index.ts"
-
 [functions.create-event]
 enabled = true
 verify_jwt = true

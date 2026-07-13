@@ -5,6 +5,10 @@ import {
   getSiteUrl,
   sendTalkSubmissionReceivedEmail,
 } from '../_shared/talk-review-email.ts';
+import {
+  sendTalkSubmissionToOrganizersEmail,
+  type TalkSubmissionOrganizerNotification,
+} from '../_shared/talk-submission-notify-organizers.ts';
 
 type TalkSubmissionPayload = {
   talkTitle: string;
@@ -23,6 +27,11 @@ type TalkSubmissionPayload = {
 };
 
 type JsonRecord = Record<string, unknown>;
+
+interface OrganizerNotificationResult {
+  notified: number;
+  failed: number;
+}
 
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:4200',
@@ -62,6 +71,47 @@ const supabaseServiceKey = SUPABASE_SECRET_KEYS
 const supabaseAdmin = Deno.env.get('SUPABASE_URL') && supabaseServiceKey
   ? createClient(Deno.env.get('SUPABASE_URL')!, supabaseServiceKey)
   : null;
+
+async function getActiveOrganizerEmails(): Promise<string[]> {
+  const rows = await sql<{ email: string }[]>`
+    select email
+    from private.allowed_google_accounts
+    where active = true
+    order by email
+  `;
+
+  return rows.map((row) => row.email);
+}
+
+async function notifyOrganizers(
+  context: TalkSubmissionOrganizerNotification,
+): Promise<OrganizerNotificationResult> {
+  const recipients = await getActiveOrganizerEmails();
+  let notified = 0;
+  let failed = 0;
+
+  if (recipients.length === 0) {
+    console.warn('talk-submission-organizers-email skipped: no active organizer emails found');
+    return { notified, failed };
+  }
+
+  for (const recipient of recipients) {
+    try {
+      await sendTalkSubmissionToOrganizersEmail(recipient, context);
+      notified += 1;
+    } catch (error) {
+      failed += 1;
+
+      if (error instanceof Error) {
+        console.error('talk-submission-organizers-email failed', error.message, error.stack);
+      } else {
+        console.error('talk-submission-organizers-email failed', error);
+      }
+    }
+  }
+
+  return { notified, failed };
+}
 
 function jsonResponse(
   status: number,
@@ -558,31 +608,18 @@ Deno.serve(async (req) => {
     }
 
     try {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')?.trim();
-      const notifySecret = Deno.env.get('TALK_SUBMISSIONS_NOTIFY_WEBHOOK_SECRET')?.trim();
+      const organizerNotificationResult = await notifyOrganizers({
+        submissionId,
+        talkTitle: normalizedPayload.talkTitle,
+        speakerName: normalizedPayload.speakerName,
+        speakerEmail: normalizedPayload.emailAddress,
+      });
 
-      if (supabaseUrl && notifySecret) {
-        const response = await fetch(
-          `${supabaseUrl}/functions/v1/notify-talk-submission-recipients`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${notifySecret}`,
-            },
-            body: JSON.stringify({
-              submissionId,
-              talkTitle: normalizedPayload.talkTitle,
-              speakerName: normalizedPayload.speakerName,
-              speakerEmail: normalizedPayload.emailAddress,
-            }),
-          },
+      if (organizerNotificationResult.failed > 0) {
+        console.error(
+          'talk-submission-organizers-notify partially failed',
+          organizerNotificationResult,
         );
-
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`notify-recipients failed:${response.status}:${text}`);
-        }
       }
     } catch (error) {
       if (error instanceof Error) {
