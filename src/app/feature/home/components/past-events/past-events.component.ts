@@ -1,6 +1,6 @@
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 
 interface PastEventCard {
@@ -22,8 +22,7 @@ interface PastEventCard {
   selector: 'app-past-events',
   imports: [DatePipe, RouterLink],
   templateUrl: './past-events.component.html',
-  styleUrl: './past-events.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './past-events.component.css'
 })
 export class PastEventsComponent {
   readonly events = input.required<Event[]>();

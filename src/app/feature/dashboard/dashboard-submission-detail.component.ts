@@ -1,5 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import {
@@ -22,8 +27,7 @@ type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
   selector: 'app-dashboard-submission-detail',
   imports: [DatePipe],
   templateUrl: './dashboard-submission-detail.component.html',
-  styleUrl: './dashboard-submission-detail.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './dashboard-submission-detail.component.css'
 })
 export class DashboardSubmissionDetailComponent {
   private readonly route = inject(ActivatedRoute);

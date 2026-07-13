@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { SupabaseService } from '../../../../core/data-access/supabase/supabase.service';
 
 interface Stat {
@@ -10,8 +10,7 @@ interface Stat {
   selector: 'app-stats',
   imports: [],
   templateUrl: './stats.component.html',
-  styleUrl: './stats.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './stats.component.css'
 })
 export class StatsComponent implements OnInit {
   private readonly supabaseService = inject(SupabaseService);

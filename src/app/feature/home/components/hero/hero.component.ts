@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
 import { NavbarDateFormatPipe } from '../../../../core/pipes/date-format/navbar-date-format.pipe';
@@ -7,8 +7,7 @@ import { NavbarDateFormatPipe } from '../../../../core/pipes/date-format/navbar-
   selector: 'app-hero',
   imports: [NavbarDateFormatPipe],
   templateUrl: './hero.component.html',
-  styleUrl: './hero.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './hero.component.css'
 })
 export class HeroComponent {
   readonly sponsors = input.required<Sponsor[]>();

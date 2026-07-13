@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 import { splitTextIntoParagraphs } from '../../../../core/utils/split-text-into-paragraphs';
 
@@ -6,8 +6,7 @@ import { splitTextIntoParagraphs } from '../../../../core/utils/split-text-into-
   selector: 'app-upcoming-talks',
   imports: [],
   templateUrl: './upcoming-talks.component.html',
-  styleUrl: './upcoming-talks.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './upcoming-talks.component.css'
 })
 export class UpcomingTalksComponent {
   readonly talks = input.required<Event['talks']>();

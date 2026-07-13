@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -77,8 +76,7 @@ let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
   selector: 'app-submit-talk',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './submit-talk.component.html',
-  styleUrl: './submit-talk.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './submit-talk.component.css'
 })
 export class SubmitTalkComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, resource } from '@angular/core';
+import { Component, computed, inject, resource } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
 import { PastEventsComponent } from './components/past-events/past-events.component';
 import { PartnersComponent } from './components/partners/partners.component';
@@ -34,8 +34,7 @@ const EMPTY_SPONSORS: Sponsor[] = [];
   selector: 'app-home',
   imports: [HeroComponent, UpcomingTalksComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './home.component.css'
 })
 export class HomeComponent {
   private readonly supabaseService = inject(SupabaseService);

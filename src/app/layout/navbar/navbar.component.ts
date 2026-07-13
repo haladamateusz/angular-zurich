@@ -1,7 +1,6 @@
 import { DOCUMENT, NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  ChangeDetectionStrategy,
   Component,
   ElementRef,
   effect,
@@ -19,7 +18,6 @@ import { ThemeService } from '../../core/theme/theme.service';
   imports: [NgClass, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {
   private readonly guestMenuAnimationDurationMs = 360;

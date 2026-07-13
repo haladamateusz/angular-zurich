@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   PLATFORM_ID,
   afterNextRender,
@@ -29,7 +28,6 @@ import { AuthService } from '../../../core/auth/auth.service';
       </div>
     </section>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthCallbackComponent {
   private readonly authService = inject(AuthService);

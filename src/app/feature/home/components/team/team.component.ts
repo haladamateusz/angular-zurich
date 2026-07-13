@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, resource } from '@angular/core';
+import { Component, inject, resource } from '@angular/core';
 import { SupabaseService } from '../../../../core/data-access/supabase/supabase.service';
 import { Person } from '../../../../core/models/person.interface';
 
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
-  styleUrl: './team.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './team.component.css'
 })
 export class TeamComponent {
   private readonly supabaseService = inject(SupabaseService);

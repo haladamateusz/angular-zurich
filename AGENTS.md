@@ -57,7 +57,6 @@ These instructions apply to work in this repository.
 - Keep components small and focused on a single responsibility.
 - Use `input()` and `output()` functions instead of decorators.
 - Use `computed()` for derived state.
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in the `@Component` decorator.
 - Prefer inline templates for small components.
 - Prefer reactive forms instead of template-driven forms.
 - Do not use `ngClass`; use `class` bindings instead.

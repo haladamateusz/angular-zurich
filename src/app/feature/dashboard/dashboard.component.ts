@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
@@ -41,8 +40,7 @@ interface DashboardTalkSubmission extends OrganizerTalkSubmission {
   selector: 'app-dashboard',
   imports: [DatePipe, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   private readonly authService = inject(AuthService);

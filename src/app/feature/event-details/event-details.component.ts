@@ -1,6 +1,5 @@
 import { DatePipe, isPlatformBrowser } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   PLATFORM_ID,
   afterNextRender,
@@ -38,7 +37,6 @@ const EMPTY_EVENT: Event = {
   imports: [DatePipe],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventDetailsComponent {
   slug = input.required<string>();
