@@ -41,7 +41,8 @@ const MAX_LENGTHS = {
   talkTitle: 160,
   talkDescription: 6000,
   slidesLink: 500,
-  speakerName: 120,
+  speakerFirstName: 60,
+  speakerLastName: 59,
   speakerLabel: 160,
   emailAddress: 320,
   speakerBio: 4000,
@@ -116,9 +117,21 @@ export class SubmitTalkComponent {
       '',
       [Validators.required, Validators.maxLength(MAX_LENGTHS.slidesLink), Validators.pattern(SLIDES_LINK_PATTERN)],
     ],
-    speakerName: [
+    speakerFirstName: [
       '',
-      [Validators.required, Validators.minLength(2), Validators.maxLength(MAX_LENGTHS.speakerName)],
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(MAX_LENGTHS.speakerFirstName),
+      ],
+    ],
+    speakerLastName: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(MAX_LENGTHS.speakerLastName),
+      ],
     ],
     speakerLabel: ['', [Validators.maxLength(MAX_LENGTHS.speakerLabel)]],
     emailAddress: [

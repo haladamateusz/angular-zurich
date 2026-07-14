@@ -2,7 +2,8 @@ export interface TalkSubmissionPayload {
   talkTitle: string;
   talkDescription: string;
   slidesLink: string;
-  speakerName: string;
+  speakerFirstName: string;
+  speakerLastName: string;
   speakerLabel?: string;
   emailAddress: string;
   speakerBio: string;

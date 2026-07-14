@@ -14,6 +14,8 @@ type TalkSubmissionPayload = {
   talkTitle: string;
   talkDescription: string;
   slidesLink: string;
+  speakerFirstName: string;
+  speakerLastName: string;
   speakerName: string;
   speakerLabel?: string;
   emailAddress: string;
@@ -44,6 +46,8 @@ const TALK_TITLE_MAX_LENGTH = 160;
 const TALK_DESCRIPTION_MAX_LENGTH = 6000;
 const SLIDES_LINK_MAX_LENGTH = 500;
 const SPEAKER_NAME_MAX_LENGTH = 120;
+const SPEAKER_FIRST_NAME_MAX_LENGTH = 60;
+const SPEAKER_LAST_NAME_MAX_LENGTH = 59;
 const SPEAKER_LABEL_MAX_LENGTH = 160;
 const EMAIL_ADDRESS_MAX_LENGTH = 320;
 const SPEAKER_BIO_MAX_LENGTH = 4000;
@@ -206,6 +210,10 @@ function normalizeOptionalFile(file: File | null | undefined): File | null {
   return file;
 }
 
+function getSpeakerDisplayName(firstName: string, lastName: string): string {
+  return [firstName, lastName].filter((name) => name.length > 0).join(' ');
+}
+
 function isValidHttpUrl(value: string): boolean {
   try {
     const url = new URL(value);
@@ -246,6 +254,8 @@ async function parseSubmissionPayload(req: Request): Promise<TalkSubmissionPaylo
       talkTitle: String(formData.get('talkTitle') ?? ''),
       talkDescription: String(formData.get('talkDescription') ?? ''),
       slidesLink: String(formData.get('slidesLink') ?? ''),
+      speakerFirstName: String(formData.get('speakerFirstName') ?? ''),
+      speakerLastName: String(formData.get('speakerLastName') ?? ''),
       speakerName: String(formData.get('speakerName') ?? ''),
       speakerLabel: String(formData.get('speakerLabel') ?? '') || undefined,
       emailAddress: String(formData.get('emailAddress') ?? ''),
@@ -388,8 +398,12 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'slides_link_invalid';
   }
 
-  if (!payload.speakerName || payload.speakerName.trim().length < 2) {
-    return 'speaker_name_invalid';
+  if (!payload.speakerFirstName || payload.speakerFirstName.trim().length < 2) {
+    return 'speaker_first_name_invalid';
+  }
+
+  if (!payload.speakerLastName || payload.speakerLastName.trim().length < 2) {
+    return 'speaker_last_name_invalid';
   }
 
   if (!payload.emailAddress || !isValidEmail(payload.emailAddress.trim())) {
@@ -450,7 +464,9 @@ Deno.serve(async (req) => {
       talkTitle: normalizeText(payload.talkTitle ?? '', TALK_TITLE_MAX_LENGTH),
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
       slidesLink: normalizeOptionalUrl(payload.slidesLink, SLIDES_LINK_MAX_LENGTH) ?? '',
-      speakerName: normalizeText(payload.speakerName ?? '', SPEAKER_NAME_MAX_LENGTH),
+      speakerFirstName: normalizeText(payload.speakerFirstName ?? '', SPEAKER_FIRST_NAME_MAX_LENGTH),
+      speakerLastName: normalizeText(payload.speakerLastName ?? '', SPEAKER_LAST_NAME_MAX_LENGTH),
+      speakerName: '',
       speakerLabel: normalizeOptionalText(payload.speakerLabel, SPEAKER_LABEL_MAX_LENGTH) ?? undefined,
       emailAddress: normalizeText(payload.emailAddress ?? '', EMAIL_ADDRESS_MAX_LENGTH).toLowerCase(),
       speakerBio: normalizeText(payload.speakerBio ?? '', SPEAKER_BIO_MAX_LENGTH),
@@ -461,6 +477,10 @@ Deno.serve(async (req) => {
       speakerPicture: normalizeOptionalFile(payload.speakerPicture),
       captchaToken: payload.captchaToken,
     };
+    normalizedPayload.speakerName = getSpeakerDisplayName(
+      normalizedPayload.speakerFirstName,
+      normalizedPayload.speakerLastName,
+    ).slice(0, SPEAKER_NAME_MAX_LENGTH);
 
     const validationError = validatePayload(normalizedPayload);
 
@@ -553,6 +573,8 @@ Deno.serve(async (req) => {
         talk_title,
         talk_description,
         slides_url,
+        speaker_first_name,
+        speaker_last_name,
         speaker_name,
         speaker_label,
         speaker_email,
@@ -573,6 +595,8 @@ Deno.serve(async (req) => {
         ${normalizedPayload.talkTitle},
         ${normalizedPayload.talkDescription},
         ${normalizedPayload.slidesLink ?? null},
+        ${normalizedPayload.speakerFirstName},
+        ${normalizedPayload.speakerLastName},
         ${normalizedPayload.speakerName},
         ${normalizedPayload.speakerLabel ?? null},
         ${normalizedPayload.emailAddress},

@@ -124,21 +124,59 @@
 
           <div class="submission-card__body speaker-card__layout relative z-[1] mt-7 grid items-start gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]">
             <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
-              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.62fr)] md:items-start">
+              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
                 <div class="space-y-2">
-                  <label class="text-sm font-semibold text-foreground" for="speakerName">Speaker name *</label>
+                  <label class="text-sm font-semibold text-foreground" for="speakerFirstName">First name *</label>
                   <input
-                    id="speakerName"
+                    id="speakerFirstName"
                     type="text"
-                    formControlName="speakerName"
-                    autocomplete="name"
-                    placeholder="Your full name"
+                    formControlName="speakerFirstName"
+                    autocomplete="given-name"
+                    placeholder="Your first name"
                     class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                    [attr.aria-invalid]="fieldHasError('speakerName')"
+                    [attr.aria-invalid]="fieldHasError('speakerFirstName')"
                   />
                   <div class="field-error-slot" aria-live="polite">
-                    @if (fieldHasError('speakerName')) {
-                      <p class="text-sm text-destructive">Please enter your name.</p>
+                    @if (fieldHasError('speakerFirstName')) {
+                      <p class="text-sm text-destructive">Please enter your first name.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-foreground" for="speakerLastName">Last name *</label>
+                  <input
+                    id="speakerLastName"
+                    type="text"
+                    formControlName="speakerLastName"
+                    autocomplete="family-name"
+                    placeholder="Your last name"
+                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    [attr.aria-invalid]="fieldHasError('speakerLastName')"
+                  />
+                  <div class="field-error-slot" aria-live="polite">
+                    @if (fieldHasError('speakerLastName')) {
+                      <p class="text-sm text-destructive">Please enter your last name.</p>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
+                <div class="space-y-2">
+                  <label class="text-sm font-semibold text-foreground" for="emailAddress">Email address *</label>
+                  <input
+                    id="emailAddress"
+                    type="email"
+                    formControlName="emailAddress"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    [attr.aria-invalid]="fieldHasError('emailAddress')"
+                  />
+                  <div class="field-error-slot" aria-live="polite">
+                    @if (fieldHasError('emailAddress')) {
+                      <p class="text-sm text-destructive">Please enter a valid email address.</p>
                     }
                   </div>
                 </div>
@@ -161,24 +199,6 @@
                       </p>
                     }
                   </div>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <label class="text-sm font-semibold text-foreground" for="emailAddress">Email address *</label>
-                <input
-                  id="emailAddress"
-                  type="email"
-                  formControlName="emailAddress"
-                  autocomplete="email"
-                  placeholder="you@example.com"
-                class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                [attr.aria-invalid]="fieldHasError('emailAddress')"
-              />
-                <div class="field-error-slot" aria-live="polite">
-                  @if (fieldHasError('emailAddress')) {
-                    <p class="text-sm text-destructive">Please enter a valid email address.</p>
-                  }
                 </div>
               </div>
 

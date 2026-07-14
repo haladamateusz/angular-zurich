@@ -435,7 +435,8 @@ export class SupabaseService {
 
     formData.set('talkTitle', payload.talkTitle);
     formData.set('talkDescription', payload.talkDescription);
-    formData.set('speakerName', payload.speakerName);
+    formData.set('speakerFirstName', payload.speakerFirstName);
+    formData.set('speakerLastName', payload.speakerLastName);
 
     if (payload.speakerLabel?.trim()) {
       formData.set('speakerLabel', payload.speakerLabel.trim());
