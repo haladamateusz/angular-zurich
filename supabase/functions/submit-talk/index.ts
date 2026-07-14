@@ -619,6 +619,7 @@ Deno.serve(async (req) => {
       await sendTalkSubmissionReceivedEmail({
         submissionId,
         talkTitle: normalizedPayload.talkTitle,
+        speakerFirstName: normalizedPayload.speakerFirstName,
         speakerName: normalizedPayload.speakerName,
         speakerEmail: normalizedPayload.emailAddress,
         siteUrl: getSiteUrl(),

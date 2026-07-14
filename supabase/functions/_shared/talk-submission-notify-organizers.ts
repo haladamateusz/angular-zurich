@@ -26,7 +26,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
   text: string;
   html: string;
 } {
-  const subject = `New talk submission: "${context.talkTitle.trim()}"`;
+  const subject = `New Angular Zurich talk proposal: "${context.talkTitle.trim()}"`;
   const dashboardUrl = getDashboardUrl(getSiteUrl(), context.submissionId);
 
   const speakerLine = context.speakerEmail.trim()
@@ -36,7 +36,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
   const text = [
     `Hi,`,
     ``,
-    `A new talk proposal was submitted to Angular Zurich.`,
+    `A new talk proposal was submitted and is ready for review.`,
     ``,
     `Talk: ${context.talkTitle.trim()}`,
     `Speaker: ${speakerLine}`,
@@ -49,7 +49,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
 
   const html = [
     `<p>Hi,</p>`,
-    `<p>A new talk proposal was submitted to Angular Zurich.</p>`,
+    `<p>A new talk proposal was submitted and is ready for review.</p>`,
     '<hr />',
     `<p><strong>Talk:</strong> ${escapeHtml(context.talkTitle.trim())}</p>`,
     `<p><strong>Speaker:</strong> ${escapeHtml(speakerLine)}</p>`,
@@ -83,4 +83,3 @@ export async function sendTalkSubmissionToOrganizersEmail(
     html,
   });
 }
-

@@ -27,6 +27,7 @@ interface SubmissionAssetSummary {
 
 interface SubmissionNotificationSummary {
   talk_title: string;
+  speaker_first_name: string | null;
   speaker_name: string;
   speaker_email: string;
 }
@@ -198,6 +199,7 @@ async function getSubmissionNotificationSummary(
   const rows = await sql<SubmissionNotificationSummary[]>`
     select
       talk_title,
+      speaker_first_name,
       speaker_name,
       speaker_email
     from submissions.talk_submissions
@@ -225,6 +227,7 @@ async function notifySpeakerAboutReview(
     action,
     submissionId,
     talkTitle: submission.talk_title,
+    speakerFirstName: submission.speaker_first_name,
     speakerName: submission.speaker_name,
     speakerEmail: submission.speaker_email,
     organizerMessage,
