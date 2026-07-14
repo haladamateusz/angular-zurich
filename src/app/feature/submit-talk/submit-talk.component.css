@@ -245,7 +245,7 @@
   right: 1rem;
   z-index: 2;
   border: 1px solid color-mix(in srgb, white 18%, transparent);
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background: color-mix(in srgb, black 50%, transparent);
   padding: 0.55rem 0.95rem;
   color: white;
