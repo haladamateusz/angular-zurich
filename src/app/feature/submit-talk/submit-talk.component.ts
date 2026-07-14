@@ -36,6 +36,7 @@ const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api
 const SLIDES_LINK_PATTERN = /^https?:\/\/.+/i;
 const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 const SPEAKER_PICTURE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
+const SPEAKER_AVATAR_PLACEHOLDER_URL = '/avatar.svg';
 
 const MAX_LENGTHS = {
   talkTitle: 160,
@@ -95,6 +96,7 @@ export class SubmitTalkComponent {
 
   protected readonly maxLengths = MAX_LENGTHS;
   protected readonly maxSpeakerPictureSizeInMegabytes = SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
+  protected readonly speakerAvatarPlaceholderUrl = SPEAKER_AVATAR_PLACEHOLDER_URL;
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
   protected readonly submissionState = signal<SubmissionState>('idle');
   protected readonly captchaError = signal('');

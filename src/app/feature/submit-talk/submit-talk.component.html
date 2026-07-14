@@ -6,7 +6,7 @@
           Tell us about your talk
         </h2>
         <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
-          All fields below are required for the initial review. We use your contact details only
+          Fields marked with * are required to submit your talk. We use your contact details only
           to follow up about this proposal.
         </p>
       </div>
@@ -326,100 +326,62 @@
                   [class.speaker-card__preview-frame--empty]="!speakerPicturePreviewUrl()"
                   [class.speaker-card__preview-frame--filled]="!!speakerPicturePreviewUrl()"
                 >
-                  @if (speakerPicturePreviewUrl()) {
-                    <div class="speaker-card__preview-media overflow-hidden rounded-[1.4rem]">
+                  <div class="speaker-card__preview-media overflow-hidden rounded-[1.4rem]">
                     <img
-                      [src]="speakerPicturePreviewUrl()"
-                      alt="Selected speaker preview"
+                      [src]="speakerPicturePreviewUrl() ?? speakerAvatarPlaceholderUrl"
+                      [alt]="speakerPicturePreviewUrl() ? 'Selected speaker preview' : ''"
+                      [attr.aria-hidden]="speakerPicturePreviewUrl() ? null : true"
                       class="speaker-card__preview-image w-full object-cover"
                     />
-                    <button
-                      type="button"
-                      class="speaker-card__remove-button"
-                      (click)="removeSpeakerPicture()"
-                    >
-                      Remove image
-                    </button>
-                    </div>
-                  } @else {
-                    <div class="speaker-card__preview-empty">
-                      <div class="speaker-card__empty-state">
-                        <div class="speaker-card__upload-shell speaker-card__upload-shell--inline">
-                          <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
-                            <button
-                              type="button"
-                              class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
-                              (click)="openSpeakerPicturePicker()"
-                            >
-                              Browse
-                            </button>
 
-                            <p class="speaker-card__selected-file text-sm text-foreground">
-                              Select a square portrait or browse for one.
-                            </p>
-                          </div>
-
-                          <input
-                            #speakerPictureInput
-                            id="speakerPicture"
-                            type="file"
-                            hidden
-                            accept="image/jpeg,image/png,image/webp"
-                            (change)="onSpeakerPictureSelected($event)"
-                            class="speaker-card__sr-only-input"
-                            [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                            aria-describedby="speakerPictureHint"
-                          />
-
-                          <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
-                            <p id="speakerPictureHint" class="text-sm leading-7 text-muted-foreground-1">
-                              Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  }
+                    @if (speakerPicturePreviewUrl()) {
+                      <button
+                        type="button"
+                        class="speaker-card__remove-button"
+                        (click)="removeSpeakerPicture()"
+                      >
+                        Remove image
+                      </button>
+                    }
+                  </div>
                 </div>
               </div>
 
-              @if (speakerPicturePreviewUrl()) {
-                <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
-                  <div class="speaker-card__upload-shell">
-                    <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
-                      <button
-                        type="button"
-                        class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
-                        (click)="openSpeakerPicturePicker()"
-                      >
-                        Browse
-                      </button>
+              <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
+                <div class="speaker-card__upload-shell">
+                  <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
+                      (click)="openSpeakerPicturePicker()"
+                    >
+                      Browse
+                    </button>
 
-                      <p class="speaker-card__selected-file text-sm text-foreground">
-                        {{ speakerPictureFileName() || submitTalkForm.controls.speakerPicture.value?.name || 'Photo selected' }}
-                      </p>
-                    </div>
+                    <p class="speaker-card__selected-file text-sm text-foreground">
+                      {{ speakerPictureFileName() || submitTalkForm.controls.speakerPicture.value?.name || 'Select a square portrait or browse for one.' }}
+                    </p>
+                  </div>
 
-                    <input
-                      #speakerPictureInput
-                      id="speakerPicture"
-                      type="file"
-                      hidden
-                      accept="image/jpeg,image/png,image/webp"
-                      (change)="onSpeakerPictureSelected($event)"
-                      class="speaker-card__sr-only-input"
-                      [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                      aria-describedby="speakerPictureHintFilled"
-                    />
+                  <input
+                    #speakerPictureInput
+                    id="speakerPicture"
+                    type="file"
+                    hidden
+                    accept="image/jpeg,image/png,image/webp"
+                    (change)="onSpeakerPictureSelected($event)"
+                    class="speaker-card__sr-only-input"
+                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                    aria-describedby="speakerPictureHint"
+                  />
 
-                    <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
-                      <p id="speakerPictureHintFilled" class="text-sm leading-7 text-muted-foreground-1">
-                        Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
-                      </p>
-                    </div>
+                  <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
+                    <p id="speakerPictureHint" class="text-sm leading-7 text-muted-foreground-1">
+                      Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
+                    </p>
                   </div>
                 </div>
-              }
+              </div>
 
               <div class="field-error-slot" aria-live="polite">
                 @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('required')) {
@@ -472,33 +434,24 @@
           }
 
           <div class="submission-card__body relative z-[1] mt-7 space-y-5">
-            <div class="submission-card__device-note">
-              <h4 class="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground-2">
-                Edits after submission
-              </h4>
-              <p class="mt-2 text-sm leading-7 text-muted-foreground-1">
-                After submitting, changes can only be made from this device. Keep this browser
-                available if you expect to adjust the proposal later.
-              </p>
-            </div>
+<!--            <div class="submission-card__device-note">-->
+<!--              <h4 class="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground-2">-->
+<!--                Edits after submission-->
+<!--              </h4>-->
+<!--              <p class="mt-2 text-sm leading-7 text-muted-foreground-1">-->
+<!--                After submitting, changes can only be made from this device. Keep this browser-->
+<!--                available if you expect to adjust the proposal later.-->
+<!--              </p>-->
+<!--            </div>-->
 
-            <div class="submission-card__verification-panel space-y-3">
-              <div class="space-y-2">
-                <h4 class="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground-2">Verification</h4>
-                <p class="text-sm leading-7 text-muted-foreground-1">
-                  Please complete the verification check before submitting your proposal.
+            <div class="space-y-3">
+              @if (turnstileSiteKey) {
+                <div #turnstileContainer class="min-h-16"></div>
+              } @else {
+                <p class="text-sm text-destructive">
+                  Verification is not configured yet. Please contact the maintainers before using this form.
                 </p>
-              </div>
-
-              <div>
-                @if (turnstileSiteKey) {
-                  <div #turnstileContainer class="min-h-16"></div>
-                } @else {
-                  <p class="text-sm text-destructive">
-                    Verification is not configured yet. Please contact the maintainers before using this form.
-                  </p>
-                }
-              </div>
+              }
 
               @if (captchaError()) {
                 <p class="text-sm text-destructive">{{ captchaError() }}</p>
