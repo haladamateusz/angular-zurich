@@ -6,7 +6,11 @@ import { App } from './app.component';
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { SupabaseService } from './core/data-access/supabase/supabase.service';
-import { Event } from './core/models/event.interface';
+import {
+  AssignableTalk,
+  VenueOption,
+} from './core/models/event-management.interface';
+import { DashboardEvent, Event } from './core/models/event.interface';
 import { OrganizerTalkSubmission } from './core/models/organizer-talk-submission.interface';
 import { Person } from './core/models/person.interface';
 import { Sponsor } from './core/models/sponsor.interface';
@@ -69,6 +73,33 @@ const EMPTY_EVENTS_RESPONSE = {
   success: true,
 } satisfies PostgrestResponse<Event>;
 
+const EMPTY_DASHBOARD_EVENTS_RESPONSE = {
+  data: [],
+  error: null,
+  count: null,
+  status: 200,
+  statusText: 'OK',
+  success: true,
+} satisfies PostgrestResponse<DashboardEvent>;
+
+const EMPTY_ASSIGNABLE_TALKS_RESPONSE = {
+  data: [],
+  error: null,
+  count: null,
+  status: 200,
+  statusText: 'OK',
+  success: true,
+} satisfies PostgrestResponse<AssignableTalk>;
+
+const EMPTY_VENUES_RESPONSE = {
+  data: [],
+  error: null,
+  count: null,
+  status: 200,
+  statusText: 'OK',
+  success: true,
+} satisfies PostgrestResponse<VenueOption>;
+
 const EMPTY_PEOPLE_RESPONSE = {
   data: [],
   error: null,
@@ -99,12 +130,12 @@ function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
 }
 
 describe('App', () => {
-  let latestEventResponse = createEventResponse(DEFAULT_EVENT);
+  let upcomingPublicEventResponse = createEventResponse(DEFAULT_EVENT);
   const isAuthenticated = signal(false);
   const userProfile = signal<{ avatarUrl: string | null; displayName: string } | null>(null);
 
   beforeEach(async () => {
-    latestEventResponse = createEventResponse(DEFAULT_EVENT);
+    upcomingPublicEventResponse = createEventResponse(DEFAULT_EVENT);
     isAuthenticated.set(false);
     userProfile.set(null);
     Object.defineProperty(window, 'matchMedia', {
@@ -128,12 +159,17 @@ describe('App', () => {
         {
           provide: SupabaseService,
           useValue: {
-            getLatestEvent: vi.fn(async () => latestEventResponse),
+            getUpcomingPublicEvent: vi.fn(async () => upcomingPublicEventResponse),
             getPastEvents: vi.fn().mockResolvedValue(EMPTY_EVENTS_RESPONSE),
             getSponsors: vi.fn().mockResolvedValue(EMPTY_SPONSORS_RESPONSE),
             getOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
             getFormerOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
             getOrganizerTalkSubmissions: vi.fn().mockResolvedValue(EMPTY_TALK_SUBMISSIONS_RESPONSE),
+            getDashboardEvents: vi.fn().mockResolvedValue(EMPTY_DASHBOARD_EVENTS_RESPONSE),
+            getAssignableTalks: vi.fn().mockResolvedValue(EMPTY_ASSIGNABLE_TALKS_RESPONSE),
+            getVenueOptions: vi.fn().mockResolvedValue(EMPTY_VENUES_RESPONSE),
+            canCurrentUserManageEvents: vi.fn().mockResolvedValue(true),
+            createEvent: vi.fn(),
             getStatsCounts: vi.fn().mockResolvedValue({
               speakers: 0,
               talks: 0,
@@ -178,7 +214,7 @@ describe('App', () => {
   });
 
   it('hides the hero event preview and upcoming talks for a past event', async () => {
-    latestEventResponse = createEventResponse({
+    upcomingPublicEventResponse = createEventResponse({
       ...DEFAULT_EVENT,
       starts_at: '2020-04-17T18:30:00.000Z',
     });
@@ -223,16 +259,88 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
 
-    await router.navigateByUrl('/dashboard');
+    await router.navigateByUrl('/dashboard/talk-submissions');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(router.url).toBe('/dashboard');
+    expect(router.url).toBe('/dashboard/talk-submissions');
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(compiled.textContent).toContain('Talk submissions');
+      expect(compiled.textContent).toContain('Events');
       expect(compiled.textContent).toContain('No talk submissions yet.');
     });
+  });
+
+  it('redirects authenticated dashboard index visits to talk submissions', async () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/dashboard');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(router.url).toBe('/dashboard/talk-submissions');
+  });
+
+  it('renders the dashboard events view for authenticated users', async () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/dashboard/events');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(router.url).toBe('/dashboard/events');
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(compiled.textContent).toContain('Talk submissions');
+      expect(compiled.textContent).toContain('Events');
+      expect(compiled.textContent).toContain('Create Event');
+      expect(compiled.textContent).toContain('No events yet.');
+    });
+  });
+
+  it('renders the admin event creation form', async () => {
+    isAuthenticated.set(true);
+    userProfile.set({
+      avatarUrl: null,
+      displayName: 'Mateusz Halada',
+    });
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/dashboard/events/create');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(router.url).toBe('/dashboard/events/create');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Create event');
+    expect(compiled.textContent).toContain('Date');
+    expect(compiled.textContent).toContain('Time');
+    expect(compiled.textContent).toContain('Venue');
+    expect(compiled.textContent).toContain('Meetup URL');
+    expect(compiled.textContent).toContain('Talk 1');
+    expect(compiled.textContent).toContain('Talk 2');
+    expect(compiled.textContent).toContain('Add a third talk');
   });
 });
