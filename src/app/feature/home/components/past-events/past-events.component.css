@@ -58,7 +58,7 @@
 .past-events__skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 
@@ -86,7 +86,6 @@
 .past-events__skeleton--title {
   width: min(11rem, 90%);
   height: 1.7rem;
-  border-radius: 0.7rem;
 }
 
 .past-events__skeleton--meta-icon {
@@ -121,7 +120,7 @@
   height: 3.25rem;
   margin-left: -0.9rem;
   border: 3px solid color-mix(in srgb, white 92%, var(--color-card) 8%);
-  border-radius: 0.8rem;
+  border-radius: 0.5rem;
 }
 
 .past-events__skeleton--speaker-avatar:first-child {
@@ -159,7 +158,6 @@
     inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
     0 8px 18px color-mix(in srgb, black 4%, transparent);
   transition:
-    transform 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
   color: inherit;
@@ -168,7 +166,6 @@
 
 .past-event-card:hover,
 .past-event-card:focus-visible {
-  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-card-line));
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
@@ -311,21 +308,22 @@
   line-height: 1;
   min-height: 2.25rem;
   padding: 0.35rem 0;
-  color: var(--color-primary);
+  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
   font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
   text-decoration: none;
   transition:
     color 180ms ease,
-    transform 180ms ease;
+    box-shadow 180ms ease;
 }
 
+.past-event-card:hover .past-event-card__details-button,
+.past-event-card:focus-visible .past-event-card__details-button,
 .past-event-card__details-button:hover,
 .past-event-card__details-button:focus-visible {
-  color: var(--color-primary-hover);
+  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
   outline: none;
-  transform: translateX(2px);
 }
 
 .past-event-card__details-button:focus-visible {

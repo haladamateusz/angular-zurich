@@ -67,8 +67,7 @@
     background-color 180ms ease,
     border-color 180ms ease,
     color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
+    box-shadow 180ms ease;
 }
 
 .app-outline-button:hover,
@@ -89,12 +88,25 @@
   flex: none;
 }
 
+.app-select-chevron {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
+  pointer-events: none;
+  transition: transform 160ms ease;
+}
+
+.app-select-chevron--open {
+  transform: rotate(180deg);
+}
+
 .dashboard-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 6.75rem;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   padding: 0.45rem 0.8rem;
   font-size: 0.82rem;
   font-weight: 700;
@@ -136,7 +148,7 @@
 .dashboard-detail__skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 

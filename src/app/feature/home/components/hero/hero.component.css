@@ -125,7 +125,6 @@
     background-color 180ms ease,
     border-color 180ms ease,
     color 180ms ease,
-    transform 180ms ease,
     box-shadow 180ms ease;
 }
 
@@ -173,7 +172,7 @@
   overflow: hidden;
   width: 7.5rem;
   height: 1.75rem;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 
