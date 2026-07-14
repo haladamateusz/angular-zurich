@@ -32,6 +32,7 @@ export interface OrganizerTalkSubmissionStatusEvent {
     | 'changes_submitted'
     | 'approved'
     | 'assigned_to_event'
+    | 'removed_from_event'
     | 'changes_requested'
     | 'rejected';
   actor_kind: 'speaker' | 'reviewer' | 'system';

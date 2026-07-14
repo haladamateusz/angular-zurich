@@ -1,3 +1,41 @@
+.dashboard-detail__back-nav {
+  margin-bottom: 1rem;
+}
+
+.dashboard-detail__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3rem;
+  border-radius: 0.85rem;
+  padding: 0 1rem;
+  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dashboard-detail__back-link:hover,
+.dashboard-detail__back-link:focus-visible {
+  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  color: var(--color-foreground);
+  outline: none;
+}
+
+.dashboard-detail__back-link:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.dashboard-detail__back-link svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+}
+
 .dashboard-detail__review-header {
   display: flex;
   align-items: center;
@@ -9,7 +47,7 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   padding: 0.55rem 0.85rem;
   color: var(--color-primary);
@@ -105,15 +143,13 @@
   line-height: 1.9;
   text-decoration: none;
   transition:
-    color 160ms ease,
-    transform 160ms ease;
+    color 160ms ease;
 }
 
 .dashboard-detail__slides-link:hover,
 .dashboard-detail__slides-link:focus-visible {
   color: var(--color-foreground);
   outline: none;
-  transform: translateX(2px);
 }
 
 .dashboard-detail__slides-link:focus-visible {
@@ -137,7 +173,7 @@
   width: 100%;
   height: 10.5rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
-  border-radius: 1.4rem;
+  border-radius: 0.5rem;
   background: color-mix(in srgb, var(--color-background) 78%, transparent);
   padding: 1rem 1.1rem;
   color: var(--color-foreground);
@@ -189,7 +225,6 @@
   font-weight: 500;
   line-height: 1.25rem;
   transition:
-    transform 160ms ease,
     border-color 160ms ease,
     background-color 160ms ease,
     color 160ms ease,
@@ -199,7 +234,6 @@
 .dashboard-detail__action-button:hover,
 .dashboard-detail__action-button:focus-visible {
   outline: none;
-  transform: translateY(-1px);
 }
 
 .dashboard-detail__action-button:focus-visible {
@@ -209,7 +243,6 @@
 .dashboard-detail__action-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
-  transform: none;
 }
 
 .dashboard-detail__action-button--approve {
@@ -224,14 +257,20 @@
 }
 
 .dashboard-detail__action-button--changes {
-  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-primary) 32%, transparent);
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
+  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
 }
 
 .dashboard-detail__action-button--changes:hover,
 .dashboard-detail__action-button--changes:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
+}
+
+.dashboard-detail__action-button--changes:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .dashboard-detail__action-button--reject {
@@ -243,6 +282,24 @@
 .dashboard-detail__action-button--reject:hover,
 .dashboard-detail__action-button--reject:focus-visible {
   background: color-mix(in srgb, #ef4444 14%, transparent);
+}
+
+.dashboard-detail__modal-send {
+  border-color: color-mix(in srgb, var(--color-primary) 32%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
+  font-weight: 600;
+}
+
+.dashboard-detail__modal-send:hover,
+.dashboard-detail__modal-send:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
+}
+
+.dashboard-detail__modal-send:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .dashboard-detail__review-alert {
@@ -312,6 +369,24 @@
   border-radius: 0.5rem;
   background: color-mix(in srgb, var(--color-background) 72%, transparent);
   color: var(--color-foreground);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dashboard-detail__modal-close:not(:disabled):hover,
+.dashboard-detail__modal-close:not(:disabled):focus-visible,
+.dashboard-detail__modal-secondary:not(:disabled):hover,
+.dashboard-detail__modal-secondary:not(:disabled):focus-visible {
+  border-color: color-mix(in srgb, var(--color-border) 86%, var(--color-foreground) 14%);
+  background: color-mix(in srgb, var(--color-background) 92%, white 8%);
+  outline: none;
+}
+
+.dashboard-detail__modal-close:not(:disabled):focus-visible,
+.dashboard-detail__modal-secondary:not(:disabled):focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .dashboard-detail__modal-close {
@@ -477,8 +552,7 @@
   color: var(--color-foreground);
   text-decoration: none;
   transition:
-    color 160ms ease,
-    transform 160ms ease;
+    color 160ms ease;
 }
 
 .dashboard-detail__speaker-link-row + .dashboard-detail__speaker-link-row {
@@ -489,7 +563,6 @@
 .dashboard-detail__speaker-link-row:focus-visible {
   color: color-mix(in srgb, var(--color-foreground) 86%, white 14%);
   outline: none;
-  transform: translateX(2px);
 }
 
 .dashboard-detail__speaker-link-row:focus-visible {

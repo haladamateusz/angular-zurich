@@ -49,7 +49,7 @@ function getEmailContent(context: TalkReviewEmailContext): {
         text: [
           `Hi ${speakerGreetingName},`,
           '',
-          `Good news: the organizers approved your talk proposal "${talkTitle}".`,
+          `Good news: the organizers approved your talk proposal ${talkTitle}.`,
           '',
           'We will be in touch once your talk is assigned to an event and we have scheduling details to share.',
           '',

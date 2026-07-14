@@ -1,4 +1,17 @@
 <section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
+  <nav class="dashboard-detail__back-nav" aria-label="Talk submission navigation">
+    <a routerLink="/dashboard/talk-submissions" class="dashboard-detail__back-link">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path
+          fill-rule="evenodd"
+          d="M11.78 4.47a.75.75 0 0 1 0 1.06L7.31 10l4.47 4.47a.75.75 0 1 1-1.06 1.06l-5-5a.75.75 0 0 1 0-1.06l5-5a.75.75 0 0 1 1.06 0Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <span>Back to Talk Submissions</span>
+    </a>
+  </nav>
+
   @if (errorMessage()) {
     <div
       class="rounded-[2rem] border border-primary/25 bg-primary/8 px-6 py-5 text-sm text-foreground"
@@ -391,7 +404,7 @@
             </button>
             <button
               type="button"
-              class="dashboard-detail__action-button dashboard-detail__action-button--changes"
+              class="dashboard-detail__action-button dashboard-detail__action-button--changes dashboard-detail__modal-send"
               [class.dashboard-detail__action-button--reject]="messageAction === 'reject'"
               [disabled]="!canSubmitReviewAction(messageAction)"
               (click)="submitReviewAction(messageAction)"

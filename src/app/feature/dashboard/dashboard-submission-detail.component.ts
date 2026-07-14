@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import {
   OrganizerTalkSubmissionDetail,
@@ -25,7 +25,7 @@ type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
 
 @Component({
   selector: 'app-dashboard-submission-detail',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './dashboard-submission-detail.component.html',
   styleUrl: './dashboard-submission-detail.component.css'
 })
@@ -157,6 +157,8 @@ export class DashboardSubmissionDetailComponent {
         return 'Approved';
       case 'assigned_to_event':
         return 'Assigned to event';
+      case 'removed_from_event':
+        return 'Removed from event';
       case 'changes_requested':
         return 'Changes requested';
       case 'rejected':

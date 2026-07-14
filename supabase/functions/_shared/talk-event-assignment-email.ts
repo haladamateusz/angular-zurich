@@ -56,7 +56,7 @@ export async function sendTalkEventAssignmentEmail(
   const text = [
     `Hi ${speakerGreetingName},`,
     "",
-    `Your talk "${talkTitle}" is scheduled for ${eventTitle}.`,
+    `Your talk ${talkTitle} is scheduled for ${eventTitle}.`,
     "",
     `Date: ${eventDate}`,
     `Event details: ${eventUrl}`,

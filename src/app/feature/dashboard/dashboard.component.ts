@@ -16,6 +16,11 @@ import {
   OrganizerTalkSubmission,
   TalkSubmissionStatus,
 } from '../../core/models/organizer-talk-submission.interface';
+import {
+  CreateEventSelectComponent,
+  CreateEventSelectOption,
+} from './create-event-select.component';
+import { DashboardSectionNavComponent } from './dashboard-section-nav.component';
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -38,7 +43,12 @@ interface DashboardTalkSubmission extends OrganizerTalkSubmission {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DatePipe, RouterLink],
+  imports: [
+    DatePipe,
+    RouterLink,
+    DashboardSectionNavComponent,
+    CreateEventSelectComponent,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -58,7 +68,13 @@ export class DashboardComponent {
   protected readonly statusFilter = signal<StatusFilter>('');
   private latestLoadId = 0;
 
-  protected readonly statusFilterOptions = TALK_SUBMISSION_STATUSES;
+  protected readonly statusSelectOptions: readonly CreateEventSelectOption[] = [
+    { value: '', label: 'All statuses' },
+    ...TALK_SUBMISSION_STATUSES.map((status) => ({
+      value: status,
+      label: this.formatStatus(status),
+    })),
+  ];
   protected readonly displayName = computed(
     () => this.authService.userProfile()?.displayName ?? 'Organizer',
   );
@@ -156,8 +172,7 @@ export class DashboardComponent {
     this.updateFilter(this.authorFilter, this.getControlValue(event));
   }
 
-  protected updateStatusFilter(event: Event): void {
-    const value = this.getControlValue(event);
+  protected updateStatusFilter(value: string): void {
     const status = TALK_SUBMISSION_STATUSES.includes(value as TalkSubmissionStatus)
       ? (value as TalkSubmissionStatus)
       : '';
