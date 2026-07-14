@@ -1,5 +1,38 @@
 <section class="event-details">
   <div class="event-details__container">
+    @if (showDashboardEventsBackLink()) {
+      <nav class="event-details__back-nav" aria-label="Event navigation">
+        <a routerLink="/dashboard/events" class="event-details__back-link">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M11.78 4.47a.75.75 0 0 1 0 1.06L7.31 10l4.47 4.47a.75.75 0 1 1-1.06 1.06l-5-5a.75.75 0 0 1 0-1.06l5-5a.75.75 0 0 1 1.06 0Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Back to Events</span>
+        </a>
+
+        @if (event().id) {
+          <a
+            [routerLink]="['/dashboard/events', event().id]"
+            class="event-details__edit-link app-outline-button"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="app-outline-button__icon"
+              aria-hidden="true"
+            >
+              <path
+                d="M13.92 2.84a2.25 2.25 0 0 1 3.18 3.18l-8.6 8.6a2.25 2.25 0 0 1-1.02.58l-3.17.86a.75.75 0 0 1-.92-.92l.86-3.17c.1-.38.3-.73.58-1.02l8.6-8.6Zm2.12 1.06a.75.75 0 0 0-1.06 0l-.82.82 1.06 1.06.82-.82a.75.75 0 0 0 0-1.06Zm-1.88 2.94-1.06-1.06-7.21 7.21a.75.75 0 0 0-.2.34l-.47 1.73 1.73-.47a.75.75 0 0 0 .34-.2l7.21-7.21Z"
+              />
+            </svg>
+            <span>Edit</span>
+          </a>
+        }
+      </nav>
+    }
 
     @if (eventResource.isLoading()) {
       <section class="event-details__loading" aria-label="Loading event details" aria-busy="true">
@@ -122,6 +155,7 @@
         <div
           class="event-details__hero-graphic-shell"
           [class.event-details__hero-graphic-shell--pending]="!!currentEvent.feature_graphic && !featureGraphicLoaded()"
+          [class.event-details__hero-graphic-shell--loaded]="!!currentEvent.feature_graphic && featureGraphicLoaded()"
         >
           @if (currentEvent.feature_graphic) {
             @if (!featureGraphicLoaded()) {
@@ -132,6 +166,7 @@
               [alt]="pageTitle()"
               class="event-details__hero-graphic"
               (load)="markFeatureGraphicAsLoaded()"
+              (error)="markFeatureGraphicAsLoaded()"
             />
           }
         </div>
@@ -181,7 +216,7 @@
                 }
               </div>
 
-              @if (talk.slides_url) {
+              @if (talk.slides_url && canShowSlides(currentEvent.starts_at)) {
                 <div class="talk-detail-card__actions">
                   <a
                     [href]="talk.slides_url"

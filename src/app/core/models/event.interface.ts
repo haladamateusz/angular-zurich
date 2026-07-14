@@ -6,6 +6,7 @@ export interface Event {
   meetup_url: string;
   starts_at: string;
   venue_id: string;
+  public?: boolean | null;
   talks: {
     id: string;
     title: string;
@@ -14,6 +15,7 @@ export interface Event {
     event_id: string;
     presentation_time: number;
     created_by: string;
+    source_talk_submission_id?: string | null;
     speaker_links: {
       speaker: {
         id: string;
@@ -33,3 +35,5 @@ export interface Event {
     google_maps_url: string | null;
   } | null;
 }
+
+export type DashboardEvent = Pick<Event, 'id' | 'slug' | 'starts_at' | 'title'>;

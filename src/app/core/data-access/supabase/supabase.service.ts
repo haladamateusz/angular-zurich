@@ -2,7 +2,15 @@ import { Service, inject } from '@angular/core';
 import { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../auth/auth.service';
-import { Event } from '../../models/event.interface';
+import {
+  AssignableTalk,
+  CreateEventPayload,
+  CreateEventResult,
+  UpdateEventPayload,
+  UpdateEventResult,
+  VenueOption,
+} from '../../models/event-management.interface';
+import { DashboardEvent, Event } from '../../models/event.interface';
 import {
   OrganizerTalkSubmission,
   OrganizerTalkSubmissionDetail,
@@ -52,6 +60,11 @@ export interface OrganizerTalkSubmissionListOptions {
   };
 }
 
+export interface DashboardEventListOptions {
+  page: number;
+  pageSize: number;
+}
+
 @Service()
 export class SupabaseService {
   private readonly authService = inject(AuthService);
@@ -75,9 +88,9 @@ export class SupabaseService {
     return this.supabase.from('organizers_public').select('*');
   }
 
-  async getLatestEvent(): Promise<PostgrestSingleResponse<Event>> {
+  async getUpcomingPublicEvent(): Promise<PostgrestSingleResponse<Event | null>> {
     if (this.supabase === null) {
-      return this.createEmptySingleResponse<Event>(null);
+      return this.createEmptySingleResponse<Event | null>(null);
     }
 
     return this.supabase
@@ -115,10 +128,12 @@ export class SupabaseService {
           )
         )
       `)
+      .eq('public', true)
+      .gt('starts_at', new Date().toISOString())
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
-      .order('starts_at', { ascending: false })
+      .order('starts_at', { ascending: true })
       .limit(1)
-      .single();
+      .maybeSingle();
   }
 
   async getPastEvents(limit = 3): Promise<PostgrestResponse<Event>> {
@@ -217,6 +232,234 @@ export class SupabaseService {
       .eq('slug', slug)
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .single();
+  }
+
+  async getEventForEdit(eventId: string): Promise<PostgrestSingleResponse<Event>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<Event>(null);
+    }
+
+    return this.supabase
+      .from('Events')
+      .select(`
+        id,
+        slug,
+        title,
+        feature_graphic,
+        meetup_url,
+        starts_at,
+        venue_id,
+        public,
+        venue:Venues(
+          title,
+          street,
+          city,
+          zip,
+          google_maps_url
+        ),
+        talks:Talks(
+          id,
+          title,
+          description,
+          slides_url,
+          event_id,
+          presentation_time,
+          created_by,
+          source_talk_submission_id,
+          speaker_links:SpeakerOnTalk(
+            speaker:People(
+              id,
+              first_name,
+              last_name,
+              picture_url,
+              label,
+              company_name
+            )
+          )
+        )
+      `)
+      .eq('id', eventId)
+      .order('sort_order', { ascending: true, referencedTable: 'Talks' })
+      .single();
+  }
+
+  async getDashboardEvents(
+    options: DashboardEventListOptions,
+  ): Promise<PostgrestResponse<DashboardEvent>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<DashboardEvent>([]);
+    }
+
+    const from = Math.max(0, options.page - 1) * options.pageSize;
+    const to = from + options.pageSize - 1;
+
+    return this.supabase
+      .from('Events')
+      .select('id, slug, title, starts_at', { count: 'exact' })
+      .order('starts_at', { ascending: false })
+      .range(from, to);
+  }
+
+  async getAssignableTalks(): Promise<PostgrestResponse<AssignableTalk>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<AssignableTalk>([]);
+    }
+
+    const response = await this.supabase
+      .from('Talks')
+      .select(`
+        id,
+        title,
+        source_talk_submission_id,
+        speaker_links:SpeakerOnTalk(
+          speaker:People(
+            first_name,
+            last_name
+          )
+        )
+      `)
+      .is('event_id', null)
+      .not('source_talk_submission_id', 'is', null)
+      .order('title', { ascending: true });
+
+    return response as PostgrestResponse<AssignableTalk>;
+  }
+
+  async getVenueOptions(): Promise<PostgrestResponse<VenueOption>> {
+    if (this.supabase === null) {
+      return this.createEmptyListResponse<VenueOption>([]);
+    }
+
+    return this.supabase
+      .from('Venues')
+      .select('id, title, street, city, zip')
+      .order('title', { ascending: true });
+  }
+
+  async canCurrentUserManageEvents(): Promise<boolean> {
+    if (this.supabase === null) {
+      return false;
+    }
+
+    const { data, error } = await this.supabase.rpc('can_current_user_manage_events');
+
+    return !error && data === true;
+  }
+
+  async createEvent(
+    payload: CreateEventPayload,
+  ): Promise<{ data: CreateEventResult | null; error: Error | null }> {
+    const accessToken = this.authService.session()?.access_token;
+
+    if (!this.supabaseUrl || !this.supabaseKey || !accessToken) {
+      return {
+        data: null,
+        error: new Error('create_event_not_configured'),
+      };
+    }
+
+    const formData = new FormData();
+
+    formData.set('title', payload.title);
+    formData.set('startsAt', payload.startsAt);
+    formData.set('meetupUrl', payload.meetupUrl);
+    formData.set('venueId', payload.venueId);
+    formData.set('talkIds', JSON.stringify(payload.talkIds));
+    formData.set('public', payload.isPublic ? 'true' : 'false');
+    formData.set('featureGraphic', payload.featureGraphic);
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/create-event`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    let body: CreateEventResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage = body && 'error' in body && body.error
+        ? body.error
+        : 'create_event_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'id' in body ? body : null,
+      error: null,
+    };
+  }
+
+  async updateEvent(
+    payload: UpdateEventPayload,
+  ): Promise<{ data: UpdateEventResult | null; error: Error | null }> {
+    const accessToken = this.authService.session()?.access_token;
+
+    if (!this.supabaseUrl || !this.supabaseKey || !accessToken) {
+      return {
+        data: null,
+        error: new Error('update_event_not_configured'),
+      };
+    }
+
+    const formData = new FormData();
+
+    formData.set('eventId', payload.eventId);
+    formData.set('title', payload.title);
+    formData.set('startsAt', payload.startsAt);
+    formData.set('meetupUrl', payload.meetupUrl);
+    formData.set('venueId', payload.venueId);
+    formData.set('talkIds', JSON.stringify(payload.talkIds));
+    formData.set('public', payload.isPublic ? 'true' : 'false');
+
+    if (payload.featureGraphic) {
+      formData.set('featureGraphic', payload.featureGraphic);
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/update-event`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    let body: UpdateEventResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage = body && 'error' in body && body.error
+        ? body.error
+        : 'update_event_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'id' in body ? body : null,
+      error: null,
+    };
   }
 
   async getTalks(): Promise<PostgrestResponse<Talk>> {

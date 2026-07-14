@@ -1,0 +1,82 @@
+<button
+  #trigger
+  type="button"
+  class="create-event-select__trigger"
+  role="combobox"
+  aria-haspopup="listbox"
+  [id]="controlId()"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-controls]="listboxId()"
+  [attr.aria-activedescendant]="activeOptionId()"
+  [attr.aria-describedby]="ariaDescribedBy()"
+  [attr.aria-labelledby]="ariaLabelledBy()"
+  [attr.aria-invalid]="invalid() && touched() ? 'true' : null"
+  [class.create-event-select__trigger--placeholder]="!selectedOption()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)"
+>
+  <span>{{ selectedOption()?.label ?? placeholder() }}</span>
+  @if (icon() === 'clock') {
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      class="create-event-select__clock-icon"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 7V12L15 15"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  } @else {
+    <svg
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      class="app-select-chevron"
+      aria-hidden="true"
+      [class.app-select-chevron--open]="isOpen()"
+    >
+      <path
+        fill-rule="evenodd"
+        d="M5.22 7.72a.75.75 0 0 1 1.06 0L10 11.44l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.78a.75.75 0 0 1 0-1.06Z"
+        clip-rule="evenodd"
+      />
+    </svg>
+  }
+</button>
+
+@if (isOpen()) {
+  <div [id]="listboxId()" class="create-event-select__listbox" role="listbox">
+    @for (option of options(); track option.value; let optionIndex = $index) {
+      <button
+        type="button"
+        role="option"
+        tabindex="-1"
+        [id]="controlId() + '-option-' + optionIndex"
+        [attr.aria-selected]="option.value === value()"
+        [attr.aria-disabled]="option.disabled || null"
+        [class.create-event-select__option--active]="activeIndex() === optionIndex"
+        [class.create-event-select__option--selected]="option.value === value()"
+        [class.create-event-select__option--disabled]="option.disabled"
+        (pointerenter)="setActiveIndex(optionIndex)"
+        (pointerdown)="$event.preventDefault()"
+        (click)="selectOption(option)"
+      >
+        {{ option.label }}
+      </button>
+    } @empty {
+      <p class="create-event-select__empty">No options available</p>
+    }
+  </div>
+}

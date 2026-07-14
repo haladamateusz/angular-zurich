@@ -11,15 +11,49 @@
   margin: 0 auto;
 }
 
+.event-details__back-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
 .event-details__back-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  color: var(--color-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 0.55rem;
+  min-height: 3rem;
+  border-radius: 0.85rem;
+  padding: 0 1rem;
+  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
+  font-size: 0.98rem;
+  font-weight: 700;
   text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.event-details__back-link:hover,
+.event-details__back-link:focus-visible {
+  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  color: var(--color-foreground);
+  outline: none;
+}
+
+.event-details__back-link:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.event-details__back-link svg {
+  flex: none;
+}
+
+.event-details__back-link svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .event-details__state-card,
@@ -102,12 +136,13 @@
   position: relative;
   overflow: hidden;
   border-radius: 1.3rem;
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  background: transparent;
 }
 
 .event-details__hero-graphic-shell--loading,
 .event-details__hero-graphic-shell--pending {
   min-height: clamp(14rem, 30vw, 24rem);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 
 .event-details__hero-graphic {
@@ -246,7 +281,7 @@
 .event-details__skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 
@@ -273,19 +308,16 @@
 .event-details__skeleton--title {
   width: min(26rem, 100%);
   height: clamp(3.2rem, 8vw, 4.75rem);
-  border-radius: 1rem;
 }
 
 .event-details__skeleton--icon {
   width: 1rem;
   height: 1rem;
-  border-radius: 999px;
   flex: none;
 }
 
 .event-details__skeleton--meta-text {
   height: 1rem;
-  border-radius: 999px;
 }
 
 .event-details__skeleton--meta-date {
@@ -330,12 +362,10 @@
 .event-details__skeleton--talk-title {
   width: min(18rem, 100%);
   height: 2.35rem;
-  border-radius: 0.8rem;
 }
 
 .event-details__skeleton--paragraph {
   height: 0.95rem;
-  border-radius: 999px;
 }
 
 .event-details__skeleton--paragraph-full {

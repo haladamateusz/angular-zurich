@@ -1,0 +1,53 @@
+<nav class="dashboard-section-nav" aria-label="Dashboard sections">
+  <a
+    routerLink="/dashboard/talk-submissions"
+    routerLinkActive="dashboard-section-nav__item--active"
+    ariaCurrentWhenActive="page"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="dashboard-section-nav__item"
+  >
+    <svg class="dashboard-section-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M8 6h8M8 10h8M8 14h5"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+      />
+      <path
+        d="M6.75 3.75h10.5A1.75 1.75 0 0 1 19 5.5v13a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 18.5v-13a1.75 1.75 0 0 1 1.75-1.75Z"
+        stroke="currentColor"
+        stroke-width="1.8"
+      />
+    </svg>
+    <span>Talk submissions</span>
+  </a>
+
+  <a
+    routerLink="/dashboard/events"
+    routerLinkActive="dashboard-section-nav__item--active"
+    ariaCurrentWhenActive="page"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="dashboard-section-nav__item"
+  >
+    <svg class="dashboard-section-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M7 3.75v2.5M17 3.75v2.5M4.75 9h14.5"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+      />
+      <path
+        d="M6.5 5.25h11A1.75 1.75 0 0 1 19.25 7v10.5a1.75 1.75 0 0 1-1.75 1.75h-11a1.75 1.75 0 0 1-1.75-1.75V7A1.75 1.75 0 0 1 6.5 5.25Z"
+        stroke="currentColor"
+        stroke-width="1.8"
+      />
+      <path
+        d="M8 12.25h2.25M8 15.5h4.25"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+      />
+    </svg>
+    <span>Events</span>
+  </a>
+</nav>

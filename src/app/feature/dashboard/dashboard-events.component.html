@@ -1,0 +1,197 @@
+<section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
+  <section>
+    <app-dashboard-section-nav />
+
+    <div class="dashboard-events-actions">
+      <a routerLink="/dashboard/events/create" class="dashboard-events-actions__create">
+        <span>Create Event</span>
+      </a>
+    </div>
+
+    @if (errorMessage()) {
+      <div
+        class="mt-6 rounded-2xl border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
+        role="alert"
+        aria-live="polite"
+      >
+        {{ errorMessage() }}
+      </div>
+    } @else if (isLoading()) {
+      <div
+        class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background"
+        role="status"
+        aria-busy="true"
+      >
+        <div class="overflow-x-auto">
+          <table class="dashboard-events-table min-w-full divide-y divide-navbar-line">
+            <colgroup>
+              <col class="dashboard-events-table__col-title" />
+              <col class="dashboard-events-table__col-date" />
+              <col class="dashboard-events-table__col-details" />
+            </colgroup>
+            <thead>
+              <tr class="bg-card/70">
+                <th class="dashboard-events-table__heading">Title</th>
+                <th class="dashboard-events-table__heading">Starts at</th>
+                <th
+                  class="dashboard-events-table__heading dashboard-events-table__heading--details"
+                >
+                  <span class="sr-only">Details</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-navbar-line" aria-hidden="true">
+              @for (row of [1, 2, 3, 4, 5]; track row) {
+                <tr class="dashboard-events-table__row">
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--title">
+                    <div
+                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--title"
+                    ></div>
+                  </td>
+                  <td class="dashboard-events-table__cell">
+                    <div
+                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--date"
+                    ></div>
+                  </td>
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--details">
+                    <div
+                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--details"
+                    ></div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="dashboard-events-table__pagination dashboard-events-table__pagination--loading"
+          aria-hidden="true"
+        >
+          <div
+            class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--pagination-summary"
+          ></div>
+          <div class="dashboard-events-table__pagination-controls">
+            <div
+              class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--pagination-button"
+            ></div>
+            <div
+              class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--pagination-page"
+            ></div>
+            <div
+              class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--pagination-page"
+            ></div>
+            <div
+              class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--pagination-button"
+            ></div>
+          </div>
+        </div>
+        <span class="sr-only">Loading events...</span>
+      </div>
+    } @else if (!hasEvents()) {
+      <div
+        class="mt-6 rounded-2xl border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70"
+      >
+        No events yet.
+      </div>
+    } @else {
+      <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background">
+        <div class="overflow-x-auto">
+          <table class="dashboard-events-table min-w-full divide-y divide-navbar-line">
+            <colgroup>
+              <col class="dashboard-events-table__col-title" />
+              <col class="dashboard-events-table__col-date" />
+              <col class="dashboard-events-table__col-details" />
+            </colgroup>
+            <thead>
+              <tr class="bg-card/70">
+                <th class="dashboard-events-table__heading">Title</th>
+                <th class="dashboard-events-table__heading">Starts at</th>
+                <th
+                  class="dashboard-events-table__heading dashboard-events-table__heading--details"
+                >
+                  <span class="sr-only">Details</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-navbar-line">
+              @for (event of events(); track event.id) {
+                <tr class="dashboard-events-table__row">
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--title">
+                    <p class="dashboard-events-table__title">{{ event.title }}</p>
+                  </td>
+                  <td class="dashboard-events-table__cell whitespace-nowrap">
+                    {{ event.starts_at | date: 'dd MMM yyyy' }}
+                  </td>
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--details">
+                    <a
+                      [routerLink]="['/events', event.slug]"
+                      [state]="eventDetailsNavigationState"
+                      class="dashboard-events-table__details-button app-outline-button"
+                      [attr.aria-label]="'Open details for ' + event.title"
+                    >
+                      <span>Details</span>
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="dashboard-events-table__details-icon app-outline-button__icon"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="dashboard-events-table__pagination" aria-label="Events pagination">
+          <p class="dashboard-events-table__pagination-summary">
+            Showing {{ currentPageStart() }}-{{ currentPageEnd() }} of {{ totalEventCount() }}
+          </p>
+
+          @if (totalPages() > 1) {
+            <nav class="dashboard-events-table__pagination-controls" aria-label="Events pages">
+              <button
+                type="button"
+                class="dashboard-events-table__pagination-button"
+                [disabled]="currentPage() === 1"
+                (click)="goToPreviousPage()"
+              >
+                Previous
+              </button>
+
+              <div class="dashboard-events-table__pagination-pages">
+                @for (page of pageNumbers(); track page) {
+                  <button
+                    type="button"
+                    class="dashboard-events-table__pagination-page"
+                    [class.dashboard-events-table__pagination-page--active]="page === currentPage()"
+                    [attr.aria-current]="page === currentPage() ? 'page' : null"
+                    [attr.aria-label]="'Go to page ' + page"
+                    (click)="goToPage(page)"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              </div>
+
+              <button
+                type="button"
+                class="dashboard-events-table__pagination-button"
+                [disabled]="currentPage() === totalPages()"
+                (click)="goToNextPage()"
+              >
+                Next
+              </button>
+            </nav>
+          }
+        </div>
+      </div>
+    }
+  </section>
+</section>

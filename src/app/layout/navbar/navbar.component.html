@@ -98,7 +98,7 @@
               Submit Talk
             </a>
             <a
-              routerLink="/dashboard"
+              routerLink="/dashboard/talk-submissions"
               class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
               [class.text-primary]="!dark()"
               [class.text-primary-100]="dark()"
@@ -332,7 +332,7 @@
               <div>
                 @if (isAuthenticated()) {
                   <a
-                    routerLink="/dashboard"
+                    routerLink="/dashboard/talk-submissions"
                     (click)="closeGuestMenu()"
                     class="flex min-h-16 items-center border-b px-4 text-base font-medium transition-colors"
                     [class.border-navbar-line]="!dark()"

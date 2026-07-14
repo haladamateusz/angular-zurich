@@ -1,0 +1,114 @@
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.create-event-select__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.85rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, transparent);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  padding: 0.65rem 1.15rem 0.65rem 0.85rem;
+  color: var(--color-foreground);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.create-event-select__trigger span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-event-select__trigger:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border) 65%);
+}
+
+.create-event-select__trigger:focus-visible,
+.create-event-select__trigger[aria-expanded='true'] {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.create-event-select__trigger[aria-invalid='true'] {
+  border-color: color-mix(in srgb, var(--color-destructive) 64%, var(--color-border) 36%);
+}
+
+.create-event-select__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.create-event-select__trigger--placeholder {
+  color: color-mix(in srgb, var(--color-foreground) 38%, transparent);
+}
+
+.create-event-select__clock-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  color: color-mix(in srgb, var(--color-primary) 68%, var(--color-foreground) 32%);
+}
+
+.create-event-select__listbox {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  left: 0;
+  max-height: 15rem;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  padding: 0.3rem;
+  box-shadow: 0 0.8rem 2rem color-mix(in srgb, var(--color-foreground) 14%, transparent);
+}
+
+[role='option'] {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  border-radius: 0.375rem;
+  padding: 0.65rem 0.7rem;
+  color: var(--color-foreground);
+  font-size: 0.88rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.create-event-select__option--active {
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-background));
+}
+
+.create-event-select__option--selected {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.create-event-select__option--disabled {
+  color: color-mix(in srgb, var(--color-foreground) 36%, transparent);
+  cursor: not-allowed;
+}
+
+.create-event-select__empty {
+  margin: 0;
+  padding: 0.65rem 0.7rem;
+  color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+  font-size: 0.88rem;
+}

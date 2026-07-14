@@ -1,6 +1,7 @@
 import { DatePipe, isPlatformBrowser } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   PLATFORM_ID,
   afterNextRender,
   computed,
@@ -10,9 +11,12 @@ import {
   resource,
   signal,
 } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
+
+const SLIDES_VISIBILITY_DELAY_MS = 2 * 60 * 60 * 1000;
 
 const EMPTY_EVENT: Event = {
   id: '',
@@ -34,7 +38,7 @@ const EMPTY_EVENT: Event = {
 
 @Component({
   selector: 'app-event-details',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css',
 })
@@ -42,9 +46,16 @@ export class EventDetailsComponent {
   slug = input.required<string>();
   protected readonly loadingCards = [1, 2, 3];
   protected readonly featureGraphicLoaded = signal(false);
+  private readonly currentTimestamp = signal(Date.now());
+  private readonly featureGraphicUrl = signal<string | null>(null);
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  protected readonly showDashboardEventsBackLink = signal(
+    this.router.currentNavigation()?.extras.state?.['fromDashboardEvents'] === true,
+  );
 
   protected readonly eventResource = resource<Event, string>({
     params: () => this.slug(),
@@ -66,7 +77,10 @@ export class EventDetailsComponent {
   );
 
   private readonly resetFeatureGraphicPlaceholder = effect(() => {
-    if (this.event().feature_graphic !== undefined) {
+    const featureGraphic = this.event().feature_graphic;
+
+    if (this.featureGraphicUrl() !== featureGraphic) {
+      this.featureGraphicUrl.set(featureGraphic);
       this.featureGraphicLoaded.set(false);
     }
   });
@@ -83,8 +97,32 @@ export class EventDetailsComponent {
     });
   });
 
+  constructor() {
+    if (!this.isBrowser) {
+      return;
+    }
+
+    const currentTimestampInterval = window.setInterval(() => {
+      this.currentTimestamp.set(Date.now());
+    }, 60_000);
+
+    this.destroyRef.onDestroy(() => {
+      window.clearInterval(currentTimestampInterval);
+    });
+  }
+
   protected formatSpeakerName(firstName: string | null, lastName: string | null): string {
     return [firstName, lastName].filter((value): value is string => Boolean(value)).join(' ');
+  }
+
+  protected canShowSlides(eventStartsAt: string): boolean {
+    const eventStartTimestamp = Date.parse(eventStartsAt);
+
+    if (Number.isNaN(eventStartTimestamp)) {
+      return false;
+    }
+
+    return this.currentTimestamp() >= eventStartTimestamp + SLIDES_VISIBILITY_DELAY_MS;
   }
 
   protected markFeatureGraphicAsLoaded(): void {
