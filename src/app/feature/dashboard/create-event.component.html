@@ -1,6 +1,6 @@
-<section class="create-event-shell">
-  <nav class="create-event-back-nav" aria-label="Event navigation">
-    <a routerLink="/dashboard/events" class="create-event-back-nav__link">
+<section class="mx-auto max-w-6xl px-6 py-16">
+  <nav class="mb-8" aria-label="Event navigation">
+    <a routerLink="/dashboard/events" class="app-back-link">
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -12,32 +12,46 @@
     </a>
   </nav>
 
-  <header class="create-event-header">
+  <header class="create-event-header mb-6 flex items-end justify-between gap-6">
     <div>
-      <h1>{{ isEditMode ? 'Edit event' : 'Create event' }}</h1>
+      <h1 class="m-0 text-[clamp(1.7rem,3vw,2.25rem)] font-extrabold leading-[1.1] text-foreground">
+        {{ isEditMode ? 'Edit event' : 'Create event' }}
+      </h1>
     </div>
   </header>
 
   @if (errorMessage()) {
-    <div class="create-event-alert" role="alert" aria-live="polite">
+    <div
+      class="mb-4 rounded-lg border border-destructive/30 bg-destructive/8 px-4 py-3.5 text-sm text-foreground"
+      role="alert"
+      aria-live="polite"
+    >
       {{ errorMessage() }}
     </div>
   }
 
   <form
-    class="create-event-form"
+    class="grid isolate gap-6"
     [attr.aria-busy]="isSubmitting()"
     (submit)="saveEvent(); $event.preventDefault()"
   >
-    <section class="create-event-section" aria-labelledby="event-details-heading">
-      <div class="create-event-section__header">
+    <section
+      class="create-event-section rounded-[2rem] border border-card-line bg-card p-8"
+      aria-labelledby="event-details-heading"
+    >
+      <div class="mb-[1.6rem]">
         <span class="create-event-section__number">Step 1</span>
-        <h2 id="event-details-heading">Event details</h2>
+        <h2
+          id="event-details-heading"
+          class="mt-3 mb-0 max-w-[22ch] text-2xl font-semibold leading-[1.05] tracking-[-0.03em] text-foreground"
+        >
+          Event details
+        </h2>
       </div>
 
-      <div class="create-event-details-grid">
-        <div class="create-event-fields">
-          <div class="create-event-field create-event-field--wide">
+      <div class="create-event-details-grid grid gap-8">
+        <div class="create-event-fields grid content-start gap-x-4 gap-y-[0.15rem]">
+          <div class="create-event-field col-span-full">
             <label for="eventTitle">Title</label>
             <input
               id="eventTitle"
@@ -87,7 +101,7 @@
             </div>
           </div>
 
-          <div class="create-event-field create-event-field--wide">
+          <div class="create-event-field col-span-full">
             <label for="eventVenue">Venue</label>
             <app-create-event-select
               controlId="eventVenue"
@@ -103,7 +117,7 @@
             </div>
           </div>
 
-          <div class="create-event-field create-event-field--wide">
+          <div class="create-event-field col-span-full">
             <label for="eventMeetupUrl">Meetup URL</label>
             <input
               id="eventMeetupUrl"
@@ -216,10 +230,18 @@
       </div>
     </section>
 
-    <section class="create-event-section" aria-labelledby="event-talks-heading">
-      <div class="create-event-section__header">
+    <section
+      class="create-event-section rounded-[2rem] border border-card-line bg-card p-8"
+      aria-labelledby="event-talks-heading"
+    >
+      <div class="mb-[1.6rem]">
         <span class="create-event-section__number">Step 2</span>
-        <h2 id="event-talks-heading">Talk lineup</h2>
+        <h2
+          id="event-talks-heading"
+          class="mt-3 mb-0 max-w-[22ch] text-2xl font-semibold leading-[1.05] tracking-[-0.03em] text-foreground"
+        >
+          Talk lineup
+        </h2>
       </div>
 
       @if (optionsState() === 'loading') {
@@ -288,7 +310,7 @@
       }
     </section>
 
-    <footer class="create-event-form__footer">
+    <footer class="flex items-center justify-end gap-3 pt-2">
       <a routerLink="/dashboard/events" class="create-event-form__cancel">Cancel</a>
       <button
         type="submit"

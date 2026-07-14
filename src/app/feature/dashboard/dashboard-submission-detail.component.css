@@ -2,47 +2,6 @@
   margin-bottom: 1rem;
 }
 
-.dashboard-detail__back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 3rem;
-  border-radius: 0.85rem;
-  padding: 0 1rem;
-  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
-  font-size: 0.98rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.dashboard-detail__back-link:hover,
-.dashboard-detail__back-link:focus-visible {
-  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
-  color: var(--color-foreground);
-  outline: none;
-}
-
-.dashboard-detail__back-link:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.dashboard-detail__back-link svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  flex: none;
-}
-
-.dashboard-detail__review-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .dashboard-detail__meta-chip {
   display: inline-flex;
   align-items: center;
@@ -66,13 +25,6 @@
   text-transform: none;
 }
 
-.dashboard-detail__speaker-picture {
-  width: 50%;
-  margin-inline: auto;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-}
-
 .dashboard-detail__card {
   position: relative;
   border-color: var(--color-card-line);
@@ -81,16 +33,6 @@
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
     0 6px 14px color-mix(in srgb, black 3%, transparent);
-}
-
-.dashboard-detail__card-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.dashboard-detail__card-header--speaker {
-  align-items: flex-start;
 }
 
 .dashboard-detail__field-label {
@@ -142,14 +84,6 @@
   font-size: 0.98rem;
   line-height: 1.9;
   text-decoration: none;
-  transition:
-    color 160ms ease;
-}
-
-.dashboard-detail__slides-link:hover,
-.dashboard-detail__slides-link:focus-visible {
-  color: var(--color-foreground);
-  outline: none;
 }
 
 .dashboard-detail__slides-link:focus-visible {
@@ -231,8 +165,7 @@
     box-shadow 160ms ease;
 }
 
-.dashboard-detail__action-button:hover,
-.dashboard-detail__action-button:focus-visible {
+.dashboard-detail__action-button:is(:hover, :focus-visible) {
   outline: none;
 }
 
@@ -251,8 +184,7 @@
   color: color-mix(in srgb, #047857 82%, var(--color-foreground) 18%);
 }
 
-.dashboard-detail__action-button--approve:hover,
-.dashboard-detail__action-button--approve:focus-visible {
+.dashboard-detail__action-button--approve:is(:hover, :focus-visible) {
   background: color-mix(in srgb, #10b981 16%, transparent);
 }
 
@@ -262,8 +194,7 @@
   color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
 }
 
-.dashboard-detail__action-button--changes:hover,
-.dashboard-detail__action-button--changes:focus-visible {
+.dashboard-detail__action-button--changes:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
   color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
@@ -279,8 +210,7 @@
   color: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
 }
 
-.dashboard-detail__action-button--reject:hover,
-.dashboard-detail__action-button--reject:focus-visible {
+.dashboard-detail__action-button--reject:is(:hover, :focus-visible) {
   background: color-mix(in srgb, #ef4444 14%, transparent);
 }
 
@@ -291,15 +221,10 @@
   font-weight: 600;
 }
 
-.dashboard-detail__modal-send:hover,
-.dashboard-detail__modal-send:focus-visible {
+.dashboard-detail__modal-send:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
   color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
-}
-
-.dashboard-detail__modal-send:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .dashboard-detail__review-alert {
@@ -369,23 +294,16 @@
   border-radius: 0.5rem;
   background: color-mix(in srgb, var(--color-background) 72%, transparent);
   color: var(--color-foreground);
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.dashboard-detail__modal-close:not(:disabled):hover,
-.dashboard-detail__modal-close:not(:disabled):focus-visible,
-.dashboard-detail__modal-secondary:not(:disabled):hover,
-.dashboard-detail__modal-secondary:not(:disabled):focus-visible {
+:is(.dashboard-detail__modal-close, .dashboard-detail__modal-secondary):not(:disabled):is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-border) 86%, var(--color-foreground) 14%);
   background: color-mix(in srgb, var(--color-background) 92%, white 8%);
   outline: none;
 }
 
-.dashboard-detail__modal-close:not(:disabled):focus-visible,
-.dashboard-detail__modal-secondary:not(:disabled):focus-visible {
+:is(.dashboard-detail__modal-close, .dashboard-detail__modal-secondary):not(:disabled):focus-visible {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
@@ -414,19 +332,6 @@
   font-weight: 500;
 }
 
-.dashboard-detail__log-card {
-  overflow: hidden;
-}
-
-:host-context(.dark) .dashboard-detail__card {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, white 1.5%, var(--color-card)) 0%, var(--color-card) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
-    0 16px 32px color-mix(in srgb, black 7%, transparent);
-}
-
 .dashboard-detail__log-list {
   display: grid;
   gap: 1rem;
@@ -450,36 +355,31 @@
   height: 0.75rem;
   margin-top: 0.45rem;
   border-radius: 999px;
+  background: var(--dashboard-detail-log-marker);
 }
 
 .dashboard-detail__log-marker--submitted {
-  background: color-mix(in srgb, #b45309 82%, var(--color-foreground) 18%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, #f59e0b 12%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, #b45309 82%, var(--color-foreground) 18%);
 }
 
 .dashboard-detail__log-marker--changes {
-  background: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--color-primary) 12%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
 }
 
 .dashboard-detail__log-marker--approved {
-  background: color-mix(in srgb, #047857 78%, var(--color-foreground) 22%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, #10b981 13%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, #047857 78%, var(--color-foreground) 22%);
 }
 
 .dashboard-detail__log-marker--assigned {
-  background: color-mix(in srgb, #0369a1 78%, var(--color-foreground) 22%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, #0ea5e9 12%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, #0369a1 78%, var(--color-foreground) 22%);
 }
 
 .dashboard-detail__log-marker--adjusted {
-  background: color-mix(in srgb, #6d28d9 76%, var(--color-foreground) 24%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, #8b5cf6 12%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, #6d28d9 76%, var(--color-foreground) 24%);
 }
 
 .dashboard-detail__log-marker--rejected {
-  background: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, #ef4444 12%, transparent);
+  --dashboard-detail-log-marker: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
 }
 
 .dashboard-detail__log-heading {
@@ -551,16 +451,13 @@
   padding: 0.9rem 0;
   color: var(--color-foreground);
   text-decoration: none;
-  transition:
-    color 160ms ease;
 }
 
 .dashboard-detail__speaker-link-row + .dashboard-detail__speaker-link-row {
   border-top: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);
 }
 
-.dashboard-detail__speaker-link-row:hover,
-.dashboard-detail__speaker-link-row:focus-visible {
+.dashboard-detail__speaker-link-row:is(:hover, :focus-visible) {
   color: color-mix(in srgb, var(--color-foreground) 86%, white 14%);
   outline: none;
 }
@@ -589,7 +486,6 @@
 
 .dashboard-detail__speaker-link-arrow {
   flex-shrink: 0;
-  font-size: 1rem;
   color: currentcolor;
 }
 
@@ -608,9 +504,5 @@
 
   .dashboard-detail__action-row--header {
     margin-left: 0;
-  }
-
-  .dashboard-detail__card-header {
-    align-items: flex-start;
   }
 }

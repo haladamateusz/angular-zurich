@@ -2,146 +2,6 @@
   display: block;
 }
 
-.create-event-shell {
-  width: min(100% - 3rem, 72rem);
-  margin: 0 auto;
-  padding: 4rem 0;
-}
-
-.create-event-back-nav {
-  margin-bottom: 2rem;
-}
-
-.create-event-back-nav__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 3rem;
-  border-radius: 0.85rem;
-  padding: 0 1rem;
-  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
-  font-size: 0.98rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.create-event-back-nav__link:hover,
-.create-event-back-nav__link:focus-visible {
-  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
-  color: var(--color-foreground);
-  outline: none;
-}
-
-.create-event-back-nav__link:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.create-event-back-nav__link svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  flex: none;
-}
-
-.create-event-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.create-event-header h1 {
-  margin: 0;
-  color: var(--color-foreground);
-  font-size: clamp(1.7rem, 3vw, 2.25rem);
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.create-event-alert {
-  margin-bottom: 1rem;
-  border: 1px solid color-mix(in srgb, var(--color-destructive) 32%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--color-destructive) 8%, transparent);
-  padding: 0.85rem 1rem;
-  color: var(--color-foreground);
-  font-size: 0.9rem;
-}
-
-.create-event-form {
-  display: grid;
-  gap: 1.5rem;
-  isolation: isolate;
-}
-
-.create-event-section {
-  position: relative;
-  overflow: visible;
-  border: 1px solid var(--color-card-line);
-  border-radius: 2rem;
-  background: color-mix(in srgb, white 96%, var(--color-card) 4%);
-  padding: 2rem;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 8px 18px color-mix(in srgb, black 3%, transparent);
-}
-
-.create-event-section::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 1px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--color-border) 55%, transparent) 24%,
-      color-mix(in srgb, white 28%, transparent) 50%,
-      transparent 100%
-    );
-  pointer-events: none;
-}
-
-:host-context(.dark) .create-event-section {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, white 1.5%, var(--color-card)) 0%, var(--color-card) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
-    0 18px 40px color-mix(in srgb, black 8%, transparent);
-}
-
-:host-context(.dark) .create-event-section::before {
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--color-primary) 42%, transparent) 18%,
-      color-mix(in srgb, white 18%, transparent) 52%,
-      transparent 100%
-    );
-}
-
-.create-event-section__header {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 1.6rem;
-}
-
-.create-event-section__header h2 {
-  max-width: 22ch;
-  margin: 0.75rem 0 0;
-  color: var(--color-foreground);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-}
-
 .create-event-section__number {
   display: inline-flex;
   align-items: center;
@@ -179,22 +39,11 @@
 }
 
 .create-event-details-grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
-  gap: 2rem;
 }
 
 .create-event-fields {
-  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-content: start;
-  gap: 0.15rem 1rem;
-}
-
-.create-event-field--wide {
-  grid-column: 1 / -1;
 }
 
 .create-event-field label,
@@ -224,10 +73,6 @@
 
 .create-event-field input::placeholder {
   color: color-mix(in srgb, var(--color-foreground) 38%, transparent);
-}
-
-.create-event-field input:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border) 65%);
 }
 
 .create-event-field input:focus {
@@ -321,8 +166,7 @@
     box-shadow 160ms ease;
 }
 
-.create-event-image-picker:not(.create-event-image-picker--filled):hover,
-.create-event-image-picker:not(.create-event-image-picker--filled):focus-visible {
+.create-event-image-picker:not(.create-event-image-picker--filled):is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 66%, transparent);
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
   outline: none;
@@ -385,32 +229,21 @@
   color: var(--color-foreground);
   font-size: 0.76rem;
   font-weight: 800;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
-  backdrop-filter: blur(0.4rem);
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
-.create-event-image-picker__actions button:hover,
-.create-event-image-picker__actions button:focus-visible {
+.create-event-image-picker__actions button:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border) 55%);
   background: color-mix(in srgb, var(--color-primary) 14%, var(--color-background) 86%);
   color: var(--color-primary);
   outline: none;
 }
 
-.create-event-image-picker__actions button:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
-}
-
-.create-event-image-picker__actions .create-event-image-picker__remove {
+.create-event-image-picker__remove {
   color: var(--color-destructive);
 }
 
-.create-event-image-picker__actions .create-event-image-picker__remove:hover,
-.create-event-image-picker__actions .create-event-image-picker__remove:focus-visible {
+.create-event-image-picker__remove:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-destructive) 42%, var(--color-border) 58%);
   background: color-mix(in srgb, var(--color-destructive) 12%, var(--color-background) 88%);
   color: var(--color-destructive);
@@ -438,8 +271,6 @@
   --create-event-talks-gap: 0.75rem;
   --create-event-talk-placeholder-height: 4.5rem;
 
-  position: relative;
-  z-index: 1;
   display: grid;
   gap: var(--create-event-talks-gap);
 }
@@ -484,8 +315,7 @@
   color: var(--color-destructive);
 }
 
-.create-event-talk-row__remove:hover,
-.create-event-talk-row__remove:focus-visible {
+.create-event-talk-row__remove:is(:hover, :focus-visible) {
   background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
   outline: none;
 }
@@ -526,8 +356,7 @@
   color: var(--color-primary);
 }
 
-.create-event-talk-placeholder:hover,
-.create-event-talk-placeholder:focus-visible {
+.create-event-talk-placeholder:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 58%, transparent);
   background: color-mix(in srgb, var(--color-primary) 7%, transparent);
   color: var(--color-foreground);
@@ -539,19 +368,9 @@
 }
 
 .create-event-talks__notice {
-  position: relative;
-  z-index: 1;
   margin: 1rem 0 0;
   color: var(--color-destructive);
   font-size: 0.85rem;
-}
-
-.create-event-form__footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 0.5rem 0 0;
 }
 
 .create-event-form__cancel,
@@ -575,8 +394,7 @@
   color: var(--color-foreground);
 }
 
-.create-event-form__cancel:hover,
-.create-event-form__cancel:focus-visible {
+.create-event-form__cancel:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 36%, var(--color-border) 64%);
   background: color-mix(in srgb, var(--color-primary) 6%, transparent);
   outline: none;
@@ -588,8 +406,7 @@
   color: var(--color-primary-foreground);
 }
 
-.create-event-form__submit:hover:not(:disabled),
-.create-event-form__submit:focus-visible:not(:disabled) {
+.create-event-form__submit:is(:hover, :focus-visible):not(:disabled) {
   border-color: var(--color-primary-hover);
   background: var(--color-primary-hover);
   outline: none;
@@ -636,11 +453,6 @@
 }
 
 @media (max-width: 640px) {
-  .create-event-shell {
-    width: min(100% - 2rem, 72rem);
-    padding: 2.5rem 0;
-  }
-
   .create-event-header {
     align-items: flex-start;
     flex-direction: column;
@@ -652,10 +464,6 @@
 
   .create-event-fields {
     grid-template-columns: 1fr;
-  }
-
-  .create-event-field--wide {
-    grid-column: auto;
   }
 
   .create-event-talk-row {

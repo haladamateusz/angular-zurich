@@ -1,6 +1,6 @@
 <section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
   <nav class="dashboard-detail__back-nav" aria-label="Talk submission navigation">
-    <a routerLink="/dashboard/talk-submissions" class="dashboard-detail__back-link">
+    <a routerLink="/dashboard/talk-submissions" class="app-back-link">
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -22,7 +22,7 @@
     </div>
   } @else if (isLoading()) {
     <section class="dashboard-detail__loading" aria-label="Loading submission review" aria-busy="true" role="status">
-      <div class="dashboard-detail__review-header mb-8" aria-hidden="true">
+      <div class="dashboard-detail__review-header mb-8 flex items-center justify-between gap-4" aria-hidden="true">
         <div class="dashboard-detail__skeleton h-7 w-64 max-w-full"></div>
         <div class="dashboard-detail__action-row dashboard-detail__action-row--header">
           <div class="dashboard-detail__skeleton h-11 w-32 rounded-lg"></div>
@@ -33,7 +33,7 @@
 
       <div class="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]" aria-hidden="true">
         <section class="dashboard-detail__card rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8">
-          <div class="dashboard-detail__card-header">
+          <div class="dashboard-detail__card-header flex items-center gap-4">
             <div class="dashboard-detail__skeleton size-[3.2rem] rounded-2xl"></div>
             <div class="dashboard-detail__skeleton h-10 w-56 max-w-[70%] rounded-xl"></div>
           </div>
@@ -64,13 +64,13 @@
         </section>
 
         <aside class="dashboard-detail__card rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8">
-          <div class="dashboard-detail__card-header dashboard-detail__card-header--speaker">
+          <div class="dashboard-detail__card-header dashboard-detail__card-header--speaker flex items-start gap-4">
             <div class="dashboard-detail__skeleton size-[3.2rem] rounded-2xl"></div>
             <div class="dashboard-detail__skeleton h-10 w-40 rounded-xl"></div>
           </div>
 
           <div class="mt-8 space-y-6">
-            <div class="dashboard-detail__skeleton dashboard-detail__speaker-picture rounded-[1.6rem]"></div>
+            <div class="dashboard-detail__skeleton mx-auto aspect-square w-1/2 overflow-hidden rounded-[1.6rem]"></div>
 
             <div class="dashboard-detail__speaker-identity space-y-3">
               <div class="dashboard-detail__skeleton mx-auto h-10 w-56 max-w-full rounded-xl"></div>
@@ -90,7 +90,7 @@
         class="dashboard-detail__card dashboard-detail__log-card mt-6 rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8"
         aria-hidden="true"
       >
-        <div class="dashboard-detail__card-header">
+        <div class="dashboard-detail__card-header flex items-center gap-4">
           <div class="dashboard-detail__skeleton size-[3.2rem] rounded-2xl"></div>
           <div class="dashboard-detail__skeleton h-10 w-44 rounded-xl"></div>
         </div>
@@ -106,7 +106,7 @@
     </section>
   } @else if (submission(); as currentSubmission) {
     <header class="dashboard-detail__page-header mb-8">
-      <div class="dashboard-detail__review-header">
+      <div class="dashboard-detail__review-header flex items-center justify-between gap-4">
         <p class="text-xl font-semibold uppercase tracking-[0.22em] text-primary sm:text-2xl">Submission review</p>
         <div class="dashboard-detail__action-row dashboard-detail__action-row--header" aria-label="Review actions">
           <button
@@ -151,7 +151,7 @@
 
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
       <section class="dashboard-detail__card rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8">
-        <div class="dashboard-detail__card-header">
+        <div class="dashboard-detail__card-header flex items-center gap-4">
           <div class="inline-flex size-[3.2rem] items-center justify-center rounded-2xl border border-card-line bg-background/70 text-primary" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" class="size-6">
               <path d="M8 3.75h5.5L18 8.25V19a1.25 1.25 0 0 1-1.25 1.25h-8.5A1.25 1.25 0 0 1 7 19V5A1.25 1.25 0 0 1 8.25 3.75Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -213,7 +213,7 @@
       </section>
 
       <aside class="dashboard-detail__card rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8">
-        <div class="dashboard-detail__card-header dashboard-detail__card-header--speaker">
+        <div class="dashboard-detail__card-header dashboard-detail__card-header--speaker flex items-start gap-4">
           <div class="inline-flex size-[3.2rem] items-center justify-center rounded-2xl border border-card-line bg-background/70 text-primary" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" class="size-6">
               <path d="M12 12a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5ZM5 19.25a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -227,7 +227,7 @@
         </div>
 
         <div class="mt-8 space-y-6">
-          <div class="dashboard-detail__speaker-picture rounded-[1.6rem] border border-navbar-line bg-background">
+          <div class="mx-auto aspect-square w-1/2 overflow-hidden rounded-[1.6rem] border border-navbar-line bg-background">
             @if (speakerPictureUrl()) {
               <img
                 [src]="speakerPictureUrl()"
@@ -295,7 +295,7 @@
     </div>
 
     <section class="dashboard-detail__card dashboard-detail__log-card mt-6 rounded-[1.6rem] border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-8">
-      <div class="dashboard-detail__card-header">
+      <div class="dashboard-detail__card-header flex items-center gap-4">
         <div class="inline-flex size-[3.2rem] items-center justify-center rounded-2xl border border-card-line bg-background/70 text-primary" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" class="size-6">
             <path d="M12 7.75v4.5l3 1.75M20.25 12a8.25 8.25 0 1 1-2.42-5.83" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

@@ -88,6 +88,40 @@
   flex: none;
 }
 
+.app-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 3rem;
+  border-radius: 0.85rem;
+  padding: 0 1rem;
+  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.app-back-link:hover,
+.app-back-link:focus-visible {
+  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  color: var(--color-foreground);
+  outline: none;
+}
+
+.app-back-link:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+.app-back-link svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+}
+
 .app-select-chevron {
   flex: 0 0 auto;
   width: 1rem;
