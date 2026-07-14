@@ -39,10 +39,10 @@ const EMPTY_SPONSORS: Sponsor[] = [];
 export class HomeComponent {
   private readonly supabaseService = inject(SupabaseService);
 
-  protected readonly latestEvent = resource<Event, void>({
+  protected readonly upcomingPublicEvent = resource<Event, void>({
     defaultValue: EMPTY_EVENT,
     loader: async () => {
-      const { data, error } = await this.supabaseService.getLatestEvent();
+      const { data, error } = await this.supabaseService.getUpcomingPublicEvent();
 
       if (error) {
         throw error;
@@ -79,7 +79,7 @@ export class HomeComponent {
   });
 
   protected readonly upcomingEvent = computed(() => {
-    const event = this.latestEvent.value();
+    const event = this.upcomingPublicEvent.value();
     const startsAt = Date.parse(event.starts_at);
 
     if (!Number.isFinite(startsAt) || startsAt <= Date.now()) {
