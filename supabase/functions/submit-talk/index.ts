@@ -68,13 +68,30 @@ const sql = postgres(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '', {
 
 const SUPABASE_SECRET_KEYS = Deno.env.get('SUPABASE_SECRET_KEYS');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const supabaseServiceKey = SUPABASE_SECRET_KEYS
-  ? (JSON.parse(SUPABASE_SECRET_KEYS) as Record<string, string>).default
-  : SUPABASE_SERVICE_ROLE_KEY;
+const supabaseServiceKey = getSupabaseServiceKey();
 
 const supabaseAdmin = Deno.env.get('SUPABASE_URL') && supabaseServiceKey
   ? createClient(Deno.env.get('SUPABASE_URL')!, supabaseServiceKey)
   : null;
+
+function getSupabaseServiceKey(): string | undefined {
+  if (!SUPABASE_SECRET_KEYS) {
+    return SUPABASE_SERVICE_ROLE_KEY || undefined;
+  }
+
+  try {
+    return (JSON.parse(SUPABASE_SECRET_KEYS) as Record<string, string>)
+      .default ?? SUPABASE_SERVICE_ROLE_KEY ?? undefined;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('supabase-secret-keys parse failed', error.message);
+    } else {
+      console.error('supabase-secret-keys parse failed', error);
+    }
+
+    return SUPABASE_SERVICE_ROLE_KEY || undefined;
+  }
+}
 
 async function getActiveOrganizerEmails(): Promise<string[]> {
   const rows = await sql<{ email: string }[]>`
