@@ -36,7 +36,6 @@ const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api
 const SLIDES_LINK_PATTERN = /^https?:\/\/.+/i;
 const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 const SPEAKER_PICTURE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-const SPEAKER_AVATAR_PLACEHOLDER_URL = '/avatar.svg';
 
 const MAX_LENGTHS = {
   talkTitle: 160,
@@ -96,14 +95,12 @@ export class SubmitTalkComponent {
 
   protected readonly maxLengths = MAX_LENGTHS;
   protected readonly maxSpeakerPictureSizeInMegabytes = SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
-  protected readonly speakerAvatarPlaceholderUrl = SPEAKER_AVATAR_PLACEHOLDER_URL;
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
   protected readonly submissionState = signal<SubmissionState>('idle');
   protected readonly captchaError = signal('');
   protected readonly errorMessage = signal('');
   protected readonly captchaToken = signal<string | null>(null);
   protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
-  protected readonly speakerPictureFileName = signal('');
 
   protected readonly submitTalkForm = this.formBuilder.group({
     talkTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(MAX_LENGTHS.talkTitle)]],
@@ -262,12 +259,28 @@ export class SubmitTalkComponent {
     const file = input.files?.[0] ?? null;
     const control = this.submitTalkForm.controls.speakerPicture;
 
-    this.revokeSpeakerPicturePreviewUrl();
-    control.setValue(file);
+    if (!file) {
+      return;
+    }
+
     control.markAsDirty();
     control.markAsTouched();
+
+    if (!SPEAKER_PICTURE_ALLOWED_TYPES.includes(file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number])) {
+      input.value = '';
+      control.setErrors({ invalidFileType: true });
+      return;
+    }
+
+    if (file.size > SPEAKER_PICTURE_MAX_SIZE_BYTES) {
+      input.value = '';
+      control.setErrors({ fileTooLarge: true });
+      return;
+    }
+
+    this.revokeSpeakerPicturePreviewUrl();
+    control.setValue(file);
     control.updateValueAndValidity();
-    this.speakerPictureFileName.set(file?.name ?? '');
 
     if (file && control.valid && isPlatformBrowser(this.platformId)) {
       this.speakerPicturePreviewUrl.set(URL.createObjectURL(file));
@@ -279,7 +292,14 @@ export class SubmitTalkComponent {
   }
 
   protected openSpeakerPicturePicker(): void {
-    this.speakerPictureInput()?.nativeElement?.click();
+    const input = this.speakerPictureInput()?.nativeElement;
+
+    if (!input) {
+      return;
+    }
+
+    input.value = '';
+    input.click();
   }
 
   private async loadTurnstile(): Promise<TurnstileApi | null> {
@@ -373,7 +393,6 @@ export class SubmitTalkComponent {
 
   private resetSpeakerPictureInput(): void {
     this.revokeSpeakerPicturePreviewUrl();
-    this.speakerPictureFileName.set('');
     this.submitTalkForm.controls.speakerPicture.setValue(null);
     this.submitTalkForm.controls.speakerPicture.markAsPristine();
     this.submitTalkForm.controls.speakerPicture.markAsUntouched();

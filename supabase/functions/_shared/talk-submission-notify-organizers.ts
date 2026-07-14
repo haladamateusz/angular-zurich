@@ -26,7 +26,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
   text: string;
   html: string;
 } {
-  const subject = `New Angular Zurich talk proposal: "${context.talkTitle.trim()}"`;
+  const subject = `New Angular Zurich talk proposal: ${context.talkTitle.trim()}`;
   const dashboardUrl = getDashboardUrl(getSiteUrl(), context.submissionId);
 
   const speakerLine = context.speakerEmail.trim()
@@ -44,20 +44,17 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
     ``,
     `Review it in the dashboard: ${dashboardUrl}`,
     ``,
-    `Thanks.`,
   ].join('\n');
 
   const html = [
     `<p>Hi,</p>`,
     `<p>A new talk proposal was submitted and is ready for review.</p>`,
-    '<hr />',
     `<p><strong>Talk:</strong> ${escapeHtml(context.talkTitle.trim())}</p>`,
     `<p><strong>Speaker:</strong> ${escapeHtml(speakerLine)}</p>`,
     `<p><strong>Submission ID:</strong> ${escapeHtml(context.submissionId)}</p>`,
     `<p><strong>Review:</strong> <a href="${escapeHtml(dashboardUrl)}">${escapeHtml(
       dashboardUrl,
     )}</a></p>`,
-    '<p>Thanks.</p>',
   ].join('');
 
   return { subject, text, html };

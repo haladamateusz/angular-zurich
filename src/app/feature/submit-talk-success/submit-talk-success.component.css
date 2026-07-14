@@ -2,9 +2,67 @@
   display: block;
 }
 
-.submission-status-panel {
-  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
-  padding: 1rem;
+.submit-talk-success-card {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, white 96%, var(--color-card) 4%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
+    0 8px 18px color-mix(in srgb, black 3%, transparent);
+}
+
+.submit-talk-success-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-border) 55%, transparent) 24%,
+      color-mix(in srgb, white 28%, transparent) 50%,
+      transparent 100%
+    );
+  pointer-events: none;
+}
+
+:host-context(.dark) .submit-talk-success-card {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, white 1.5%, var(--color-card)) 0%, var(--color-card) 100%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
+    0 18px 40px color-mix(in srgb, black 8%, transparent);
+}
+
+:host-context(.dark) .submit-talk-success-card::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-primary) 42%, transparent) 18%,
+      color-mix(in srgb, white 18%, transparent) 52%,
+      transparent 100%
+    );
+}
+
+.submission-summary {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.submission-summary__item {
+  min-width: 0;
+}
+
+@media (width >= 640px) {
+  .submission-summary {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    align-items: start;
+  }
+
+  .submission-summary__item:last-child {
+    text-align: right;
+  }
 }

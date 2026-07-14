@@ -1,7 +1,7 @@
 <main class="bg-background">
   <section class="px-6 py-16 lg:py-24">
     <div class="mx-auto max-w-3xl">
-      <div class="rounded-[2rem] border border-card-line bg-card p-8 shadow-sm sm:p-10">
+      <div class="submit-talk-success-card rounded-[2rem] border border-card-line bg-card p-8 shadow-sm sm:p-10">
         <div class="space-y-4">
           <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
             Talk proposal received
@@ -13,63 +13,30 @@
         </div>
 
         @if (hasSubmissionId()) {
-          <div class="mt-6 rounded-2xl border border-border bg-background p-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground-2">
-              Submission ID
-            </p>
-            <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
-          </div>
+          <div class="submission-summary mt-6">
+            <div class="submission-summary__item">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                Submission ID
+              </p>
+              <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
+            </div>
 
-          <div class="submission-status-panel mt-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground-2">
-              Device access
-            </p>
-            @if (statusSummary()?.can_edit === false) {
-              <p class="mt-2 text-sm leading-7 text-foreground/85">
-                This browser is recognized, but this submission is no longer open for speaker edits.
+            <div class="submission-summary__item">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                Current status
               </p>
-            } @else if (isDeviceRecognized()) {
-              <p class="mt-2 text-sm leading-7 text-foreground/85">
-                This browser can be used to make changes while the submission is open for edits.
-              </p>
-            } @else {
-              <p class="mt-2 text-sm leading-7 text-foreground/85">
-                Changes can only be made from the device and browser used for the original
-                submission.
-              </p>
-            }
-
-            @if (isLoading()) {
-              <p class="mt-3 text-sm text-muted-foreground-1">Loading current status...</p>
-            } @else if (errorMessage()) {
-              <p class="mt-3 text-sm text-destructive">{{ errorMessage() }}</p>
-            } @else if (statusSummary(); as currentStatus) {
-              <div class="mt-4 rounded-xl border border-border bg-card px-4 py-3">
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground-2">
-                  Current status
-                </p>
+              @if (isLoading()) {
+                <p class="mt-2 text-sm text-muted-foreground-1">Loading...</p>
+              } @else if (errorMessage()) {
+                <p class="mt-2 text-sm text-destructive">{{ errorMessage() }}</p>
+              } @else if (statusSummary(); as currentStatus) {
                 <p class="mt-2 text-sm font-semibold text-foreground">
                   {{ formatStatus(currentStatus.status) }}
                 </p>
-              </div>
-            }
+              }
+            </div>
           </div>
         }
-
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a
-            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-            routerLink="/"
-          >
-            Back to home
-          </a>
-          <a
-            class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-6 py-3 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
-            routerLink="/talk-submission"
-          >
-            Submit another talk
-          </a>
-        </div>
       </div>
     </div>
   </section>

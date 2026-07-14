@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionDeviceAuthService } from '../../core/data-access/talk-submission-device-auth.service';
 import {
@@ -9,7 +9,6 @@ import {
 
 @Component({
   selector: 'app-submit-talk-success',
-  imports: [RouterLink],
   templateUrl: './submit-talk-success.component.html',
   styleUrl: './submit-talk-success.component.css'
 })

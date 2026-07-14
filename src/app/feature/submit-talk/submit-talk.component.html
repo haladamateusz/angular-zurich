@@ -45,7 +45,7 @@
                 formControlName="talkTitle"
                 autocomplete="off"
                 placeholder="Example: Modern Angular debugging workflows"
-                class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('talkTitle')"
               />
               <div class="field-error-slot" aria-live="polite">
@@ -69,7 +69,7 @@
                 formControlName="talkDescription"
                 rows="8"
                 placeholder="What problem does the talk address, what will the audience learn, and why is it worth attending?"
-                class="mt-2 w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('talkDescription')"
               ></textarea>
               <div class="field-error-slot" aria-live="polite">
@@ -89,7 +89,7 @@
                 formControlName="slidesLink"
                 autocomplete="url"
                 placeholder="https://speakerdeck.com/you/your-talk"
-                class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                 [attr.aria-invalid]="fieldHasError('slidesLink')"
               />
               <div class="field-error-slot" aria-live="polite">
@@ -133,7 +133,7 @@
                     formControlName="speakerFirstName"
                     autocomplete="given-name"
                     placeholder="Your first name"
-                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('speakerFirstName')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -151,7 +151,7 @@
                     formControlName="speakerLastName"
                     autocomplete="family-name"
                     placeholder="Your last name"
-                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('speakerLastName')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -171,7 +171,7 @@
                     formControlName="emailAddress"
                     autocomplete="email"
                     placeholder="you@example.com"
-                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('emailAddress')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -189,7 +189,7 @@
                     formControlName="speakerLabel"
                     autocomplete="off"
                     placeholder="Architect, GDE, Consultant"
-                    class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                     [attr.aria-invalid]="fieldHasError('speakerLabel')"
                   />
                   <div class="field-error-slot" aria-live="polite">
@@ -214,7 +214,7 @@
                   formControlName="speakerBio"
                   rows="6"
                   placeholder="Tell us about your background, what you work on, and why you are the right person to give this talk."
-                  class="speaker-card__input speaker-card__bio-textarea mt-2 w-full rounded-[1.4rem] border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                  class="speaker-card__input speaker-card__bio-textarea mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                   [attr.aria-invalid]="fieldHasError('speakerBio')"
                 ></textarea>
                 <div class="field-error-slot" aria-live="polite">
@@ -236,7 +236,7 @@
                       formControlName="personalUrl"
                       autocomplete="url"
                       placeholder="https://your-site.dev"
-                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('personalUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -256,7 +256,7 @@
                       formControlName="twitterUrl"
                       autocomplete="url"
                       placeholder="https://x.com/your-handle"
-                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('twitterUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -278,7 +278,7 @@
                       formControlName="linkedinUrl"
                       autocomplete="url"
                       placeholder="https://www.linkedin.com/in/you"
-                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('linkedinUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -298,7 +298,7 @@
                       formControlName="githubUrl"
                       autocomplete="url"
                       placeholder="https://github.com/your-handle"
-                      class="speaker-card__input mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
+                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
                       [attr.aria-invalid]="fieldHasError('githubUrl')"
                     />
                     <div class="field-error-slot" aria-live="polite">
@@ -314,76 +314,73 @@
             </div>
 
             <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
-              <div class="speaker-card__preview-block">
-                <div class="speaker-card__portrait-header flex flex-col">
+              <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
+                <div class="speaker-card__portrait-header">
                   <label class="text-sm font-semibold text-foreground" for="speakerPicture">
                     Speaker photo *
                   </label>
                 </div>
 
-                <div
-                  class="speaker-card__preview-frame rounded-[1.4rem] bg-card"
-                  [class.speaker-card__preview-frame--empty]="!speakerPicturePreviewUrl()"
-                  [class.speaker-card__preview-frame--filled]="!!speakerPicturePreviewUrl()"
-                >
-                  <div class="speaker-card__preview-media overflow-hidden rounded-[1.4rem]">
-                    <img
-                      [src]="speakerPicturePreviewUrl() ?? speakerAvatarPlaceholderUrl"
-                      [alt]="speakerPicturePreviewUrl() ? 'Selected speaker preview' : ''"
-                      [attr.aria-hidden]="speakerPicturePreviewUrl() ? null : true"
-                      class="speaker-card__preview-image w-full object-cover"
-                    />
-
-                    @if (speakerPicturePreviewUrl()) {
+                @if (speakerPicturePreviewUrl()) {
+                  <div
+                    class="speaker-card__image-picker speaker-card__image-picker--filled"
+                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : null"
+                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                  >
+                    <img [src]="speakerPicturePreviewUrl()" alt="Selected speaker preview" />
+                    <div class="speaker-card__image-picker-actions">
+                      <button type="button" (click)="openSpeakerPicturePicker()">
+                        Replace
+                      </button>
                       <button
                         type="button"
-                        class="speaker-card__remove-button"
+                        class="speaker-card__image-picker-remove"
                         (click)="removeSpeakerPicture()"
                       >
-                        Remove image
+                        Remove
                       </button>
-                    }
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
-                <div class="speaker-card__upload-shell">
-                  <div class="speaker-card__filled-upload-row flex items-center gap-[0.9rem]">
-                    <button
-                      type="button"
-                      class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-hidden focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background"
-                      (click)="openSpeakerPicturePicker()"
-                    >
-                      Browse
-                    </button>
-
-                    <p class="speaker-card__selected-file text-sm text-foreground">
-                      {{ speakerPictureFileName() || submitTalkForm.controls.speakerPicture.value?.name || 'Select a square portrait or browse for one.' }}
-                    </p>
-                  </div>
-
-                  <input
-                    #speakerPictureInput
-                    id="speakerPicture"
-                    type="file"
-                    hidden
-                    accept="image/jpeg,image/png,image/webp"
-                    (change)="onSpeakerPictureSelected($event)"
-                    class="speaker-card__sr-only-input"
+                } @else {
+                  <button
+                    type="button"
+                    class="speaker-card__image-picker"
+                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : 'speakerPictureHint'"
                     [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                    aria-describedby="speakerPictureHint"
-                  />
+                    (click)="openSpeakerPicturePicker()"
+                  >
+                    <span class="speaker-card__image-picker-icon">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                          d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3.75A1.75 1.75 0 0 0 6.75 20h10.5A1.75 1.75 0 0 0 19 18.25V14.5"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <strong>Choose speaker photo</strong>
+                    <span id="speakerPictureHint">
+                      JPG, PNG, or WebP up to {{ maxSpeakerPictureSizeInMegabytes }} MB
+                    </span>
+                  </button>
+                }
 
-                  <div class="speaker-card__upload-meta speaker-card__upload-meta--compact flex flex-col gap-[0.1rem] pt-[0.65rem]">
-                    <p id="speakerPictureHint" class="text-sm leading-7 text-muted-foreground-1">
-                      Upload a JPG, PNG, or WebP image up to {{ maxSpeakerPictureSizeInMegabytes }} MB.
-                    </p>
-                  </div>
-                </div>
+                <input
+                  #speakerPictureInput
+                  id="speakerPicture"
+                  type="file"
+                  hidden
+                  accept="image/jpeg,image/png,image/webp"
+                  (change)="onSpeakerPictureSelected($event)"
+                  class="speaker-card__sr-only-input"
+                  [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                  [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : speakerPicturePreviewUrl() ? null : 'speakerPictureHint'"
+                />
               </div>
 
-              <div class="field-error-slot" aria-live="polite">
+              <div id="speakerPictureFeedback" class="field-error-slot" aria-live="polite">
                 @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('required')) {
                   <p class="text-sm text-destructive">
                     Please upload a speaker photo.
