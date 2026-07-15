@@ -1,6 +1,17 @@
 <main class="bg-background">
   <section class="px-6 py-14 lg:py-18">
     <div class="mx-auto max-w-5xl space-y-8">
+      @if (isBlockingEditError()) {
+        <div
+          aria-live="assertive"
+          class="rounded-2xl border border-destructive/25 bg-destructive/10 p-5 text-destructive"
+          role="alert"
+        >
+          <p class="text-sm leading-7 sm:text-base">{{ errorMessage() }}</p>
+        </div>
+      }
+
+      @if (!isBlockingEditError()) {
       <div class="space-y-3">
         <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
           {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
@@ -497,7 +508,7 @@
               <button
                 type="submit"
                 class="submission-card__submit-button inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70"
-                [disabled]="submissionState() === 'loading' || submissionState() === 'submitting'"
+                [disabled]="isSubmitDisabled()"
               >
                 @if (submissionState() === 'loading') {
                   <span>Loading…</span>
@@ -522,6 +533,7 @@
           />
         </div>
       </form>
+      }
     </div>
   </section>
 </main>

@@ -19,6 +19,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionDeviceAuthService } from '../../core/data-access/talk-submission-device-auth.service';
@@ -106,6 +107,8 @@ export class SubmitTalkComponent {
   protected readonly captchaError = signal('');
   protected readonly errorMessage = signal('');
   protected readonly captchaToken = signal<string | null>(null);
+  protected readonly isEditSubmissionInvalid = signal(false);
+  protected readonly isEditSubmissionLoaded = signal(false);
   protected readonly existingSpeakerPicturePath = signal<string | null>(null);
   protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
 
@@ -160,11 +163,28 @@ export class SubmitTalkComponent {
     companyWebsite: ['', [Validators.maxLength(MAX_LENGTHS.companyWebsite)]],
   });
 
+  private readonly formStatus = toSignal(this.submitTalkForm.statusChanges, {
+    initialValue: this.submitTalkForm.status,
+  });
+
   protected readonly talkDescriptionLength = computed(
     () => this.submitTalkForm.controls.talkDescription.value.length,
   );
   protected readonly speakerBioLength = computed(
     () => this.submitTalkForm.controls.speakerBio.value.length,
+  );
+  protected readonly isSubmitDisabled = computed(
+    () => {
+      this.formStatus();
+
+      return this.submissionState() === 'loading' ||
+      this.submissionState() === 'submitting' ||
+      this.submitTalkForm.invalid ||
+      (this.isEditMode() && (!this.isEditSubmissionLoaded() || this.isEditSubmissionInvalid()));
+    },
+  );
+  protected readonly isBlockingEditError = computed(
+    () => this.isEditMode() && this.isEditSubmissionInvalid() && this.submissionState() === 'error',
   );
 
   constructor() {
@@ -324,6 +344,8 @@ export class SubmitTalkComponent {
     const editToken = this.talkSubmissionDeviceAuthService.getEditToken(submissionId);
 
     if (!submissionId || !editToken) {
+      this.isEditSubmissionInvalid.set(true);
+      this.isEditSubmissionLoaded.set(false);
       this.submissionState.set('error');
       this.errorMessage.set('We could not verify this device for editing.');
       return;
@@ -338,12 +360,16 @@ export class SubmitTalkComponent {
     );
 
     if (error || !data || !data.can_edit) {
+      this.isEditSubmissionInvalid.set(true);
+      this.isEditSubmissionLoaded.set(false);
       this.submissionState.set('error');
       this.errorMessage.set('This submission cannot be edited from this device.');
       return;
     }
 
     this.populateForm(data);
+    this.isEditSubmissionInvalid.set(false);
+    this.isEditSubmissionLoaded.set(true);
     this.submissionState.set('idle');
   }
 
@@ -380,8 +406,13 @@ export class SubmitTalkComponent {
     const editToken = this.talkSubmissionDeviceAuthService.getEditToken(submissionId);
 
     if (!submissionId || !editToken) {
+      this.isEditSubmissionInvalid.set(true);
       this.submissionState.set('error');
       this.errorMessage.set('We could not verify this device for editing.');
+      return;
+    }
+
+    if (this.isEditSubmissionInvalid() || !this.isEditSubmissionLoaded()) {
       return;
     }
 

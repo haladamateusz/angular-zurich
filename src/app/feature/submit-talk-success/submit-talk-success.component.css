@@ -56,6 +56,10 @@
   min-width: 0;
 }
 
+.submission-summary__device-text {
+  margin: 0;
+}
+
 .submission-summary__edit-link {
   min-width: 7rem;
 }
@@ -66,7 +70,11 @@
     align-items: start;
   }
 
-  .submission-summary__item:last-child {
+  .submission-summary__device-text {
+    grid-column: 1 / -1;
+  }
+
+  .submission-summary__item:nth-of-type(2) {
     text-align: right;
   }
 }

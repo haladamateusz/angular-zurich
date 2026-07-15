@@ -651,6 +651,18 @@ export class SupabaseService {
       .maybeSingle();
   }
 
+  async talkSubmissionExists(submissionId: string): Promise<boolean> {
+    if (this.supabase === null) {
+      return false;
+    }
+
+    const { data, error } = await this.supabase.rpc('talk_submission_exists', {
+      p_submission_id: submissionId,
+    });
+
+    return !error && data === true;
+  }
+
   async getEditableTalkSubmissionForDevice(
     submissionId: string,
     editToken: string,

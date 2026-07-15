@@ -19,6 +19,9 @@ export class SubmitTalkSuccessComponent {
   private readonly talkSubmissionDeviceAuthService = inject(TalkSubmissionDeviceAuthService);
 
   protected readonly submissionId = signal(this.route.snapshot.paramMap.get('submissionId'));
+  protected readonly isSubmissionIdInvalid = signal(
+    this.route.snapshot.queryParamMap.get('invalidSubmissionId') === 'true',
+  );
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly statusSummary = signal<TalkSubmissionStatusSummary | null>(null);
@@ -54,7 +57,7 @@ export class SubmitTalkSuccessComponent {
   }
 
   private async loadSubmissionStatus(): Promise<void> {
-    if (!this.hasSubmissionId()) {
+    if (!this.hasSubmissionId() || this.isSubmissionIdInvalid()) {
       return;
     }
 

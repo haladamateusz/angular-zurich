@@ -1,19 +1,44 @@
 <main class="bg-background">
   <section class="px-6 py-16 lg:py-24">
     <div class="mx-auto max-w-3xl">
+      @if (!isSubmissionIdInvalid()) {
+        @if (statusSummary(); as currentStatus) {
+          @if (currentStatus.can_edit) {
+            <div class="mb-4 flex justify-end">
+              <a
+                class="submission-summary__edit-link inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
+                [routerLink]="['/talk-submission', currentStatus.id, 'edit']"
+              >
+                Edit
+              </a>
+            </div>
+          }
+        }
+      }
+
       <div class="submit-talk-success-card rounded-[2rem] border border-card-line bg-card p-8 shadow-sm sm:p-10">
         <div class="space-y-4">
           <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
-            Talk proposal received
+            {{ isSubmissionIdInvalid() ? 'Invalid submission id' : 'Talk proposal received' }}
           </h1>
-          <p class="text-sm leading-8 text-foreground/85 sm:text-base">
-            Thanks for sending this over. We stored your submission in our review queue and will
-            reach out after the review, whether we decide to move forward with the talk or not.
-          </p>
+          @if (isSubmissionIdInvalid()) {
+            <p class="text-sm leading-8 text-destructive sm:text-base">
+              Invalid submission id
+            </p>
+          } @else {
+            <p class="text-sm leading-8 text-foreground/85 sm:text-base">
+              Thanks for sending this over. We stored your submission in our review queue and will
+              reach out after the review, whether we decide to move forward with the talk or not.
+            </p>
+          }
         </div>
 
-        @if (hasSubmissionId()) {
+        @if (hasSubmissionId() && !isSubmissionIdInvalid()) {
           <div class="submission-summary mt-6">
+            <p class="submission-summary__device-text text-sm leading-8 text-foreground/85 sm:text-base">
+              Further edits will be possible only from this current device.
+            </p>
+
             <div class="submission-summary__item">
               <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
                 Submission ID
@@ -21,28 +46,22 @@
               <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
             </div>
 
-            <div class="submission-summary__item">
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                Current status
-              </p>
-              @if (isLoading()) {
-                <p class="mt-2 text-sm text-muted-foreground-1">Loading...</p>
-              } @else if (errorMessage()) {
-                <p class="mt-2 text-sm text-destructive">{{ errorMessage() }}</p>
-              } @else if (statusSummary(); as currentStatus) {
-                <p class="mt-2 text-sm font-semibold text-foreground">
-                  {{ formatStatus(currentStatus.status) }}
+            @if (isLoading() || errorMessage() || statusSummary()) {
+              <div class="submission-summary__item">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                  Current status
                 </p>
-                @if (currentStatus.can_edit) {
-                  <a
-                    class="submission-summary__edit-link mt-4 inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-                    [routerLink]="['/talk-submission', currentStatus.id, 'edit']"
-                  >
-                    Edit
-                  </a>
+                @if (isLoading()) {
+                  <p class="mt-2 text-sm text-muted-foreground-1">Loading...</p>
+                } @else if (errorMessage()) {
+                  <p class="mt-2 text-sm text-destructive">{{ errorMessage() }}</p>
+                } @else if (statusSummary(); as currentStatus) {
+                  <p class="mt-2 text-sm font-semibold text-foreground">
+                    {{ formatStatus(currentStatus.status) }}
+                  </p>
                 }
-              }
-            </div>
+              </div>
+            }
           </div>
         }
       </div>
