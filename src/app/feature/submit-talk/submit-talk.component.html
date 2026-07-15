@@ -3,11 +3,15 @@
     <div class="mx-auto max-w-5xl space-y-8">
       <div class="space-y-3">
         <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-          Tell us about your talk
+          {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
         </h2>
         <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
-          Fields marked with * are required to submit your talk. We use your contact details only
-          to follow up about this proposal.
+          @if (isEditMode()) {
+            Update the details below and save the proposal when everything looks right.
+          } @else {
+            Fields marked with * are required to submit your talk. We use your contact details only
+            to follow up about this proposal.
+          }
         </p>
       </div>
 
@@ -317,7 +321,7 @@
               <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
                 <div class="speaker-card__portrait-header">
                   <label class="text-sm font-semibold text-foreground" for="speakerPicture">
-                    Speaker photo *
+                    Speaker photo{{ isEditMode() ? '' : ' *' }}
                   </label>
                 </div>
 
@@ -341,6 +345,30 @@
                       </button>
                     </div>
                   </div>
+                } @else if (isEditMode() && existingSpeakerPicturePath()) {
+                  <button
+                    type="button"
+                    class="speaker-card__image-picker"
+                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : 'speakerPictureHint'"
+                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                    (click)="openSpeakerPicturePicker()"
+                  >
+                    <span class="speaker-card__image-picker-icon">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                          d="M6.75 4.75h10.5A1.75 1.75 0 0 1 19 6.5v11a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 17.5v-11a1.75 1.75 0 0 1 1.75-1.75Zm1.5 10.5 2.25-2.5 1.65 1.8 2.1-2.55 2.5 3.25M9.25 9.25h.01"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <strong>Current speaker photo on file</strong>
+                    <span id="speakerPictureHint">
+                      Choose a replacement only if you want to change it
+                    </span>
+                  </button>
                 } @else {
                   <button
                     type="button"
@@ -412,10 +440,14 @@
               </p>
             </div>
             <h3 id="submission-heading" class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground">
-              Verification and submit
+              {{ isEditMode() ? 'Review and save' : 'Verification and submit' }}
             </h3>
             <p class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base">
-              Complete the verification step and send us the proposal when everything looks good.
+              @if (isEditMode()) {
+                Save the adjusted proposal when everything looks good.
+              } @else {
+                Complete the verification step and send us the proposal when everything looks good.
+              }
             </p>
           </div>
 
@@ -431,34 +463,30 @@
           }
 
           <div class="submission-card__body relative z-[1] mt-7 space-y-5">
-<!--            <div class="submission-card__device-note">-->
-<!--              <h4 class="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground-2">-->
-<!--                Edits after submission-->
-<!--              </h4>-->
-<!--              <p class="mt-2 text-sm leading-7 text-muted-foreground-1">-->
-<!--                After submitting, changes can only be made from this device. Keep this browser-->
-<!--                available if you expect to adjust the proposal later.-->
-<!--              </p>-->
-<!--            </div>-->
+            @if (!isEditMode()) {
+              <div class="space-y-3">
+                @if (turnstileSiteKey) {
+                  <div #turnstileContainer class="min-h-16"></div>
+                } @else {
+                  <p class="text-sm text-destructive">
+                    Verification is not configured yet. Please contact the maintainers before using this form.
+                  </p>
+                }
 
-            <div class="space-y-3">
-              @if (turnstileSiteKey) {
-                <div #turnstileContainer class="min-h-16"></div>
-              } @else {
-                <p class="text-sm text-destructive">
-                  Verification is not configured yet. Please contact the maintainers before using this form.
-                </p>
-              }
-
-              @if (captchaError()) {
-                <p class="text-sm text-destructive">{{ captchaError() }}</p>
-              }
-            </div>
+                @if (captchaError()) {
+                  <p class="text-sm text-destructive">{{ captchaError() }}</p>
+                }
+              </div>
+            }
 
             <div class="submission-card__footer flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
               <div class="submission-card__consent space-y-1">
                 <p class="max-w-2xl text-sm leading-7 text-muted-foreground-1">
-                  By submitting, you agree that Angular Zurich can contact you about this proposal.
+                  @if (isEditMode()) {
+                    By saving, you confirm Angular Zurich can continue reviewing this proposal.
+                  } @else {
+                    By submitting, you agree that Angular Zurich can contact you about this proposal.
+                  }
                 </p>
                 <p class="text-sm leading-7 text-muted-foreground-1">
                   Want to explore the community first?
@@ -469,12 +497,14 @@
               <button
                 type="submit"
                 class="submission-card__submit-button inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70"
-                [disabled]="submissionState() === 'submitting'"
+                [disabled]="submissionState() === 'loading' || submissionState() === 'submitting'"
               >
-                @if (submissionState() === 'submitting') {
-                  <span>Submitting…</span>
+                @if (submissionState() === 'loading') {
+                  <span>Loading…</span>
+                } @else if (submissionState() === 'submitting') {
+                  <span>{{ isEditMode() ? 'Saving…' : 'Submitting…' }}</span>
                 } @else {
-                  <span>Submit talk proposal</span>
+                  <span>{{ isEditMode() ? 'Save changes' : 'Submit talk proposal' }}</span>
                 }
               </button>
             </div>

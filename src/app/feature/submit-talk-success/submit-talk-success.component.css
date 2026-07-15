@@ -56,6 +56,10 @@
   min-width: 0;
 }
 
+.submission-summary__edit-link {
+  min-width: 7rem;
+}
+
 @media (width >= 640px) {
   .submission-summary {
     grid-template-columns: minmax(0, 1fr) max-content;

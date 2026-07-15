@@ -22,6 +22,9 @@ import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
 import {
+  TalkSubmissionEditable,
+  TalkSubmissionEditPayload,
+  TalkSubmissionEditResult,
   TalkSubmissionPayload,
   TalkSubmissionResult,
   TalkSubmissionStatusSummary,
@@ -648,6 +651,22 @@ export class SupabaseService {
       .maybeSingle();
   }
 
+  async getEditableTalkSubmissionForDevice(
+    submissionId: string,
+    editToken: string,
+  ): Promise<PostgrestSingleResponse<TalkSubmissionEditable | null>> {
+    if (this.supabase === null) {
+      return this.createEmptySingleResponse<TalkSubmissionEditable | null>(null);
+    }
+
+    return this.supabase
+      .rpc('get_talk_submission_for_device', {
+        p_submission_id: submissionId,
+        p_edit_token: editToken,
+      })
+      .maybeSingle();
+  }
+
   async getOrganizerSpeakerPictureUrl(path: string): Promise<string | null> {
     if (this.supabase === null || !path.trim()) {
       return null;
@@ -736,6 +755,85 @@ export class SupabaseService {
       const errorMessage = body && 'error' in body && body.error
         ? body.error
         : 'submit_talk_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'status' in body ? body : null,
+      error: null,
+    };
+  }
+
+  async updateTalkSubmission(
+    payload: TalkSubmissionEditPayload,
+  ): Promise<{ data: TalkSubmissionEditResult | null; error: Error | null }> {
+    if (!this.supabaseUrl || !this.supabaseKey) {
+      return {
+        data: null,
+        error: new Error('supabase_not_configured'),
+      };
+    }
+
+    const formData = new FormData();
+
+    formData.set('submissionId', payload.submissionId);
+    formData.set('editToken', payload.editToken);
+    formData.set('talkTitle', payload.talkTitle);
+    formData.set('talkDescription', payload.talkDescription);
+    formData.set('slidesLink', payload.slidesLink);
+    formData.set('speakerFirstName', payload.speakerFirstName);
+    formData.set('speakerLastName', payload.speakerLastName);
+    formData.set('emailAddress', payload.emailAddress);
+    formData.set('speakerBio', payload.speakerBio);
+
+    if (payload.speakerLabel?.trim()) {
+      formData.set('speakerLabel', payload.speakerLabel.trim());
+    }
+
+    if (payload.personalUrl?.trim()) {
+      formData.set('personalUrl', payload.personalUrl.trim());
+    }
+
+    if (payload.twitterUrl?.trim()) {
+      formData.set('twitterUrl', payload.twitterUrl.trim());
+    }
+
+    if (payload.linkedinUrl?.trim()) {
+      formData.set('linkedinUrl', payload.linkedinUrl.trim());
+    }
+
+    if (payload.githubUrl?.trim()) {
+      formData.set('githubUrl', payload.githubUrl.trim());
+    }
+
+    if (payload.speakerPicture) {
+      formData.set('speakerPicture', payload.speakerPicture);
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/update-talk-submission`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+      },
+      body: formData,
+    });
+
+    let body: TalkSubmissionEditResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage = body && 'error' in body && body.error
+        ? body.error
+        : 'update_talk_submission_failed';
 
       return {
         data: null,

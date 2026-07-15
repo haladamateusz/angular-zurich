@@ -33,6 +33,14 @@
                 <p class="mt-2 text-sm font-semibold text-foreground">
                   {{ formatStatus(currentStatus.status) }}
                 </p>
+                @if (currentStatus.can_edit) {
+                  <a
+                    class="submission-summary__edit-link mt-4 inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
+                    [routerLink]="['/talk-submission', currentStatus.id, 'edit']"
+                  >
+                    Edit
+                  </a>
+                }
               }
             </div>
           </div>

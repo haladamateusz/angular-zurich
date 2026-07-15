@@ -19,14 +19,17 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionDeviceAuthService } from '../../core/data-access/talk-submission-device-auth.service';
-import { TalkSubmissionPayload } from '../../core/models/talk-submission.interface';
+import {
+  TalkSubmissionEditable,
+  TalkSubmissionPayload,
+} from '../../core/models/talk-submission.interface';
 import { ThemeService } from '../../core/theme/theme.service';
 import { environment } from '../../../environments/environment';
 
-type SubmissionState = 'idle' | 'submitting' | 'error';
+type SubmissionState = 'idle' | 'loading' | 'submitting' | 'error';
 
 type TurnstileApi = NonNullable<Window['turnstile']>;
 
@@ -83,6 +86,7 @@ export class SubmitTalkComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
   private readonly talkSubmissionDeviceAuthService = inject(TalkSubmissionDeviceAuthService);
@@ -93,6 +97,8 @@ export class SubmitTalkComponent {
   private widgetId: string | null = null;
   private turnstileThemeAtRender: 'light' | 'dark' | null = null;
 
+  protected readonly editSubmissionId = signal(this.route.snapshot.paramMap.get('submissionId'));
+  protected readonly isEditMode = computed(() => this.editSubmissionId() !== null);
   protected readonly maxLengths = MAX_LENGTHS;
   protected readonly maxSpeakerPictureSizeInMegabytes = SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
@@ -100,6 +106,7 @@ export class SubmitTalkComponent {
   protected readonly captchaError = signal('');
   protected readonly errorMessage = signal('');
   protected readonly captchaToken = signal<string | null>(null);
+  protected readonly existingSpeakerPicturePath = signal<string | null>(null);
   protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
 
   protected readonly submitTalkForm = this.formBuilder.group({
@@ -146,7 +153,9 @@ export class SubmitTalkComponent {
     linkedinUrl: ['', [Validators.maxLength(MAX_LENGTHS.linkedinUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
     githubUrl: ['', [Validators.maxLength(MAX_LENGTHS.githubUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
     speakerPicture: new FormControl<File | null>(null, {
-      validators: [Validators.required, optionalImageFileValidator],
+      validators: this.isEditMode()
+        ? [optionalImageFileValidator]
+        : [Validators.required, optionalImageFileValidator],
     }),
     companyWebsite: ['', [Validators.maxLength(MAX_LENGTHS.companyWebsite)]],
   });
@@ -160,7 +169,7 @@ export class SubmitTalkComponent {
 
   constructor() {
     afterNextRender(async () => {
-      if (!isPlatformBrowser(this.platformId) || !this.turnstileSiteKey) {
+      if (!isPlatformBrowser(this.platformId) || !this.turnstileSiteKey || this.isEditMode()) {
         return;
       }
 
@@ -196,6 +205,10 @@ export class SubmitTalkComponent {
 
       this.revokeSpeakerPicturePreviewUrl();
     });
+
+    if (this.isEditMode()) {
+      void this.loadEditableSubmission();
+    }
   }
 
   protected async submitTalk(): Promise<void> {
@@ -203,12 +216,19 @@ export class SubmitTalkComponent {
       this.errorMessage.set('');
       this.submitTalkForm.reset();
       this.resetSpeakerPictureInput();
-      await this.router.navigate(['/talk-submission', 'submitted']);
+      await this.router.navigate(this.isEditMode()
+        ? ['/talk-submission', this.editSubmissionId() ?? 'submitted']
+        : ['/talk-submission', 'submitted']);
       return;
     }
 
     if (this.submitTalkForm.invalid) {
       this.submitTalkForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.isEditMode()) {
+      await this.updateTalkSubmission();
       return;
     }
 
@@ -221,11 +241,8 @@ export class SubmitTalkComponent {
     this.captchaError.set('');
     this.errorMessage.set('');
 
-    const { companyWebsite: _honeypot, ...payload } = this.submitTalkForm.getRawValue();
-    void _honeypot;
-
     const submissionPayload: TalkSubmissionPayload = {
-      ...payload,
+      ...this.createSubmissionPayload(),
       captchaToken: this.captchaToken() ?? undefined,
     };
     const { data, error } = await this.supabaseService.submitTalk(submissionPayload);
@@ -300,6 +317,99 @@ export class SubmitTalkComponent {
 
     input.value = '';
     input.click();
+  }
+
+  private async loadEditableSubmission(): Promise<void> {
+    const submissionId = this.editSubmissionId();
+    const editToken = this.talkSubmissionDeviceAuthService.getEditToken(submissionId);
+
+    if (!submissionId || !editToken) {
+      this.submissionState.set('error');
+      this.errorMessage.set('We could not verify this device for editing.');
+      return;
+    }
+
+    this.submissionState.set('loading');
+    this.errorMessage.set('');
+
+    const { data, error } = await this.supabaseService.getEditableTalkSubmissionForDevice(
+      submissionId,
+      editToken,
+    );
+
+    if (error || !data || !data.can_edit) {
+      this.submissionState.set('error');
+      this.errorMessage.set('This submission cannot be edited from this device.');
+      return;
+    }
+
+    this.populateForm(data);
+    this.submissionState.set('idle');
+  }
+
+  private populateForm(submission: TalkSubmissionEditable): void {
+    this.submitTalkForm.patchValue({
+      talkTitle: submission.talk_title,
+      talkDescription: submission.talk_description,
+      slidesLink: submission.slides_url,
+      speakerFirstName: submission.speaker_first_name,
+      speakerLastName: submission.speaker_last_name,
+      speakerLabel: submission.speaker_label ?? '',
+      emailAddress: submission.speaker_email,
+      speakerBio: submission.speaker_bio,
+      personalUrl: submission.personal_url ?? '',
+      twitterUrl: submission.twitter_url ?? '',
+      linkedinUrl: submission.linkedin_url ?? '',
+      githubUrl: submission.github_url ?? '',
+      speakerPicture: null,
+      companyWebsite: '',
+    });
+    this.existingSpeakerPicturePath.set(submission.speaker_picture_path);
+    if (submission.speaker_picture_path) {
+      this.submitTalkForm.controls.speakerPicture.removeValidators(Validators.required);
+    } else {
+      this.submitTalkForm.controls.speakerPicture.addValidators(Validators.required);
+    }
+    this.submitTalkForm.controls.speakerPicture.updateValueAndValidity();
+    this.submitTalkForm.markAsPristine();
+    this.submitTalkForm.markAsUntouched();
+  }
+
+  private async updateTalkSubmission(): Promise<void> {
+    const submissionId = this.editSubmissionId();
+    const editToken = this.talkSubmissionDeviceAuthService.getEditToken(submissionId);
+
+    if (!submissionId || !editToken) {
+      this.submissionState.set('error');
+      this.errorMessage.set('We could not verify this device for editing.');
+      return;
+    }
+
+    this.submissionState.set('submitting');
+    this.errorMessage.set('');
+
+    const { data, error } = await this.supabaseService.updateTalkSubmission({
+      ...this.createSubmissionPayload(),
+      editToken,
+      submissionId,
+    });
+
+    if (error || !data) {
+      this.submissionState.set('error');
+      this.errorMessage.set(
+        'We could not save your changes right now. Please try again in a moment or contact us directly.',
+      );
+      return;
+    }
+
+    await this.router.navigate(['/talk-submission', submissionId]);
+  }
+
+  private createSubmissionPayload(): TalkSubmissionPayload {
+    const { companyWebsite: _honeypot, ...payload } = this.submitTalkForm.getRawValue();
+    void _honeypot;
+
+    return payload;
   }
 
   private async loadTurnstile(): Promise<TurnstileApi | null> {

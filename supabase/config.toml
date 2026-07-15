@@ -430,6 +430,12 @@ entrypoint = "./functions/submit-talk/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/submit-talk/*.html" ]
 
+[functions.update-talk-submission]
+enabled = true
+verify_jwt = false
+import_map = "./functions/update-talk-submission/deno.json"
+entrypoint = "./functions/update-talk-submission/index.ts"
+
 [functions.review-talk-submission]
 enabled = true
 verify_jwt = true

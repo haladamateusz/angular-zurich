@@ -2,6 +2,10 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
+    path: 'talk-submission/:submissionId/edit',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'talk-submission/:submissionId',
     renderMode: RenderMode.Server,
   },
