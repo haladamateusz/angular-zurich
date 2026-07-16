@@ -9,21 +9,74 @@ These instructions apply to work in this repository.
 
 ## Workflow
 
-- All commits must use this Conventional Commits format:
+### Commit Message Format
 
-  `<type>(<scope>): <short summary>`
+All commits must use this Conventional Commits format:
 
-- The `<type>` and `<short summary>` fields are required.
-- The `(<scope>)` field is optional.
-- The `<type>` must be one of:
-  - `build`: Changes that affect the build system or external dependencies.
-  - `ci`: Changes to CI configuration files and scripts.
-  - `docs`: Documentation-only changes.
-  - `feat`: A new feature.
-  - `fix`: A bug fix.
-  - `perf`: A code change that improves performance.
-  - `refactor`: A code change that neither fixes a bug nor adds a feature.
-  - `test`: Adding missing tests or correcting existing tests.
+```text
+<type>(<scope>): <short summary>
+  |       |             |
+  |       |             +- Summary in imperative present tense. Not capitalized. No period at the end.
+  |       |
+  |       +- Commit Scope: angular|app|auth|build|dashboard|events|home|lint|navbar|
+  |                         submissions|submit-talk|supabase|talk-submissions|ui
+  |
+  +- Commit Type: build|ci|docs|feat|fix|perf|refactor|test
+```
+
+The `<type>`, `(<scope>)`, and `<short summary>` fields are mandatory. The commit message must always begin with both `<type>` and `(<scope>)`, for example `build(angular): increase component style budget`.
+
+#### Type
+
+Must be one of the following:
+
+| Type | Description |
+| --- | --- |
+| `build` | Changes that affect the build system, deployment tooling, or external dependencies. |
+| `ci` | Changes to CI configuration files and scripts. |
+| `docs` | Documentation-only changes. |
+| `feat` | A new feature. |
+| `fix` | A bug fix. |
+| `perf` | A code change that improves performance. |
+| `refactor` | A code change that neither fixes a bug nor adds a feature. |
+| `test` | Adding missing tests or correcting existing tests. |
+
+#### Scope
+
+The scope should describe the main project area affected, as perceived by someone reading the Git history or changelog. Prefer existing scopes over introducing narrow one-off scopes.
+
+Supported scopes:
+
+- `angular`: Angular framework configuration, migrations, and version-specific framework changes.
+- `app`: Application shell, route organization, and cross-feature application wiring.
+- `auth`: Authentication flows, login UI, sessions, and organizer sign-in behavior.
+- `build`: Production build behavior, deployment configuration, and environment injection.
+- `dashboard`: Organizer dashboard views and workflows.
+- `events`: Event creation, event details, event visibility, and event data display.
+- `home`: Homepage content, sections, stats, and event previews.
+- `lint`: ESLint, Stylelint, Prettier, and formatting/linting setup.
+- `navbar`: Main navigation, mobile drawer, and user menu behavior.
+- `submissions`: Speaker submission data, validation, and speaker-facing submission UI.
+- `submit-talk`: Submit-talk route, form, and success flow.
+- `supabase`: Supabase schema, client integration, storage, and data access.
+- `talk-submissions`: Organizer talk review workflow and talk-submission notifications.
+- `ui`: Shared visual polish, layout, theme, and interaction styling.
+
+Use a more specific historical scope only when it is clearly the best fit for the change: `analytics`, `deps`, `email`, `hero`, `sponsors`, `theme`, or `team`.
+
+#### Summary
+
+Use the summary field to provide a succinct description of the change:
+
+- use the imperative, present tense: `add`, not `added` or `adds`
+- do not capitalize the first letter
+- do not end with a period
+
+#### Commit Message Body
+
+Just as in the summary, use the imperative, present tense.
+
+Use the body when the motivation is not obvious from the summary. Explain why the change is being made and, when useful, compare the previous behavior with the new behavior.
 
 ## TypeScript Best Practices
 
