@@ -339,6 +339,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .event-details__skeleton::after {
+    animation: none;
+  }
+}
+
 @media (min-width: 960px) {
   .event-details__hero {
     grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);

@@ -354,3 +354,9 @@
     transform: translateX(100%);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .past-events__skeleton::after {
+    animation: none;
+  }
+}
