@@ -560,7 +560,7 @@ export class SupabaseService {
     return this.supabase
       .from('organizer_talk_submissions')
       .select(
-        'id, created_at, status, talk_title, talk_description, slides_url, speaker_name, speaker_label, speaker_picture_path, personal_url, linkedin_url, github_url',
+        'id, created_at, status, talk_title, talk_description, slides_url, speaker_name, speaker_label, speaker_picture_path, speaker_email, personal_url, linkedin_url, github_url',
       )
       .eq('id', submissionId)
       .single();

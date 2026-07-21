@@ -248,7 +248,7 @@
             <p class="dashboard-detail__body-copy">{{ currentSubmission.talk_description }}</p>
           </div>
 
-          <div class="dashboard-detail__field space-y-3">
+          <div class="dashboard-detail__field dashboard-detail__field--slides space-y-3">
             <p class="dashboard-detail__field-label">Link to slides</p>
             <a
               [href]="currentSubmission.slides_url"
@@ -338,6 +338,33 @@
           </div>
 
           <div class="dashboard-detail__speaker-links">
+            <a
+              [href]="'mailto:' + currentSubmission.speaker_email"
+              class="dashboard-detail__speaker-link-row"
+            >
+              <span class="dashboard-detail__speaker-link-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" class="size-6">
+                  <rect
+                    x="3.75"
+                    y="5.75"
+                    width="16.5"
+                    height="12.5"
+                    rx="1.75"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                  <path
+                    d="m4.75 7.25 6.15 4.92a1.75 1.75 0 0 0 2.2 0l6.15-4.92"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="dashboard-detail__speaker-link-label">{{ currentSubmission.speaker_email }}</span>
+            </a>
+
             @if (speakerProfileLinks().length > 0) {
               @for (link of speakerProfileLinks(); track link.href) {
                 <a

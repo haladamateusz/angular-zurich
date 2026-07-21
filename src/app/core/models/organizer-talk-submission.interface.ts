@@ -15,6 +15,7 @@ export interface OrganizerTalkSubmission {
 export interface OrganizerTalkSubmissionDetail extends OrganizerTalkSubmission {
   talk_description: string;
   slides_url: string;
+  speaker_email: string;
   personal_url: string | null;
   linkedin_url: string | null;
   github_url: string | null;
