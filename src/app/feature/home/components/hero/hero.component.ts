@@ -19,7 +19,7 @@ export class HeroComponent {
       const speaker = talk.speaker_links.find((link) => link.speaker)?.speaker ?? null;
       const firstName = speaker?.first_name?.trim() ?? '';
       const lastName = speaker?.last_name?.trim() ?? '';
-      const speakerName = `${firstName} ${lastName}`.trim() || 'Angular Zurich speaker';
+      const speakerName = `${firstName} ${lastName}`.trim() || 'Angular Zürich speaker';
       const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.trim() || speakerName.charAt(0).toUpperCase();
 
       return {

@@ -16,7 +16,7 @@ import { Person } from './core/models/person.interface';
 import { Sponsor } from './core/models/sponsor.interface';
 
 const DEFAULT_EVENT: Event = {
-  title: 'Angular Zurich Meetup',
+  title: 'Angular Zürich Meetup',
   meetup_url: 'https://www.meetup.com/angularzrh/',
   id: 'event-1',
   slug: 'meetup',
@@ -38,7 +38,7 @@ const DEFAULT_EVENT: Event = {
             last_name: 'Lovelace',
             picture_url: null,
             label: 'Engineer',
-            company_name: 'Angular Zurich',
+            company_name: 'Angular Zürich',
           },
         },
       ],
@@ -46,7 +46,7 @@ const DEFAULT_EVENT: Event = {
   ],
   venue: {
     title: 'Tech Hub',
-    city: 'Zurich',
+    city: 'Zürich',
     zip: '8000',
     street: 'Main Street 1',
     google_maps_url: 'https://maps.example.com',
@@ -210,7 +210,7 @@ describe('App', () => {
 
     expect(compiled.textContent).toContain('Upcoming talks');
     expect(compiled.textContent).toContain(DEFAULT_EVENT.title);
-    expect(compiled.textContent).toContain('Next on Angular Zurich');
+    expect(compiled.textContent).toContain('Next on Angular Zürich');
   });
 
   it('hides the hero event preview and upcoming talks for a past event', async () => {
@@ -231,7 +231,7 @@ describe('App', () => {
 
     expect(compiled.textContent).not.toContain('Upcoming Talks');
     expect(compiled.textContent).not.toContain(DEFAULT_EVENT.title);
-    expect(compiled.textContent).not.toContain('Next on Angular Zurich');
+    expect(compiled.textContent).not.toContain('Next on Angular Zürich');
   });
 
   it('redirects unauthenticated users away from the dashboard route', async () => {

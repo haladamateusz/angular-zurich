@@ -52,7 +52,7 @@ export async function sendTalkEventAssignmentEmail(
   const eventUrl = `${
     context.siteUrl.replace(/\/$/, "")
   }/events/${context.eventSlug}`;
-  const subject = `Your Angular Zurich talk is scheduled for ${eventTitle}`;
+  const subject = `Your Angular Zürich talk is scheduled for ${eventTitle}`;
   const text = [
     `Hi ${speakerGreetingName},`,
     "",
@@ -62,7 +62,7 @@ export async function sendTalkEventAssignmentEmail(
     `Event details: ${eventUrl}`,
     `Meetup: ${context.meetupUrl}`,
     "",
-    "We are looking forward to having you at Angular Zurich.",
+    "We are looking forward to having you at Angular Zürich.",
   ].join("\n");
   const html = [
     `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
@@ -75,7 +75,7 @@ export async function sendTalkEventAssignmentEmail(
     `<p><a href="${escapeHtml(eventUrl)}">View event details</a><br><a href="${
       escapeHtml(context.meetupUrl)
     }">Open Meetup</a></p>`,
-    "<p>We are looking forward to having you at Angular Zurich.</p>",
+    "<p>We are looking forward to having you at Angular Zürich.</p>",
   ].join("");
 
   await sendEmail({

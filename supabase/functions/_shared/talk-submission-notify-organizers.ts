@@ -26,7 +26,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
   text: string;
   html: string;
 } {
-  const subject = `New Angular Zurich talk proposal: ${context.talkTitle.trim()}`;
+  const subject = `New Angular Zürich talk proposal: ${context.talkTitle.trim()}`;
   const dashboardUrl = getDashboardUrl(getSiteUrl(), context.submissionId);
 
   const speakerLine = context.speakerEmail.trim()

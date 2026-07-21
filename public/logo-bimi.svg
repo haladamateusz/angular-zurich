@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg version="1.2" baseProfile="tiny-ps" width="960" height="960" viewBox="0 0 960 960" xmlns="http://www.w3.org/2000/svg">
-  <title>Angular Zurich</title>
-  <desc>Angular Zurich logo for BIMI email sender avatar.</desc>
+  <title>Angular Zürich</title>
+  <desc>Angular Zürich logo for BIMI email sender avatar.</desc>
   <defs>
     <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(348.619633,-151.387333,151.387333,348.619633,436.592385,601.903802)"><stop offset="0" stop-color="rgb(21, 101, 192)" stop-opacity="1"/><stop offset="1" stop-color="rgb(30, 136, 229)" stop-opacity="1"/></linearGradient>
   </defs>

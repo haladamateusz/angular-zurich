@@ -45,7 +45,7 @@ function getEmailContent(context: TalkReviewEmailContext): {
   switch (context.action) {
     case 'approve':
       return {
-        subject: 'Your Angular Zurich talk proposal was approved',
+        subject: 'Your Angular Zürich talk proposal was approved',
         text: [
           `Hi ${speakerGreetingName},`,
           '',
@@ -55,24 +55,24 @@ function getEmailContent(context: TalkReviewEmailContext): {
           '',
           `You can check the current status here: ${statusUrl}`,
           '',
-          'Thanks again for submitting to Angular Zurich.',
+          'Thanks again for submitting to Angular Zürich.',
         ].join('\n'),
         html: [
           `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
           `<p>Good news: the organizers approved your talk proposal <strong>${escapeHtml(talkTitle)}</strong>.</p>`,
           '<p>We will be in touch once your talk is assigned to an event and we have scheduling details to share.</p>',
           `<p>You can check the current status <a href="${escapeHtml(statusUrl)}">here</a>.</p>`,
-          '<p>Thanks again for submitting to Angular Zurich.</p>',
+          '<p>Thanks again for submitting to Angular Zürich.</p>',
         ].join(''),
       };
 
     case 'request_changes':
       return {
-        subject: 'Updates requested for your Angular Zurich talk proposal',
+        subject: 'Updates requested for your Angular Zürich talk proposal',
         text: [
           `Hi ${speakerGreetingName},`,
           '',
-          `Thanks for submitting "${talkTitle}" to Angular Zurich.`,
+          `Thanks for submitting "${talkTitle}" to Angular Zürich.`,
           '',
           'The organizers reviewed your proposal and would like a few updates before making a final decision.',
           '',
@@ -86,7 +86,7 @@ function getEmailContent(context: TalkReviewEmailContext): {
           .join('\n'),
         html: [
           `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
-          `<p>Thanks for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zurich.</p>`,
+          `<p>Thanks for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zürich.</p>`,
           '<p>The organizers reviewed your proposal and would like a few updates before making a final decision.</p>',
           organizerMessage
             ? `<p><strong>Message from the organizers:</strong><br>${escapeHtml(organizerMessage).replaceAll('\n', '<br>')}</p>`
@@ -98,11 +98,11 @@ function getEmailContent(context: TalkReviewEmailContext): {
 
     case 'reject':
       return {
-        subject: 'Update on your Angular Zurich talk proposal',
+        subject: 'Update on your Angular Zürich talk proposal',
         text: [
           `Hi ${speakerGreetingName},`,
           '',
-          `Thank you for submitting "${talkTitle}" to Angular Zurich.`,
+          `Thank you for submitting "${talkTitle}" to Angular Zürich.`,
           '',
           'After review, the organizers decided not to move forward with this proposal for an upcoming event.',
           '',
@@ -114,7 +114,7 @@ function getEmailContent(context: TalkReviewEmailContext): {
           .join('\n'),
         html: [
           `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
-          `<p>Thank you for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zurich.</p>`,
+          `<p>Thank you for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zürich.</p>`,
           '<p>After review, the organizers decided not to move forward with this proposal for an upcoming event.</p>',
           organizerMessage
             ? `<p><strong>Message from the organizers:</strong><br>${escapeHtml(organizerMessage).replaceAll('\n', '<br>')}</p>`
@@ -206,24 +206,24 @@ export async function sendTalkSubmissionReceivedEmail(
   }
 
   const statusUrl = getSubmissionStatusUrl(siteUrl, context.submissionId);
-  const subject = 'We received your Angular Zurich talk proposal';
+  const subject = 'We received your Angular Zürich talk proposal';
   const text = [
     `Hi ${speakerGreetingName},`,
     '',
-    `Thanks for submitting "${talkTitle}" to Angular Zurich.`,
+    `Thanks for submitting "${talkTitle}" to Angular Zürich.`,
     '',
     'Your proposal is now in our review queue. The organizers will review it and follow up with the next step.',
     '',
     `You can check the current status here: ${statusUrl}`,
     '',
-    'Thanks for sharing your idea with the Angular Zurich community.',
+    'Thanks for sharing your idea with the Angular Zürich community.',
   ].join('\n');
   const html = [
     `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
-    `<p>Thanks for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zurich.</p>`,
+    `<p>Thanks for submitting <strong>${escapeHtml(talkTitle)}</strong> to Angular Zürich.</p>`,
     '<p>Your proposal is now in our review queue. The organizers will review it and follow up with the next step.</p>',
     `<p>You can check the current status <a href="${escapeHtml(statusUrl)}">here</a>.</p>`,
-    '<p>Thanks for sharing your idea with the Angular Zurich community.</p>',
+    '<p>Thanks for sharing your idea with the Angular Zürich community.</p>',
   ].join('');
 
   await sendEmail({

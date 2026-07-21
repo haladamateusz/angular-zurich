@@ -5,7 +5,7 @@ import { Sponsor } from '../../../../core/models/sponsor.interface';
 
 const TEST_EVENT: Event = {
   id: 'event-1',
-  title: 'Angular Zurich April 2026',
+  title: 'Angular Zürich April 2026',
   slug: 'april-2026',
   feature_graphic: null,
   meetup_url: 'https://www.meetup.com/angularzrh/',

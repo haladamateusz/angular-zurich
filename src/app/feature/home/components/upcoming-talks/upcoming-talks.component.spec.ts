@@ -19,7 +19,7 @@ const TEST_TALKS: Event['talks'] = [
           last_name: 'Lovelace',
           picture_url: null,
           label: 'Engineer',
-          company_name: 'Angular Zurich',
+          company_name: 'Angular Zürich',
         },
       },
     ],

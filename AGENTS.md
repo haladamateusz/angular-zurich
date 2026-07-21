@@ -1,4 +1,4 @@
-# Angular Zurich Agent Rules
+# Angular Zürich Agent Rules
 
 These instructions apply to work in this repository.
 
