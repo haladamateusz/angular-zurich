@@ -9,7 +9,7 @@
 
     <div class="partners__grid">
       @for (partner of partners(); track partner.id) {
-        <a [href]="partner.website_url" target="_blank" rel="noopener noreferrer" class="partner-card">
+        <a [href]="partnerUrl(partner)" target="_blank" rel="noopener noreferrer" class="partner-card">
           <img [src]="partner.logo_url" [alt]="partner.title" class="partner-card__logo" width="160" height="40" />
         </a>
       }
