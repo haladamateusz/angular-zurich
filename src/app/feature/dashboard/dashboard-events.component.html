@@ -27,16 +27,18 @@
             <colgroup>
               <col class="dashboard-events-table__col-title" />
               <col class="dashboard-events-table__col-date" />
-              <col class="dashboard-events-table__col-details" />
+              <col class="dashboard-events-table__col-visibility" />
+              <col class="dashboard-events-table__col-actions" />
             </colgroup>
             <thead>
               <tr class="bg-card/70">
                 <th class="dashboard-events-table__heading">Title</th>
                 <th class="dashboard-events-table__heading">Starts at</th>
+                <th class="dashboard-events-table__heading">Visibility</th>
                 <th
-                  class="dashboard-events-table__heading dashboard-events-table__heading--details"
+                  class="dashboard-events-table__heading dashboard-events-table__heading--actions"
                 >
-                  <span class="sr-only">Details</span>
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -53,9 +55,14 @@
                       class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--date"
                     ></div>
                   </td>
-                  <td class="dashboard-events-table__cell dashboard-events-table__cell--details">
+                  <td class="dashboard-events-table__cell">
                     <div
-                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--details"
+                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--visibility"
+                    ></div>
+                  </td>
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--actions">
+                    <div
+                      class="app-skeleton dashboard-events-table__skeleton dashboard-events-table__skeleton--actions"
                     ></div>
                   </td>
                 </tr>
@@ -100,16 +107,18 @@
             <colgroup>
               <col class="dashboard-events-table__col-title" />
               <col class="dashboard-events-table__col-date" />
-              <col class="dashboard-events-table__col-details" />
+              <col class="dashboard-events-table__col-visibility" />
+              <col class="dashboard-events-table__col-actions" />
             </colgroup>
             <thead>
               <tr class="bg-card/70">
                 <th class="dashboard-events-table__heading">Title</th>
                 <th class="dashboard-events-table__heading">Starts at</th>
+                <th class="dashboard-events-table__heading">Visibility</th>
                 <th
-                  class="dashboard-events-table__heading dashboard-events-table__heading--details"
+                  class="dashboard-events-table__heading dashboard-events-table__heading--actions"
                 >
-                  <span class="sr-only">Details</span>
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -117,32 +126,49 @@
               @for (event of events(); track event.id) {
                 <tr class="dashboard-events-table__row">
                   <td class="dashboard-events-table__cell dashboard-events-table__cell--title">
-                    <p class="dashboard-events-table__title">{{ event.title }}</p>
+                    <a
+                      [routerLink]="['/events', event.slug]"
+                      [state]="eventDetailsNavigationState"
+                      class="dashboard-events-table__title-link"
+                    >
+                      {{ event.title }}
+                    </a>
                   </td>
                   <td class="dashboard-events-table__cell whitespace-nowrap">
                     {{ event.starts_at | date: 'dd MMM yyyy' }}
                   </td>
-                  <td class="dashboard-events-table__cell dashboard-events-table__cell--details">
-                    <a
-                      [routerLink]="['/events', event.slug]"
-                      [state]="eventDetailsNavigationState"
-                      class="dashboard-events-table__details-button app-button app-button--secondary app-button--compact"
-                      [attr.aria-label]="'Open details for ' + event.title"
+                  <td class="dashboard-events-table__cell">
+                    <span
+                      class="dashboard-events-table__visibility"
+                      [class.dashboard-events-table__visibility--draft]="event.public !== true"
                     >
-                      <span>Details</span>
-                      <svg
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        class="dashboard-events-table__details-icon app-button__icon"
-                        aria-hidden="true"
+                      {{ event.public === true ? 'Public' : 'Draft' }}
+                    </span>
+                  </td>
+                  <td class="dashboard-events-table__cell dashboard-events-table__cell--actions">
+                    <div class="dashboard-events-table__actions">
+                      <a
+                        [routerLink]="['/dashboard/events', event.id]"
+                        class="dashboard-events-table__edit-button app-button app-button--ghost app-button--compact"
+                        [attr.aria-label]="'Edit ' + event.title"
                       >
-                        <path
-                          fill-rule="evenodd"
-                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </a>
+                        <span>Edit</span>
+                        <svg
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.5"
+                          class="app-button__icon"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.5 8.5a1 1 0 0 1-.47.263l-3.5.875a1 1 0 0 1-1.213-1.213l.875-3.5a1 1 0 0 1 .263-.47l8.5-8.5ZM12.5 5.5l2 2"
+                          />
+                        </svg>
+                      </a>
+                    </div>
                   </td>
                 </tr>
               }

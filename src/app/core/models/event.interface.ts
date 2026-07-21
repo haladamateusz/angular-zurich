@@ -36,4 +36,4 @@ export interface Event {
   } | null;
 }
 
-export type DashboardEvent = Pick<Event, 'id' | 'slug' | 'starts_at' | 'title'>;
+export type DashboardEvent = Pick<Event, 'id' | 'public' | 'slug' | 'starts_at' | 'title'>;

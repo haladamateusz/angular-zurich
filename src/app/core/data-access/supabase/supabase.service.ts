@@ -298,7 +298,7 @@ export class SupabaseService {
 
     return this.supabase
       .from('Events')
-      .select('id, slug, title, starts_at', { count: 'exact' })
+      .select('id, slug, title, starts_at, public', { count: 'exact' })
       .order('starts_at', { ascending: false })
       .range(from, to);
   }
