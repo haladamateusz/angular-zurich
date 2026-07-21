@@ -51,18 +51,18 @@
 }
 
 .dashboard-section-nav__item--active {
-  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
-  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-background));
+  color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item--active:hover,
 .dashboard-section-nav__item--active:focus-visible {
-  background: color-mix(in srgb, var(--color-primary) 16%, var(--color-background));
+  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-background));
   color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item--active:active {
-  background: color-mix(in srgb, var(--color-primary) 20%, var(--color-background));
+  background: color-mix(in srgb, var(--color-primary) 26%, var(--color-background));
 }
 
 .dashboard-section-nav__item:focus-visible {
