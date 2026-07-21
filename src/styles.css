@@ -376,6 +376,12 @@
 }
 
 .icon-link {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
   color: var(--color-muted-foreground-1);
   opacity: 0.5;
   transition:
@@ -383,8 +389,13 @@
     opacity 0.2s;
 }
 
-.icon-link:hover {
+.icon-link:is(:hover, :focus-visible) {
   opacity: 1;
+}
+
+.icon-link:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .icon-link--linkedin:hover {
