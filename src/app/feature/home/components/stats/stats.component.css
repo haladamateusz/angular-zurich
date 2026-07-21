@@ -41,7 +41,7 @@
 }
 
 .stats__item + .stats__item::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 50%;
@@ -52,7 +52,7 @@
 }
 
 .stats__value {
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(2rem, 4vw, 2.75rem);
   color: var(--color-primary);

@@ -19,7 +19,7 @@
 .team__heading {
   margin: 0;
   color: var(--color-foreground);
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2rem, 3vw, 2.6rem);
   font-weight: 600;
   line-height: 1.02;
@@ -62,7 +62,7 @@
 .team__subheading {
   margin: 0;
   color: var(--color-foreground);
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 600;
 }
@@ -111,23 +111,15 @@
   display: flex;
   width: 100%;
   border: 1px solid var(--color-card-line);
-  border-radius: 1.6rem;
+  border-radius: var(--radius-surface);
   padding: 1.25rem 1.35rem;
-  background: color-mix(in srgb, white 96%, var(--color-card) 4%);
+  background: var(--color-card);
   text-align: left;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 6px 14px color-mix(in srgb, black 3%, transparent);
-  transition:
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+  transition: border-color 180ms ease;
 }
 
 .member-card:hover {
   border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-card-line));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 10px 22px color-mix(in srgb, black 5%, transparent);
 }
 
 .member-card__profile {
@@ -141,10 +133,9 @@
   width: 4rem;
   height: 4rem;
   flex-shrink: 0;
-  border-radius: 1.1rem;
+  border-radius: var(--radius-control);
   background-color: var(--color-primary-100);
   object-fit: cover;
-  box-shadow: 0 8px 22px color-mix(in srgb, black 10%, transparent);
 }
 
 .member-card__info {
@@ -203,30 +194,9 @@
 
 .member-card--faded {
   opacity: 0.88;
-  background: color-mix(in srgb, white 97%, var(--color-card) 3%);
+  background: var(--color-card);
 }
 
 .member-card--faded .member-card__avatar {
   filter: grayscale(100%);
-  box-shadow: 0 8px 20px color-mix(in srgb, black 8%, transparent);
-}
-
-:host-context(.dark) .member-card {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, white 1.5%, var(--color-card)) 0%, var(--color-card) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
-    0 16px 32px color-mix(in srgb, black 7%, transparent);
-}
-
-:host-context(.dark) .member-card:hover {
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 5%, transparent),
-    0 22px 44px color-mix(in srgb, black 10%, transparent);
-}
-
-:host-context(.dark) .member-card--faded {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, white 1%, var(--color-card)) 0%, color-mix(in srgb, black 1%, var(--color-card)) 100%);
 }

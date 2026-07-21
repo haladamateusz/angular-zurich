@@ -4,29 +4,17 @@
       <pattern id="cross-pattern" width="60" height="120" patternUnits="userSpaceOnUse">
         <svg viewBox="0 -1 1773 1773" x="0" y="0" width="30" height="30">
           <path
+            class="cross-overlay__mark"
             d="m369.4-0.308v221.46h221.46v147.64h-221.46v221.46h-147.64v-221.46h-221.46v-147.64h221.46v-221.46h147.64z"
-            fill="currentColor">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 295.58 295"
-              to="360 295.58 295"
-              dur="30s"
-              repeatCount="indefinite" />
-          </path>
+            fill="currentColor"
+          ></path>
         </svg>
         <svg viewBox="0 -1 1773 1773" x="30" y="60" width="30" height="30">
           <path
+            class="cross-overlay__mark cross-overlay__mark--reverse"
             d="m369.4-0.308v221.46h221.46v147.64h-221.46v221.46h-147.64v-221.46h-221.46v-147.64h221.46v-221.46h147.64z"
-            fill="currentColor">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 295.58 295"
-              to="360 295.58 295"
-              dur="30s"
-              repeatCount="indefinite" />
-          </path>
+            fill="currentColor"
+          ></path>
         </svg>
       </pattern>
     </defs>
@@ -38,29 +26,17 @@
       <pattern id="cross-pattern-primary" width="60" height="120" patternUnits="userSpaceOnUse">
         <svg viewBox="0 -1 1773 1773" x="0" y="0" width="30" height="30">
           <path
+            class="cross-overlay__mark"
             d="m369.4-0.308v221.46h221.46v147.64h-221.46v221.46h-147.64v-221.46h-221.46v-147.64h221.46v-221.46h147.64z"
-            fill="currentColor">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 295.58 295"
-              to="360 295.58 295"
-              dur="30s"
-              repeatCount="indefinite" />
-          </path>
+            fill="currentColor"
+          ></path>
         </svg>
         <svg viewBox="0 -1 1773 1773" x="30" y="60" width="30" height="30">
           <path
+            class="cross-overlay__mark cross-overlay__mark--reverse"
             d="m369.4-0.308v221.46h221.46v147.64h-221.46v221.46h-147.64v-221.46h-221.46v-147.64h221.46v-221.46h147.64z"
-            fill="currentColor">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 295.58 295"
-              to="360 295.58 295"
-              dur="30s"
-              repeatCount="indefinite" />
-          </path>
+            fill="currentColor"
+          ></path>
         </svg>
       </pattern>
     </defs>
@@ -69,51 +45,15 @@
 
   @let nextEvent = event();
   <div class="hero-content max-[720px]:gap-6" [class.hero-content--solo]="!nextEvent">
-    <div class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5" [class.hero-copy--solo]="!nextEvent">
+    <div
+      class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5"
+      [class.hero-copy--solo]="!nextEvent"
+    >
       <h1 class="hero-title">Meet. Learn. Ship&nbsp;Angular.</h1>
       <p class="hero-description">
-        Learn with local Angular engineers, discover practical ideas you can ship the next day, and build momentum with the Zürich community.
+        Learn with local Angular engineers, discover practical ideas you can ship the next day, and
+        build momentum with the Zürich community.
       </p>
-
-      <div class="hero-actions flex flex-wrap gap-3.5 max-[720px]:w-full">
-        @if (nextEvent?.meetup_url) {
-          <a
-            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-[0_12px_30px_color-mix(in_srgb,var(--color-primary)_24%,transparent)] transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-            [attr.href]="nextEvent?.meetup_url"
-            target="_blank"
-            rel="noopener noreferrer">
-            Join the next meetup
-          </a>
-        }
-      </div>
-
-      <div class="sponsors mt-10 mb-8 flex w-full max-w-[34rem] flex-col items-start gap-4 max-[720px]:mt-7 max-[720px]:max-w-full" [class.sponsors--solo]="!nextEvent">
-        <span class="sponsors__label">Supported by</span>
-        <div class="sponsors__marquee">
-          @if (sponsorsLoading() && !sponsors().length) {
-            <div class="sponsors__placeholder-row" aria-hidden="true">
-              @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-                <span class="sponsors__item">
-                  <span class="sponsors__placeholder"></span>
-                </span>
-              }
-            </div>
-          } @else {
-            <div class="sponsors__track">
-              @for (sponsor of sponsors(); track sponsor.id) {
-                <span class="sponsors__item">
-                  <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
-                </span>
-              }
-              @for (sponsor of sponsors(); track sponsor.id) {
-                <span class="sponsors__item" aria-hidden="true">
-                  <img [src]="sponsor.logo_url" [alt]="sponsor.title" class="sponsors__logo" draggable="false" width="120" height="28" />
-                </span>
-              }
-            </div>
-          }
-        </div>
-      </div>
     </div>
 
     @if (nextEvent) {
@@ -123,11 +63,15 @@
           <h2 class="event-preview__title">{{ nextEvent.title }}</h2>
         </div>
 
-        <dl class="event-preview__facts grid grid-cols-2 items-start gap-4 m-0 max-[720px]:grid-cols-1 max-[720px]:gap-[1.15rem]">
+        <dl
+          class="event-preview__facts grid grid-cols-2 items-start gap-4 m-0 max-[720px]:grid-cols-1 max-[720px]:gap-[1.15rem]"
+        >
           <div class="event-preview__fact grid gap-[0.35rem]">
             <dt>Date</dt>
             <dd>
-              <span class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]">
+              <span
+                class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]"
+              >
                 <svg
                   class="event-preview__fact-icon"
                   xmlns="http://www.w3.org/2000/svg"
@@ -135,11 +79,13 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  aria-hidden="true">
+                  aria-hidden="true"
+                >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M6.75 3v2.25m10.5-2.25v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                    d="M6.75 3v2.25m10.5-2.25v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25M3 18.75A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75M3 18.75v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
+                  />
                 </svg>
                 <span class="event-preview__fact-copy grid min-w-0 gap-[0.1rem]">
                   <span>{{ nextEvent.starts_at | navbarDateFormat: 'date' }}</span>
@@ -154,8 +100,14 @@
               <dt>Venue</dt>
               <dd>
                 @if (nextEvent.venue.google_maps_url) {
-                  <a [attr.href]="nextEvent.venue.google_maps_url" target="_blank" rel="noopener noreferrer">
-                    <span class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]">
+                  <a
+                    [attr.href]="nextEvent.venue.google_maps_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span
+                      class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]"
+                    >
                       <svg
                         class="event-preview__fact-icon"
                         xmlns="http://www.w3.org/2000/svg"
@@ -163,21 +115,29 @@
                         viewBox="0 0 24 24"
                         stroke-width="1.5"
                         stroke="currentColor"
-                        aria-hidden="true">
+                        aria-hidden="true"
+                      >
                         <path
                           stroke-linecap="round"
                           stroke-linejoin="round"
-                          d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                        />
                         <path
                           stroke-linecap="round"
                           stroke-linejoin="round"
-                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                        />
                       </svg>
-                      <span>{{ nextEvent.venue.title }}, {{ nextEvent.venue.street }}, {{ nextEvent.venue.zip }} {{ nextEvent.venue.city }}</span>
+                      <span
+                        >{{ nextEvent.venue.title }}, {{ nextEvent.venue.street }},
+                        {{ nextEvent.venue.zip }} {{ nextEvent.venue.city }}</span
+                      >
                     </span>
                   </a>
                 } @else {
-                  <span class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]">
+                  <span
+                    class="event-preview__fact-value grid min-w-0 grid-cols-[auto_1fr] items-start gap-[0.425rem]"
+                  >
                     <svg
                       class="event-preview__fact-icon"
                       xmlns="http://www.w3.org/2000/svg"
@@ -185,17 +145,23 @@
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      aria-hidden="true">
+                      aria-hidden="true"
+                    >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                      />
                     </svg>
-                    <span>{{ nextEvent.venue.title }}, {{ nextEvent.venue.street }}, {{ nextEvent.venue.zip }} {{ nextEvent.venue.city }}</span>
+                    <span
+                      >{{ nextEvent.venue.title }}, {{ nextEvent.venue.street }},
+                      {{ nextEvent.venue.zip }} {{ nextEvent.venue.city }}</span
+                    >
                   </span>
                 }
               </dd>
@@ -209,9 +175,17 @@
             <div class="event-preview__talks grid gap-3">
               @for (talk of previewTalks(); track talk.id) {
                 <article class="event-preview__talk">
-                  <div class="event-preview__avatar" [class.event-preview__avatar--image]="!!talk.speakerImage">
+                  <div
+                    class="event-preview__avatar"
+                    [class.event-preview__avatar--image]="!!talk.speakerImage"
+                  >
                     @if (talk.speakerImage) {
-                      <img [src]="talk.speakerImage" [alt]="talk.speakerName" width="40" height="40" />
+                      <img
+                        [src]="talk.speakerImage"
+                        [alt]="talk.speakerName"
+                        width="40"
+                        height="40"
+                      />
                     } @else {
                       <span>{{ talk.initials }}</span>
                     }
@@ -227,7 +201,61 @@
           </div>
         }
 
+        @if (nextEvent.meetup_url) {
+          <div class="event-preview__actions">
+            <a
+              class="app-button"
+              [attr.href]="nextEvent.meetup_url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Reserve your spot on Meetup
+            </a>
+          </div>
+        }
       </aside>
     }
+
+    <div class="sponsors">
+      <span class="sponsors__label">Supported by</span>
+      <div class="sponsors__marquee">
+        @if (sponsorsLoading() && !sponsors().length) {
+          <div class="sponsors__placeholder-row" aria-hidden="true">
+            @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+              <span class="sponsors__item">
+                <span class="sponsors__placeholder"></span>
+              </span>
+            }
+          </div>
+        } @else {
+          <div class="sponsors__track">
+            @for (sponsor of sponsors(); track sponsor.id) {
+              <span class="sponsors__item">
+                <img
+                  [src]="sponsor.logo_url"
+                  [alt]="sponsor.title"
+                  class="sponsors__logo"
+                  draggable="false"
+                  width="120"
+                  height="28"
+                />
+              </span>
+            }
+            @for (sponsor of sponsors(); track sponsor.id) {
+              <span class="sponsors__item" aria-hidden="true">
+                <img
+                  [src]="sponsor.logo_url"
+                  alt=""
+                  class="sponsors__logo"
+                  draggable="false"
+                  width="120"
+                  height="28"
+                />
+              </span>
+            }
+          </div>
+        }
+      </div>
+    </div>
   </div>
 </section>

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { UpcomingTalksComponent } from './upcoming-talks.component';
 import { Event } from '../../../../core/models/event.interface';
 
@@ -33,12 +34,13 @@ describe('UpcomingTalksComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [UpcomingTalksComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UpcomingTalksComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('talks', TEST_TALKS);
-    fixture.detectChanges();
+    fixture.componentRef.setInput('eventSlug', 'september-meetup');
     await fixture.whenStable();
   });
 
@@ -52,14 +54,14 @@ describe('UpcomingTalksComponent', () => {
     expect(compiled.textContent).toContain('How signals make state easier to manage.');
   });
 
-  it('renders each sentence in its own paragraph', () => {
+  it('renders each sentence in its own paragraph', async () => {
     fixture.componentRef.setInput('talks', [
       {
         ...TEST_TALKS[0],
         description: 'First sentence. Second sentence.',
       },
     ]);
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     const paragraphs = (fixture.nativeElement as HTMLElement).querySelectorAll(
       '.talk-card__description-paragraph',
@@ -68,5 +70,14 @@ describe('UpcomingTalksComponent', () => {
     expect(paragraphs.length).toBe(2);
     expect(paragraphs[0]?.textContent).toContain('First sentence.');
     expect(paragraphs[1]?.textContent).toContain('Second sentence.');
+  });
+
+  it('links each talk to its event and renders speaker initials without a photo', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const talkLink = compiled.querySelector<HTMLAnchorElement>('.talk-card__link');
+    const avatarFallback = compiled.querySelector<HTMLElement>('.talk-card__avatar--fallback');
+
+    expect(talkLink?.getAttribute('href')).toBe('/events/september-meetup');
+    expect(avatarFallback?.textContent?.trim()).toBe('AL');
   });
 });

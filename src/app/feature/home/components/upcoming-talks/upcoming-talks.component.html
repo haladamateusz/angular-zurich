@@ -12,7 +12,17 @@
         <article class="talk-card">
           <div class="talk-card__speaker">
             @if (talk.speakerImage) {
-              <img [src]="talk.speakerImage" [alt]="talk.speakerName" class="talk-card__avatar" width="48" height="48" />
+              <img
+                [src]="talk.speakerImage"
+                [alt]="talk.speakerName"
+                class="talk-card__avatar"
+                width="48"
+                height="48"
+              />
+            } @else {
+              <span class="talk-card__avatar talk-card__avatar--fallback" aria-hidden="true">
+                {{ talk.speakerInitials }}
+              </span>
             }
 
             <div class="talk-card__info">
@@ -24,7 +34,11 @@
             </div>
           </div>
 
-          <h3 class="talk-card__title">{{ talk.title }}</h3>
+          <h3 class="talk-card__title">
+            <a class="talk-card__link" [routerLink]="['/events', eventSlug()]">
+              {{ talk.title }}
+            </a>
+          </h3>
 
           @if (talk.descriptionParagraphs.length) {
             <div class="talk-card__description">
