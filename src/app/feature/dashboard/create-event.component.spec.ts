@@ -192,4 +192,27 @@ describe('CreateEventComponent', () => {
     expect(venueTrigger?.getAttribute('aria-expanded')).toBe('true');
     expect(element.querySelector('#eventVenue-listbox')).not.toBeNull();
   });
+
+  it('lets organizers choose whether an event is public or a draft', async () => {
+    const fixture = TestBed.createComponent(CreateEventComponent);
+
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const visibilityOptions = element.querySelectorAll<HTMLInputElement>(
+      'input[name="eventVisibility"]',
+    );
+    const publicOption = visibilityOptions.item(0);
+    const draftOption = visibilityOptions.item(1);
+
+    expect(publicOption.checked).toBe(true);
+    expect(draftOption.checked).toBe(false);
+
+    draftOption.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(publicOption.checked).toBe(false);
+    expect(draftOption.checked).toBe(true);
+  });
 });

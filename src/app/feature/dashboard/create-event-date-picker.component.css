@@ -12,7 +12,7 @@
   width: 100%;
   min-height: 2.85rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 92%, transparent);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background: var(--color-background);
   padding: 0.65rem 1.15rem 0.65rem 0.85rem;
   color: var(--color-foreground);
@@ -21,7 +21,6 @@
   text-align: left;
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease,
     background-color 160ms ease;
 }
 
@@ -33,14 +32,11 @@
 }
 
 .create-event-date-picker__trigger:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border) 65%);
+  border-color: var(--color-primary-text);
 }
 
-.create-event-date-picker__trigger:focus-visible,
 .create-event-date-picker__trigger[aria-expanded='true'] {
-  border-color: var(--color-primary);
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border-color: var(--color-primary-text);
 }
 
 .create-event-date-picker__trigger[aria-invalid='true'] {
@@ -66,7 +62,7 @@
   width: fit-content;
   max-width: calc(100vw - 3rem);
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-surface);
   background: var(--color-background);
   padding: 0.8rem;
   box-shadow: 0 0.8rem 2rem color-mix(in srgb, var(--color-foreground) 14%, transparent);
@@ -88,16 +84,16 @@ calendar-date {
 
 calendar-date::part(header) {
   display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
   gap: 0.4rem;
   padding: 0 0 0.6rem;
 }
 
 calendar-date::part(button) {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-foreground);
   transition:
@@ -112,7 +108,7 @@ calendar-date::part(button):hover {
 }
 
 calendar-date::part(button):focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  outline: 2px solid var(--color-primary-focus);
   outline-offset: 2px;
 }
 
@@ -158,7 +154,7 @@ calendar-month::part(th) {
 calendar-month::part(day) {
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   color: var(--color-foreground);
   font: inherit;
   font-size: 0.86rem;
@@ -169,7 +165,7 @@ calendar-month::part(day):hover {
 }
 
 calendar-month::part(today) {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 48%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-primary-text);
 }
 
 calendar-month::part(selected) {

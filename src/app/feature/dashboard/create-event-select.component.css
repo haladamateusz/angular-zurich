@@ -12,7 +12,7 @@
   width: 100%;
   min-height: 2.85rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 92%, transparent);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background: var(--color-background);
   padding: 0.65rem 1.15rem 0.65rem 0.85rem;
   color: var(--color-foreground);
@@ -21,7 +21,6 @@
   text-align: left;
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease,
     background-color 160ms ease;
 }
 
@@ -33,14 +32,13 @@
 }
 
 .create-event-select__trigger:hover:not(:disabled) {
-  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border) 65%);
+  border-color: var(--color-primary-text);
 }
 
-.create-event-select__trigger:focus-visible,
 .create-event-select__trigger[aria-expanded='true'] {
-  border-color: var(--color-primary);
-  outline: none;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border-color: var(--color-primary-text);
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .create-event-select__trigger[aria-invalid='true'] {
@@ -72,7 +70,7 @@
   max-height: 15rem;
   overflow-y: auto;
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-surface);
   background: var(--color-background);
   padding: 0.3rem;
   box-shadow: 0 0.8rem 2rem color-mix(in srgb, var(--color-foreground) 14%, transparent);
@@ -81,9 +79,10 @@
 [role='option'] {
   display: block;
   width: 100%;
+  min-height: 2.75rem;
   border: 0;
   background: transparent;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-subtle);
   padding: 0.65rem 0.7rem;
   color: var(--color-foreground);
   font-size: 0.88rem;
@@ -97,7 +96,7 @@
 }
 
 .create-event-select__option--selected {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 700;
 }
 
@@ -111,4 +110,10 @@
   padding: 0.65rem 0.7rem;
   color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
   font-size: 0.88rem;
+}
+
+@media (forced-colors: active) {
+  .create-event-select__trigger[aria-expanded='true'] {
+    outline-color: Highlight;
+  }
 }

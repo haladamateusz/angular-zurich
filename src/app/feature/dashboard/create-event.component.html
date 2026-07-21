@@ -1,6 +1,6 @@
 <section class="mx-auto max-w-6xl px-6 py-16">
   <nav class="mb-8" aria-label="Event navigation">
-    <a routerLink="/dashboard/events" class="app-back-link">
+    <a routerLink="/dashboard/events" class="app-button app-button--ghost">
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
           fill-rule="evenodd"
@@ -22,7 +22,7 @@
 
   @if (errorMessage()) {
     <div
-      class="mb-4 rounded-lg border border-destructive/30 bg-destructive/8 px-4 py-3.5 text-sm text-foreground"
+      class="mb-4 rounded-surface border border-destructive/30 bg-destructive/8 px-4 py-3.5 text-sm text-foreground"
       role="alert"
       aria-live="polite"
     >
@@ -36,7 +36,7 @@
     (submit)="saveEvent(); $event.preventDefault()"
   >
     <section
-      class="create-event-section rounded-[2rem] border border-card-line bg-card p-8"
+      class="create-event-section rounded-surface border border-card-line bg-card p-8"
       aria-labelledby="event-details-heading"
     >
       <div class="mb-[1.6rem]">
@@ -59,7 +59,11 @@
               autocomplete="off"
               placeholder="Angular Zurich September 2026"
               [formField]="eventForm.title"
-              [attr.aria-describedby]="eventForm.title().touched() && eventForm.title().invalid() ? 'eventTitleError' : null"
+              [attr.aria-describedby]="
+                eventForm.title().touched() && eventForm.title().invalid()
+                  ? 'eventTitleError'
+                  : null
+              "
             />
             <div class="create-event-field__error-slot" aria-live="polite">
               @if (eventForm.title().touched() && eventForm.title().errors()[0]; as error) {
@@ -74,10 +78,17 @@
               controlId="eventStartsDate"
               placeholder="Select date"
               [formField]="eventForm.startsDate"
-              [ariaDescribedBy]="eventForm.startsDate().touched() && eventForm.startsDate().invalid() ? 'eventStartsDateError' : null"
+              [ariaDescribedBy]="
+                eventForm.startsDate().touched() && eventForm.startsDate().invalid()
+                  ? 'eventStartsDateError'
+                  : null
+              "
             />
             <div class="create-event-field__error-slot" aria-live="polite">
-              @if (eventForm.startsDate().touched() && eventForm.startsDate().errors()[0]; as error) {
+              @if (
+                eventForm.startsDate().touched() && eventForm.startsDate().errors()[0];
+                as error
+              ) {
                 <p id="eventStartsDateError">{{ error.message }}</p>
               }
             </div>
@@ -91,11 +102,18 @@
               icon="clock"
               [options]="timeSelectOptions"
               [formField]="eventForm.startsTime"
-              [ariaDescribedBy]="eventForm.startsTime().touched() && eventForm.startsTime().invalid() ? 'eventStartsTimeError' : null"
+              [ariaDescribedBy]="
+                eventForm.startsTime().touched() && eventForm.startsTime().invalid()
+                  ? 'eventStartsTimeError'
+                  : null
+              "
             />
 
             <div class="create-event-field__error-slot" aria-live="polite">
-              @if (eventForm.startsTime().touched() && eventForm.startsTime().errors()[0]; as error) {
+              @if (
+                eventForm.startsTime().touched() && eventForm.startsTime().errors()[0];
+                as error
+              ) {
                 <p id="eventStartsTimeError">{{ error.message }}</p>
               }
             </div>
@@ -108,7 +126,11 @@
               placeholder="Select a venue"
               [options]="venueSelectOptions()"
               [formField]="eventForm.venueId"
-              [ariaDescribedBy]="eventForm.venueId().touched() && eventForm.venueId().invalid() ? 'eventVenueError' : null"
+              [ariaDescribedBy]="
+                eventForm.venueId().touched() && eventForm.venueId().invalid()
+                  ? 'eventVenueError'
+                  : null
+              "
             />
             <div class="create-event-field__error-slot" aria-live="polite">
               @if (eventForm.venueId().touched() && eventForm.venueId().errors()[0]; as error) {
@@ -126,7 +148,11 @@
               autocomplete="url"
               placeholder="https://www.meetup.com/angularzrh/events/..."
               [formField]="eventForm.meetupUrl"
-              [attr.aria-describedby]="eventForm.meetupUrl().touched() && eventForm.meetupUrl().invalid() ? 'eventMeetupUrlError' : null"
+              [attr.aria-describedby]="
+                eventForm.meetupUrl().touched() && eventForm.meetupUrl().invalid()
+                  ? 'eventMeetupUrlError'
+                  : null
+              "
             />
             <div class="create-event-field__error-slot" aria-live="polite">
               @if (eventForm.meetupUrl().touched() && eventForm.meetupUrl().errors()[0]; as error) {
@@ -134,35 +160,37 @@
               }
             </div>
 
-            <div
-              class="create-event-go-live"
-              role="radiogroup"
-              aria-label="Public event"
-            >
-              <div class="create-event-go-live__label">Public event</div>
+            <fieldset class="create-event-visibility">
+              <legend class="create-event-visibility__legend">Visibility</legend>
 
-              <div class="create-event-go-live__options">
-                <label class="create-event-go-live__option">
+              <div class="create-event-visibility__options">
+                <label class="create-event-visibility__option">
                   <input
                     type="radio"
-                    name="goLive"
+                    name="eventVisibility"
                     [checked]="formModel().isPublic === true"
                     (change)="setIsPublic(true)"
                   />
-                  <span>Yes</span>
+                  <span class="create-event-visibility__copy">
+                    <strong>Public</strong>
+                    <span>Visible to everyone</span>
+                  </span>
                 </label>
 
-                <label class="create-event-go-live__option">
+                <label class="create-event-visibility__option">
                   <input
                     type="radio"
-                    name="goLive"
+                    name="eventVisibility"
                     [checked]="formModel().isPublic === false"
                     (change)="setIsPublic(false)"
                   />
-                  <span>No</span>
+                  <span class="create-event-visibility__copy">
+                    <strong>Draft</strong>
+                    <span>Visible to organizers only</span>
+                  </span>
                 </label>
               </div>
-            </div>
+            </fieldset>
           </div>
         </div>
 
@@ -178,10 +206,18 @@
             >
               <img [src]="featureGraphicPreviewUrl()" alt="Selected event preview" />
               <div class="create-event-image-picker__actions">
-                <button type="button" (click)="openFeatureGraphicPicker()">
+                <button
+                  type="button"
+                  class="app-button app-button--secondary app-button--compact"
+                  (click)="openFeatureGraphicPicker()"
+                >
                   Replace
                 </button>
-                <button type="button" class="create-event-image-picker__remove" (click)="removeFeatureGraphic()">
+                <button
+                  type="button"
+                  class="create-event-image-picker__remove app-button app-button--danger app-button--compact"
+                  (click)="removeFeatureGraphic()"
+                >
                   Remove
                 </button>
               </div>
@@ -190,7 +226,9 @@
             <button
               type="button"
               class="create-event-image-picker"
-              [attr.aria-describedby]="featureGraphicError() ? 'featureGraphicError' : 'featureGraphicHint'"
+              [attr.aria-describedby]="
+                featureGraphicError() ? 'featureGraphicError' : 'featureGraphicHint'
+              "
               (click)="openFeatureGraphicPicker()"
             >
               <span class="create-event-image-picker__icon">
@@ -214,6 +252,7 @@
             #featureGraphicInput
             id="featureGraphic"
             type="file"
+            tabindex="-1"
             accept="image/jpeg,image/png,image/webp"
             class="create-event-image-field__input"
             [attr.aria-invalid]="featureGraphicTouched() && !featureGraphic()"
@@ -231,7 +270,7 @@
     </section>
 
     <section
-      class="create-event-section rounded-[2rem] border border-card-line bg-card p-8"
+      class="create-event-section rounded-surface border border-card-line bg-card p-8"
       aria-labelledby="event-talks-heading"
     >
       <div class="mb-[1.6rem]">
@@ -266,10 +305,17 @@
                   placeholder="Select an approved talk"
                   [options]="getTalkSelectOptions(talkIndex)"
                   [formField]="talkSelection.talkId"
-                  [ariaDescribedBy]="talkSelection.talkId().touched() && talkSelection.talkId().invalid() ? 'eventTalkError' + talkIndex : null"
+                  [ariaDescribedBy]="
+                    talkSelection.talkId().touched() && talkSelection.talkId().invalid()
+                      ? 'eventTalkError' + talkIndex
+                      : null
+                  "
                 />
                 <div class="create-event-field__error-slot" aria-live="polite">
-                  @if (talkSelection.talkId().touched() && talkSelection.talkId().errors()[0]; as error) {
+                  @if (
+                    talkSelection.talkId().touched() && talkSelection.talkId().errors()[0];
+                    as error
+                  ) {
                     <p [id]="'eventTalkError' + talkIndex">{{ error.message }}</p>
                   }
                 </div>
@@ -277,7 +323,7 @@
               @if (talkIndex === 2) {
                 <button
                   type="button"
-                  class="create-event-talk-row__remove"
+                  class="create-event-talk-row__remove app-button app-button--danger app-button--icon"
                   aria-label="Remove third talk"
                   title="Remove third talk"
                   (click)="removeThirdTalk()"
@@ -291,7 +337,11 @@
           }
 
           @if (canAddThirdTalk()) {
-            <button type="button" class="create-event-talk-placeholder" (click)="addThirdTalk()">
+            <button
+              type="button"
+              class="create-event-talk-placeholder app-button app-button--secondary app-button--block"
+              (click)="addThirdTalk()"
+            >
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                 <path
                   d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
@@ -311,12 +361,12 @@
     </section>
 
     <footer class="flex items-center justify-end gap-3 pt-2">
-      <a routerLink="/dashboard/events" class="create-event-form__cancel">Cancel</a>
-      <button
-        type="submit"
-        class="create-event-form__submit"
-        [disabled]="!canSubmit()"
+      <a
+        routerLink="/dashboard/events"
+        class="create-event-form__cancel app-button app-button--secondary"
+        >Cancel</a
       >
+      <button type="submit" class="create-event-form__submit app-button" [disabled]="!canSubmit()">
         @if (isSubmitting()) {
           <span class="create-event-form__spinner" aria-hidden="true"></span>
           <span>{{ isEditMode ? 'Saving...' : 'Creating...' }}</span>
