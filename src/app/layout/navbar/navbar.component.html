@@ -1,4 +1,6 @@
-<nav class="bg-navbar border-b border-navbar-line px-6 py-0 max-[720px]:px-4 max-[420px]:px-[0.9rem]">
+<nav
+  class="bg-navbar border-b border-navbar-line px-6 py-0 max-[720px]:px-4 max-[420px]:px-[0.9rem]"
+>
   <div class="mx-auto flex max-w-[94rem] items-center justify-between">
     <a class="flex items-center gap-2" routerLink="/">
       <img src="logo-flat.svg" alt="Angular Zürich logo" class="h-20 w-20" width="80" height="80" />
@@ -9,14 +11,7 @@
     <div class="flex items-center gap-2">
       <button
         (click)="toggleDarkMode()"
-        class="relative hidden h-9 w-9 items-center justify-center rounded-full bg-transparent transition-colors min-[721px]:inline-flex"
-        [class.text-primary]="!dark()"
-        [class.text-primary-300]="dark()"
-        [ngClass]="{
-          'bg-[color:color-mix(in_srgb,var(--color-primary)_12%,transparent)]': dark(),
-          'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]': dark(),
-          'hover:text-primary-200': dark(),
-        }"
+        class="navbar-desktop-action app-button app-button--ghost app-button--icon"
         [attr.aria-label]="dark() ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         @if (dark()) {
@@ -54,20 +49,13 @@
       </button>
 
       <button
+        #guestMenuButton
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-lg border transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background min-[721px]:hidden"
+        class="navbar-mobile-action app-button app-button--ghost app-button--icon"
         (click)="toggleGuestMenu()"
         [attr.aria-expanded]="guestMenuOpen()"
         aria-controls="guest-mobile-menu"
         aria-label="Open navigation menu"
-        [class.text-primary]="!dark()"
-        [ngClass]="{
-          'border-primary/15': !dark(),
-          'bg-primary/5': !dark(),
-          'border-primary/30': dark(),
-          'bg-[color:color-mix(in_srgb,var(--color-primary)_14%,var(--color-card)_86%)]': dark(),
-        }"
-        [class.text-primary-100]="dark()"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -85,59 +73,28 @@
       @if (isAuthenticated()) {
         @if (userProfile(); as profile) {
           <div class="hidden items-center gap-2 min-[721px]:flex">
-            <a
-              routerLink="/talk-submission"
-              class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-              [class.text-primary]="!dark()"
-              [class.text-primary-100]="dark()"
-              [ngClass]="{
-                'hover:bg-primary/10': !dark(),
-                'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-              }"
-            >
-              Submit Talk
-            </a>
-            <a
-              routerLink="/dashboard/talk-submissions"
-              class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-              [class.text-primary]="!dark()"
-              [class.text-primary-100]="dark()"
-              [ngClass]="{
-                'hover:bg-primary/10': !dark(),
-                'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-              }"
-            >
+            <a routerLink="/talk-submission" class="app-button app-button--ghost"> Submit Talk </a>
+            <a routerLink="/dashboard/talk-submissions" class="app-button app-button--ghost">
               Dashboard
             </a>
           </div>
 
           <details #navMenu class="relative hidden min-[721px]:block">
-            <summary
-              class="flex list-none items-center gap-3 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-              [class.text-foreground]="!dark()"
-              [ngClass]="{
-                'border-primary/15': !dark(),
-                'bg-primary/5': !dark(),
-                'border-primary/30': dark(),
-                'bg-[color:color-mix(in_srgb,var(--color-primary)_14%,var(--color-card)_86%)]': dark(),
-                'shadow-[0_16px_36px_-24px_rgba(0,0,0,0.75)]': dark(),
-              }"
-              [class.text-primary-100]="dark()"
-            >
+            <summary class="navbar-profile-trigger app-button app-button--secondary list-none">
               <span class="max-w-40 truncate">{{ profile.displayName }}</span>
               @if (shouldShowAvatarImage) {
                 <img
                   [src]="profile.avatarUrl"
-                  [alt]="profile.displayName"
+                  alt=""
                   (error)="handleAvatarLoadError()"
-                  class="h-9 w-9 rounded-lg object-cover object-center"
-                  width="36"
-                  height="36"
+                  class="navbar-profile-avatar h-7 w-7 rounded-control object-cover object-center"
+                  width="28"
+                  height="28"
                 />
               } @else {
                 <div
-                  class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold"
-                  [class.text-primary]="!dark()"
+                  class="navbar-profile-avatar inline-flex h-7 w-7 items-center justify-center rounded-control text-xs font-semibold"
+                  [class.text-primary-text]="!dark()"
                   [ngClass]="{
                     'bg-primary/10': !dark(),
                     'bg-primary/20': dark(),
@@ -161,28 +118,16 @@
             </summary>
 
             <div
-              class="absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-2xl border p-2 shadow-[0_18px_48px_-24px_rgba(15,23,42,0.5)] backdrop-blur-sm"
+              class="absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-surface border bg-card p-2"
               [class.border-navbar-line]="!dark()"
-              [class.bg-card]="!dark()"
               [ngClass]="{
                 'border-primary/30': dark(),
-                'bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-card)_92%,black_8%),color-mix(in_srgb,var(--color-card)_84%,black_16%))]':
-                  dark(),
-                'shadow-[0_24px_60px_-20px_rgba(0,0,0,0.82)]': dark(),
-                'ring-white/8': dark(),
               }"
-              [class.ring-1]="dark()"
             >
               <button
                 type="button"
                 (click)="signOut(); closeMenu($event)"
-                class="mt-1 flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors"
-                [class.text-primary]="!dark()"
-                [class.text-primary-100]="dark()"
-                [ngClass]="{
-                  'hover:bg-primary/10': !dark(),
-                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                }"
+                class="app-button app-button--ghost app-button--block mt-1"
               >
                 Log out
               </button>
@@ -191,40 +136,16 @@
         }
       } @else {
         <div class="hidden items-center gap-2 min-[721px]:flex">
-          <a
-            routerLink="/login"
-            class="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-            [class.text-primary]="!dark()"
-            [class.text-primary-100]="dark()"
-            [ngClass]="{
-              'hover:bg-primary/10': !dark(),
-              'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_28%,transparent)]': dark(),
-            }"
-          >
-            Sign in
-          </a>
-          <a
-            routerLink="/talk-submission"
-            class="inline-flex items-center rounded-lg border px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
-            [class.border-primary]="!dark()"
-            [class.text-primary]="!dark()"
-            [class.border-primary-300]="dark()"
-            [class.text-primary-100]="dark()"
-            [ngClass]="{
-              'hover:bg-primary/10': !dark(),
-              'hover:border-primary-200': dark(),
-              'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]': dark(),
-            }"
-          >
-            Submit Talk
-          </a>
+          <a routerLink="/login" class="app-button app-button--ghost"> Sign in </a>
+          <a routerLink="/talk-submission" class="app-button"> Submit Talk </a>
         </div>
       }
 
       @if (guestMenuRendered()) {
-        <div class="fixed inset-0 z-40 min-[721px]:hidden" id="guest-mobile-menu">
+        <div class="fixed inset-0 z-40 min-[721px]:hidden">
           <button
             type="button"
+            tabindex="-1"
             class="navbar-mobile-backdrop absolute inset-0 border-0 bg-[rgba(15,23,42,0.28)] backdrop-blur-[3px]"
             (click)="closeGuestMenu()"
             [class.navbar-mobile-backdrop--open]="guestMenuOpen()"
@@ -232,7 +153,13 @@
           ></button>
 
           <div
-            class="navbar-mobile-panel absolute right-0 top-0 flex h-dvh w-[min(24rem,calc(100vw-1rem))] flex-col border-l px-5 pb-6 pt-5 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.45)]"
+            #guestMenuPanel
+            id="guest-mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="guest-mobile-menu-title"
+            class="navbar-mobile-panel absolute right-0 top-0 flex h-dvh w-[min(24rem,calc(100vw-1rem))] flex-col border-l px-5 pb-6 pt-5"
+            (keydown)="handleGuestMenuKeydown($event)"
             [class.border-navbar-line]="!dark()"
             [class.bg-background]="!dark()"
             [ngClass]="{
@@ -250,8 +177,9 @@
             >
               <div class="min-w-0 px-4">
                 <p
+                  id="guest-mobile-menu-title"
                   class="text-xs font-semibold uppercase tracking-[0.24em]"
-                  [class.text-primary]="!dark()"
+                  [class.text-primary-text]="!dark()"
                   [class.text-primary-200]="dark()"
                 >
                   Menu
@@ -263,14 +191,14 @@
                         [src]="profile.avatarUrl"
                         [alt]="profile.displayName"
                         (error)="handleAvatarLoadError()"
-                        class="h-5 w-5 shrink-0 rounded-md object-cover object-center"
+                        class="h-5 w-5 shrink-0 rounded-subtle object-cover object-center"
                         width="20"
                         height="20"
                       />
                     } @else {
                       <div
-                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-[10px] font-semibold"
-                        [class.text-primary]="!dark()"
+                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-subtle text-[10px] font-semibold"
+                        [class.text-primary-text]="!dark()"
                         [ngClass]="{
                           'bg-primary/10': !dark(),
                           'bg-primary/20': dark(),
@@ -303,16 +231,11 @@
               </div>
 
               <button
+                #guestMenuCloseButton
                 type="button"
-                class="flex h-10 w-10 items-center justify-center rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/40"
+                class="app-button app-button--ghost app-button--icon"
                 (click)="closeGuestMenu()"
                 aria-label="Close navigation menu"
-                [class.text-primary]="!dark()"
-                [class.text-primary-100]="dark()"
-                [ngClass]="{
-                  'hover:bg-primary/10': !dark(),
-                  'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_22%,transparent)]': dark(),
-                }"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -334,15 +257,7 @@
                   <a
                     routerLink="/dashboard/talk-submissions"
                     (click)="closeGuestMenu()"
-                    class="flex min-h-16 items-center border-b px-4 text-base font-medium transition-colors"
-                    [class.border-navbar-line]="!dark()"
-                    [class.text-primary]="!dark()"
-                    [class.text-primary-100]="dark()"
-                    [ngClass]="{
-                      'hover:bg-primary/10': !dark(),
-                      'border-primary/20': dark(),
-                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                    }"
+                    class="app-button app-button--ghost app-button--menu"
                   >
                     Dashboard
                   </a>
@@ -351,15 +266,7 @@
                 <a
                   routerLink="/talk-submission"
                   (click)="closeGuestMenu()"
-                  class="flex min-h-16 items-center border-b px-4 text-base font-medium transition-colors"
-                  [class.border-navbar-line]="!dark()"
-                  [class.text-primary]="!dark()"
-                  [class.text-primary-100]="dark()"
-                  [ngClass]="{
-                    'hover:bg-primary/10': !dark(),
-                    'border-primary/20': dark(),
-                    'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                  }"
+                  class="app-button app-button--ghost app-button--menu"
                 >
                   Submit Talk
                 </a>
@@ -367,15 +274,7 @@
                 <button
                   type="button"
                   (click)="toggleDarkMode()"
-                  class="flex min-h-16 w-full items-center justify-between border-b px-4 text-left text-base font-medium transition-colors"
-                  [class.border-navbar-line]="!dark()"
-                  [class.text-primary]="!dark()"
-                  [class.text-primary-100]="dark()"
-                  [ngClass]="{
-                    'hover:bg-primary/10': !dark(),
-                    'border-primary/20': dark(),
-                    'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                  }"
+                  class="app-button app-button--ghost app-button--menu app-button--space-between"
                 >
                   <span>{{ mobileThemeLabel }}</span>
                   @if (!dark()) {
@@ -417,34 +316,30 @@
                   <a
                     routerLink="/login"
                     (click)="closeGuestMenu()"
-                    class="flex min-h-16 items-center px-4 text-base font-medium transition-colors"
-                    [class.text-primary]="!dark()"
-                    [class.text-primary-100]="dark()"
-                    [ngClass]="{
-                      'hover:bg-primary/10': !dark(),
-                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                    }"
+                    class="app-button app-button--ghost app-button--menu"
                   >
                     Sign in
                   </a>
                 }
+              </div>
 
-                @if (isAuthenticated()) {
+              @if (isAuthenticated()) {
+                <div
+                  class="mt-auto border-t pt-3"
+                  [class.border-navbar-line]="!dark()"
+                  [ngClass]="{
+                    'border-primary/20': dark(),
+                  }"
+                >
                   <button
                     type="button"
                     (click)="signOutAndCloseGuestMenu()"
-                    class="flex min-h-16 w-full items-center px-4 text-left text-base font-medium transition-colors"
-                    [class.text-primary]="!dark()"
-                    [class.text-primary-100]="dark()"
-                    [ngClass]="{
-                      'hover:bg-primary/10': !dark(),
-                      'hover:bg-[color:color-mix(in_srgb,var(--color-primary)_24%,transparent)]': dark(),
-                    }"
+                    class="app-button app-button--ghost app-button--menu"
                   >
                     Log out
                   </button>
-                }
-              </div>
+                </div>
+              }
             </div>
           </div>
         </div>

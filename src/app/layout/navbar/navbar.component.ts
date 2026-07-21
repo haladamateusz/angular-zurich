@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   signal,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -27,7 +28,12 @@ export class NavbarComponent {
   private readonly avatarLoadFailed = signal(false);
   protected readonly guestMenuRendered = signal(false);
   protected readonly guestMenuOpen = signal(false);
+  private readonly guestMenuButton = viewChild<ElementRef<HTMLButtonElement>>('guestMenuButton');
+  private readonly guestMenuCloseButton =
+    viewChild<ElementRef<HTMLButtonElement>>('guestMenuCloseButton');
+  private readonly guestMenuPanel = viewChild<ElementRef<HTMLElement>>('guestMenuPanel');
   private readonly navMenus = viewChildren<ElementRef<HTMLDetailsElement>>('navMenu');
+  private guestMenuOpenTimeoutId: ReturnType<typeof setTimeout> | undefined;
   private guestMenuCloseTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly isAuthenticated = this.authService.isAuthenticated;
@@ -70,7 +76,7 @@ export class NavbarComponent {
   }
 
   protected get mobileThemeLabel(): string {
-    return this.dark() ? 'Theme: Dark mode' : 'Theme: Light mode';
+    return this.dark() ? 'Switch to light mode' : 'Switch to dark mode';
   }
 
   protected handleAvatarLoadError(): void {
@@ -94,11 +100,55 @@ export class NavbarComponent {
   }
 
   protected closeGuestMenu(): void {
+    clearTimeout(this.guestMenuOpenTimeoutId);
     clearTimeout(this.guestMenuCloseTimeoutId);
     this.guestMenuOpen.set(false);
     this.guestMenuCloseTimeoutId = setTimeout(() => {
       this.guestMenuRendered.set(false);
+      this.guestMenuButton()?.nativeElement.focus();
     }, this.guestMenuAnimationDurationMs);
+  }
+
+  protected handleGuestMenuKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeGuestMenu();
+      return;
+    }
+
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const panel = this.guestMenuPanel()?.nativeElement;
+    if (!panel) {
+      return;
+    }
+
+    const focusableElements = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    const firstElement = focusableElements.at(0);
+    const lastElement = focusableElements.at(-1);
+    if (!firstElement || !lastElement) {
+      event.preventDefault();
+      return;
+    }
+
+    const activeElement = this.document.activeElement;
+    if (event.shiftKey && (activeElement === firstElement || !panel.contains(activeElement))) {
+      event.preventDefault();
+      lastElement.focus();
+      return;
+    }
+
+    if (!event.shiftKey && activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
   }
 
   protected toggleGuestMenu(): void {
@@ -109,9 +159,10 @@ export class NavbarComponent {
 
     clearTimeout(this.guestMenuCloseTimeoutId);
     this.guestMenuRendered.set(true);
-    setTimeout(() => {
+    this.guestMenuOpenTimeoutId = setTimeout(() => {
       this.guestMenuOpen.set(true);
-    },0);
+      this.guestMenuCloseButton()?.nativeElement.focus();
+    }, 0);
   }
 
   protected toggleDarkMode(): void {

@@ -10,6 +10,22 @@
   transform: rotate(180deg);
 }
 
+.navbar-desktop-action.app-button.app-button {
+  display: none;
+}
+
+.navbar-mobile-action.app-button.app-button {
+  display: inline-flex;
+}
+
+.navbar-profile-trigger.app-button.app-button {
+  padding-block: 0.5rem;
+}
+
+.navbar-profile-avatar {
+  flex: none;
+}
+
 .navbar-mobile-backdrop {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
@@ -40,5 +56,15 @@
   .navbar-mobile-backdrop,
   .navbar-mobile-panel {
     transition-duration: 1ms;
+  }
+}
+
+@media (min-width: 721px) {
+  .navbar-desktop-action.app-button.app-button {
+    display: inline-flex;
+  }
+
+  .navbar-mobile-action.app-button.app-button {
+    display: none;
   }
 }
