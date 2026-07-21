@@ -138,7 +138,7 @@
 }
 
 .dashboard-detail__action-row--header {
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .dashboard-detail__action-button {
@@ -389,15 +389,4 @@
   color: var(--color-muted-foreground-1);
   font-size: 0.98rem;
   line-height: 1.8;
-}
-
-@media (max-width: 767px) {
-  .dashboard-detail__review-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .dashboard-detail__action-row--header {
-    margin-left: 0;
-  }
 }
