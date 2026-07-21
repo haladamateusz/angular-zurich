@@ -223,6 +223,7 @@
   display: grid;
   gap: 1.5rem;
   min-width: 0;
+  container: event-preview / inline-size;
   padding: 1.5rem;
   border: 1px solid var(--color-card-line);
   border-radius: var(--radius-surface);
@@ -247,8 +248,14 @@
   overflow-wrap: anywhere;
 }
 
+.event-preview__facts {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
 .event-preview__fact dt {
-  padding-left: calc(1rem + 0.625rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--color-muted-foreground-1);
   font-size: 0.78rem;
   font-weight: 600;
@@ -268,22 +275,85 @@
   display: block;
 }
 
-.event-preview__fact-icon {
+.event-preview__label-icon {
   width: 1rem;
   height: 1rem;
-  margin-top: 0.18rem;
   color: var(--color-muted-foreground-1);
   flex-shrink: 0;
 }
 
 .event-preview__fact a {
+  display: block;
+  border-radius: var(--radius-subtle);
   color: inherit;
+  text-decoration: none;
   text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
 }
 
-.event-preview__fact-value > span:last-child {
+.event-preview__fact a:hover .event-preview__venue-title {
+  color: var(--color-primary-text);
+  text-decoration: underline;
+}
+
+.event-preview__fact a:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+.event-preview__fact-value {
+  display: block;
+  min-width: 0;
+}
+
+.event-preview__fact-value > :last-child {
   min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.event-preview__venue-copy {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.event-preview__venue-title {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: fit-content;
+  max-width: 100%;
+  font-weight: 600;
+}
+
+.event-preview__venue-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.event-preview__venue-address {
+  color: var(--color-muted-foreground-1);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.event-preview__external-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+.event-preview__talks {
+  --_program-line: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+
+  display: grid;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--_program-line);
+  border-radius: var(--radius-surface);
+  background: color-mix(in srgb, var(--color-background) 88%, transparent);
+  list-style: none;
 }
 
 .event-preview__talk {
@@ -292,9 +362,10 @@
   align-items: center;
   gap: 0.875rem;
   padding: 0.875rem 0.95rem;
-  border: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
-  border-radius: var(--radius-surface);
-  background: color-mix(in srgb, var(--color-background) 88%, transparent);
+}
+
+.event-preview__talk + .event-preview__talk {
+  border-top: 1px solid var(--_program-line);
 }
 
 .event-preview__avatar {
@@ -399,9 +470,17 @@
   );
 }
 
-:host-context(.dark) .event-preview__talk {
-  border-color: color-mix(in srgb, white 10%, transparent);
+:host-context(.dark) .event-preview__talks {
+  --_program-line: color-mix(in srgb, white 10%, transparent);
+
   background: rgba(255, 255, 255, 0.025);
+}
+
+@container event-preview (max-width: 23.25rem) {
+  .event-preview__facts {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -437,7 +516,7 @@
 
 @media (max-width: 960px) {
   .hero-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding-top: 3rem;
   }
 
@@ -508,10 +587,6 @@
     line-height: 1.2;
   }
 
-  .event-preview__fact dt {
-    padding-left: calc(0.95rem + 0.425rem);
-  }
-
   .event-preview__fact dd {
     font-size: 0.9rem;
     line-height: 1.45;
@@ -520,11 +595,6 @@
   .event-preview__talk {
     align-items: start;
     padding: 0.85rem;
-  }
-
-  .event-preview__avatar {
-    width: 2.2rem;
-    height: 2.2rem;
   }
 
   .event-preview__talk-copy h3 {
@@ -568,19 +638,5 @@
 
   .event-preview__title {
     font-size: 1rem;
-  }
-
-  .event-preview__talk {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-
-  .event-preview__avatar {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .event-preview__fact-value {
-    gap: 0.35rem;
   }
 }

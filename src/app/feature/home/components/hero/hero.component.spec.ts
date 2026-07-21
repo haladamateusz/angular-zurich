@@ -51,19 +51,75 @@ describe('HeroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeroComponent]
-    })
-    .compileComponents();
+      imports: [HeroComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeroComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('sponsors', TEST_SPONSORS);
     fixture.componentRef.setInput('event', TEST_EVENT);
-    fixture.detectChanges();
     await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('associates the event preview with its visible heading', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const preview = root.querySelector<HTMLElement>('.event-preview');
+    const title = root.querySelector<HTMLElement>('.event-preview__title');
+
+    expect(title?.id).toBe('next-event-title');
+    expect(preview?.getAttribute('aria-labelledby')).toBe(title?.id);
+  });
+
+  it('renders concise semantic date and venue details', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const eventTime = root.querySelector<HTMLTimeElement>('.event-preview__fact-copy');
+    const venueLink = root.querySelector<HTMLAnchorElement>('.event-preview__fact a');
+
+    expect(eventTime?.getAttribute('datetime')).toBe(TEST_EVENT.starts_at);
+    expect(eventTime?.textContent).toContain('17 April 2099');
+    expect(eventTime?.textContent).toContain('20:30');
+    expect(eventTime?.textContent).not.toContain('starts at');
+    expect(root.querySelector('.event-preview__venue-title')?.textContent).toContain(
+      'Constructor Nexademy',
+    );
+    expect(root.querySelector('.event-preview__venue-address')?.textContent).toContain(
+      'Foerrlibuckstrasse 150, 8005 Zurich',
+    );
+    expect(venueLink?.getAttribute('href')).toBe(TEST_EVENT.venue?.google_maps_url);
+    expect(venueLink?.textContent).toContain('opens in a new tab');
+  });
+
+  it('renders a single semantic program list when all talks are visible', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const program = root.querySelector<HTMLUListElement>('.event-preview__talks');
+
+    expect(program?.children).toHaveLength(1);
+    expect(program?.querySelector('.event-preview__talk')?.tagName).toBe('LI');
+    expect(root.querySelector('.event-preview__agenda-label')?.textContent?.trim()).toBe('Program');
+  });
+
+  it('labels the program as a preview when talks are truncated', async () => {
+    const firstTalk = TEST_EVENT.talks[0];
+    fixture.componentRef.setInput('event', {
+      ...TEST_EVENT,
+      talks: [
+        firstTalk,
+        { ...firstTalk, id: 'talk-2', title: 'Typed Forms' },
+        { ...firstTalk, id: 'talk-3', title: 'Modern Routing' },
+        { ...firstTalk, id: 'talk-4', title: 'Angular Aria' },
+      ],
+    });
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.querySelectorAll('.event-preview__talk')).toHaveLength(3);
+    expect(root.querySelector('.event-preview__agenda-label')?.textContent?.trim()).toBe(
+      'Program preview',
+    );
   });
 });

@@ -37,8 +37,8 @@ export class NavbarDateFormatPipe implements PipeTransform {
 
     const month = dateParts.find((part) => part.type === 'month')?.value ?? '';
     const year = dateParts.find((part) => part.type === 'year')?.value ?? '';
-    const formattedDate = `${this.formatOrdinal(day)} ${month} ${year}`;
-    const formattedTime = `starts at ${timeFormatter.format(date)}`;
+    const formattedDate = `${day} ${month} ${year}`;
+    const formattedTime = timeFormatter.format(date);
 
     if (mode === 'date') {
       return formattedDate;
@@ -48,25 +48,6 @@ export class NavbarDateFormatPipe implements PipeTransform {
       return formattedTime;
     }
 
-    return `${formattedDate} ${formattedTime}`;
-  }
-
-  private formatOrdinal(day: number): string {
-    const remainder10 = day % 10;
-    const remainder100 = day % 100;
-
-    if (remainder10 === 1 && remainder100 !== 11) {
-      return `${day}st`;
-    }
-
-    if (remainder10 === 2 && remainder100 !== 12) {
-      return `${day}nd`;
-    }
-
-    if (remainder10 === 3 && remainder100 !== 13) {
-      return `${day}rd`;
-    }
-
-    return `${day}th`;
+    return `${formattedDate} at ${formattedTime}`;
   }
 }
