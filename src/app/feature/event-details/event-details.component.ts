@@ -3,9 +3,8 @@ import {
   Component,
   DestroyRef,
   PLATFORM_ID,
-  afterNextRender,
+  afterRenderEffect,
   computed,
-  effect,
   inject,
   input,
   resource,
@@ -45,9 +44,8 @@ const EMPTY_EVENT: Event = {
 export class EventDetailsComponent {
   slug = input.required<string>();
   protected readonly loadingCards = [1, 2, 3];
-  protected readonly featureGraphicLoaded = signal(false);
   private readonly currentTimestamp = signal(Date.now());
-  private readonly featureGraphicUrl = signal<string | null>(null);
+  private readonly loadedFeatureGraphicUrl = signal<string | null>(null);
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly destroyRef = inject(DestroyRef);
@@ -72,29 +70,18 @@ export class EventDetailsComponent {
   });
 
   protected readonly event = computed(() => this.eventResource.value());
+  protected readonly featureGraphicLoaded = computed(() => {
+    const featureGraphicUrl = this.event().feature_graphic;
+
+    return Boolean(featureGraphicUrl) && this.loadedFeatureGraphicUrl() === featureGraphicUrl;
+  });
   protected readonly pageTitle = computed(() =>
     this.event().title.replace(/^Angular Zurich\s+/i, '') || 'Event details',
   );
 
-  private readonly resetFeatureGraphicPlaceholder = effect(() => {
-    const featureGraphic = this.event().feature_graphic;
-
-    if (this.featureGraphicUrl() !== featureGraphic) {
-      this.featureGraphicUrl.set(featureGraphic);
-      this.featureGraphicLoaded.set(false);
-    }
-  });
-
-  private readonly scrollToTopOnSlugChange = effect(() => {
+  private readonly scrollToTopOnSlugChange = afterRenderEffect(() => {
     this.slug();
-
-    if (!this.isBrowser) {
-      return;
-    }
-
-    afterNextRender(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    });
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   });
 
   constructor() {
@@ -125,8 +112,8 @@ export class EventDetailsComponent {
     return this.currentTimestamp() >= eventStartTimestamp + SLIDES_VISIBILITY_DELAY_MS;
   }
 
-  protected markFeatureGraphicAsLoaded(): void {
-    this.featureGraphicLoaded.set(true);
+  protected markFeatureGraphicAsLoaded(featureGraphicUrl: string | null): void {
+    this.loadedFeatureGraphicUrl.set(featureGraphicUrl);
   }
 
   protected splitTalkDescription(description: string): string[] {

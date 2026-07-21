@@ -249,8 +249,8 @@
               [src]="currentEvent.feature_graphic"
               [alt]="pageTitle()"
               class="event-details__hero-graphic"
-              (load)="markFeatureGraphicAsLoaded()"
-              (error)="markFeatureGraphicAsLoaded()"
+              (load)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
+              (error)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
             />
           }
         </div>
