@@ -1,8 +1,8 @@
 
 /* ============================================== */
 /* Theme: Zuerich Blue                          */
-/* Generated: 2026-02-21                        */
-/* Hue: 251 | Style: vibrant                  */
+/* Brand anchors: #1E88E5 (500), #1565C0 (700) */
+/* Style: vibrant                               */
 /* ============================================== */
 
 @theme theme-zuerich-blue inline {
@@ -14,17 +14,17 @@
   /* BRAND PALETTE (vibrant)                     */
   /* -------------------------------------------- */
   
-  --color-zuerich-blue-50: oklch(92.8% 0.08 251);
-  --color-zuerich-blue-100: oklch(88.6% 0.1 251);
-  --color-zuerich-blue-200: oklch(80.4% 0.12 251);
-  --color-zuerich-blue-300: oklch(72.4% 0.14 251);
-  --color-zuerich-blue-400: oklch(64.6% 0.16 251);
-  --color-zuerich-blue-500: oklch(57% 0.14 251);
-  --color-zuerich-blue-600: oklch(49.6% 0.12 251);
-  --color-zuerich-blue-700: oklch(42.4% 0.1 251);
-  --color-zuerich-blue-800: oklch(35.4% 0.08 251);
-  --color-zuerich-blue-900: oklch(28.6% 0.06 251);
-  --color-zuerich-blue-950: oklch(25.3% 0.05 251);
+  --color-zuerich-blue-50: #e3f2fd;
+  --color-zuerich-blue-100: #bbdefb;
+  --color-zuerich-blue-200: #90caf9;
+  --color-zuerich-blue-300: #64b5f6;
+  --color-zuerich-blue-400: #42a5f5;
+  --color-zuerich-blue-500: #1e88e5;
+  --color-zuerich-blue-600: #1976d2;
+  --color-zuerich-blue-700: #1565c0;
+  --color-zuerich-blue-800: #0d47a1;
+  --color-zuerich-blue-900: #0a397f;
+  --color-zuerich-blue-950: #06244f;
   
   /* -------------------------------------------- */
   /* GRAY PALETTE (bell curve chroma)             */
