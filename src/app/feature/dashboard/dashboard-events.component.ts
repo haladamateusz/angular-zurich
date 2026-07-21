@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { DashboardEvent } from '../../core/models/event.interface';
 import { DashboardSectionNavComponent } from './dashboard-section-nav.component';
+import { createPaginationItems } from './pagination';
 
 const EVENTS_PAGE_SIZE = 5;
 
@@ -28,8 +29,8 @@ export class DashboardEventsComponent {
   protected readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.totalEventCount() / EVENTS_PAGE_SIZE)),
   );
-  protected readonly pageNumbers = computed(() =>
-    Array.from({ length: this.totalPages() }, (_, index) => index + 1),
+  protected readonly paginationItems = computed(() =>
+    createPaginationItems(this.currentPage(), this.totalPages()),
   );
   protected readonly currentPageStart = computed(() => {
     if (!this.totalEventCount()) {

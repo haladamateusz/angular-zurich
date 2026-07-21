@@ -223,6 +223,18 @@
   line-height: 1.2;
 }
 
+.app-pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  min-height: 2.75rem;
+  color: var(--color-muted-foreground-1);
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
 .dark .app-pagination-current {
   background: color-mix(in srgb, var(--color-primary-400) 18%, var(--color-background));
   color: var(--color-primary-text);

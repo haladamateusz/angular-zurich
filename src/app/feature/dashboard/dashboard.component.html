@@ -642,24 +642,28 @@
               </button>
 
               <div class="dashboard-table__pagination-pages">
-                @for (page of pageNumbers(); track page) {
-                  @if (page === currentPage()) {
-                    <span
-                      class="dashboard-table__pagination-page app-pagination-current"
-                      aria-current="page"
-                      [attr.aria-label]="'Current page, ' + page"
-                    >
-                      {{ page }}
-                    </span>
+                @for (item of paginationItems(); track item.key) {
+                  @if (item.type === 'ellipsis') {
+                    <span class="app-pagination-ellipsis" aria-hidden="true">&hellip;</span>
                   } @else {
-                    <button
-                      type="button"
-                      class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
-                      [attr.aria-label]="'Go to page ' + page"
-                      (click)="goToPage(page)"
-                    >
-                      {{ page }}
-                    </button>
+                    @if (item.page === currentPage()) {
+                      <span
+                        class="dashboard-table__pagination-page app-pagination-current"
+                        aria-current="page"
+                        [attr.aria-label]="'Current page, ' + item.page"
+                      >
+                        {{ item.page }}
+                      </span>
+                    } @else {
+                      <button
+                        type="button"
+                        class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
+                        [attr.aria-label]="'Go to page ' + item.page"
+                        (click)="goToPage(item.page)"
+                      >
+                        {{ item.page }}
+                      </button>
+                    }
                   }
                 }
               </div>

@@ -21,6 +21,7 @@ import {
   CreateEventSelectOption,
 } from './create-event-select.component';
 import { DashboardSectionNavComponent } from './dashboard-section-nav.component';
+import { createPaginationItems } from './pagination';
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
 type SortDirection = 'asc' | 'desc';
@@ -85,8 +86,8 @@ export class DashboardComponent {
   protected readonly totalPages = computed(() =>
     Math.max(1, Math.ceil(this.totalSubmissionCount() / SUBMISSIONS_PAGE_SIZE)),
   );
-  protected readonly pageNumbers = computed(() =>
-    Array.from({ length: this.totalPages() }, (_, index) => index + 1),
+  protected readonly paginationItems = computed(() =>
+    createPaginationItems(this.currentPage(), this.totalPages()),
   );
   protected readonly paginatedSubmissions = computed(() => this.submissions());
   protected readonly currentPageStart = computed(() => {
