@@ -1,4 +1,4 @@
-<main class="bg-background">
+<div class="bg-background">
   <section class="px-6 py-14 lg:py-18">
     <div class="mx-auto max-w-5xl space-y-8">
       @if (isBlockingEditError()) {
@@ -13,9 +13,9 @@
 
       @if (!isBlockingEditError()) {
         <div class="space-y-3">
-          <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+          <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
             {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
-          </h2>
+          </h1>
           <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
             @if (isEditMode()) {
               Update the details below and save the proposal when everything looks right.
@@ -37,21 +37,35 @@
             class="submission-card submission-card--talk rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
           >
             <div class="submission-card__header relative z-[1] space-y-3">
-              <div
-                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
-              >
+              <div class="submission-card__title-row">
+                <h3
+                  id="talk-details-heading"
+                  class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+                >
+                  <span class="submission-card__title-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M5 6.75A1.75 1.75 0 0 1 6.75 5h10.5A1.75 1.75 0 0 1 19 6.75v6.5A1.75 1.75 0 0 1 17.25 15H6.75A1.75 1.75 0 0 1 5 13.25v-6.5Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M12 15v3.5M9.25 18.5h5.5M8.5 8.75h7M8.5 11.5h4"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Talk details</span>
+                </h3>
                 <p
                   class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
                 >
                   Step 1
                 </p>
               </div>
-              <h3
-                id="talk-details-heading"
-                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
-              >
-                Talk details
-              </h3>
               <p
                 class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
               >
@@ -140,21 +154,34 @@
             class="submission-card submission-card--speaker speaker-card rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
           >
             <div class="submission-card__header speaker-card__header relative z-[1] space-y-3">
-              <div
-                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
-              >
+              <div class="submission-card__title-row">
+                <h3
+                  id="speaker-details-heading"
+                  class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+                >
+                  <span class="submission-card__title-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 12.25a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M5.75 19.25c.65-2.85 2.85-4.5 6.25-4.5s5.6 1.65 6.25 4.5"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>Speaker details</span>
+                </h3>
                 <p
                   class="submission-card__eyebrow speaker-card__step text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
                 >
                   Step 2
                 </p>
               </div>
-              <h3
-                id="speaker-details-heading"
-                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
-              >
-                Speaker details
-              </h3>
               <p
                 class="submission-card__lede speaker-card__intro max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
               >
@@ -515,21 +542,36 @@
             class="submission-card submission-card--submit rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
           >
             <div class="submission-card__header relative z-[1] space-y-3">
-              <div
-                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
-              >
+              <div class="submission-card__title-row">
+                <h3
+                  id="submission-heading"
+                  class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+                >
+                  <span class="submission-card__title-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 3.75 18.25 6v5.3c0 3.95-2.4 7.45-6.25 8.95-3.85-1.5-6.25-5-6.25-8.95V6L12 3.75Z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="m9 12.1 2 2 4-4.35"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <span>{{ isEditMode() ? 'Review and save' : 'Verification and submit' }}</span>
+                </h3>
                 <p
                   class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
                 >
                   Step 3
                 </p>
               </div>
-              <h3
-                id="submission-heading"
-                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
-              >
-                {{ isEditMode() ? 'Review and save' : 'Verification and submit' }}
-              </h3>
               <p
                 class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
               >
@@ -625,4 +667,4 @@
       }
     </div>
   </section>
-</main>
+</div>
