@@ -193,16 +193,24 @@
 
               <div class="dashboard-events-table__pagination-pages">
                 @for (page of pageNumbers(); track page) {
-                  <button
-                    type="button"
-                    class="dashboard-events-table__pagination-page app-button app-button--ghost app-button--page"
-                    [class.dashboard-events-table__pagination-page--active]="page === currentPage()"
-                    [attr.aria-current]="page === currentPage() ? 'page' : null"
-                    [attr.aria-label]="'Go to page ' + page"
-                    (click)="goToPage(page)"
-                  >
-                    {{ page }}
-                  </button>
+                  @if (page === currentPage()) {
+                    <span
+                      class="dashboard-events-table__pagination-page app-pagination-current"
+                      aria-current="page"
+                      [attr.aria-label]="'Current page, ' + page"
+                    >
+                      {{ page }}
+                    </span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="dashboard-events-table__pagination-page app-button app-button--ghost app-button--page"
+                      [attr.aria-label]="'Go to page ' + page"
+                      (click)="goToPage(page)"
+                    >
+                      {{ page }}
+                    </button>
+                  }
                 }
               </div>
 

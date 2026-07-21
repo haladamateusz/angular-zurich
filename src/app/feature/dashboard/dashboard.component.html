@@ -602,7 +602,7 @@
                   <td class="dashboard-table__cell dashboard-table__cell--details">
                     <a
                       [routerLink]="['/dashboard', 'talk-submissions', submission.id]"
-                      class="dashboard-table__details-button app-button app-button--secondary app-button--compact"
+                      class="dashboard-table__details-button app-button app-button--ghost app-button--compact"
                       [attr.aria-label]="'Open details for ' + submission.talk_title"
                     >
                       <span>Details</span>
@@ -643,16 +643,24 @@
 
               <div class="dashboard-table__pagination-pages">
                 @for (page of pageNumbers(); track page) {
-                  <button
-                    type="button"
-                    class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
-                    [class.dashboard-table__pagination-page--active]="page === currentPage()"
-                    [attr.aria-current]="page === currentPage() ? 'page' : null"
-                    [attr.aria-label]="'Go to page ' + page"
-                    (click)="goToPage(page)"
-                  >
-                    {{ page }}
-                  </button>
+                  @if (page === currentPage()) {
+                    <span
+                      class="dashboard-table__pagination-page app-pagination-current"
+                      aria-current="page"
+                      [attr.aria-label]="'Current page, ' + page"
+                    >
+                      {{ page }}
+                    </span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
+                      [attr.aria-label]="'Go to page ' + page"
+                      (click)="goToPage(page)"
+                    >
+                      {{ page }}
+                    </button>
+                  }
                 }
               </div>
 

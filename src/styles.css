@@ -14,6 +14,13 @@
   --radius-subtle: 0.25rem;
   --radius-control: 0.5rem;
   --radius-surface: 0.75rem;
+  --color-control-muted: color-mix(in oklch, var(--color-surface) 65%, var(--color-surface-1));
+  --color-control-muted-hover: color-mix(
+    in oklch,
+    var(--color-surface) 30%,
+    var(--color-surface-1)
+  );
+  --color-control-muted-active: var(--color-surface-1);
 }
 
 /* Adds pointer cursor to buttons */
@@ -129,10 +136,16 @@
 }
 
 :is(button, a, summary).app-button.app-button--secondary {
+  --app-button-background: var(--color-control-muted);
+  --app-button-background-hover: var(--color-control-muted-hover);
+  --app-button-background-active: var(--color-control-muted-active);
+  --app-button-foreground: var(--color-surface-foreground);
+}
+
+.dark :is(button, a, summary).app-button.app-button--secondary {
   --app-button-background: var(--color-surface);
   --app-button-background-hover: var(--color-surface-hover);
   --app-button-background-active: var(--color-surface-active);
-  --app-button-foreground: var(--color-surface-foreground);
 }
 
 .dark :is(button, a, summary).app-button.app-button {
@@ -195,11 +208,24 @@
   justify-content: space-between;
 }
 
-:is(button, a, summary).app-button.app-button--page[aria-current='page'] {
-  --app-button-background: var(--color-primary);
-  --app-button-background-hover: var(--color-primary-hover);
-  --app-button-background-active: var(--color-primary-active);
-  --app-button-foreground: var(--color-primary-foreground);
+.app-pagination-current {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
+  color: var(--color-primary-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.dark .app-pagination-current {
+  background: color-mix(in srgb, var(--color-primary-400) 18%, var(--color-background));
+  color: var(--color-primary-text);
 }
 
 .app-button__icon,
@@ -227,6 +253,13 @@
 
   :is(button, a, summary).app-button.app-button:focus-visible {
     outline-color: Highlight;
+  }
+
+  .app-pagination-current {
+    border: 1px solid Highlight;
+    background: Canvas;
+    color: LinkText;
+    forced-color-adjust: none;
   }
 }
 

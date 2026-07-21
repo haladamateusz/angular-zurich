@@ -11,7 +11,7 @@
   margin-bottom: 2rem;
   overflow-x: auto;
   border-radius: var(--radius-surface);
-  background: var(--color-surface);
+  background: var(--color-control-muted);
   padding: 0.25rem;
   scrollbar-width: none;
 }
@@ -42,27 +42,27 @@
 }
 
 .dashboard-section-nav__item:hover:not(.dashboard-section-nav__item--active) {
-  background: var(--color-surface-hover);
+  background: var(--color-control-muted-hover);
   color: var(--color-foreground);
 }
 
 .dashboard-section-nav__item:active:not(.dashboard-section-nav__item--active) {
-  background: var(--color-surface-active);
+  background: var(--color-control-muted-active);
 }
 
 .dashboard-section-nav__item--active {
-  background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-background));
+  color: var(--color-primary-text);
 }
 
 .dashboard-section-nav__item--active:hover,
 .dashboard-section-nav__item--active:focus-visible {
-  background: var(--color-primary-hover);
-  color: var(--color-primary-foreground);
+  background: color-mix(in srgb, var(--color-primary) 16%, var(--color-background));
+  color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item--active:active {
-  background: var(--color-primary-active);
+  background: color-mix(in srgb, var(--color-primary) 20%, var(--color-background));
 }
 
 .dashboard-section-nav__item:focus-visible {
@@ -74,6 +74,33 @@
   width: 1.125rem;
   height: 1.125rem;
   flex: none;
+}
+
+:host-context(.dark) .dashboard-section-nav {
+  background: var(--color-surface);
+}
+
+:host-context(.dark) .dashboard-section-nav__item:hover:not(.dashboard-section-nav__item--active) {
+  background: var(--color-surface-hover);
+}
+
+:host-context(.dark) .dashboard-section-nav__item:active:not(.dashboard-section-nav__item--active) {
+  background: var(--color-surface-active);
+}
+
+:host-context(.dark) .dashboard-section-nav__item--active {
+  background: color-mix(in srgb, var(--color-primary-400) 18%, var(--color-background));
+  color: var(--color-primary-text);
+}
+
+:host-context(.dark) .dashboard-section-nav__item--active:hover,
+:host-context(.dark) .dashboard-section-nav__item--active:focus-visible {
+  background: color-mix(in srgb, var(--color-primary-400) 24%, var(--color-background));
+  color: var(--color-primary-text-hover);
+}
+
+:host-context(.dark) .dashboard-section-nav__item--active:active {
+  background: color-mix(in srgb, var(--color-primary-400) 30%, var(--color-background));
 }
 
 @media (max-width: 32rem) {
