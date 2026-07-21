@@ -149,15 +149,15 @@
 }
 
 .dashboard-detail__review-alert--error {
-  border: 1px solid color-mix(in srgb, #ef4444 28%, var(--color-border));
-  background: color-mix(in srgb, #ef4444 9%, transparent);
-  color: color-mix(in srgb, #b91c1c 82%, var(--color-foreground) 18%);
+  border: 1px solid var(--color-status-rejected-border);
+  background: var(--color-status-rejected-background);
+  color: var(--color-status-rejected-foreground);
 }
 
 .dashboard-detail__review-alert--success {
-  border: 1px solid color-mix(in srgb, #10b981 28%, var(--color-border));
-  background: color-mix(in srgb, #10b981 9%, transparent);
-  color: color-mix(in srgb, #047857 82%, var(--color-foreground) 18%);
+  border: 1px solid var(--color-status-approved-border);
+  background: var(--color-status-approved-background);
+  color: var(--color-status-approved-foreground);
 }
 
 .dashboard-detail__modal-backdrop {
@@ -249,31 +249,27 @@
 }
 
 .dashboard-detail__log-marker--submitted {
-  --dashboard-detail-log-marker: color-mix(in srgb, #b45309 82%, var(--color-foreground) 18%);
+  --dashboard-detail-log-marker: var(--color-status-submitted-accent);
 }
 
 .dashboard-detail__log-marker--changes {
-  --dashboard-detail-log-marker: color-mix(
-    in srgb,
-    var(--color-primary) 78%,
-    var(--color-foreground) 22%
-  );
+  --dashboard-detail-log-marker: var(--color-status-changes-accent);
 }
 
 .dashboard-detail__log-marker--approved {
-  --dashboard-detail-log-marker: color-mix(in srgb, #047857 78%, var(--color-foreground) 22%);
+  --dashboard-detail-log-marker: var(--color-status-approved-accent);
 }
 
 .dashboard-detail__log-marker--assigned {
-  --dashboard-detail-log-marker: color-mix(in srgb, #0369a1 78%, var(--color-foreground) 22%);
+  --dashboard-detail-log-marker: var(--color-status-assigned-accent);
 }
 
 .dashboard-detail__log-marker--adjusted {
-  --dashboard-detail-log-marker: color-mix(in srgb, #6d28d9 76%, var(--color-foreground) 24%);
+  --dashboard-detail-log-marker: var(--color-status-adjusted-accent);
 }
 
 .dashboard-detail__log-marker--rejected {
-  --dashboard-detail-log-marker: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
+  --dashboard-detail-log-marker: var(--color-status-rejected-accent);
 }
 
 .dashboard-detail__log-heading {

@@ -162,6 +162,112 @@
   --destructive-foreground: var(--color-white);
   --destructive-hover: var(--color-red-600);
   --destructive-focus: var(--color-red-600);
+
+  /* ============================================ */
+  /* WORKFLOW STATUS                              */
+  /* ============================================ */
+
+  --color-status-submitted-accent: var(--color-amber-500);
+  --color-status-submitted-background: color-mix(
+    in srgb,
+    var(--color-status-submitted-accent) 12%,
+    transparent
+  );
+  --color-status-submitted-border: color-mix(
+    in srgb,
+    var(--color-status-submitted-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-submitted-foreground: color-mix(
+    in srgb,
+    var(--color-amber-700) 82%,
+    var(--color-foreground) 18%
+  );
+
+  --color-status-changes-accent: var(--color-primary-500);
+  --color-status-changes-background: color-mix(
+    in srgb,
+    var(--color-status-changes-accent) 12%,
+    transparent
+  );
+  --color-status-changes-border: color-mix(
+    in srgb,
+    var(--color-status-changes-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-changes-foreground: color-mix(
+    in srgb,
+    var(--color-primary-700) 78%,
+    var(--color-foreground) 22%
+  );
+
+  --color-status-approved-accent: var(--color-emerald-500);
+  --color-status-approved-background: color-mix(
+    in srgb,
+    var(--color-status-approved-accent) 13%,
+    transparent
+  );
+  --color-status-approved-border: color-mix(
+    in srgb,
+    var(--color-status-approved-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-approved-foreground: color-mix(
+    in srgb,
+    var(--color-emerald-700) 78%,
+    var(--color-foreground) 22%
+  );
+
+  --color-status-assigned-accent: var(--color-sky-500);
+  --color-status-assigned-background: color-mix(
+    in srgb,
+    var(--color-status-assigned-accent) 12%,
+    transparent
+  );
+  --color-status-assigned-border: color-mix(
+    in srgb,
+    var(--color-status-assigned-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-assigned-foreground: color-mix(
+    in srgb,
+    var(--color-sky-700) 78%,
+    var(--color-foreground) 22%
+  );
+
+  --color-status-adjusted-accent: var(--color-violet-500);
+  --color-status-adjusted-background: color-mix(
+    in srgb,
+    var(--color-status-adjusted-accent) 12%,
+    transparent
+  );
+  --color-status-adjusted-border: color-mix(
+    in srgb,
+    var(--color-status-adjusted-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-adjusted-foreground: color-mix(
+    in srgb,
+    var(--color-violet-700) 76%,
+    var(--color-foreground) 24%
+  );
+
+  --color-status-rejected-accent: var(--color-red-500);
+  --color-status-rejected-background: color-mix(
+    in srgb,
+    var(--color-status-rejected-accent) 12%,
+    transparent
+  );
+  --color-status-rejected-border: color-mix(
+    in srgb,
+    var(--color-status-rejected-accent) 28%,
+    var(--color-border)
+  );
+  --color-status-rejected-foreground: color-mix(
+    in srgb,
+    var(--color-red-700) 76%,
+    var(--color-foreground) 24%
+  );
   
   /* ============================================ */
   /* NAVBAR                                       */
@@ -500,6 +606,85 @@
   --destructive-foreground: var(--color-white);
   --destructive-hover: var(--color-red-600);
   --destructive-focus: var(--color-red-600);
+
+  /* WORKFLOW STATUS */
+  --color-status-submitted-accent: var(--color-amber-400);
+  --color-status-submitted-background: color-mix(
+    in srgb,
+    var(--color-status-submitted-accent) 18%,
+    transparent
+  );
+  --color-status-submitted-border: color-mix(
+    in srgb,
+    var(--color-status-submitted-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-submitted-foreground: var(--color-amber-300);
+
+  --color-status-changes-accent: var(--color-primary-400);
+  --color-status-changes-background: color-mix(
+    in srgb,
+    var(--color-status-changes-accent) 18%,
+    transparent
+  );
+  --color-status-changes-border: color-mix(
+    in srgb,
+    var(--color-status-changes-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-changes-foreground: var(--color-primary-300);
+
+  --color-status-approved-accent: var(--color-emerald-400);
+  --color-status-approved-background: color-mix(
+    in srgb,
+    var(--color-status-approved-accent) 18%,
+    transparent
+  );
+  --color-status-approved-border: color-mix(
+    in srgb,
+    var(--color-status-approved-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-approved-foreground: var(--color-emerald-300);
+
+  --color-status-assigned-accent: var(--color-sky-400);
+  --color-status-assigned-background: color-mix(
+    in srgb,
+    var(--color-status-assigned-accent) 18%,
+    transparent
+  );
+  --color-status-assigned-border: color-mix(
+    in srgb,
+    var(--color-status-assigned-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-assigned-foreground: var(--color-sky-300);
+
+  --color-status-adjusted-accent: var(--color-violet-400);
+  --color-status-adjusted-background: color-mix(
+    in srgb,
+    var(--color-status-adjusted-accent) 18%,
+    transparent
+  );
+  --color-status-adjusted-border: color-mix(
+    in srgb,
+    var(--color-status-adjusted-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-adjusted-foreground: var(--color-violet-300);
+
+  --color-status-rejected-accent: var(--color-red-400);
+  --color-status-rejected-background: color-mix(
+    in srgb,
+    var(--color-status-rejected-accent) 18%,
+    transparent
+  );
+  --color-status-rejected-border: color-mix(
+    in srgb,
+    var(--color-status-rejected-accent) 36%,
+    var(--color-border)
+  );
+  --color-status-rejected-foreground: var(--color-red-300);
   
   /* NAVBAR */
   --navbar: var(--color-zuerich-blue-gray-800);
