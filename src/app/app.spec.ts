@@ -197,7 +197,7 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('shows the hero event preview and upcoming talks for a future event', async () => {
+  it('shows the hero event preview and details link for a future event', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
 
@@ -208,12 +208,16 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).toContain('Upcoming talks');
     expect(compiled.textContent).toContain(DEFAULT_EVENT.title);
     expect(compiled.textContent).toContain('Next on Angular Zürich');
+    expect(
+      compiled.querySelector<HTMLAnchorElement>(
+        `.event-preview__actions a[href="/events/${DEFAULT_EVENT.slug}"]`,
+      )?.textContent,
+    ).toContain('View details');
   });
 
-  it('hides the hero event preview and upcoming talks for a past event', async () => {
+  it('hides the hero event preview for a past event', async () => {
     upcomingPublicEventResponse = createEventResponse({
       ...DEFAULT_EVENT,
       starts_at: '2020-04-17T18:30:00.000Z',
@@ -229,7 +233,6 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.textContent).not.toContain('Upcoming Talks');
     expect(compiled.textContent).not.toContain(DEFAULT_EVENT.title);
     expect(compiled.textContent).not.toContain('Next on Angular Zürich');
   });

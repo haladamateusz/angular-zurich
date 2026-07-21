@@ -4,7 +4,6 @@ import { PastEventsComponent } from './components/past-events/past-events.compon
 import { PartnersComponent } from './components/partners/partners.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { TeamComponent } from './components/team/team.component';
-import { UpcomingTalksComponent } from './components/upcoming-talks/upcoming-talks.component';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
 import { Sponsor } from '../../core/models/sponsor.interface';
@@ -32,7 +31,7 @@ const EMPTY_SPONSORS: Sponsor[] = [];
 
 @Component({
   selector: 'app-home',
-  imports: [HeroComponent, UpcomingTalksComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
+  imports: [HeroComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

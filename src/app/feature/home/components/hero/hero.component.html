@@ -204,8 +204,15 @@
           </div>
         }
 
-        @if (nextEvent.meetup_url) {
-          <div class="event-preview__actions">
+        <div class="event-preview__actions">
+          <a
+            class="app-button"
+            [class.app-button--secondary]="!!nextEvent.meetup_url"
+            [routerLink]="['/events', nextEvent.slug]"
+          >
+            View details
+          </a>
+          @if (nextEvent.meetup_url) {
             <a
               class="app-button"
               [attr.href]="nextEvent.meetup_url"
@@ -215,8 +222,8 @@
               Reserve your spot on Meetup
               <span class="sr-only">(opens in a new tab)</span>
             </a>
-          </div>
-        }
+          }
+        </div>
       </aside>
     }
 

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { HeroComponent } from './hero.component';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
@@ -52,6 +53,7 @@ describe('HeroComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeroComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeroComponent);
@@ -100,6 +102,28 @@ describe('HeroComponent', () => {
     expect(program?.children).toHaveLength(1);
     expect(program?.querySelector('.event-preview__talk')?.tagName).toBe('LI');
     expect(root.querySelector('.event-preview__agenda-label')?.textContent?.trim()).toBe('Program');
+  });
+
+  it('offers event registration and details as distinct actions', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const actions = root.querySelectorAll<HTMLAnchorElement>('.event-preview__actions a');
+
+    expect(actions).toHaveLength(2);
+    expect(actions[0].textContent?.trim()).toBe('View details');
+    expect(actions[0].getAttribute('href')).toBe(`/events/${TEST_EVENT.slug}`);
+    expect(actions[1].textContent).toContain('Reserve your spot on Meetup');
+    expect(actions[1].getAttribute('href')).toBe(TEST_EVENT.meetup_url);
+  });
+
+  it('promotes event details to the primary action when registration is unavailable', async () => {
+    fixture.componentRef.setInput('event', { ...TEST_EVENT, meetup_url: '' });
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const action = root.querySelector<HTMLAnchorElement>('.event-preview__actions a');
+
+    expect(action?.textContent?.trim()).toBe('View details');
+    expect(action?.classList.contains('app-button--secondary')).toBe(false);
   });
 
   it('labels the program as a preview when talks are truncated', async () => {
