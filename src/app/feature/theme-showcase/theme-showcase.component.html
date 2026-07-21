@@ -1,242 +1,294 @@
-<main class="max-w-5xl mx-auto px-6 py-10 space-y-10">
-  <!-- Hero -->
-  <section class="text-center space-y-3">
-    <h1 class="text-4xl font-bold tracking-tight">Theme Showcase</h1>
-    <p class="text-muted-foreground-1 text-lg max-w-xl mx-auto">
-      A preview of the Zürich Blue custom theme with primary color
-      <code class="bg-background-2 text-sm px-1.5 py-0.5 rounded">#1E88E5</code>
-    </p>
-  </section>
+<div class="theme-showcase">
+  <section class="showcase-hero" aria-labelledby="theme-showcase-title">
+    <div class="showcase-crosses" aria-hidden="true"></div>
 
-  <!-- Color Palette -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Primary Palette</h2>
-    <div class="grid grid-cols-11 gap-1 rounded-surface overflow-hidden">
-      <div class="bg-primary-50 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">50</span>
+    <div class="showcase-hero__content">
+      <div class="showcase-hero__copy">
+        <p class="showcase-kicker">Theme system</p>
+        <h1 id="theme-showcase-title">Angular Z&uuml;rich in context</h1>
+        <p>
+          A focused preview of the surfaces we actually use today: public event pages, talk cards,
+          speaker submission forms, organizer tables, and review actions.
+        </p>
       </div>
-      <div class="bg-primary-100 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">100</span>
-      </div>
-      <div class="bg-primary-200 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">200</span>
-      </div>
-      <div class="bg-primary-300 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">300</span>
-      </div>
-      <div class="bg-primary-400 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">400</span>
-      </div>
-      <div class="bg-primary-500 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-zuerich-blue-gray-950">500</span>
-      </div>
-      <div class="bg-primary-600 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-white">600</span>
-      </div>
-      <div class="bg-primary-700 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-white">700</span>
-      </div>
-      <div class="bg-primary-800 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-white">800</span>
-      </div>
-      <div class="bg-primary-900 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-white">900</span>
-      </div>
-      <div class="bg-primary-950 aspect-square flex items-end justify-center pb-1">
-        <span class="text-[10px] text-white">950</span>
-      </div>
+
+      <aside class="showcase-event-card" aria-label="Next event preview sample">
+        <div>
+          <p class="showcase-card-kicker">Next on Angular Z&uuml;rich</p>
+          <h2>Signals, forms, and production Angular</h2>
+        </div>
+
+        <dl class="showcase-facts">
+          <div>
+            <dt>Date</dt>
+            <dd>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M8 2.75v2.5M16 2.75v2.5M3.75 9.25h16.5M5.75 5.25h12.5A2 2 0 0 1 20.25 7.25v10A2 2 0 0 1 18.25 19.25H5.75A2 2 0 0 1 3.75 17.25v-10A2 2 0 0 1 5.75 5.25Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>21 Aug 2026, 18:30</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Venue</dt>
+            <dd>
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 20.25s6-5.28 6-10.125a6 6 0 1 0-12 0c0 4.845 6 10.125 6 10.125Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 12.25a2.125 2.125 0 1 0 0-4.25 2.125 2.125 0 0 0 0 4.25Z"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                />
+              </svg>
+              <span>Google Zurich</span>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="showcase-mini-talks">
+          <article>
+            <span class="showcase-avatar">MT</span>
+            <div>
+              <h3>Typed async state without ceremony</h3>
+              <p>Maya Tanner</p>
+            </div>
+          </article>
+          <article>
+            <span class="showcase-avatar">RK</span>
+            <div>
+              <h3>Accessible forms in Angular 22</h3>
+              <p>Roman Keller</p>
+            </div>
+          </article>
+        </div>
+
+        <a
+          class="app-button"
+          href="https://www.meetup.com/angular-zurich/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Reserve your spot on Meetup
+        </a>
+      </aside>
     </div>
   </section>
 
-  <!-- Buttons -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Buttons</h2>
-    <div class="flex flex-wrap gap-3 items-center">
-      <button type="button" class="app-button">Primary</button>
-      <button type="button" class="app-button app-button--secondary">Secondary</button>
-      <button type="button" class="app-button app-button--danger">Danger</button>
-      <button type="button" class="app-button app-button--ghost">Ghost</button>
-      <button type="button" class="app-button app-button--secondary" disabled>Disabled</button>
+  <section class="showcase-section" aria-labelledby="public-surfaces-heading">
+    <div class="showcase-section__header">
+      <p class="showcase-kicker">Public surfaces</p>
+      <h2 id="public-surfaces-heading">What visitors scan first</h2>
+    </div>
+
+    <div class="showcase-grid showcase-grid--talks">
+      <article class="showcase-talk-card">
+        <div class="showcase-speaker">
+          <span class="showcase-avatar showcase-avatar--large">AM</span>
+          <div>
+            <p class="showcase-speaker__name">Anna Meier</p>
+            <p class="showcase-speaker__role">Angular architect, Puzzle ITC</p>
+          </div>
+        </div>
+        <h3><a href="/">Modern Angular debugging workflows</a></h3>
+        <p>
+          Practical techniques for making signal-based applications easier to inspect, reason about,
+          and support once real users arrive.
+        </p>
+      </article>
+
+      <article class="showcase-talk-card">
+        <div class="showcase-speaker">
+          <span class="showcase-avatar showcase-avatar--large">LS</span>
+          <div>
+            <p class="showcase-speaker__name">Luca Schmid</p>
+            <p class="showcase-speaker__role">Frontend lead, local.ch</p>
+          </div>
+        </div>
+        <h3><a href="/">From component APIs to product velocity</a></h3>
+        <p>
+          How a small set of consistent controls, cards, and loading states keeps feature work
+          moving without visual drift.
+        </p>
+      </article>
     </div>
   </section>
 
-  <!-- Cards -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Cards</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-card border border-card-line rounded-surface overflow-hidden">
-        <div class="bg-primary-100 h-24 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-10 h-10 text-primary-800"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"
-            />
-          </svg>
-        </div>
-        <div class="p-4 space-y-2">
-          <h3 class="font-semibold">Primary Surfaces</h3>
-          <p class="text-muted-foreground-1 text-sm">
-            Cards, backgrounds, and layered surfaces use the custom gray palette for a cohesive
-            feel.
-          </p>
-        </div>
-      </div>
-
-      <div class="bg-card border border-card-line rounded-surface overflow-hidden">
-        <div class="bg-primary-600 h-24 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-10 h-10 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"
-            />
-          </svg>
-        </div>
-        <div class="p-4 space-y-2">
-          <h3 class="font-semibold">Brand Colors</h3>
-          <p class="text-muted-foreground-1 text-sm">
-            Full 11-shade primary ramp from 50 to 950, built in OKLCH for perceptual uniformity.
-          </p>
-        </div>
-      </div>
-
-      <div class="bg-card border border-card-line rounded-surface overflow-hidden">
-        <div class="bg-background-2 h-24 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-10 h-10 text-muted-foreground-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 6.002-2.998Z"
-            />
-          </svg>
-        </div>
-        <div class="p-4 space-y-2">
-          <h3 class="font-semibold">Dark Mode Ready</h3>
-          <p class="text-muted-foreground-1 text-sm">
-            Full dark mode support with Tailwind slate grays. Add
-            <code class="bg-background-2 text-xs px-1 py-0.5 rounded">.dark</code> to activate.
-          </p>
-        </div>
-      </div>
+  <section class="showcase-section" aria-labelledby="submission-heading">
+    <div class="showcase-section__header">
+      <p class="showcase-kicker">Speaker flow</p>
+      <h2 id="submission-heading">The submit-talk form language</h2>
     </div>
-  </section>
 
-  <!-- Surfaces -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Surfaces &amp; Borders</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="bg-background border border-border rounded-surface p-4 text-center">
-        <span class="text-sm font-medium">Background</span>
+    <div class="showcase-form-card">
+      <div class="showcase-form-card__header">
+        <p class="showcase-card-kicker">Step 1</p>
+        <h3>Talk details</h3>
+        <p>Fields, counters, validation slots, and helper copy use the same quiet rhythm.</p>
       </div>
-      <div class="bg-background-1 border border-border rounded-surface p-4 text-center">
-        <span class="text-sm font-medium">Background 1</span>
-      </div>
-      <div class="bg-background-2 border border-border rounded-surface p-4 text-center">
-        <span class="text-sm font-medium">Background 2</span>
-      </div>
-      <div class="bg-surface border border-border rounded-surface p-4 text-center">
-        <span class="text-sm font-medium">Surface</span>
-      </div>
-    </div>
-    <div class="flex flex-wrap gap-2 items-center">
-      <span class="text-sm text-muted-foreground-1">Border scale:</span>
-      <div class="h-8 w-12 border-2 border-line-1 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-2 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-3 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-4 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-5 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-6 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-7 rounded"></div>
-      <div class="h-8 w-12 border-2 border-line-8 rounded"></div>
-    </div>
-  </section>
 
-  <!-- Typography -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Typography</h2>
-    <div class="bg-card border border-card-line rounded-surface p-6 space-y-3">
-      <p class="text-foreground font-semibold">Foreground &mdash; primary text on the page</p>
-      <p class="text-muted-foreground">Muted foreground &mdash; subtle labels and hints</p>
-      <p class="text-muted-foreground-1">Muted foreground 1 &mdash; secondary descriptions</p>
-      <p class="text-muted-foreground-2">Muted foreground 2 &mdash; important supporting text</p>
-    </div>
-  </section>
-
-  <!-- Form Elements -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Form Elements</h2>
-    <div class="bg-card border border-card-line rounded-surface p-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="space-y-1.5">
-          <label for="theme-showcase-email" class="text-sm font-medium">Email</label>
+      <div class="showcase-fields">
+        <div class="showcase-field">
+          <label for="showcase-talk-title">Talk title *</label>
           <input
-            id="theme-showcase-email"
-            type="email"
-            placeholder="you&#64;example.com"
-            class="w-full bg-background border border-border rounded-control px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+            id="showcase-talk-title"
+            type="text"
+            value="Modern Angular debugging workflows"
+            aria-describedby="showcase-talk-title-error"
           />
+          <p id="showcase-talk-title-error" class="showcase-field__slot">
+            Validation copy lives here without moving the form.
+          </p>
         </div>
-        <div class="space-y-1.5">
-          <label for="theme-showcase-role" class="text-sm font-medium">Role</label>
-          <select
-            id="theme-showcase-role"
-            class="w-full bg-background border border-border rounded-control px-3 py-2 text-sm text-foreground transition-colors"
-          >
-            <option>Developer</option>
-            <option>Designer</option>
-            <option>Manager</option>
-          </select>
+
+        <div class="showcase-field">
+          <div class="showcase-label-row">
+            <label for="showcase-talk-description">Talk description *</label>
+            <span>156/1200</span>
+          </div>
+          <textarea id="showcase-talk-description" rows="5">
+Show how to trace signal updates, isolate expensive computed state, and keep production debugging humane.</textarea>
+        </div>
+
+        <div class="showcase-field showcase-field--error">
+          <label for="showcase-slides">Link to slides *</label>
+          <input
+            id="showcase-slides"
+            type="url"
+            value="speakerdeck.com/angular-zurich/debugging"
+            aria-invalid="true"
+          />
+          <p class="showcase-field__slot">
+            Please enter a valid slides URL starting with http:// or https://.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Tooltip / Badge row -->
-  <section class="space-y-3">
-    <h2 class="text-xl font-semibold">Badges &amp; Tags</h2>
-    <div class="flex flex-wrap gap-2">
-      <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-1 rounded-full"
-        >Angular</span
-      >
-      <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-1 rounded-full"
-        >Tailwind CSS</span
-      >
-      <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-1 rounded-full"
-        >Preline</span
-      >
-      <span
-        class="bg-muted dark:bg-surface text-muted-foreground-2 text-xs font-medium px-2.5 py-1 rounded-full"
-        >OKLCH</span
-      >
-      <span
-        class="bg-muted dark:bg-surface text-muted-foreground-2 text-xs font-medium px-2.5 py-1 rounded-full"
-        >Dark Mode</span
-      >
-      <span class="bg-destructive/10 text-destructive text-xs font-medium px-2.5 py-1 rounded-full"
-        >Breaking</span
-      >
+  <section class="showcase-section" aria-labelledby="dashboard-heading">
+    <div class="showcase-section__header">
+      <p class="showcase-kicker">Organizer dashboard</p>
+      <h2 id="dashboard-heading">Dense, scannable management states</h2>
+    </div>
+
+    <div class="showcase-dashboard-grid">
+      <div class="showcase-table-shell" role="region" aria-label="Events table sample">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Starts at</th>
+              <th>Visibility</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="/">Signals, forms, and production Angular</a></td>
+              <td>21 Aug 2026</td>
+              <td><span class="showcase-status">Public</span></td>
+              <td>
+                <button type="button" class="app-button app-button--ghost app-button--compact">
+                  Edit
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td><a href="/">Testing standalone route features</a></td>
+              <td>18 Sep 2026</td>
+              <td><span class="showcase-status showcase-status--draft">Draft</span></td>
+              <td>
+                <button type="button" class="app-button app-button--ghost app-button--compact">
+                  Edit
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="showcase-review-card">
+        <div class="showcase-review-card__header">
+          <span class="showcase-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M8 3.75h5.5L18 8.25V19a1.25 1.25 0 0 1-1.25 1.25h-8.5A1.25 1.25 0 0 1 7 19V5A1.25 1.25 0 0 1 8.25 3.75Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M13.5 3.75V8.5H18M9.5 12.25h5M9.5 15.5h3.25"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <p class="showcase-card-kicker">Submission review</p>
+            <h3>Content details</h3>
+          </div>
+        </div>
+
+        <div class="showcase-meta-row">
+          <span class="showcase-status showcase-status--submitted">Initially submitted</span>
+          <span class="showcase-chip">Received 21 Jul 2026, 14:30</span>
+        </div>
+
+        <div class="showcase-review-field">
+          <p>Title</p>
+          <strong>Modern Angular debugging workflows</strong>
+        </div>
+
+        <div class="showcase-review-actions" aria-label="Review action samples">
+          <button type="button" class="app-button app-button--danger">Reject</button>
+          <button type="button" class="app-button app-button--secondary">Request changes</button>
+          <button type="button" class="app-button">Approve</button>
+        </div>
+      </aside>
     </div>
   </section>
-</main>
+
+  <section class="showcase-section" aria-labelledby="tokens-heading">
+    <div class="showcase-section__header">
+      <p class="showcase-kicker">Theme primitives</p>
+      <h2 id="tokens-heading">Tokens still worth checking directly</h2>
+    </div>
+
+    <div class="showcase-token-grid">
+      <div class="showcase-swatch-row" aria-label="Primary blue scale">
+        <span class="bg-primary-50">50</span>
+        <span class="bg-primary-100">100</span>
+        <span class="bg-primary-200">200</span>
+        <span class="bg-primary-300">300</span>
+        <span class="bg-primary-400">400</span>
+        <span class="bg-primary-500">500</span>
+        <span class="bg-primary-600 text-white">600</span>
+        <span class="bg-primary-700 text-white">700</span>
+        <span class="bg-primary-800 text-white">800</span>
+        <span class="bg-primary-900 text-white">900</span>
+        <span class="bg-primary-950 text-white">950</span>
+      </div>
+
+      <div class="showcase-button-row" aria-label="Button variants">
+        <button type="button" class="app-button">Primary</button>
+        <button type="button" class="app-button app-button--secondary">Secondary</button>
+        <button type="button" class="app-button app-button--ghost">Ghost</button>
+        <button type="button" class="app-button app-button--danger">Danger</button>
+        <button type="button" class="app-button" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+</div>
