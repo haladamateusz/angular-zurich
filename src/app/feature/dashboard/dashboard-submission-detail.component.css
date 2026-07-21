@@ -6,10 +6,10 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   padding: 0.55rem 0.85rem;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -29,58 +29,13 @@
   position: relative;
   overflow: hidden;
   border-color: var(--color-card-line);
-  border-radius: 1.6rem;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 5%, transparent), transparent 36%),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, white 94%, var(--color-card) 6%) 0%,
-      color-mix(in srgb, var(--color-card) 94%, var(--color-background) 6%) 100%
-    );
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 6px 14px color-mix(in srgb, black 3%, transparent);
-}
-
-.dashboard-detail__card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 1px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--color-border) 55%, transparent) 24%,
-      color-mix(in srgb, white 28%, transparent) 50%,
-      transparent 100%
-    );
-  pointer-events: none;
-}
-
-:host-context(.dark) .dashboard-detail__card {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, white 2%, var(--color-card)) 0%, var(--color-card) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
-    0 18px 40px color-mix(in srgb, black 8%, transparent);
-}
-
-:host-context(.dark) .dashboard-detail__card::before {
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      color-mix(in srgb, var(--color-primary) 42%, transparent) 18%,
-      color-mix(in srgb, white 18%, transparent) 52%,
-      transparent 100%
-    );
+  border-radius: var(--radius-surface);
+  background: var(--color-card);
 }
 
 .dashboard-detail__field-label {
   margin: 0;
-  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
+  color: var(--color-primary-text);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -130,8 +85,9 @@
 }
 
 .dashboard-detail__slides-link:focus-visible {
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-focus) 20%, transparent);
-  border-radius: 0.8rem;
+  border-radius: var(--radius-control);
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .dashboard-detail__slides-link-text {
@@ -150,7 +106,7 @@
   width: 100%;
   height: 10.5rem;
   border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--color-background) 78%, transparent);
   padding: 1rem 1.1rem;
   color: var(--color-foreground);
@@ -159,7 +115,6 @@
   resize: none;
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease,
     background-color 160ms ease;
 }
 
@@ -169,12 +124,6 @@
 
 .dashboard-detail__notes-textarea:hover {
   border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
-}
-
-.dashboard-detail__notes-textarea:focus {
-  border-color: var(--color-primary);
-  outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-focus) 20%, transparent);
 }
 
 .dashboard-detail__action-row {
@@ -189,89 +138,11 @@
 }
 
 .dashboard-detail__action-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   min-width: 8.5rem;
-  border: 1px solid color-mix(in srgb, var(--color-border) 92%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--color-background) 72%, transparent);
-  padding: 0.625rem 1.25rem;
-  color: var(--color-foreground);
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25rem;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.dashboard-detail__action-button:is(:hover, :focus-visible) {
-  outline: none;
-}
-
-.dashboard-detail__action-button:focus-visible {
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-focus) 20%, transparent);
-}
-
-.dashboard-detail__action-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-.dashboard-detail__action-button--approve {
-  border-color: color-mix(in srgb, #10b981 32%, var(--color-border));
-  background: color-mix(in srgb, #10b981 10%, transparent);
-  color: color-mix(in srgb, #047857 82%, var(--color-foreground) 18%);
-}
-
-.dashboard-detail__action-button--approve:is(:hover, :focus-visible) {
-  background: color-mix(in srgb, #10b981 16%, transparent);
-}
-
-.dashboard-detail__action-button--changes {
-  border-color: color-mix(in srgb, var(--color-primary) 32%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
-}
-
-.dashboard-detail__action-button--changes:is(:hover, :focus-visible) {
-  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
-}
-
-.dashboard-detail__action-button--changes:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.dashboard-detail__action-button--reject {
-  border-color: color-mix(in srgb, #ef4444 28%, var(--color-border));
-  background: color-mix(in srgb, #ef4444 8%, transparent);
-  color: color-mix(in srgb, #b91c1c 76%, var(--color-foreground) 24%);
-}
-
-.dashboard-detail__action-button--reject:is(:hover, :focus-visible) {
-  background: color-mix(in srgb, #ef4444 14%, transparent);
-}
-
-.dashboard-detail__modal-send {
-  border-color: color-mix(in srgb, var(--color-primary) 32%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
-  font-weight: 600;
-}
-
-.dashboard-detail__modal-send:is(:hover, :focus-visible) {
-  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
 }
 
 .dashboard-detail__review-alert {
-  border-radius: 1rem;
+  border-radius: var(--radius-surface);
   padding: 0.9rem 1rem;
   font-size: 0.9rem;
   line-height: 1.6;
@@ -302,7 +173,7 @@
 .dashboard-detail__modal {
   width: min(100%, 36rem);
   border: 1px solid var(--color-navbar-line);
-  border-radius: 1.25rem;
+  border-radius: var(--radius-surface);
   background: var(--color-card);
   padding: 1.5rem;
   box-shadow: 0 24px 80px color-mix(in srgb, black 32%, transparent);
@@ -331,28 +202,7 @@
   line-height: 1.6;
 }
 
-.dashboard-detail__modal-close,
-.dashboard-detail__modal-secondary {
-  border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--color-background) 72%, transparent);
-  color: var(--color-foreground);
-  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-:is(.dashboard-detail__modal-close, .dashboard-detail__modal-secondary):not(:disabled):is(:hover, :focus-visible) {
-  border-color: color-mix(in srgb, var(--color-border) 86%, var(--color-foreground) 14%);
-  background: color-mix(in srgb, var(--color-background) 92%, white 8%);
-  outline: none;
-}
-
-:is(.dashboard-detail__modal-close, .dashboard-detail__modal-secondary):not(:disabled):focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
 .dashboard-detail__modal-close {
-  width: 2.25rem;
-  height: 2.25rem;
   flex: none;
   font-size: 1.5rem;
   line-height: 1;
@@ -370,9 +220,6 @@
 
 .dashboard-detail__modal-secondary {
   min-width: 6rem;
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 500;
 }
 
 .dashboard-detail__log-list {
@@ -406,7 +253,11 @@
 }
 
 .dashboard-detail__log-marker--changes {
-  --dashboard-detail-log-marker: color-mix(in srgb, var(--color-primary) 78%, var(--color-foreground) 22%);
+  --dashboard-detail-log-marker: color-mix(
+    in srgb,
+    var(--color-primary) 78%,
+    var(--color-foreground) 22%
+  );
 }
 
 .dashboard-detail__log-marker--approved {
@@ -506,8 +357,9 @@
 }
 
 .dashboard-detail__speaker-link-row:focus-visible {
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary-focus) 20%, transparent);
-  border-radius: 0.8rem;
+  border-radius: var(--radius-control);
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .dashboard-detail__speaker-link-icon {

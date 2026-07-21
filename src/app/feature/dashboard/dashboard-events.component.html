@@ -3,14 +3,14 @@
     <app-dashboard-section-nav />
 
     <div class="dashboard-events-actions">
-      <a routerLink="/dashboard/events/create" class="dashboard-events-actions__create">
+      <a routerLink="/dashboard/events/create" class="dashboard-events-actions__create app-button">
         <span>Create Event</span>
       </a>
     </div>
 
     @if (errorMessage()) {
       <div
-        class="mt-6 rounded-2xl border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
+        class="mt-6 rounded-surface border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
         role="alert"
         aria-live="polite"
       >
@@ -18,7 +18,7 @@
       </div>
     } @else if (isLoading()) {
       <div
-        class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background"
+        class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background"
         role="status"
         aria-busy="true"
       >
@@ -89,12 +89,12 @@
       </div>
     } @else if (!hasEvents()) {
       <div
-        class="mt-6 rounded-2xl border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70"
+        class="mt-6 rounded-surface border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70"
       >
         No events yet.
       </div>
     } @else {
-      <div class="mt-6 overflow-hidden rounded-2xl border border-navbar-line bg-background">
+      <div class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background">
         <div class="overflow-x-auto">
           <table class="dashboard-events-table min-w-full divide-y divide-navbar-line">
             <colgroup>
@@ -126,14 +126,14 @@
                     <a
                       [routerLink]="['/events', event.slug]"
                       [state]="eventDetailsNavigationState"
-                      class="dashboard-events-table__details-button app-outline-button"
+                      class="dashboard-events-table__details-button app-button app-button--secondary app-button--compact"
                       [attr.aria-label]="'Open details for ' + event.title"
                     >
                       <span>Details</span>
                       <svg
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        class="dashboard-events-table__details-icon app-outline-button__icon"
+                        class="dashboard-events-table__details-icon app-button__icon"
                         aria-hidden="true"
                       >
                         <path
@@ -158,7 +158,7 @@
             <nav class="dashboard-events-table__pagination-controls" aria-label="Events pages">
               <button
                 type="button"
-                class="dashboard-events-table__pagination-button"
+                class="dashboard-events-table__pagination-button app-button app-button--secondary app-button--compact"
                 [disabled]="currentPage() === 1"
                 (click)="goToPreviousPage()"
               >
@@ -169,7 +169,7 @@
                 @for (page of pageNumbers(); track page) {
                   <button
                     type="button"
-                    class="dashboard-events-table__pagination-page"
+                    class="dashboard-events-table__pagination-page app-button app-button--ghost app-button--page"
                     [class.dashboard-events-table__pagination-page--active]="page === currentPage()"
                     [attr.aria-current]="page === currentPage() ? 'page' : null"
                     [attr.aria-label]="'Go to page ' + page"
@@ -182,7 +182,7 @@
 
               <button
                 type="button"
-                class="dashboard-events-table__pagination-button"
+                class="dashboard-events-table__pagination-button app-button app-button--secondary app-button--compact"
                 [disabled]="currentPage() === totalPages()"
                 (click)="goToNextPage()"
               >

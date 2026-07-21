@@ -19,53 +19,11 @@
   margin-bottom: 1rem;
 }
 
-.event-details__back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 3rem;
-  border-radius: 0.85rem;
-  padding: 0 1rem;
-  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
-  font-size: 0.98rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.event-details__back-link:hover,
-.event-details__back-link:focus-visible {
-  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
-  color: var(--color-foreground);
-  outline: none;
-}
-
-.event-details__back-link:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.event-details__back-link svg {
-  flex: none;
-}
-
-.event-details__back-link svg {
-  width: 1.2rem;
-  height: 1.2rem;
-}
-
 .event-details__state-card,
 .talk-detail-card {
   border: 1px solid var(--color-card-line);
-  border-radius: 1.75rem;
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent 36%),
-    linear-gradient(180deg, color-mix(in srgb, white 97%, var(--color-card) 3%) 0%, color-mix(in srgb, white 93%, var(--color-card) 7%) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 55%, transparent),
-    0 8px 18px color-mix(in srgb, black 4%, transparent);
+  border-radius: var(--radius-surface);
+  background: var(--color-card);
 }
 
 .event-details__state-card {
@@ -94,7 +52,7 @@
 .event-details__title {
   margin: 0;
   color: var(--color-foreground);
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 3.8rem);
   font-weight: 600;
   line-height: 0.98;
@@ -125,17 +83,12 @@
 
 .event-details__meetup-button {
   align-self: flex-start;
-  padding-inline: 1.2rem;
-}
-
-.talk-detail-card__slides-button {
-  padding-inline: 1.2rem;
 }
 
 .event-details__hero-graphic-shell {
   position: relative;
   overflow: hidden;
-  border-radius: 1.3rem;
+  border-radius: var(--radius-surface);
   background: transparent;
 }
 
@@ -166,7 +119,7 @@
 .event-details__talks-heading {
   margin: 0 0 1.5rem;
   color: var(--color-foreground);
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.8rem, 3vw, 2.3rem);
   font-weight: 600;
 }
@@ -215,7 +168,7 @@
 .talk-detail-card__speaker-avatar {
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-control);
   object-fit: cover;
   object-position: center;
   flex-shrink: 0;
@@ -281,7 +234,7 @@
 .event-details__skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 
@@ -302,7 +255,7 @@
 .event-details__skeleton--graphic {
   width: 100%;
   min-height: clamp(14rem, 30vw, 24rem);
-  border-radius: 1.3rem;
+  border-radius: var(--radius-surface);
 }
 
 .event-details__skeleton--title {
@@ -335,7 +288,7 @@
 .event-details__skeleton--button {
   width: 10.5rem;
   height: 3rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
 }
 
 .event-details__skeleton--button-small {
@@ -345,7 +298,7 @@
 .event-details__skeleton--avatar {
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-control);
   flex: none;
 }
 
@@ -432,32 +385,6 @@
   .talk-detail-card__description--loading {
     display: none;
   }
-}
-
-:host-context(.dark) .event-details__state-card,
-:host-context(.dark) .talk-detail-card {
-  background:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 34%),
-    linear-gradient(180deg, color-mix(in srgb, white 1.5%, var(--color-card)) 0%, var(--color-card) 100%);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 4%, transparent),
-    0 16px 32px color-mix(in srgb, black 7%, transparent);
-}
-
-:host-context(.dark) .event-details__meetup-button,
-:host-context(.dark) .talk-detail-card__slides-button {
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--color-primary) 10%, transparent);
-}
-
-:host-context(.dark) .event-details__meetup-button:focus-visible,
-:host-context(.dark) .talk-detail-card__slides-button:focus-visible {
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent),
-    0 14px 28px color-mix(in srgb, var(--color-primary) 14%, transparent);
-}
-
-:host-context(.dark) .event-details__meetup-button:focus-visible {
-  box-shadow: 0 2px 0 0 color-mix(in srgb, var(--color-primary) 36%, transparent);
 }
 
 :host-context(.dark) .event-details__skeleton {

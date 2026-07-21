@@ -1,15 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "tailwindcss";
-@import "../node_modules/preline/variants.css";
-@import "../node_modules/preline/css/themes/theme.css";
-@import "./themes/zuerich-blue.css";
+@import 'tailwindcss';
+@import '../node_modules/preline/variants.css';
+@import '../node_modules/preline/css/themes/theme.css';
+@import './themes/zuerich-blue.css';
 
 @source "../node_modules/preline/dist/*.js";
 
 @theme inline {
-  --font-sans: "Lato", sans-serif;
-  --font-inter-tight: "Inter Tight", sans-serif;
+  --font-sans: 'Lato', sans-serif;
+  --font-inter-tight: 'Inter Tight', sans-serif;
+  --font-display: 'Montserrat', sans-serif;
+  --radius-subtle: 0.25rem;
+  --radius-control: 0.5rem;
+  --radius-surface: 0.75rem;
 }
 
 /* Adds pointer cursor to buttons */
@@ -19,7 +23,7 @@
   }
 
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role='button']:not(:disabled) {
     cursor: pointer;
   }
 
@@ -37,9 +41,28 @@
 /* Defaults hover styles on all devices */
 @custom-variant hover (&:hover);
 
+/* Unified field focus: one flat, high-contrast indicator across native and custom controls. */
+:is(input:not([type='hidden']), textarea, select, .app-field-trigger):focus {
+  border-color: var(--color-primary-text);
+  outline: none;
+  box-shadow: none;
+}
+
+:is(input:not([type='hidden']), textarea, select, .app-field-trigger):focus-visible,
+.app-field-trigger[aria-expanded='true'] {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
 @keyframes gradient-shift {
-  0%, 100% { background-position: 0 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .animate-gradient {
@@ -48,78 +71,163 @@
   will-change: background-position;
 }
 
-.app-outline-button {
+/* Flat action system: solid hierarchy, palette tokens, no decorative depth. */
+:is(button, a, summary).app-button.app-button {
+  --app-button-background: var(--color-primary);
+  --app-button-background-hover: var(--color-primary-hover);
+  --app-button-background-active: var(--color-primary-active);
+  --app-button-foreground: var(--color-primary-foreground);
+  --app-button-focus: var(--color-primary-700);
+
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  min-height: 3rem;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 32%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-  padding: 0.85rem 1.2rem;
-  color: color-mix(in srgb, var(--color-primary) 82%, white 18%);
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--app-button-background);
+  padding: 0.75rem 1rem;
+  color: var(--app-button-foreground);
+  font: inherit;
   font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.app-outline-button:hover,
-.app-outline-button:focus-visible {
-  border-color: color-mix(in srgb, var(--color-primary) 48%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 72%, white 28%);
-  outline: none;
-}
-
-.app-outline-button:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-.app-outline-button__icon {
-  width: 1rem;
-  height: 1rem;
-  flex: none;
-}
-
-.app-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 3rem;
-  border-radius: 0.85rem;
-  padding: 0 1rem;
-  color: color-mix(in srgb, var(--color-foreground) 74%, transparent);
-  font-size: 0.98rem;
   font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
   text-decoration: none;
+  box-shadow: none;
+  cursor: pointer;
   transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
+    background-color 140ms ease,
+    color 140ms ease,
+    opacity 140ms ease;
 }
 
-.app-back-link:hover,
-.app-back-link:focus-visible {
-  background: color-mix(in srgb, var(--color-foreground) 12%, transparent);
-  color: var(--color-foreground);
-  outline: none;
+:is(button, a, summary).app-button.app-button:is(:hover, :focus-visible):not(
+    :disabled,
+    [aria-disabled='true']
+  ) {
+  background: var(--app-button-background-hover);
+  color: var(--app-button-foreground);
+  box-shadow: none;
 }
 
-.app-back-link:focus-visible {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+:is(button, a, summary).app-button.app-button:active:not(:disabled, [aria-disabled='true']) {
+  background: var(--app-button-background-active);
+  box-shadow: none;
 }
 
-.app-back-link svg {
-  width: 1.2rem;
-  height: 1.2rem;
+:is(button, a, summary).app-button.app-button:focus-visible {
+  outline: 3px solid var(--app-button-focus);
+  outline-offset: 2px;
+}
+
+:is(button, a, summary).app-button.app-button:is(:disabled, [aria-disabled='true']) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+:is(button, a, summary).app-button.app-button--secondary {
+  --app-button-background: var(--color-surface);
+  --app-button-background-hover: var(--color-surface-hover);
+  --app-button-background-active: var(--color-surface-active);
+  --app-button-foreground: var(--color-surface-foreground);
+}
+
+.dark :is(button, a, summary).app-button.app-button {
+  --app-button-focus: var(--color-primary-400);
+}
+
+:is(button, a, summary).app-button.app-button--ghost {
+  --app-button-background: transparent;
+  --app-button-background-hover: color-mix(in srgb, var(--color-primary-500) 12%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-primary-500) 18%, transparent);
+  --app-button-foreground: var(--color-primary-text);
+}
+
+.dark :is(button, a, summary).app-button.app-button--ghost {
+  --app-button-background-hover: color-mix(in srgb, var(--color-primary-400) 18%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-primary-400) 24%, transparent);
+  --app-button-foreground: var(--color-primary-text);
+}
+
+:is(button, a, summary).app-button.app-button--danger {
+  --app-button-background: var(--color-red-700);
+  --app-button-background-hover: var(--color-red-800);
+  --app-button-background-active: var(--color-red-900);
+  --app-button-foreground: var(--color-white);
+  --app-button-focus: var(--color-red-700);
+}
+
+.dark :is(button, a, summary).app-button.app-button--danger {
+  --app-button-background: var(--color-red-600);
+  --app-button-background-hover: var(--color-red-700);
+  --app-button-background-active: var(--color-red-800);
+  --app-button-focus: var(--color-red-400);
+}
+
+:is(button, a, summary).app-button.app-button--compact {
+  padding-inline: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+:is(button, a, summary).app-button.app-button--icon,
+:is(button, a, summary).app-button.app-button--page {
+  width: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0;
+}
+
+:is(button, a, summary).app-button.app-button--block {
+  width: 100%;
+}
+
+:is(button, a, summary).app-button.app-button--menu {
+  justify-content: flex-start;
+  min-height: 3.25rem;
+  width: 100%;
+  padding-inline: 1rem;
+  text-align: left;
+}
+
+:is(button, a, summary).app-button.app-button--space-between {
+  justify-content: space-between;
+}
+
+:is(button, a, summary).app-button.app-button--page[aria-current='page'] {
+  --app-button-background: var(--color-primary);
+  --app-button-background-hover: var(--color-primary-hover);
+  --app-button-background-active: var(--color-primary-active);
+  --app-button-foreground: var(--color-primary-foreground);
+}
+
+.app-button__icon,
+.app-button > svg {
+  width: 1.125rem;
+  height: 1.125rem;
   flex: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(button, a, summary).app-button.app-button {
+    transition-duration: 1ms;
+  }
+}
+
+@media (forced-colors: active) {
+  :is(input:not([type='hidden']), textarea, select, .app-field-trigger):focus-visible,
+  .app-field-trigger[aria-expanded='true'] {
+    outline-color: Highlight;
+  }
+
+  :is(button, a, summary).app-button.app-button {
+    border: 1px solid ButtonText;
+  }
+
+  :is(button, a, summary).app-button.app-button:focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 .app-select-chevron {
@@ -140,7 +248,7 @@
   align-items: center;
   justify-content: center;
   min-width: 6.75rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   padding: 0.45rem 0.8rem;
   font-size: 0.82rem;
   font-weight: 700;
@@ -182,7 +290,7 @@
 .dashboard-detail__skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
   background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-card) 92%);
 }
 
@@ -192,7 +300,12 @@
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 58%, transparent), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, white 58%, transparent),
+    transparent
+  );
   animation: dashboard-detail-skeleton-shimmer 1.5s ease-in-out infinite;
 }
 
@@ -203,7 +316,12 @@
 
 .dark .app-skeleton::after,
 .dark .dashboard-detail__skeleton::after {
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 16%, transparent), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, white 16%, transparent),
+    transparent
+  );
 }
 
 @keyframes dashboard-detail-skeleton-shimmer {
@@ -215,7 +333,9 @@
 .icon-link {
   color: var(--color-muted-foreground-1);
   opacity: 0.5;
-  transition: color 0.2s, opacity 0.2s;
+  transition:
+    color 0.2s,
+    opacity 0.2s;
 }
 
 .icon-link:hover {
@@ -223,11 +343,11 @@
 }
 
 .icon-link--linkedin:hover {
-  color: #0A66C2;
+  color: #0a66c2;
 }
 
 .icon-link--meetup:hover {
-  color: #ED1C40;
+  color: #ed1c40;
 }
 
 .icon-link--github:hover {
@@ -239,7 +359,7 @@
 }
 
 .icon-link--website:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .dark .icon-link--linkedin:hover,

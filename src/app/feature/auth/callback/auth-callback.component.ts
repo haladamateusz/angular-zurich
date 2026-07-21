@@ -16,9 +16,9 @@ import { AuthService } from '../../../core/auth/auth.service';
       class="mx-auto flex min-h-[calc(100vh-12rem)] max-w-2xl items-center justify-center px-6 py-16"
     >
       <div
-        class="w-full rounded-[2rem] border border-navbar-line bg-navbar px-8 py-10 text-center shadow-[0_24px_80px_-40px_rgba(15,23,42,0.45)]"
+        class="w-full rounded-surface border border-navbar-line bg-navbar px-8 py-10 text-center"
       >
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-primary">Google sign-in</p>
+        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-primary-text">Google sign-in</p>
         <h1 class="mt-4 text-3xl font-inter-tight font-semibold tracking-[-0.04em] text-foreground">
           Finishing sign-in
         </h1>

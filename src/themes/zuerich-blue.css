@@ -25,6 +25,9 @@
   --color-zuerich-blue-800: #0d47a1;
   --color-zuerich-blue-900: #0a397f;
   --color-zuerich-blue-950: #06244f;
+
+  --color-primary-text: var(--primary-text);
+  --color-primary-text-hover: var(--primary-text-hover);
   
   /* -------------------------------------------- */
   /* GRAY PALETTE (bell curve chroma)             */
@@ -50,9 +53,9 @@
   /* GLOBAL SURFACES + TEXT                       */
   /* ============================================ */
   
-  --background: var(--color-white);
-  --background-1: var(--color-zuerich-blue-gray-50);
-  --background-2: var(--color-zuerich-blue-gray-100);
+  --background: var(--color-zuerich-blue-gray-50);
+  --background-1: var(--color-zuerich-blue-gray-100);
+  --background-2: var(--color-zuerich-blue-gray-200);
   --background-plain: var(--color-white);
   --foreground: var(--color-zuerich-blue-gray-800);
   --foreground-inverse: var(--color-white);
@@ -92,6 +95,8 @@
   
   /* PRIMARY STATES */
   --primary: var(--color-primary-600);
+  --primary-text: var(--color-primary-700);
+  --primary-text-hover: var(--color-primary-800);
   --primary-line: transparent;
   --primary-foreground: var(--color-white);
   --primary-hover: var(--color-primary-700);
@@ -422,10 +427,10 @@
   /* ============================================ */
   
   /* BACKGROUNDS */
-  --background: var(--color-zuerich-blue-gray-800);
+  --background: var(--color-zuerich-blue-gray-900);
   --background-1: var(--color-zuerich-blue-gray-900);
   --background-2: var(--color-zuerich-blue-gray-900);
-  --background-plain: var(--color-zuerich-blue-gray-800);
+  --background-plain: var(--color-zuerich-blue-gray-900);
   
   /* TEXT */
   --foreground: var(--color-zuerich-blue-gray-200);
@@ -446,9 +451,11 @@
   
   /* PRIMARY STATES */
   --primary: var(--color-primary-600);
+  --primary-text: var(--color-primary-400);
+  --primary-text-hover: var(--color-primary-300);
   --primary-foreground: var(--color-white);
   --primary-hover: var(--color-primary-700);
-  --primary-focus: var(--color-primary-700);
+  --primary-focus: var(--color-primary-400);
   --primary-active: var(--color-primary-700);
   --primary-checked: var(--color-primary-600);
   
