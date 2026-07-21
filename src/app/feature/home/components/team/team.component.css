@@ -56,7 +56,7 @@
 }
 
 .team__column--current {
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .team__subheading {
