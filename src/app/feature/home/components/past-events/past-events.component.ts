@@ -1,7 +1,7 @@
 import { RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
+import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
 
 interface PastEventCard {
   id: string;
@@ -20,7 +20,7 @@ interface PastEventCard {
 
 @Component({
   selector: 'app-past-events',
-  imports: [DatePipe, RouterLink],
+  imports: [EventDateFormatPipe, RouterLink],
   templateUrl: './past-events.component.html',
   styleUrl: './past-events.component.css'
 })

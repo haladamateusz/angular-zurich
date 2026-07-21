@@ -2,11 +2,11 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
-import { NavbarDateFormatPipe } from '../../../../core/pipes/date-format/navbar-date-format.pipe';
+import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
 
 @Component({
   selector: 'app-hero',
-  imports: [NavbarDateFormatPipe, RouterLink],
+  imports: [EventDateFormatPipe, RouterLink],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css'
 })

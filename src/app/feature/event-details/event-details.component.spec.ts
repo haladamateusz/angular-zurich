@@ -71,4 +71,14 @@ describe('EventDetailsComponent', () => {
     expect(shell?.classList.contains('event-details__hero-graphic-shell--pending')).toBe(false);
     expect(shell?.classList.contains('event-details__hero-graphic-shell--loaded')).toBe(true);
   });
+
+  it('uses readable metadata values without linking the venue', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const metadata = root.querySelector<HTMLElement>('.event-details__meta');
+
+    expect(metadata?.textContent).toContain('8 Sept 2099');
+    expect(metadata?.textContent).toContain('20:00');
+    expect(metadata?.textContent).toContain(TEST_EVENT.venue?.title);
+    expect(metadata?.querySelector('a')).toBeNull();
+  });
 });

@@ -1,4 +1,4 @@
-import { DatePipe, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -13,6 +13,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
+import { EventDateFormatPipe } from '../../core/pipes/date-format/event-date-format.pipe';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
 
 const SLIDES_VISIBILITY_DELAY_MS = 2 * 60 * 60 * 1000;
@@ -37,7 +38,7 @@ const EMPTY_EVENT: Event = {
 
 @Component({
   selector: 'app-event-details',
-  imports: [DatePipe, RouterLink],
+  imports: [EventDateFormatPipe, RouterLink],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css',
 })

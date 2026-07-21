@@ -68,7 +68,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: color-mix(in srgb, var(--color-primary) 68%, var(--color-foreground) 32%);
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;

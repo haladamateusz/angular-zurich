@@ -137,7 +137,7 @@
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                class="event-details__meta-icon"
+                class="event-details__meta-icon event-meta__icon"
                 aria-hidden="true"
               >
                 <path
@@ -148,14 +148,16 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span>{{ currentEvent.starts_at | date: 'd MMM yyyy' }}</span>
+              <time class="event-meta__value" [attr.datetime]="currentEvent.starts_at">
+                {{ currentEvent.starts_at | eventDateFormat: 'date' }}
+              </time>
             </span>
 
             <span class="event-details__meta-item">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                class="event-details__meta-icon"
+                class="event-details__meta-icon event-meta__icon"
                 aria-hidden="true"
               >
                 <path
@@ -166,14 +168,16 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span>{{ currentEvent.starts_at | date: 'HH:mm' }}</span>
+              <time class="event-meta__value" [attr.datetime]="currentEvent.starts_at">
+                {{ currentEvent.starts_at | eventDateFormat: 'time' }}
+              </time>
             </span>
 
             <span class="event-details__meta-item">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                class="event-details__meta-icon"
+                class="event-details__meta-icon event-meta__icon"
                 aria-hidden="true"
               >
                 <path
@@ -191,7 +195,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span>{{ currentEvent.venue?.title }}</span>
+              <span class="event-meta__value">{{ currentEvent.venue?.title }}</span>
             </span>
           </div>
 

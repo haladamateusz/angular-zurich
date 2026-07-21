@@ -48,6 +48,56 @@
 /* Defaults hover styles on all devices */
 @custom-variant hover (&:hover);
 
+/* Shared event metadata hierarchy: accent icons, readable values, explicit links. */
+.event-meta__label {
+  color: var(--event-meta-label);
+}
+
+.event-meta__icon {
+  flex: none;
+  color: var(--event-meta-icon);
+}
+
+.event-meta__value {
+  color: var(--event-meta-value);
+  font-weight: 600;
+}
+
+.event-meta__secondary {
+  color: var(--event-meta-secondary);
+}
+
+.event-meta__link {
+  border-radius: var(--radius-subtle);
+  color: var(--event-meta-link);
+  text-decoration: none;
+}
+
+.event-meta__link-label {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+}
+
+.event-meta__link:is(:hover, :focus-visible) {
+  color: var(--event-meta-link-hover);
+}
+
+.event-meta__link:is(:hover, :focus-visible) .event-meta__link-label {
+  text-decoration: underline;
+}
+
+.event-meta__link:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+.event-meta__external-icon {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
 /* Unified field focus: one flat, high-contrast indicator across native and custom controls. */
 :is(input:not([type='hidden']), textarea, select, .app-field-trigger):focus {
   border-color: var(--color-primary-text);

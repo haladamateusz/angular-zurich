@@ -93,7 +93,7 @@
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
-                    class="past-event-card__meta-icon"
+                    class="past-event-card__meta-icon event-meta__icon"
                     aria-hidden="true"
                   >
                     <path
@@ -104,14 +104,16 @@
                       stroke-linejoin="round"
                     />
                   </svg>
-                  <span>{{ card.startsAt | date: 'd MMM yyyy' }}</span>
+                  <time class="event-meta__value" [attr.datetime]="card.startsAt">
+                    {{ card.startsAt | eventDateFormat: 'date' }}
+                  </time>
                 </span>
 
                 <span class="past-event-card__meta-item">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
-                    class="past-event-card__meta-icon"
+                    class="past-event-card__meta-icon event-meta__icon"
                     aria-hidden="true"
                   >
                     <path
@@ -122,14 +124,16 @@
                       stroke-linejoin="round"
                     />
                   </svg>
-                  <span>{{ card.startsAt | date: 'HH:mm' }}</span>
+                  <time class="event-meta__value" [attr.datetime]="card.startsAt">
+                    {{ card.startsAt | eventDateFormat: 'time' }}
+                  </time>
                 </span>
 
                 <span class="past-event-card__meta-item">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
-                    class="past-event-card__meta-icon"
+                    class="past-event-card__meta-icon event-meta__icon"
                     aria-hidden="true"
                   >
                     <path
@@ -147,7 +151,7 @@
                       stroke-linejoin="round"
                     />
                   </svg>
-                  <span>{{ card.venueLabel }}</span>
+                  <span class="event-meta__value">{{ card.venueLabel }}</span>
                 </span>
               </div>
 

@@ -103,6 +103,17 @@
   --primary-focus: var(--color-primary-700);
   --primary-active: var(--color-primary-700);
   --primary-checked: var(--color-primary-600);
+
+  /* ============================================ */
+  /* EVENT METADATA                               */
+  /* ============================================ */
+
+  --event-meta-icon: var(--color-primary-text);
+  --event-meta-value: var(--color-foreground);
+  --event-meta-label: var(--color-muted-foreground-1);
+  --event-meta-secondary: var(--color-muted-foreground-1);
+  --event-meta-link: var(--color-primary-text);
+  --event-meta-link-hover: var(--color-primary-text-hover);
   
   /* ============================================ */
   /* SECONDARY                                    */

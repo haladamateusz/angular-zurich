@@ -80,19 +80,22 @@ describe('HeroComponent', () => {
     const root = fixture.nativeElement as HTMLElement;
     const eventTime = root.querySelector<HTMLTimeElement>('.event-preview__fact-copy');
     const venueLink = root.querySelector<HTMLAnchorElement>('.event-preview__fact a');
+    const venueLinkText = venueLink?.textContent?.replace(/\s+/g, ' ').trim();
 
     expect(eventTime?.getAttribute('datetime')).toBe(TEST_EVENT.starts_at);
-    expect(eventTime?.textContent).toContain('17 April 2099');
+    expect(eventTime?.textContent).toContain('17 Apr 2099');
     expect(eventTime?.textContent).toContain('20:30');
     expect(eventTime?.textContent).not.toContain('starts at');
     expect(root.querySelector('.event-preview__venue-title')?.textContent).toContain(
       'Constructor Nexademy',
     );
-    expect(root.querySelector('.event-preview__venue-address')?.textContent).toContain(
-      'Foerrlibuckstrasse 150, 8005 Zurich',
-    );
+    expect(venueLinkText).not.toContain('Constructor Nexademy');
+    expect(venueLinkText).toContain('Foerrlibuckstrasse 150, 8005 Zurich');
     expect(venueLink?.getAttribute('href')).toBe(TEST_EVENT.venue?.google_maps_url);
     expect(venueLink?.textContent).toContain('opens in a new tab');
+    expect(
+      venueLink?.querySelector('.event-preview__venue-city .event-preview__external-icon'),
+    ).not.toBeNull();
   });
 
   it('renders a single semantic program list when all talks are visible', () => {

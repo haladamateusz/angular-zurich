@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'navbarDateFormat',
+  name: 'eventDateFormat',
 })
-export class NavbarDateFormatPipe implements PipeTransform {
+export class EventDateFormatPipe implements PipeTransform {
   transform(value: string | null | undefined, mode: 'full' | 'date' | 'time' = 'full'): string {
     if (!value) {
       return '';
@@ -17,7 +17,7 @@ export class NavbarDateFormatPipe implements PipeTransform {
 
     const dateParts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/Zurich',
-      month: 'long',
+      month: 'short',
       year: 'numeric',
     }).formatToParts(date);
 
