@@ -5,7 +5,8 @@
 .create-event-section__number {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  flex: none;
+  margin-left: auto;
   color: var(--color-muted-foreground-2);
   font-size: 0.72rem;
   font-weight: 700;
@@ -13,29 +14,46 @@
   text-transform: uppercase;
 }
 
-.create-event-section__number::before {
-  content: '';
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-primary) 72%, white 12%);
-  box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--color-primary) 10%, transparent);
+.create-event-section__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.create-event-talk-row__number {
+.create-event-section__heading-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.create-event-section__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 3.2rem;
+  height: 3.2rem;
   flex: none;
-  margin-top: 2.075rem;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+  border: 1px solid var(--color-card-line);
   border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
-  color: color-mix(in srgb, var(--color-primary) 82%, var(--color-foreground) 18%);
-  font-size: 0.72rem;
-  font-weight: 800;
+  background: color-mix(in srgb, var(--color-background) 70%, transparent);
+  color: var(--color-primary-text);
+}
+
+.create-event-section__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.create-event-section__title {
+  max-width: 22ch;
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
 }
 
 .create-event-details-grid {
@@ -292,7 +310,7 @@
 
 .create-event-talk-row {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   min-height: var(--create-event-talk-row-height);
   gap: 0.85rem;
@@ -301,7 +319,7 @@
 }
 
 .create-event-talk-row--removable {
-  grid-template-columns: 2rem minmax(0, 1fr) 2.85rem;
+  grid-template-columns: minmax(0, 1fr) 2.85rem;
   border-bottom: 0;
 }
 
@@ -359,6 +377,10 @@
     padding: 1.25rem;
   }
 
+  .create-event-section__header-row {
+    flex-wrap: wrap;
+  }
+
   .create-event-fields {
     grid-template-columns: 1fr;
   }
@@ -367,13 +389,8 @@
     grid-template-columns: 1fr;
   }
 
-  .create-event-talk-row {
-    grid-template-columns: 1.75rem minmax(0, 1fr);
-    gap: 0.55rem;
-  }
-
   .create-event-talk-row--removable {
-    grid-template-columns: 1.75rem minmax(0, 1fr) 2.85rem;
+    grid-template-columns: minmax(0, 1fr) 2.85rem;
   }
 }
 

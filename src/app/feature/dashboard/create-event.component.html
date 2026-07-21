@@ -39,14 +39,29 @@
       class="create-event-section rounded-surface border border-card-line bg-card p-8"
       aria-labelledby="event-details-heading"
     >
-      <div class="mb-[1.6rem]">
+      <div class="create-event-section__header-row mb-[1.6rem]">
+        <div class="create-event-section__heading-row">
+          <span class="create-event-section__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7.25 4.75h9.5A1.75 1.75 0 0 1 18.5 6.5v11a1.75 1.75 0 0 1-1.75 1.75h-9.5A1.75 1.75 0 0 1 5.5 17.5v-11a1.75 1.75 0 0 1 1.75-1.75Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8.5 3.5v3M15.5 3.5v3M5.75 8.75h12.5M8.75 12h2.5M8.75 15h5.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <h2 id="event-details-heading" class="create-event-section__title">
+            Event details
+          </h2>
+        </div>
         <span class="create-event-section__number">Step 1</span>
-        <h2
-          id="event-details-heading"
-          class="mt-3 mb-0 max-w-[22ch] text-2xl font-semibold leading-[1.05] tracking-[-0.03em] text-foreground"
-        >
-          Event details
-        </h2>
       </div>
 
       <div class="create-event-details-grid grid gap-8">
@@ -273,14 +288,29 @@
       class="create-event-section rounded-surface border border-card-line bg-card p-8"
       aria-labelledby="event-talks-heading"
     >
-      <div class="mb-[1.6rem]">
+      <div class="create-event-section__header-row mb-[1.6rem]">
+        <div class="create-event-section__heading-row">
+          <span class="create-event-section__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M6.75 5.25h10.5A1.75 1.75 0 0 1 19 7v10a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 17V7a1.75 1.75 0 0 1 1.75-1.75Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8.75 9h6.5M8.75 12h6.5M8.75 15h3.75"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <h2 id="event-talks-heading" class="create-event-section__title">
+            Talk lineup
+          </h2>
+        </div>
         <span class="create-event-section__number">Step 2</span>
-        <h2
-          id="event-talks-heading"
-          class="mt-3 mb-0 max-w-[22ch] text-2xl font-semibold leading-[1.05] tracking-[-0.03em] text-foreground"
-        >
-          Talk lineup
-        </h2>
       </div>
 
       @if (optionsState() === 'loading') {
@@ -297,7 +327,6 @@
               class="create-event-talk-row"
               [class.create-event-talk-row--removable]="talkIndex === 2"
             >
-              <span class="create-event-talk-row__number">{{ talkIndex + 1 }}</span>
               <div class="create-event-field">
                 <label [for]="'eventTalk' + talkIndex">Talk {{ talkIndex + 1 }}</label>
                 <app-create-event-select
