@@ -6,7 +6,7 @@
           @if (currentStatus.can_edit) {
             <div class="mb-4 flex justify-end">
               <a
-                class="submission-summary__edit-link inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background"
+                class="submission-summary__edit-link app-button"
                 [routerLink]="['/talk-submission', currentStatus.id, 'edit']"
               >
                 Edit
@@ -16,15 +16,15 @@
         }
       }
 
-      <div class="submit-talk-success-card rounded-[2rem] border border-card-line bg-card p-8 shadow-sm sm:p-10">
+      <div
+        class="submit-talk-success-card rounded-surface border border-card-line bg-card p-8 sm:p-10"
+      >
         <div class="space-y-4">
           <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
             {{ isSubmissionIdInvalid() ? 'Invalid submission id' : 'Talk proposal received' }}
           </h1>
           @if (isSubmissionIdInvalid()) {
-            <p class="text-sm leading-8 text-destructive sm:text-base">
-              Invalid submission id
-            </p>
+            <p class="text-sm leading-8 text-destructive sm:text-base">Invalid submission id</p>
           } @else {
             <p class="text-sm leading-8 text-foreground/85 sm:text-base">
               Thanks for sending this over. We stored your submission in our review queue and will
@@ -35,12 +35,14 @@
 
         @if (hasSubmissionId() && !isSubmissionIdInvalid()) {
           <div class="submission-summary mt-6">
-            <p class="submission-summary__device-text text-sm leading-8 text-foreground/85 sm:text-base">
+            <p
+              class="submission-summary__device-text text-sm leading-8 text-foreground/85 sm:text-base"
+            >
               Further edits will be possible only from this current device.
             </p>
 
             <div class="submission-summary__item">
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary-text">
                 Submission ID
               </p>
               <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
@@ -48,7 +50,7 @@
 
             @if (isLoading() || errorMessage() || statusSummary()) {
               <div class="submission-summary__item">
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary-text">
                   Current status
                 </p>
                 @if (isLoading()) {

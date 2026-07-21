@@ -4,7 +4,7 @@
       @if (isBlockingEditError()) {
         <div
           aria-live="assertive"
-          class="rounded-2xl border border-destructive/25 bg-destructive/10 p-5 text-destructive"
+          class="rounded-surface border border-destructive/25 bg-destructive/10 p-5 text-destructive"
           role="alert"
         >
           <p class="text-sm leading-7 sm:text-base">{{ errorMessage() }}</p>
@@ -12,527 +12,616 @@
       }
 
       @if (!isBlockingEditError()) {
-      <div class="space-y-3">
-        <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
-          {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
-        </h2>
-        <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
-          @if (isEditMode()) {
-            Update the details below and save the proposal when everything looks right.
-          } @else {
-            Fields marked with * are required to submit your talk. We use your contact details only
-            to follow up about this proposal.
-          }
-        </p>
-      </div>
+        <div class="space-y-3">
+          <h2 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+            {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
+          </h2>
+          <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
+            @if (isEditMode()) {
+              Update the details below and save the proposal when everything looks right.
+            } @else {
+              Fields marked with * are required to submit your talk. We use your contact details
+              only to follow up about this proposal.
+            }
+          </p>
+        </div>
 
-      <form
-        class="submission-form relative space-y-6"
-        [formGroup]="submitTalkForm"
-        (ngSubmit)="submitTalk()"
-        novalidate
-      >
-        <section
-          aria-labelledby="talk-details-heading"
-          class="submission-card submission-card--talk rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
+        <form
+          class="submission-form relative space-y-6"
+          [formGroup]="submitTalkForm"
+          (ngSubmit)="submitTalk()"
+          novalidate
         >
-          <div class="submission-card__header relative z-[1] space-y-3">
-            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
-              <p class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
-                Step 1
+          <section
+            aria-labelledby="talk-details-heading"
+            class="submission-card submission-card--talk rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
+          >
+            <div class="submission-card__header relative z-[1] space-y-3">
+              <div
+                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
+              >
+                <p
+                  class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                >
+                  Step 1
+                </p>
+              </div>
+              <h3
+                id="talk-details-heading"
+                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+              >
+                Talk details
+              </h3>
+              <p
+                class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
+              >
+                Tell us what you want to present, what the audience will learn, and include the
+                required link to your slides.
               </p>
             </div>
-            <h3 id="talk-details-heading" class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground">
-              Talk details
-            </h3>
-            <p class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base">
-              Tell us what you want to present, what the audience will learn, and include slides if
-              you already have them.
-            </p>
-          </div>
 
-          <div class="submission-card__body relative z-[1] mt-7 flex flex-col gap-5">
-            <div class="space-y-2">
-              <label class="text-sm font-semibold text-foreground" for="talkTitle">Talk title *</label>
-              <input
-                id="talkTitle"
-                type="text"
-                formControlName="talkTitle"
-                autocomplete="off"
-                placeholder="Example: Modern Angular debugging workflows"
-                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                [attr.aria-invalid]="fieldHasError('talkTitle')"
-              />
-              <div class="field-error-slot" aria-live="polite">
-                @if (fieldHasError('talkTitle')) {
-                  <p class="text-sm text-destructive">
-                    Please enter a clear title between 5 and {{ maxLengths.talkTitle }} characters.
-                  </p>
-                }
-              </div>
-            </div>
-
-            <div class="space-y-2">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                <label class="text-sm font-semibold text-foreground" for="talkDescription">Talk description *</label>
-                <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
-                  {{ talkDescriptionLength() }}/{{ maxLengths.talkDescription }}
-                </span>
-              </div>
-              <textarea
-                id="talkDescription"
-                formControlName="talkDescription"
-                rows="8"
-                placeholder="What problem does the talk address, what will the audience learn, and why is it worth attending?"
-                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                [attr.aria-invalid]="fieldHasError('talkDescription')"
-              ></textarea>
-              <div class="field-error-slot" aria-live="polite">
-                @if (fieldHasError('talkDescription')) {
-                  <p class="text-sm text-destructive">
-                    Please provide at least 40 characters describing the talk.
-                  </p>
-                }
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-semibold text-foreground" for="slidesLink">Link to slides *</label>
-              <input
-                id="slidesLink"
-                type="url"
-                formControlName="slidesLink"
-                autocomplete="url"
-                placeholder="https://speakerdeck.com/you/your-talk"
-                class="mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                [attr.aria-invalid]="fieldHasError('slidesLink')"
-              />
-              <div class="field-error-slot" aria-live="polite">
-                @if (fieldHasError('slidesLink')) {
-                  <p class="text-sm text-destructive">
-                    Please enter a valid slides URL starting with http:// or https:// (max
-                    {{ maxLengths.slidesLink }} characters).
-                  </p>
-                }
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="speaker-details-heading"
-          class="submission-card submission-card--speaker speaker-card rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
-        >
-          <div class="submission-card__header speaker-card__header relative z-[1] space-y-3">
-            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
-              <p class="submission-card__eyebrow speaker-card__step text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
-                Step 2
-              </p>
-            </div>
-            <h3 id="speaker-details-heading" class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground">
-              Speaker details
-            </h3>
-            <p class="submission-card__lede speaker-card__intro max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base">
-              Share the information we need to review the proposal and follow up with you.
-            </p>
-          </div>
-
-          <div class="submission-card__body speaker-card__layout relative z-[1] mt-7 grid items-start gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]">
-            <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
-              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
-                <div class="space-y-2">
-                  <label class="text-sm font-semibold text-foreground" for="speakerFirstName">First name *</label>
-                  <input
-                    id="speakerFirstName"
-                    type="text"
-                    formControlName="speakerFirstName"
-                    autocomplete="given-name"
-                    placeholder="Your first name"
-                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                    [attr.aria-invalid]="fieldHasError('speakerFirstName')"
-                  />
-                  <div class="field-error-slot" aria-live="polite">
-                    @if (fieldHasError('speakerFirstName')) {
-                      <p class="text-sm text-destructive">Please enter your first name.</p>
-                    }
-                  </div>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="text-sm font-semibold text-foreground" for="speakerLastName">Last name *</label>
-                  <input
-                    id="speakerLastName"
-                    type="text"
-                    formControlName="speakerLastName"
-                    autocomplete="family-name"
-                    placeholder="Your last name"
-                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                    [attr.aria-invalid]="fieldHasError('speakerLastName')"
-                  />
-                  <div class="field-error-slot" aria-live="polite">
-                    @if (fieldHasError('speakerLastName')) {
-                      <p class="text-sm text-destructive">Please enter your last name.</p>
-                    }
-                  </div>
-                </div>
-              </div>
-
-              <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
-                <div class="space-y-2">
-                  <label class="text-sm font-semibold text-foreground" for="emailAddress">Email address *</label>
-                  <input
-                    id="emailAddress"
-                    type="email"
-                    formControlName="emailAddress"
-                    autocomplete="email"
-                    placeholder="you@example.com"
-                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                    [attr.aria-invalid]="fieldHasError('emailAddress')"
-                  />
-                  <div class="field-error-slot" aria-live="polite">
-                    @if (fieldHasError('emailAddress')) {
-                      <p class="text-sm text-destructive">Please enter a valid email address.</p>
-                    }
-                  </div>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="text-sm font-semibold text-foreground" for="speakerLabel">Speaker label</label>
-                  <input
-                    id="speakerLabel"
-                    type="text"
-                    formControlName="speakerLabel"
-                    autocomplete="off"
-                    placeholder="Architect, GDE, Consultant"
-                    class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                    [attr.aria-invalid]="fieldHasError('speakerLabel')"
-                  />
-                  <div class="field-error-slot" aria-live="polite">
-                    @if (fieldHasError('speakerLabel')) {
-                      <p class="text-sm text-destructive">
-                        Keep the label under {{ maxLengths.speakerLabel }} characters.
-                      </p>
-                    }
-                  </div>
-                </div>
-              </div>
-
+            <div class="submission-card__body relative z-[1] mt-7 flex flex-col gap-5">
               <div class="space-y-2">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                  <label class="text-sm font-semibold text-foreground" for="speakerBio">Speaker bio *</label>
-                  <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
-                    {{ speakerBioLength() }}/{{ maxLengths.speakerBio }}
-                  </span>
-                </div>
-                <textarea
-                  id="speakerBio"
-                  formControlName="speakerBio"
-                  rows="6"
-                  placeholder="Tell us about your background, what you work on, and why you are the right person to give this talk."
-                  class="speaker-card__input speaker-card__bio-textarea mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                  [attr.aria-invalid]="fieldHasError('speakerBio')"
-                ></textarea>
+                <label class="text-sm font-semibold text-foreground" for="talkTitle"
+                  >Talk title *</label
+                >
+                <input
+                  id="talkTitle"
+                  type="text"
+                  formControlName="talkTitle"
+                  autocomplete="off"
+                  placeholder="Example: Modern Angular debugging workflows"
+                  class="mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                  [attr.aria-invalid]="fieldHasError('talkTitle')"
+                />
                 <div class="field-error-slot" aria-live="polite">
-                  @if (fieldHasError('speakerBio')) {
+                  @if (fieldHasError('talkTitle')) {
                     <p class="text-sm text-destructive">
-                      Please provide a short bio of at least 20 characters.
+                      Please enter a clear title between 5 and
+                      {{ maxLengths.talkTitle }} characters.
                     </p>
                   }
                 </div>
               </div>
 
-              <div class="space-y-3">
-                <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="personalUrl">Personal website</label>
-                    <input
-                      id="personalUrl"
-                      type="url"
-                      formControlName="personalUrl"
-                      autocomplete="url"
-                      placeholder="https://your-site.dev"
-                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                      [attr.aria-invalid]="fieldHasError('personalUrl')"
-                    />
-                    <div class="field-error-slot" aria-live="polite">
-                      @if (fieldHasError('personalUrl')) {
-                        <p class="text-sm text-destructive">
-                          Please enter a valid URL starting with http:// or https://.
-                        </p>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="twitterUrl">X / Twitter</label>
-                    <input
-                      id="twitterUrl"
-                      type="url"
-                      formControlName="twitterUrl"
-                      autocomplete="url"
-                      placeholder="https://x.com/your-handle"
-                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                      [attr.aria-invalid]="fieldHasError('twitterUrl')"
-                    />
-                    <div class="field-error-slot" aria-live="polite">
-                      @if (fieldHasError('twitterUrl')) {
-                        <p class="text-sm text-destructive">
-                          Please enter a valid URL starting with http:// or https://.
-                        </p>
-                      }
-                    </div>
-                  </div>
+              <div class="space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <label class="text-sm font-semibold text-foreground" for="talkDescription"
+                    >Talk description *</label
+                  >
+                  <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                    {{ talkDescriptionLength() }}/{{ maxLengths.talkDescription }}
+                  </span>
                 </div>
+                <textarea
+                  id="talkDescription"
+                  formControlName="talkDescription"
+                  rows="8"
+                  placeholder="What problem does the talk address, what will the audience learn, and why is it worth attending?"
+                  class="mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors"
+                  [attr.aria-invalid]="fieldHasError('talkDescription')"
+                ></textarea>
+                <div class="field-error-slot" aria-live="polite">
+                  @if (fieldHasError('talkDescription')) {
+                    <p class="text-sm text-destructive">
+                      Please provide at least 40 characters describing the talk.
+                    </p>
+                  }
+                </div>
+              </div>
 
-                <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="linkedinUrl">LinkedIn</label>
-                    <input
-                      id="linkedinUrl"
-                      type="url"
-                      formControlName="linkedinUrl"
-                      autocomplete="url"
-                      placeholder="https://www.linkedin.com/in/you"
-                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                      [attr.aria-invalid]="fieldHasError('linkedinUrl')"
-                    />
-                    <div class="field-error-slot" aria-live="polite">
-                      @if (fieldHasError('linkedinUrl')) {
-                        <p class="text-sm text-destructive">
-                          Please enter a valid URL starting with http:// or https://.
-                        </p>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="githubUrl">GitHub</label>
-                    <input
-                      id="githubUrl"
-                      type="url"
-                      formControlName="githubUrl"
-                      autocomplete="url"
-                      placeholder="https://github.com/your-handle"
-                      class="speaker-card__input mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary-focus/20"
-                      [attr.aria-invalid]="fieldHasError('githubUrl')"
-                    />
-                    <div class="field-error-slot" aria-live="polite">
-                      @if (fieldHasError('githubUrl')) {
-                        <p class="text-sm text-destructive">
-                          Please enter a valid URL starting with http:// or https://.
-                        </p>
-                      }
-                    </div>
-                  </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-foreground" for="slidesLink"
+                  >Link to slides *</label
+                >
+                <input
+                  id="slidesLink"
+                  type="url"
+                  formControlName="slidesLink"
+                  autocomplete="url"
+                  placeholder="https://speakerdeck.com/you/your-talk"
+                  class="mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                  [attr.aria-invalid]="fieldHasError('slidesLink')"
+                />
+                <div class="field-error-slot" aria-live="polite">
+                  @if (fieldHasError('slidesLink')) {
+                    <p class="text-sm text-destructive">
+                      Please enter a valid slides URL starting with http:// or https:// (max
+                      {{ maxLengths.slidesLink }} characters).
+                    </p>
+                  }
                 </div>
               </div>
             </div>
+          </section>
 
-            <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
-              <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
-                <div class="speaker-card__portrait-header">
-                  <label class="text-sm font-semibold text-foreground" for="speakerPicture">
-                    Speaker photo{{ isEditMode() ? '' : ' *' }}
-                  </label>
-                </div>
-
-                @if (speakerPicturePreviewUrl()) {
-                  <div
-                    class="speaker-card__image-picker speaker-card__image-picker--filled"
-                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : null"
-                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                  >
-                    <img [src]="speakerPicturePreviewUrl()" alt="Selected speaker preview" />
-                    <div class="speaker-card__image-picker-actions">
-                      <button type="button" (click)="openSpeakerPicturePicker()">
-                        Replace
-                      </button>
-                      <button
-                        type="button"
-                        class="speaker-card__image-picker-remove"
-                        (click)="removeSpeakerPicture()"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                } @else if (isEditMode() && existingSpeakerPicturePath()) {
-                  <button
-                    type="button"
-                    class="speaker-card__image-picker"
-                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : 'speakerPictureHint'"
-                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                    (click)="openSpeakerPicturePicker()"
-                  >
-                    <span class="speaker-card__image-picker-icon">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path
-                          d="M6.75 4.75h10.5A1.75 1.75 0 0 1 19 6.5v11a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 17.5v-11a1.75 1.75 0 0 1 1.75-1.75Zm1.5 10.5 2.25-2.5 1.65 1.8 2.1-2.55 2.5 3.25M9.25 9.25h.01"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </span>
-                    <strong>Current speaker photo on file</strong>
-                    <span id="speakerPictureHint">
-                      Choose a replacement only if you want to change it
-                    </span>
-                  </button>
-                } @else {
-                  <button
-                    type="button"
-                    class="speaker-card__image-picker"
-                    [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : 'speakerPictureHint'"
-                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                    (click)="openSpeakerPicturePicker()"
-                  >
-                    <span class="speaker-card__image-picker-icon">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path
-                          d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3.75A1.75 1.75 0 0 0 6.75 20h10.5A1.75 1.75 0 0 0 19 18.25V14.5"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </span>
-                    <strong>Choose speaker photo</strong>
-                    <span id="speakerPictureHint">
-                      JPG, PNG, or WebP up to {{ maxSpeakerPictureSizeInMegabytes }} MB
-                    </span>
-                  </button>
-                }
-
-                <input
-                  #speakerPictureInput
-                  id="speakerPicture"
-                  type="file"
-                  hidden
-                  accept="image/jpeg,image/png,image/webp"
-                  (change)="onSpeakerPictureSelected($event)"
-                  class="speaker-card__sr-only-input"
-                  [attr.aria-invalid]="fieldHasError('speakerPicture')"
-                  [attr.aria-describedby]="fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : speakerPicturePreviewUrl() ? null : 'speakerPictureHint'"
-                />
+          <section
+            aria-labelledby="speaker-details-heading"
+            class="submission-card submission-card--speaker speaker-card rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
+          >
+            <div class="submission-card__header speaker-card__header relative z-[1] space-y-3">
+              <div
+                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
+              >
+                <p
+                  class="submission-card__eyebrow speaker-card__step text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                >
+                  Step 2
+                </p>
               </div>
-
-              <div id="speakerPictureFeedback" class="field-error-slot" aria-live="polite">
-                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('required')) {
-                  <p class="text-sm text-destructive">
-                    Please upload a speaker photo.
-                  </p>
-                }
-                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('invalidFileType')) {
-                  <p class="text-sm text-destructive">
-                    Please upload a JPG, PNG, or WebP image.
-                  </p>
-                }
-                @if (fieldHasError('speakerPicture') && submitTalkForm.controls.speakerPicture.hasError('fileTooLarge')) {
-                  <p class="text-sm text-destructive">
-                    Please upload an image smaller than {{ maxSpeakerPictureSizeInMegabytes }} MB.
-                  </p>
-                }
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="submission-heading"
-          class="submission-card submission-card--submit rounded-[2rem] border border-card-line bg-card px-6 py-6 shadow-sm sm:px-8 sm:py-7 lg:px-10 lg:py-8"
-        >
-          <div class="submission-card__header relative z-[1] space-y-3">
-            <div class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3">
-              <p class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2">
-                Step 3
+              <h3
+                id="speaker-details-heading"
+                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+              >
+                Speaker details
+              </h3>
+              <p
+                class="submission-card__lede speaker-card__intro max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
+              >
+                Share the information we need to review the proposal and follow up with you.
               </p>
             </div>
-            <h3 id="submission-heading" class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground">
-              {{ isEditMode() ? 'Review and save' : 'Verification and submit' }}
-            </h3>
-            <p class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base">
-              @if (isEditMode()) {
-                Save the adjusted proposal when everything looks good.
-              } @else {
-                Complete the verification step and send us the proposal when everything looks good.
-              }
-            </p>
-          </div>
 
-          @if (submissionState() === 'error') {
             <div
-              aria-live="assertive"
-              class="mt-6 rounded-2xl border border-destructive/25 bg-destructive/10 p-5 text-destructive"
-              role="alert"
+              class="submission-card__body speaker-card__layout relative z-[1] mt-7 grid items-start gap-7 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]"
             >
-              <h4 class="text-base font-semibold">Submission failed</h4>
-              <p class="mt-2 text-sm leading-7">{{ errorMessage() }}</p>
+              <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
+                <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
+                  <div class="space-y-2">
+                    <label class="text-sm font-semibold text-foreground" for="speakerFirstName"
+                      >First name *</label
+                    >
+                    <input
+                      id="speakerFirstName"
+                      type="text"
+                      formControlName="speakerFirstName"
+                      autocomplete="given-name"
+                      placeholder="Your first name"
+                      class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                      [attr.aria-invalid]="fieldHasError('speakerFirstName')"
+                    />
+                    <div class="field-error-slot" aria-live="polite">
+                      @if (fieldHasError('speakerFirstName')) {
+                        <p class="text-sm text-destructive">Please enter your first name.</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-sm font-semibold text-foreground" for="speakerLastName"
+                      >Last name *</label
+                    >
+                    <input
+                      id="speakerLastName"
+                      type="text"
+                      formControlName="speakerLastName"
+                      autocomplete="family-name"
+                      placeholder="Your last name"
+                      class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                      [attr.aria-invalid]="fieldHasError('speakerLastName')"
+                    />
+                    <div class="field-error-slot" aria-live="polite">
+                      @if (fieldHasError('speakerLastName')) {
+                        <p class="text-sm text-destructive">Please enter your last name.</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
+                  <div class="space-y-2">
+                    <label class="text-sm font-semibold text-foreground" for="emailAddress"
+                      >Email address *</label
+                    >
+                    <input
+                      id="emailAddress"
+                      type="email"
+                      formControlName="emailAddress"
+                      autocomplete="email"
+                      placeholder="you@example.com"
+                      class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                      [attr.aria-invalid]="fieldHasError('emailAddress')"
+                    />
+                    <div class="field-error-slot" aria-live="polite">
+                      @if (fieldHasError('emailAddress')) {
+                        <p class="text-sm text-destructive">Please enter a valid email address.</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-sm font-semibold text-foreground" for="speakerLabel"
+                      >Role or title (optional)</label
+                    >
+                    <input
+                      id="speakerLabel"
+                      type="text"
+                      formControlName="speakerLabel"
+                      autocomplete="off"
+                      placeholder="Architect, GDE, Consultant"
+                      class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                      [attr.aria-invalid]="fieldHasError('speakerLabel')"
+                    />
+                    <div class="field-error-slot" aria-live="polite">
+                      @if (fieldHasError('speakerLabel')) {
+                        <p class="text-sm text-destructive">
+                          Keep the role or title under {{ maxLengths.speakerLabel }} characters.
+                        </p>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <label class="text-sm font-semibold text-foreground" for="speakerBio"
+                      >Speaker bio *</label
+                    >
+                    <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                      {{ speakerBioLength() }}/{{ maxLengths.speakerBio }}
+                    </span>
+                  </div>
+                  <textarea
+                    id="speakerBio"
+                    formControlName="speakerBio"
+                    rows="6"
+                    placeholder="Tell us about your background, what you work on, and why you are the right person to give this talk."
+                    class="speaker-card__input speaker-card__bio-textarea mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm leading-7 text-foreground placeholder:text-muted-foreground transition-colors"
+                    [attr.aria-invalid]="fieldHasError('speakerBio')"
+                  ></textarea>
+                  <div class="field-error-slot" aria-live="polite">
+                    @if (fieldHasError('speakerBio')) {
+                      <p class="text-sm text-destructive">
+                        Please provide a short bio of at least 20 characters.
+                      </p>
+                    }
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
+                    <div class="space-y-2">
+                      <label class="text-sm font-semibold text-foreground" for="personalUrl"
+                        >Personal website</label
+                      >
+                      <input
+                        id="personalUrl"
+                        type="url"
+                        formControlName="personalUrl"
+                        autocomplete="url"
+                        placeholder="https://your-site.dev"
+                        class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                        [attr.aria-invalid]="fieldHasError('personalUrl')"
+                      />
+                      <div class="field-error-slot" aria-live="polite">
+                        @if (fieldHasError('personalUrl')) {
+                          <p class="text-sm text-destructive">
+                            Please enter a valid URL starting with http:// or https://.
+                          </p>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-sm font-semibold text-foreground" for="twitterUrl"
+                        >X / Twitter</label
+                      >
+                      <input
+                        id="twitterUrl"
+                        type="url"
+                        formControlName="twitterUrl"
+                        autocomplete="url"
+                        placeholder="https://x.com/your-handle"
+                        class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                        [attr.aria-invalid]="fieldHasError('twitterUrl')"
+                      />
+                      <div class="field-error-slot" aria-live="polite">
+                        @if (fieldHasError('twitterUrl')) {
+                          <p class="text-sm text-destructive">
+                            Please enter a valid URL starting with http:// or https://.
+                          </p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
+                    <div class="space-y-2">
+                      <label class="text-sm font-semibold text-foreground" for="linkedinUrl"
+                        >LinkedIn</label
+                      >
+                      <input
+                        id="linkedinUrl"
+                        type="url"
+                        formControlName="linkedinUrl"
+                        autocomplete="url"
+                        placeholder="https://www.linkedin.com/in/you"
+                        class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                        [attr.aria-invalid]="fieldHasError('linkedinUrl')"
+                      />
+                      <div class="field-error-slot" aria-live="polite">
+                        @if (fieldHasError('linkedinUrl')) {
+                          <p class="text-sm text-destructive">
+                            Please enter a valid URL starting with http:// or https://.
+                          </p>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label class="text-sm font-semibold text-foreground" for="githubUrl"
+                        >GitHub</label
+                      >
+                      <input
+                        id="githubUrl"
+                        type="url"
+                        formControlName="githubUrl"
+                        autocomplete="url"
+                        placeholder="https://github.com/your-handle"
+                        class="speaker-card__input mt-2 w-full rounded-control border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors"
+                        [attr.aria-invalid]="fieldHasError('githubUrl')"
+                      />
+                      <div class="field-error-slot" aria-live="polite">
+                        @if (fieldHasError('githubUrl')) {
+                          <p class="text-sm text-destructive">
+                            Please enter a valid URL starting with http:// or https://.
+                          </p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
+                <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
+                  <div class="speaker-card__portrait-header">
+                    <label class="text-sm font-semibold text-foreground" for="speakerPicture">
+                      Speaker photo{{ isEditMode() ? '' : ' *' }}
+                    </label>
+                  </div>
+
+                  @if (speakerPicturePreviewUrl()) {
+                    <div
+                      class="speaker-card__image-picker speaker-card__image-picker--filled"
+                      [attr.aria-describedby]="
+                        fieldHasError('speakerPicture') ? 'speakerPictureFeedback' : null
+                      "
+                      [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                    >
+                      <img [src]="speakerPicturePreviewUrl()" alt="Selected speaker preview" />
+                      <div class="speaker-card__image-picker-actions">
+                        <button
+                          type="button"
+                          class="app-button app-button--secondary app-button--compact"
+                          (click)="openSpeakerPicturePicker()"
+                        >
+                          Replace
+                        </button>
+                        <button
+                          type="button"
+                          class="speaker-card__image-picker-remove app-button app-button--danger app-button--compact"
+                          (click)="removeSpeakerPicture()"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  } @else if (isEditMode() && existingSpeakerPicturePath()) {
+                    <button
+                      type="button"
+                      class="speaker-card__image-picker"
+                      [attr.aria-describedby]="
+                        fieldHasError('speakerPicture')
+                          ? 'speakerPictureFeedback'
+                          : 'speakerPictureHint'
+                      "
+                      [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                      (click)="openSpeakerPicturePicker()"
+                    >
+                      <span class="speaker-card__image-picker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="M6.75 4.75h10.5A1.75 1.75 0 0 1 19 6.5v11a1.75 1.75 0 0 1-1.75 1.75H6.75A1.75 1.75 0 0 1 5 17.5v-11a1.75 1.75 0 0 1 1.75-1.75Zm1.5 10.5 2.25-2.5 1.65 1.8 2.1-2.55 2.5 3.25M9.25 9.25h.01"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      <strong>Current speaker photo on file</strong>
+                      <span id="speakerPictureHint">
+                        Choose a replacement only if you want to change it
+                      </span>
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="speaker-card__image-picker"
+                      [attr.aria-describedby]="
+                        fieldHasError('speakerPicture')
+                          ? 'speakerPictureFeedback'
+                          : 'speakerPictureHint'
+                      "
+                      [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                      (click)="openSpeakerPicturePicker()"
+                    >
+                      <span class="speaker-card__image-picker-icon">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v3.75A1.75 1.75 0 0 0 6.75 20h10.5A1.75 1.75 0 0 0 19 18.25V14.5"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      <strong>Choose speaker photo</strong>
+                      <span id="speakerPictureHint">
+                        JPG, PNG, or WebP up to {{ maxSpeakerPictureSizeInMegabytes }} MB
+                      </span>
+                    </button>
+                  }
+
+                  <input
+                    #speakerPictureInput
+                    id="speakerPicture"
+                    type="file"
+                    hidden
+                    accept="image/jpeg,image/png,image/webp"
+                    (change)="onSpeakerPictureSelected($event)"
+                    class="speaker-card__sr-only-input"
+                    [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                    [attr.aria-describedby]="
+                      fieldHasError('speakerPicture')
+                        ? 'speakerPictureFeedback'
+                        : speakerPicturePreviewUrl()
+                          ? null
+                          : 'speakerPictureHint'
+                    "
+                  />
+                </div>
+
+                <div id="speakerPictureFeedback" class="field-error-slot" aria-live="polite">
+                  @if (
+                    fieldHasError('speakerPicture') &&
+                    submitTalkForm.controls.speakerPicture.hasError('required')
+                  ) {
+                    <p class="text-sm text-destructive">Please upload a speaker photo.</p>
+                  }
+                  @if (
+                    fieldHasError('speakerPicture') &&
+                    submitTalkForm.controls.speakerPicture.hasError('invalidFileType')
+                  ) {
+                    <p class="text-sm text-destructive">Please upload a JPG, PNG, or WebP image.</p>
+                  }
+                  @if (
+                    fieldHasError('speakerPicture') &&
+                    submitTalkForm.controls.speakerPicture.hasError('fileTooLarge')
+                  ) {
+                    <p class="text-sm text-destructive">
+                      Please upload an image smaller than {{ maxSpeakerPictureSizeInMegabytes }} MB.
+                    </p>
+                  }
+                </div>
+              </aside>
             </div>
-          }
+          </section>
 
-          <div class="submission-card__body relative z-[1] mt-7 space-y-5">
-            @if (!isEditMode()) {
-              <div class="space-y-3">
-                @if (turnstileSiteKey) {
-                  <div #turnstileContainer class="min-h-16"></div>
+          <section
+            aria-labelledby="submission-heading"
+            class="submission-card submission-card--submit rounded-surface border border-card-line bg-card px-6 py-6 sm:px-8 sm:py-7 lg:px-10 lg:py-8"
+          >
+            <div class="submission-card__header relative z-[1] space-y-3">
+              <div
+                class="submission-card__eyebrow-row flex flex-wrap items-center justify-between gap-3"
+              >
+                <p
+                  class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                >
+                  Step 3
+                </p>
+              </div>
+              <h3
+                id="submission-heading"
+                class="submission-card__title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+              >
+                {{ isEditMode() ? 'Review and save' : 'Verification and submit' }}
+              </h3>
+              <p
+                class="submission-card__lede max-w-3xl text-sm leading-7 text-muted-foreground-1 sm:text-base"
+              >
+                @if (isEditMode()) {
+                  Save the adjusted proposal when everything looks good.
                 } @else {
-                  <p class="text-sm text-destructive">
-                    Verification is not configured yet. Please contact the maintainers before using this form.
-                  </p>
+                  Complete the verification step and send us the proposal when everything looks
+                  good.
                 }
+              </p>
+            </div>
 
-                @if (captchaError()) {
-                  <p class="text-sm text-destructive">{{ captchaError() }}</p>
-                }
+            @if (submissionState() === 'error') {
+              <div
+                aria-live="assertive"
+                class="mt-6 rounded-surface border border-destructive/25 bg-destructive/10 p-5 text-destructive"
+                role="alert"
+              >
+                <h4 class="text-base font-semibold">Submission failed</h4>
+                <p class="mt-2 text-sm leading-7">{{ errorMessage() }}</p>
               </div>
             }
 
-            <div class="submission-card__footer flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <div class="submission-card__consent space-y-1">
-                <p class="max-w-2xl text-sm leading-7 text-muted-foreground-1">
-                  @if (isEditMode()) {
-                    By saving, you confirm Angular Zürich can continue reviewing this proposal.
+            <div class="submission-card__body relative z-[1] mt-7 space-y-5">
+              @if (!isEditMode()) {
+                <div class="space-y-3">
+                  @if (turnstileSiteKey) {
+                    <div #turnstileContainer class="min-h-16"></div>
                   } @else {
-                    By submitting, you agree that Angular Zürich can contact you about this proposal.
+                    <p class="text-sm text-destructive">
+                      Verification is not configured yet. Please contact the maintainers before
+                      using this form.
+                    </p>
                   }
-                </p>
-                <p class="text-sm leading-7 text-muted-foreground-1">
-                  Want to explore the community first?
-                  <a class="font-semibold text-primary hover:text-primary-hover" routerLink="/">Go back home</a>.
-                </p>
-              </div>
 
-              <button
-                type="submit"
-                class="submission-card__submit-button inline-flex items-center justify-center rounded-lg border border-transparent bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover focus:outline-hidden focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-70"
-                [disabled]="isSubmitDisabled()"
+                  @if (captchaError()) {
+                    <p class="text-sm text-destructive">{{ captchaError() }}</p>
+                  }
+                </div>
+              }
+
+              <div
+                class="submission-card__footer flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between"
               >
-                @if (submissionState() === 'loading') {
-                  <span>Loading…</span>
-                } @else if (submissionState() === 'submitting') {
-                  <span>{{ isEditMode() ? 'Saving…' : 'Submitting…' }}</span>
-                } @else {
-                  <span>{{ isEditMode() ? 'Save changes' : 'Submit talk proposal' }}</span>
-                }
-              </button>
-            </div>
-          </div>
-        </section>
+                <div class="submission-card__consent space-y-1">
+                  <p class="max-w-2xl text-sm leading-7 text-muted-foreground-1">
+                    @if (isEditMode()) {
+                      By saving, you confirm Angular Zürich can continue reviewing this proposal.
+                    } @else {
+                      By submitting, you agree that Angular Zürich can contact you about this
+                      proposal.
+                    }
+                  </p>
+                  <p class="text-sm leading-7 text-muted-foreground-1">
+                    Want to explore the community first?
+                    <a class="font-semibold text-primary-text hover:text-primary-text-hover" routerLink="/"
+                      >Go back home</a
+                    >.
+                  </p>
+                </div>
 
-        <div class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
-          <label for="companyWebsite">Company website</label>
-          <input
-            id="companyWebsite"
-            type="text"
-            formControlName="companyWebsite"
-            tabindex="-1"
-            autocomplete="off"
-          />
-        </div>
-      </form>
+                <button
+                  type="submit"
+                  class="submission-card__submit-button app-button"
+                  [disabled]="isSubmitDisabled()"
+                >
+                  @if (submissionState() === 'loading') {
+                    <span>Loading…</span>
+                  } @else if (submissionState() === 'submitting') {
+                    <span>{{ isEditMode() ? 'Saving…' : 'Submitting…' }}</span>
+                  } @else {
+                    <span>{{ isEditMode() ? 'Save changes' : 'Submit talk proposal' }}</span>
+                  }
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <div
+            class="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
+            aria-hidden="true"
+          >
+            <label for="companyWebsite">Company website</label>
+            <input
+              id="companyWebsite"
+              type="text"
+              formControlName="companyWebsite"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
+        </form>
       }
     </div>
   </section>
