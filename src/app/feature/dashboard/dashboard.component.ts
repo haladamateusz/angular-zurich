@@ -1,11 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-  type WritableSignal,
-} from '@angular/core';
+import { Component, computed, inject, signal, type WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import {
@@ -20,7 +14,6 @@ import {
   CreateEventSelectComponent,
   CreateEventSelectOption,
 } from './create-event-select.component';
-import { DashboardSectionNavComponent } from './dashboard-section-nav.component';
 import { createPaginationItems } from './pagination';
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
@@ -44,14 +37,9 @@ interface DashboardTalkSubmission extends OrganizerTalkSubmission {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    DatePipe,
-    RouterLink,
-    DashboardSectionNavComponent,
-    CreateEventSelectComponent,
-  ],
+  imports: [DatePipe, RouterLink, CreateEventSelectComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent {
   private readonly authService = inject(AuthService);
@@ -251,7 +239,9 @@ export class DashboardComponent {
         ...submission,
         speakerInitials: this.getSpeakerInitials(submission.speaker_name),
         speakerPictureUrl: submission.speaker_picture_path
-          ? await this.supabaseService.getOrganizerSpeakerPictureUrl(submission.speaker_picture_path)
+          ? await this.supabaseService.getOrganizerSpeakerPictureUrl(
+              submission.speaker_picture_path,
+            )
           : null,
       })),
     );

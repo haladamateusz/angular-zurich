@@ -1,4 +1,4 @@
-<section class="mx-auto max-w-6xl px-6 py-16 sm:px-8 lg:px-10">
+<section>
   <nav class="dashboard-detail__back-nav" aria-label="Talk submission navigation">
     <a routerLink="/dashboard/talk-submissions" class="app-button app-button--ghost">
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -89,7 +89,9 @@
             ></div>
 
             <div class="dashboard-detail__speaker-identity space-y-3">
-              <div class="dashboard-detail__skeleton mx-auto h-10 w-56 max-w-full rounded-control"></div>
+              <div
+                class="dashboard-detail__skeleton mx-auto h-10 w-56 max-w-full rounded-control"
+              ></div>
               <div class="dashboard-detail__skeleton mx-auto h-4 w-44 max-w-full"></div>
             </div>
 
@@ -123,7 +125,9 @@
   } @else if (submission(); as currentSubmission) {
     <header class="dashboard-detail__page-header mb-8">
       <div class="dashboard-detail__review-header flex flex-col items-start gap-5">
-        <h1 class="m-0 text-[clamp(1.7rem,3vw,2.25rem)] font-extrabold leading-[1.1] text-foreground">
+        <h1
+          class="m-0 text-[clamp(1.7rem,3vw,2.25rem)] font-extrabold leading-[1.1] text-foreground"
+        >
           Submission review
         </h1>
         <div
@@ -362,7 +366,9 @@
                   />
                 </svg>
               </span>
-              <span class="dashboard-detail__speaker-link-label">{{ currentSubmission.speaker_email }}</span>
+              <span class="dashboard-detail__speaker-link-label">{{
+                currentSubmission.speaker_email
+              }}</span>
             </a>
 
             @if (speakerProfileLinks().length > 0) {

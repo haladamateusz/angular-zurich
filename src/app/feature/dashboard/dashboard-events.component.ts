@@ -3,16 +3,15 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { DashboardEvent } from '../../core/models/event.interface';
-import { DashboardSectionNavComponent } from './dashboard-section-nav.component';
 import { createPaginationItems } from './pagination';
 
 const EVENTS_PAGE_SIZE = 5;
 
 @Component({
   selector: 'app-dashboard-events',
-  imports: [DatePipe, RouterLink, DashboardSectionNavComponent],
+  imports: [DatePipe, RouterLink],
   templateUrl: './dashboard-events.component.html',
-  styleUrl: './dashboard-events.component.css'
+  styleUrl: './dashboard-events.component.css',
 })
 export class DashboardEventsComponent {
   private readonly supabaseService = inject(SupabaseService);

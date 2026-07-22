@@ -4,6 +4,7 @@
 
 .dashboard-section-nav {
   display: flex;
+  position: relative;
   align-items: center;
   gap: 0.25rem;
   width: fit-content;
@@ -16,12 +17,38 @@
   scrollbar-width: none;
 }
 
+.dashboard-section-nav__indicator {
+  position: absolute;
+  z-index: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  left: var(--dashboard-section-nav-indicator-start, 0.25rem);
+  width: var(--dashboard-section-nav-indicator-width, 0);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-background));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dashboard-section-nav--indicator-animated .dashboard-section-nav__indicator {
+  transition:
+    left 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 140ms ease;
+}
+
+.dashboard-section-nav--indicator-ready .dashboard-section-nav__indicator {
+  opacity: 1;
+}
+
 .dashboard-section-nav::-webkit-scrollbar {
   display: none;
 }
 
 .dashboard-section-nav__item {
   display: inline-flex;
+  position: relative;
+  z-index: 1;
   align-items: center;
   justify-content: center;
   min-height: 2.75rem;
@@ -36,33 +63,28 @@
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    background-color 140ms ease,
-    color 140ms ease;
+  transition: color 140ms ease;
 }
 
 .dashboard-section-nav__item:hover:not(.dashboard-section-nav__item--active) {
-  background: var(--color-control-muted-hover);
   color: var(--color-foreground);
 }
 
 .dashboard-section-nav__item:active:not(.dashboard-section-nav__item--active) {
-  background: var(--color-control-muted-active);
+  color: var(--color-foreground);
 }
 
 .dashboard-section-nav__item--active {
-  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-background));
   color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item--active:hover,
 .dashboard-section-nav__item--active:focus-visible {
-  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-background));
   color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item--active:active {
-  background: color-mix(in srgb, var(--color-primary) 26%, var(--color-background));
+  color: var(--color-primary-text-hover);
 }
 
 .dashboard-section-nav__item:focus-visible {
@@ -81,26 +103,28 @@
 }
 
 :host-context(.dark) .dashboard-section-nav__item:hover:not(.dashboard-section-nav__item--active) {
-  background: var(--color-surface-hover);
+  color: var(--color-foreground);
 }
 
 :host-context(.dark) .dashboard-section-nav__item:active:not(.dashboard-section-nav__item--active) {
-  background: var(--color-surface-active);
+  color: var(--color-foreground);
+}
+
+:host-context(.dark) .dashboard-section-nav__indicator {
+  background: color-mix(in srgb, var(--color-primary-400) 18%, var(--color-background));
 }
 
 :host-context(.dark) .dashboard-section-nav__item--active {
-  background: color-mix(in srgb, var(--color-primary-400) 18%, var(--color-background));
   color: var(--color-primary-text);
 }
 
 :host-context(.dark) .dashboard-section-nav__item--active:hover,
 :host-context(.dark) .dashboard-section-nav__item--active:focus-visible {
-  background: color-mix(in srgb, var(--color-primary-400) 24%, var(--color-background));
   color: var(--color-primary-text-hover);
 }
 
 :host-context(.dark) .dashboard-section-nav__item--active:active {
-  background: color-mix(in srgb, var(--color-primary-400) 30%, var(--color-background));
+  color: var(--color-primary-text-hover);
 }
 
 @media (max-width: 32rem) {
@@ -115,7 +139,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-section-nav__item {
+  .dashboard-section-nav__item,
+  .dashboard-section-nav__indicator {
     transition-duration: 1ms;
   }
 }
@@ -131,8 +156,12 @@
   }
 
   .dashboard-section-nav__item--active {
-    background: Highlight;
     color: HighlightText;
+    forced-color-adjust: none;
+  }
+
+  .dashboard-section-nav__indicator {
+    background: Highlight;
     forced-color-adjust: none;
   }
 
