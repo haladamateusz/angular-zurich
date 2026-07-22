@@ -1,3 +1,5 @@
+@import './dashboard-data-table.css';
+
 :host {
   display: block;
 }
@@ -14,8 +16,6 @@
 }
 
 .dashboard-events-table {
-  table-layout: fixed;
-  width: 100%;
   min-width: 48rem;
 }
 
@@ -33,17 +33,6 @@
 
 .dashboard-events-table__col-actions {
   width: 18%;
-}
-
-.dashboard-events-table__heading {
-  padding: 0.95rem 1.25rem;
-  text-align: left;
-  color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .dashboard-events-table__sort-button {
@@ -102,9 +91,6 @@
 
 .dashboard-events-table__cell {
   height: 5.35rem;
-  padding: 1rem 1.25rem;
-  vertical-align: middle;
-  color: color-mix(in srgb, var(--color-foreground) 78%, transparent);
 }
 
 .dashboard-events-table__cell--title {
@@ -229,12 +215,6 @@
 }
 
 @media (max-width: 767px) {
-  .dashboard-events-table__heading,
-  .dashboard-events-table__cell {
-    padding-left: 0.9rem;
-    padding-right: 0.9rem;
-  }
-
   .dashboard-events-table__pagination {
     align-items: flex-start;
     flex-direction: column;

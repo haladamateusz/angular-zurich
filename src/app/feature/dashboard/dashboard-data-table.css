@@ -1,0 +1,31 @@
+.dashboard-data-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.dashboard-data-table th {
+  padding: 0.95rem 1.25rem;
+  vertical-align: middle;
+  text-align: left;
+  color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dashboard-data-table td {
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
+  text-align: left;
+  color: color-mix(in srgb, var(--color-foreground) 78%, transparent);
+}
+
+@media (max-width: 767px) {
+  .dashboard-data-table th,
+  .dashboard-data-table td {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+}
