@@ -10,10 +10,8 @@ import {
   OrganizerTalkSubmission,
   TalkSubmissionStatus,
 } from '../../core/models/organizer-talk-submission.interface';
-import {
-  CreateEventSelectComponent,
-  CreateEventSelectOption,
-} from './create-event-select.component';
+import { CreateEventSelectOption } from './create-event-select.component';
+import { DashboardTableFilterComponent } from './dashboard-table-filter.component';
 import { createPaginationItems } from './pagination';
 
 type SortColumn = 'title' | 'author' | 'dateSent' | 'status';
@@ -37,7 +35,7 @@ interface DashboardTalkSubmission extends OrganizerTalkSubmission {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DatePipe, RouterLink, CreateEventSelectComponent],
+  imports: [DatePipe, RouterLink, DashboardTableFilterComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -46,6 +44,7 @@ export class DashboardComponent {
   private readonly supabaseService = inject(SupabaseService);
 
   protected readonly isLoading = signal(true);
+  private readonly hasLoaded = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly submissions = signal<DashboardTalkSubmission[]>([]);
   protected readonly totalSubmissionCount = signal(0);
@@ -153,12 +152,12 @@ export class DashboardComponent {
     void this.loadTalkSubmissions();
   }
 
-  protected updateTitleFilter(event: Event): void {
-    this.updateFilter(this.titleFilter, this.getControlValue(event));
+  protected updateTitleFilter(value: string): void {
+    this.updateFilter(this.titleFilter, value);
   }
 
-  protected updateAuthorFilter(event: Event): void {
-    this.updateFilter(this.authorFilter, this.getControlValue(event));
+  protected updateAuthorFilter(value: string): void {
+    this.updateFilter(this.authorFilter, value);
   }
 
   protected updateStatusFilter(value: string): void {
@@ -197,7 +196,7 @@ export class DashboardComponent {
   private async loadTalkSubmissions(): Promise<void> {
     const loadId = this.latestLoadId + 1;
     this.latestLoadId = loadId;
-    this.isLoading.set(true);
+    this.isLoading.set(!this.hasLoaded());
     this.errorMessage.set('');
 
     const { count, data, error } = await this.supabaseService.getOrganizerTalkSubmissions({
@@ -228,6 +227,7 @@ export class DashboardComponent {
 
     this.submissions.set(await this.createDashboardSubmissions(data ?? []));
     this.totalSubmissionCount.set(count ?? data?.length ?? 0);
+    this.hasLoaded.set(true);
     this.isLoading.set(false);
   }
 
@@ -252,14 +252,6 @@ export class DashboardComponent {
     const initials = `${firstName?.charAt(0) ?? ''}${secondName?.charAt(0) ?? ''}`;
 
     return initials ? initials.toUpperCase() : '?';
-  }
-
-  private getControlValue(event: Event): string {
-    const target = event.target;
-
-    return target instanceof HTMLInputElement || target instanceof HTMLSelectElement
-      ? target.value
-      : '';
   }
 
   private updateFilter<T extends string>(filter: WritableSignal<T>, value: T): void {

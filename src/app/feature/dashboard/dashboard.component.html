@@ -1,52 +1,15 @@
 <section>
-  <form
-    class="dashboard-filters"
-    aria-label="Filter talk submissions"
-    (submit)="$event.preventDefault()"
-  >
-    <label class="dashboard-filters__field">
-      <span class="dashboard-filters__label">Title</span>
-      <input
-        type="search"
-        class="dashboard-filters__control"
-        placeholder="Filter by title"
-        [value]="titleFilter()"
-        (input)="updateTitleFilter($event)"
-      />
-    </label>
-
-    <label class="dashboard-filters__field">
-      <span class="dashboard-filters__label">Author</span>
-      <input
-        type="search"
-        class="dashboard-filters__control"
-        placeholder="Filter by author"
-        [value]="authorFilter()"
-        (input)="updateAuthorFilter($event)"
-      />
-    </label>
-
-    <div class="dashboard-filters__field dashboard-filters__field--status">
-      <span id="submissionStatusFilterLabel" class="dashboard-filters__label">Status</span>
-      <app-create-event-select
-        controlId="submissionStatusFilter"
-        placeholder="All statuses"
-        [value]="statusFilter()"
-        [options]="statusSelectOptions"
-        ariaLabelledBy="submissionStatusFilterLabel"
-        (valueChange)="updateStatusFilter($event)"
-      />
-    </div>
-
-    <button
-      type="button"
-      class="dashboard-filters__clear app-button app-button--secondary app-button--compact"
-      [disabled]="!hasActiveFilters()"
-      (click)="clearFilters()"
-    >
-      Clear
-    </button>
-  </form>
+  <div class="dashboard-table-actions">
+    @if (hasActiveFilters()) {
+      <button
+        type="button"
+        class="app-button app-button--secondary app-button--compact"
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+    }
+  </div>
 
   @if (errorMessage()) {
     <div
@@ -62,7 +25,7 @@
       role="status"
       aria-busy="true"
     >
-      <div class="overflow-x-auto">
+      <div class="dashboard-table-scroll">
         <table class="dashboard-table dashboard-data-table min-w-full divide-y divide-navbar-line">
           <colgroup>
             <col class="dashboard-table__col-title" />
@@ -73,12 +36,13 @@
           <thead>
             <tr class="bg-card/70">
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('title')">
+                <span class="dashboard-table__heading-label">Title</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by title"
                   (click)="toggleSort('title')"
                 >
-                  <span>Title</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'title'"
@@ -107,7 +71,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -117,14 +81,24 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkTitleFilter"
+                  label="Title"
+                  type="text"
+                  [value]="titleFilter()"
+                  [active]="titleFilter().trim().length > 0"
+                  (valueChange)="updateTitleFilter($event)"
+                  (clear)="updateTitleFilter('')"
+                />
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('author')">
+                <span class="dashboard-table__heading-label">Author</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by author"
                   (click)="toggleSort('author')"
                 >
-                  <span>Author</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'author'"
@@ -153,7 +127,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -163,14 +137,24 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkAuthorFilter"
+                  label="Author"
+                  type="text"
+                  [value]="authorFilter()"
+                  [active]="authorFilter().trim().length > 0"
+                  (valueChange)="updateAuthorFilter($event)"
+                  (clear)="updateAuthorFilter('')"
+                />
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('dateSent')">
+                <span class="dashboard-table__heading-label">Date received</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by date received"
                   (click)="toggleSort('dateSent')"
                 >
-                  <span>Date received</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'dateSent'"
@@ -199,7 +183,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -214,12 +198,13 @@
                 class="dashboard-table__heading dashboard-table__heading--status"
                 [attr.aria-sort]="getAriaSort('status')"
               >
+                <span class="dashboard-table__heading-label">Status</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by status"
                   (click)="toggleSort('status')"
                 >
-                  <span>Status</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'status'"
@@ -248,7 +233,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -258,6 +243,17 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkStatusFilter"
+                  label="Status"
+                  type="select"
+                  alignment="end"
+                  [value]="statusFilter()"
+                  [options]="statusSelectOptions"
+                  [active]="statusFilter() !== ''"
+                  (valueChange)="updateStatusFilter($event)"
+                  (clear)="updateStatusFilter('')"
+                />
               </th>
             </tr>
           </thead>
@@ -331,7 +327,7 @@
     </div>
   } @else {
     <div class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background">
-      <div class="overflow-x-auto">
+      <div class="dashboard-table-scroll">
         <table class="dashboard-table dashboard-data-table min-w-full divide-y divide-navbar-line">
           <colgroup>
             <col class="dashboard-table__col-title" />
@@ -342,12 +338,13 @@
           <thead>
             <tr class="bg-card/70">
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('title')">
+                <span class="dashboard-table__heading-label">Title</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by title"
                   (click)="toggleSort('title')"
                 >
-                  <span>Title</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'title'"
@@ -376,7 +373,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -386,14 +383,24 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkTitleFilter"
+                  label="Title"
+                  type="text"
+                  [value]="titleFilter()"
+                  [active]="titleFilter().trim().length > 0"
+                  (valueChange)="updateTitleFilter($event)"
+                  (clear)="updateTitleFilter('')"
+                />
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('author')">
+                <span class="dashboard-table__heading-label">Author</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by author"
                   (click)="toggleSort('author')"
                 >
-                  <span>Author</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'author'"
@@ -422,7 +429,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -432,14 +439,24 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkAuthorFilter"
+                  label="Author"
+                  type="text"
+                  [value]="authorFilter()"
+                  [active]="authorFilter().trim().length > 0"
+                  (valueChange)="updateAuthorFilter($event)"
+                  (clear)="updateAuthorFilter('')"
+                />
               </th>
               <th class="dashboard-table__heading" [attr.aria-sort]="getAriaSort('dateSent')">
+                <span class="dashboard-table__heading-label">Date received</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by date received"
                   (click)="toggleSort('dateSent')"
                 >
-                  <span>Date received</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'dateSent'"
@@ -468,7 +485,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -483,12 +500,13 @@
                 class="dashboard-table__heading dashboard-table__heading--status"
                 [attr.aria-sort]="getAriaSort('status')"
               >
+                <span class="dashboard-table__heading-label">Status</span>
                 <button
                   type="button"
                   class="dashboard-table__sort-button app-button app-button--ghost app-button--compact"
+                  aria-label="Sort by status"
                   (click)="toggleSort('status')"
                 >
-                  <span>Status</span>
                   <span
                     class="dashboard-table__sort-indicator"
                     [class.dashboard-table__sort-indicator--active]="sortColumn() === 'status'"
@@ -517,7 +535,7 @@
                     } @else {
                       <svg viewBox="0 0 24 24" fill="none">
                         <path
-                          d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                          d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
                           stroke="currentColor"
                           stroke-width="1.8"
                           stroke-linecap="round"
@@ -527,6 +545,17 @@
                     }
                   </span>
                 </button>
+                <app-dashboard-table-filter
+                  controlId="talkStatusFilter"
+                  label="Status"
+                  type="select"
+                  alignment="end"
+                  [value]="statusFilter()"
+                  [options]="statusSelectOptions"
+                  [active]="statusFilter() !== ''"
+                  (valueChange)="updateStatusFilter($event)"
+                  (clear)="updateStatusFilter('')"
+                />
               </th>
             </tr>
           </thead>

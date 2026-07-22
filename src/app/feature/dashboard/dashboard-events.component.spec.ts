@@ -63,10 +63,10 @@ describe('DashboardEventsComponent', () => {
       element.querySelectorAll<HTMLAnchorElement>('.dashboard-events-table__edit-button'),
     );
 
-    expect(sortButtons.map((button) => button.textContent?.trim())).toEqual([
-      'Title',
-      'Date',
-      'Visibility',
+    expect(sortButtons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Sort by Title',
+      'Sort by Date',
+      'Sort by Visibility',
     ]);
     expect(actionsHeader?.querySelector('.sr-only')?.textContent?.trim()).toBe('Actions');
     expect(visibilityBadges.map((badge) => badge.textContent?.trim())).toEqual(['Public', 'Draft']);
@@ -92,15 +92,21 @@ describe('DashboardEventsComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
     const titleSortButton = Array.from(
       element.querySelectorAll<HTMLButtonElement>('.dashboard-events-table__sort-button'),
-    ).find((button) => button.textContent?.trim() === 'Title');
-    const dateHeader = Array.from(element.querySelectorAll<HTMLTableCellElement>('th')).find(
-      (header) => header.textContent?.trim() === 'Date',
-    );
-    const titleHeader = Array.from(element.querySelectorAll<HTMLTableCellElement>('th')).find(
-      (header) => header.textContent?.trim() === 'Title',
-    );
+    ).find((button) => button.getAttribute('aria-label') === 'Sort by Title');
+    const dateHeader = Array.from(
+      element.querySelectorAll<HTMLButtonElement>('.dashboard-events-table__sort-button'),
+    )
+      .find((button) => button.getAttribute('aria-label') === 'Sort by Date')
+      ?.closest('th');
+    const titleHeader = titleSortButton?.closest('th');
 
     expect(supabaseService.getDashboardEvents).toHaveBeenLastCalledWith({
+      filters: {
+        endDate: undefined,
+        startDate: undefined,
+        title: undefined,
+        visibility: undefined,
+      },
       page: 1,
       pageSize: 5,
       sortColumn: 'starts_at',
@@ -113,12 +119,78 @@ describe('DashboardEventsComponent', () => {
     await fixture.whenStable();
 
     expect(supabaseService.getDashboardEvents).toHaveBeenLastCalledWith({
+      filters: {
+        endDate: undefined,
+        startDate: undefined,
+        title: undefined,
+        visibility: undefined,
+      },
       page: 1,
       pageSize: 5,
       sortColumn: 'title',
       sortDirection: 'asc',
     });
     expect(titleHeader?.getAttribute('aria-sort')).toBe('ascending');
+  });
+
+  it('filters events by title, date range, and visibility', async () => {
+    const supabaseService = TestBed.inject(SupabaseService);
+    const fixture = TestBed.createComponent(DashboardEventsComponent);
+
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const filterTriggers = Array.from(
+      element.querySelectorAll<HTMLButtonElement>('.dashboard-table-filter__trigger'),
+    );
+    const component = fixture.componentInstance as unknown as {
+      updateDateRange(value: { endDate: string; startDate: string }): void;
+      updateVisibilityFilter(value: string): void;
+    };
+
+    expect(filterTriggers).toHaveLength(3);
+
+    filterTriggers[0]!.click();
+    fixture.detectChanges();
+
+    const titleInput = element.querySelector<HTMLInputElement>('input[type="search"]');
+
+    expect(titleInput).not.toBeNull();
+
+    titleInput!.value = 'Signals';
+    titleInput!.dispatchEvent(new Event('input'));
+
+    await fixture.whenStable();
+
+    const dateFilterTrigger = element.querySelectorAll<HTMLButtonElement>(
+      '.dashboard-table-filter__trigger',
+    )[1];
+
+    dateFilterTrigger!.click();
+    fixture.detectChanges();
+
+    expect(element.querySelectorAll('app-create-event-date-picker')).toHaveLength(2);
+
+    component.updateDateRange({
+      startDate: '2026-09-01',
+      endDate: '2026-09-30',
+    });
+    component.updateVisibilityFilter('public');
+
+    await fixture.whenStable();
+
+    expect(supabaseService.getDashboardEvents).toHaveBeenLastCalledWith({
+      filters: {
+        endDate: '2026-09-30',
+        startDate: '2026-09-01',
+        title: 'Signals',
+        visibility: 'public',
+      },
+      page: 1,
+      pageSize: 5,
+      sortColumn: 'starts_at',
+      sortDirection: 'desc',
+    });
   });
 
   it('renders the current pagination page as non-interactive', async () => {

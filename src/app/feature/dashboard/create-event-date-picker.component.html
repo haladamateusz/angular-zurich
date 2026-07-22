@@ -7,6 +7,7 @@
   [attr.aria-expanded]="isOpen()"
   [attr.aria-controls]="panelId()"
   [attr.aria-describedby]="ariaDescribedBy()"
+  [attr.aria-labelledby]="ariaLabelledBy()"
   [attr.aria-invalid]="invalid() && touched() ? 'true' : null"
   [class.create-event-date-picker__trigger--placeholder]="!value()"
   (click)="toggle()"
@@ -25,23 +26,24 @@
 </button>
 
 @if (isOpen()) {
-  <div [id]="panelId()" class="create-event-date-picker__dialog" role="dialog" aria-label="Choose event date">
+  <div
+    [id]="panelId()"
+    class="create-event-date-picker__dialog"
+    role="dialog"
+    aria-label="Choose event date"
+  >
     @if (isCalendarReady()) {
       <calendar-date
         #calendar
         [value]="value()"
-        [min]="today"
+        [min]="minDate()"
+        [max]="maxDate()"
         locale="en-GB"
         first-day-of-week="1"
         show-outside-days
         (change)="selectDate($event)"
       >
-        <svg
-          slot="previous"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-label="Previous month"
-        >
+        <svg slot="previous" viewBox="0 0 20 20" fill="currentColor" aria-label="Previous month">
           <path
             fill-rule="evenodd"
             d="M11.78 4.47a.75.75 0 0 1 0 1.06L7.31 10l4.47 4.47a.75.75 0 1 1-1.06 1.06l-5-5a.75.75 0 0 1 0-1.06l5-5a.75.75 0 0 1 1.06 0Z"

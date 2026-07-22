@@ -1,0 +1,91 @@
+<button
+  #trigger
+  type="button"
+  class="dashboard-table-filter__trigger app-button app-button--ghost app-button--compact"
+  [class.dashboard-table-filter__trigger--active]="active()"
+  [attr.aria-label]="'Filter by ' + label()"
+  [attr.aria-controls]="isOpen() ? popoverId() : null"
+  [attr.aria-expanded]="isOpen()"
+  (click)="toggle()"
+>
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path
+      d="M3 4h18l-7 8v6l-4 2v-8L3 4Z"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="1.8"
+    />
+  </svg>
+  <span class="sr-only">Filter by {{ label() }}</span>
+</button>
+
+@if (isOpen()) {
+  <div
+    [id]="popoverId()"
+    class="dashboard-table-filter__popover"
+    [class.dashboard-table-filter__popover--date-range]="type() === 'date-range'"
+    [attr.aria-label]="'Filter by ' + label()"
+    role="dialog"
+    (keydown)="onKeydown($event)"
+  >
+    <div class="dashboard-table-filter__popover-header">
+      <p [id]="controlId() + '-label'">{{ label() }}</p>
+      @if (active()) {
+        <button
+          type="button"
+          class="dashboard-table-filter__clear-button app-button app-button--ghost app-button--compact"
+          (click)="clearFilter()"
+        >
+          Clear
+        </button>
+      }
+    </div>
+
+    @if (type() === 'text') {
+      <input
+        type="search"
+        class="dashboard-table-filter__control"
+        [attr.aria-label]="'Filter by ' + label()"
+        [placeholder]="'Filter by ' + label().toLowerCase()"
+        [value]="value()"
+        (input)="updateValue($event)"
+      />
+    } @else if (type() === 'date-range') {
+      <div class="dashboard-table-filter__date-range">
+        <div class="dashboard-table-filter__date-field">
+          <span [id]="controlId() + '-from-label'">From</span>
+          <app-create-event-date-picker
+            [controlId]="controlId() + '-from'"
+            placeholder="Select date"
+            [value]="startDate()"
+            [minDate]="null"
+            [maxDate]="endDate() || null"
+            [ariaLabelledBy]="controlId() + '-from-label'"
+            (valueChange)="updateStartDate($event)"
+          />
+        </div>
+        <div class="dashboard-table-filter__date-field">
+          <span [id]="controlId() + '-to-label'">To</span>
+          <app-create-event-date-picker
+            [controlId]="controlId() + '-to'"
+            placeholder="Select date"
+            [value]="endDate()"
+            [minDate]="startDate() || null"
+            [ariaLabelledBy]="controlId() + '-to-label'"
+            (valueChange)="updateEndDate($event)"
+          />
+        </div>
+      </div>
+    } @else {
+      <app-create-event-select
+        [controlId]="controlId() + '-select'"
+        [placeholder]="'All ' + label().toLowerCase()"
+        [value]="value()"
+        [options]="options()"
+        [ariaLabelledBy]="controlId() + '-label'"
+        (valueChange)="valueChange.emit($event)"
+      />
+    }
+  </div>
+}

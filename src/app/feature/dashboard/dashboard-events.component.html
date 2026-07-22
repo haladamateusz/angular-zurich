@@ -28,7 +28,7 @@
       } @else {
         <svg viewBox="0 0 24 24" fill="none">
           <path
-            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+            d="m5 9.5L12 3l7 6.5M5 14.5 12 21l7-6.5"
             stroke="currentColor"
             stroke-width="1.8"
             stroke-linecap="round"
@@ -39,11 +39,32 @@
     </span>
   </ng-template>
 
-  <div class="dashboard-events-actions">
-    <a
-      routerLink="/dashboard/events/create"
-      class="dashboard-events-actions__create app-button app-button--compact"
+  <ng-template #sortButton let-column let-label="label">
+    <button
+      type="button"
+      class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+      [attr.aria-label]="'Sort by ' + label"
+      (click)="toggleSort(column)"
     >
+      <ng-container
+        [ngTemplateOutlet]="sortIndicator"
+        [ngTemplateOutletContext]="{ $implicit: column }"
+      />
+    </button>
+  </ng-template>
+
+  <div class="dashboard-table-actions">
+    @if (hasActiveFilters()) {
+      <button
+        type="button"
+        class="app-button app-button--secondary app-button--compact"
+        (click)="clearFilters()"
+      >
+        Clear filters
+      </button>
+    }
+
+    <a routerLink="/dashboard/events/create" class="app-button app-button--compact">
       <span>Create Event</span>
     </a>
   </div>
@@ -62,7 +83,7 @@
       role="status"
       aria-busy="true"
     >
-      <div class="overflow-x-auto">
+      <div class="dashboard-table-scroll">
         <table
           class="dashboard-events-table dashboard-data-table min-w-full divide-y divide-navbar-line"
         >
@@ -75,46 +96,58 @@
           <thead>
             <tr class="bg-card/70">
               <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('title')">
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('title')"
-                >
-                  <span>Title</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'title' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Title</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'title', label: 'Title' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventTitleFilter"
+                  label="Title"
+                  type="text"
+                  [value]="titleFilter()"
+                  [active]="titleFilter().trim().length > 0"
+                  (valueChange)="updateTitleFilter($event)"
+                  (clear)="updateTitleFilter('')"
+                />
               </th>
               <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('date')">
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('date')"
-                >
-                  <span>Date</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'date' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Date</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'date', label: 'Date' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventDateFilter"
+                  label="Date"
+                  type="date-range"
+                  [startDate]="startDateFilter()"
+                  [endDate]="endDateFilter()"
+                  [active]="startDateFilter() !== '' || endDateFilter() !== ''"
+                  (dateRangeChange)="updateDateRange($event)"
+                  (clear)="updateDateRange({ startDate: '', endDate: '' })"
+                />
               </th>
               <th
                 class="dashboard-events-table__heading"
                 [attr.aria-sort]="getAriaSort('visibility')"
               >
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('visibility')"
-                >
-                  <span>Visibility</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'visibility' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Visibility</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'visibility', label: 'Visibility' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventVisibilityFilter"
+                  label="Visibility"
+                  type="select"
+                  alignment="end"
+                  [value]="visibilityFilter()"
+                  [options]="visibilitySelectOptions"
+                  [active]="visibilityFilter() !== ''"
+                  (valueChange)="updateVisibilityFilter($event)"
+                  (clear)="updateVisibilityFilter('')"
+                />
               </th>
               <th class="dashboard-events-table__heading dashboard-events-table__heading--actions">
                 <span class="sr-only">Actions</span>
@@ -181,7 +214,7 @@
     </div>
   } @else {
     <div class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background">
-      <div class="overflow-x-auto">
+      <div class="dashboard-table-scroll">
         <table
           class="dashboard-events-table dashboard-data-table min-w-full divide-y divide-navbar-line"
         >
@@ -194,46 +227,58 @@
           <thead>
             <tr class="bg-card/70">
               <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('title')">
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('title')"
-                >
-                  <span>Title</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'title' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Title</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'title', label: 'Title' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventTitleFilter"
+                  label="Title"
+                  type="text"
+                  [value]="titleFilter()"
+                  [active]="titleFilter().trim().length > 0"
+                  (valueChange)="updateTitleFilter($event)"
+                  (clear)="updateTitleFilter('')"
+                />
               </th>
               <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('date')">
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('date')"
-                >
-                  <span>Date</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'date' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Date</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'date', label: 'Date' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventDateFilter"
+                  label="Date"
+                  type="date-range"
+                  [startDate]="startDateFilter()"
+                  [endDate]="endDateFilter()"
+                  [active]="startDateFilter() !== '' || endDateFilter() !== ''"
+                  (dateRangeChange)="updateDateRange($event)"
+                  (clear)="updateDateRange({ startDate: '', endDate: '' })"
+                />
               </th>
               <th
                 class="dashboard-events-table__heading"
                 [attr.aria-sort]="getAriaSort('visibility')"
               >
-                <button
-                  type="button"
-                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
-                  (click)="toggleSort('visibility')"
-                >
-                  <span>Visibility</span>
-                  <ng-container
-                    [ngTemplateOutlet]="sortIndicator"
-                    [ngTemplateOutletContext]="{ $implicit: 'visibility' }"
-                  />
-                </button>
+                <span class="dashboard-events-table__heading-label">Visibility</span>
+                <ng-container
+                  [ngTemplateOutlet]="sortButton"
+                  [ngTemplateOutletContext]="{ $implicit: 'visibility', label: 'Visibility' }"
+                />
+                <app-dashboard-table-filter
+                  controlId="eventVisibilityFilter"
+                  label="Visibility"
+                  type="select"
+                  alignment="end"
+                  [value]="visibilityFilter()"
+                  [options]="visibilitySelectOptions"
+                  [active]="visibilityFilter() !== ''"
+                  (valueChange)="updateVisibilityFilter($event)"
+                  (clear)="updateVisibilityFilter('')"
+                />
               </th>
               <th class="dashboard-events-table__heading dashboard-events-table__heading--actions">
                 <span class="sr-only">Actions</span>

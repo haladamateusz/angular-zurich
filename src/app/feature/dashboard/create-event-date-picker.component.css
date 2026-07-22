@@ -2,6 +2,9 @@
   position: relative;
   display: block;
   width: 100%;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .create-event-date-picker__trigger {

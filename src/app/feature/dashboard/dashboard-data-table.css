@@ -3,12 +3,30 @@
   width: 100%;
 }
 
+.dashboard-data-table thead {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 2.75rem;
+  gap: 0.5rem;
+}
+
+.dashboard-table-scroll {
+  overflow-x: auto;
+}
+
 .dashboard-data-table th {
+  position: relative;
   padding: 0.95rem 1.25rem;
   vertical-align: middle;
   text-align: left;
   color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
-  font-size: 0.74rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -27,5 +45,11 @@
   .dashboard-data-table td {
     padding-left: 0.9rem;
     padding-right: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-table-scroll {
+    overflow: visible;
   }
 }

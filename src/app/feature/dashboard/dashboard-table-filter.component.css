@@ -1,0 +1,105 @@
+:host {
+  display: inline-flex;
+  position: relative;
+  vertical-align: middle;
+}
+
+.dashboard-table-filter__trigger {
+  width: 2.75rem;
+  min-width: 2.75rem;
+  padding: 0;
+}
+
+.dashboard-table-filter__trigger--active {
+  color: var(--color-primary-text);
+}
+
+.dashboard-table-filter__trigger svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.dashboard-table-filter__trigger path {
+  stroke-width: 2;
+}
+
+.dashboard-table-filter__popover {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  width: min(19rem, calc(100vw - 2rem));
+  border: 1px solid var(--color-navbar-line);
+  border-radius: var(--radius-surface);
+  background: var(--color-background);
+  padding: 0.75rem;
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--color-foreground) 12%, transparent);
+}
+
+.dashboard-table-filter__popover--date-range {
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+:host(.dashboard-table-filter--end-aligned) .dashboard-table-filter__popover {
+  right: 0;
+  left: auto;
+}
+
+.dashboard-table-filter__popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.dashboard-table-filter__popover-header p {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.dashboard-table-filter__clear-button {
+  min-height: 2rem;
+}
+
+.dashboard-table-filter__control {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 88%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-background) 92%, transparent);
+  padding: 0 0.75rem;
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.dashboard-table-filter__control:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 2px;
+}
+
+.dashboard-table-filter__date-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.dashboard-table-filter__date-field {
+  display: grid;
+  min-width: 0;
+  gap: 0.35rem;
+  color: color-mix(in srgb, var(--color-foreground) 62%, transparent);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-table-filter__trigger,
+  .dashboard-table-filter__control {
+    transition-duration: 1ms;
+  }
+}

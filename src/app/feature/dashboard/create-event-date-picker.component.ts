@@ -62,16 +62,20 @@ export class CreateEventDatePickerComponent implements FormValueControl<string> 
   readonly value = model.required<string>();
   readonly controlId = input.required<string>();
   readonly placeholder = input.required<string>();
+  readonly minDate = input<string | null>(getLocalDateValue(new Date()));
+  readonly maxDate = input<string | null>(null);
   readonly ariaDescribedBy = input<string | null>(null);
+  readonly ariaLabelledBy = input<string | null>(null);
   readonly invalid = input(false);
   readonly touched = input(false);
   readonly touch = output<void>();
 
   protected readonly isOpen = signal(false);
   protected readonly isCalendarReady = signal(false);
-  protected readonly today = getLocalDateValue(new Date());
   protected readonly panelId = computed(() => `${this.controlId()}-dialog`);
-  protected readonly displayValue = computed(() => this.formatDate(this.value()) ?? this.placeholder());
+  protected readonly displayValue = computed(
+    () => this.formatDate(this.value()) ?? this.placeholder(),
+  );
 
   constructor() {
     if (this.isBrowser) {

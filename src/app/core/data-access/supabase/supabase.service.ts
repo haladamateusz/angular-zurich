@@ -65,9 +65,16 @@ export interface DashboardEventListOptions {
   pageSize: number;
   sortColumn: DashboardEventSortColumn;
   sortDirection: 'asc' | 'desc';
+  filters?: {
+    endDate?: string;
+    startDate?: string;
+    title?: string;
+    visibility?: DashboardEventVisibilityFilter;
+  };
 }
 
 export type DashboardEventSortColumn = 'public' | 'starts_at' | 'title';
+export type DashboardEventVisibilityFilter = 'draft' | 'public';
 
 @Service()
 export class SupabaseService {
@@ -304,12 +311,39 @@ export class SupabaseService {
 
     const from = Math.max(0, options.page - 1) * options.pageSize;
     const to = from + options.pageSize - 1;
-
-    return this.supabase
+    const filters = options.filters;
+    let query = this.supabase
       .from('Events')
-      .select('id, slug, title, starts_at, public', { count: 'exact' })
+      .select('id, slug, title, starts_at, public', { count: 'exact' });
+
+    if (filters?.title?.trim()) {
+      query = query.ilike('title', `%${filters.title.trim()}%`);
+    }
+
+    if (filters?.startDate) {
+      query = query.gte('starts_at', filters.startDate);
+    }
+
+    if (filters?.endDate) {
+      query = query.lt('starts_at', this.getNextDate(filters.endDate));
+    }
+
+    if (filters?.visibility === 'public') {
+      query = query.eq('public', true);
+    } else if (filters?.visibility === 'draft') {
+      query = query.or('public.eq.false,public.is.null');
+    }
+
+    return query
       .order(options.sortColumn, { ascending: options.sortDirection === 'asc' })
       .range(from, to);
+  }
+
+  private getNextDate(date: string): string {
+    const parsedDate = new Date(`${date}T00:00:00.000Z`);
+    parsedDate.setUTCDate(parsedDate.getUTCDate() + 1);
+
+    return parsedDate.toISOString().slice(0, 10);
   }
 
   async getAssignableTalks(): Promise<PostgrestResponse<AssignableTalk>> {
