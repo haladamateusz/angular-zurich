@@ -47,4 +47,15 @@ describe('PastEventsComponent', () => {
     expect(metadata?.querySelectorAll('.event-meta__icon')).toHaveLength(3);
     expect(metadata?.querySelectorAll('.event-meta__value')).toHaveLength(3);
   });
+
+  it('uses one native link for the full event card', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const card = root.querySelector<HTMLElement>('article.past-event-card');
+    const link = card?.querySelector<HTMLAnchorElement>(':scope > .past-event-card__link');
+
+    expect(link?.getAttribute('href')).toBe('/events/february-2026');
+    expect(link?.getAttribute('aria-labelledby')).toBe('past-event-title-event-1');
+    expect(link?.querySelector('h3')?.id).toBe('past-event-title-event-1');
+    expect(card?.querySelectorAll('a')).toHaveLength(1);
+  });
 });

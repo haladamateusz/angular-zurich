@@ -144,21 +144,27 @@
   display: flex;
   min-height: 100%;
   flex-direction: column;
-  cursor: pointer;
   border: 1px solid var(--color-card-line);
   border-radius: var(--radius-surface);
   background: var(--color-card);
   transition: border-color 180ms ease;
+}
+
+.past-event-card__link {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  cursor: pointer;
   color: inherit;
   text-decoration: none;
 }
 
 .past-event-card:hover,
-.past-event-card:focus-visible {
+.past-event-card:focus-within {
   border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-card-line));
 }
 
-.past-event-card:focus-visible {
+.past-event-card__link:focus-visible {
   outline: 3px solid var(--color-primary-focus);
   outline-offset: 2px;
 }
@@ -298,15 +304,8 @@
 }
 
 .past-event-card:hover .past-event-card__details-button,
-.past-event-card:focus-visible .past-event-card__details-button,
-.past-event-card__details-button:hover,
-.past-event-card__details-button:focus-visible {
+.past-event-card:focus-within .past-event-card__details-button {
   color: var(--color-primary-text-hover);
-  outline: none;
-}
-
-.past-event-card__details-button:focus-visible {
-  box-shadow: 0 2px 0 0 color-mix(in srgb, var(--color-primary) 32%, transparent);
 }
 
 .past-event-card__details-icon {
