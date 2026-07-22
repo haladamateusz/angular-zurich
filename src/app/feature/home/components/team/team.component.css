@@ -98,6 +98,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
   }
+
+  .member-card__label {
+    min-block-size: 2.9em;
+  }
 }
 
 .member-card {
@@ -154,7 +158,6 @@
   color: var(--color-muted-foreground-1);
   font-size: 0.82rem;
   line-height: 1.45;
-  min-block-size: 2.9em;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
