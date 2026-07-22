@@ -46,10 +46,7 @@ interface ReviewTalkSubmissionResult {
 }
 
 export type OrganizerTalkSubmissionSortColumn =
-  | 'created_at'
-  | 'speaker_name'
-  | 'status'
-  | 'talk_title';
+  'created_at' | 'speaker_name' | 'status' | 'talk_title';
 
 export interface OrganizerTalkSubmissionListOptions {
   page: number;
@@ -66,7 +63,11 @@ export interface OrganizerTalkSubmissionListOptions {
 export interface DashboardEventListOptions {
   page: number;
   pageSize: number;
+  sortColumn: DashboardEventSortColumn;
+  sortDirection: 'asc' | 'desc';
 }
+
+export type DashboardEventSortColumn = 'public' | 'starts_at' | 'title';
 
 @Service()
 export class SupabaseService {
@@ -98,7 +99,8 @@ export class SupabaseService {
 
     return this.supabase
       .from('Events')
-      .select(`
+      .select(
+        `
         id,
         slug,
         title,
@@ -130,7 +132,8 @@ export class SupabaseService {
             )
           )
         )
-      `)
+      `,
+      )
       .eq('public', true)
       .gt('starts_at', new Date().toISOString())
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
@@ -146,7 +149,8 @@ export class SupabaseService {
 
     const response = await this.supabase
       .from('Events')
-      .select(`
+      .select(
+        `
         id,
         slug,
         title,
@@ -180,7 +184,8 @@ export class SupabaseService {
             )
           )
         )
-      `)
+      `,
+      )
       .lt('starts_at', new Date().toISOString())
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .order('starts_at', { ascending: false })
@@ -196,7 +201,8 @@ export class SupabaseService {
 
     return this.supabase
       .from('Events')
-      .select(`
+      .select(
+        `
         id,
         slug,
         title,
@@ -231,7 +237,8 @@ export class SupabaseService {
             )
           )
         )
-      `)
+      `,
+      )
       .eq('slug', slug)
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .single();
@@ -244,7 +251,8 @@ export class SupabaseService {
 
     return this.supabase
       .from('Events')
-      .select(`
+      .select(
+        `
         id,
         slug,
         title,
@@ -280,7 +288,8 @@ export class SupabaseService {
             )
           )
         )
-      `)
+      `,
+      )
       .eq('id', eventId)
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
       .single();
@@ -299,7 +308,7 @@ export class SupabaseService {
     return this.supabase
       .from('Events')
       .select('id, slug, title, starts_at, public', { count: 'exact' })
-      .order('starts_at', { ascending: false })
+      .order(options.sortColumn, { ascending: options.sortDirection === 'asc' })
       .range(from, to);
   }
 
@@ -310,7 +319,8 @@ export class SupabaseService {
 
     const response = await this.supabase
       .from('Talks')
-      .select(`
+      .select(
+        `
         id,
         title,
         source_talk_submission_id,
@@ -320,7 +330,8 @@ export class SupabaseService {
             last_name
           )
         )
-      `)
+      `,
+      )
       .is('event_id', null)
       .not('source_talk_submission_id', 'is', null)
       .order('title', { ascending: true });
@@ -389,9 +400,8 @@ export class SupabaseService {
     }
 
     if (!response.ok) {
-      const errorMessage = body && 'error' in body && body.error
-        ? body.error
-        : 'create_event_failed';
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'create_event_failed';
 
       return {
         data: null,
@@ -449,9 +459,8 @@ export class SupabaseService {
     }
 
     if (!response.ok) {
-      const errorMessage = body && 'error' in body && body.error
-        ? body.error
-        : 'update_event_failed';
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'update_event_failed';
 
       return {
         data: null,
@@ -472,7 +481,8 @@ export class SupabaseService {
 
     return this.supabase
       .from('Talks')
-      .select(`
+      .select(
+        `
         id,
         title,
         description,
@@ -498,7 +508,8 @@ export class SupabaseService {
             abstract
           )
         )
-      `)
+      `,
+      )
       .order('title', { ascending: true });
   }
 
@@ -619,9 +630,8 @@ export class SupabaseService {
     }
 
     if (!response.ok) {
-      const errorMessage = body && 'error' in body && body.error
-        ? body.error
-        : 'review_talk_submission_failed';
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'review_talk_submission_failed';
 
       return {
         data: null,
@@ -764,9 +774,8 @@ export class SupabaseService {
     }
 
     if (!response.ok) {
-      const errorMessage = body && 'error' in body && body.error
-        ? body.error
-        : 'submit_talk_failed';
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'submit_talk_failed';
 
       return {
         data: null,
@@ -843,9 +852,8 @@ export class SupabaseService {
     }
 
     if (!response.ok) {
-      const errorMessage = body && 'error' in body && body.error
-        ? body.error
-        : 'update_talk_submission_failed';
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'update_talk_submission_failed';
 
       return {
         data: null,

@@ -1,15 +1,20 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import {
+  DashboardEventSortColumn,
+  SupabaseService,
+} from '../../core/data-access/supabase/supabase.service';
 import { DashboardEvent } from '../../core/models/event.interface';
 import { createPaginationItems } from './pagination';
 
 const EVENTS_PAGE_SIZE = 5;
+type SortColumn = 'date' | 'title' | 'visibility';
+type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-dashboard-events',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, NgTemplateOutlet, RouterLink],
   templateUrl: './dashboard-events.component.html',
   styleUrl: './dashboard-events.component.css',
 })
@@ -22,6 +27,8 @@ export class DashboardEventsComponent {
   protected readonly events = signal<DashboardEvent[]>([]);
   protected readonly totalEventCount = signal(0);
   protected readonly currentPage = signal(1);
+  protected readonly sortColumn = signal<SortColumn>('date');
+  protected readonly sortDirection = signal<SortDirection>('desc');
   protected readonly eventDetailsNavigationState = { fromDashboardEvents: true } as const;
 
   protected readonly hasEvents = computed(() => this.events().length > 0);
@@ -54,6 +61,26 @@ export class DashboardEventsComponent {
     this.goToPage(this.currentPage() + 1);
   }
 
+  protected toggleSort(column: SortColumn): void {
+    if (this.sortColumn() === column) {
+      this.sortDirection.update((direction) => (direction === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this.sortColumn.set(column);
+      this.sortDirection.set(column === 'date' ? 'desc' : 'asc');
+    }
+
+    this.currentPage.set(1);
+    void this.loadEvents();
+  }
+
+  protected getAriaSort(column: SortColumn): 'ascending' | 'descending' | 'none' {
+    if (this.sortColumn() !== column) {
+      return 'none';
+    }
+
+    return this.sortDirection() === 'asc' ? 'ascending' : 'descending';
+  }
+
   protected goToPage(page: number): void {
     const nextPage = Math.min(this.totalPages(), Math.max(1, page));
 
@@ -65,6 +92,17 @@ export class DashboardEventsComponent {
     void this.loadEvents();
   }
 
+  private getSortColumn(column: SortColumn): DashboardEventSortColumn {
+    switch (column) {
+      case 'date':
+        return 'starts_at';
+      case 'title':
+        return 'title';
+      case 'visibility':
+        return 'public';
+    }
+  }
+
   private async loadEvents(): Promise<void> {
     const loadId = this.latestLoadId + 1;
     this.latestLoadId = loadId;
@@ -74,6 +112,8 @@ export class DashboardEventsComponent {
     const { count, data, error } = await this.supabaseService.getDashboardEvents({
       page: this.currentPage(),
       pageSize: EVENTS_PAGE_SIZE,
+      sortColumn: this.getSortColumn(this.sortColumn()),
+      sortDirection: this.sortDirection(),
     });
 
     if (loadId !== this.latestLoadId) {

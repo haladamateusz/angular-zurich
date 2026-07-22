@@ -1,4 +1,44 @@
 <section>
+  <ng-template #sortIndicator let-column>
+    <span
+      class="dashboard-events-table__sort-indicator"
+      [class.dashboard-events-table__sort-indicator--active]="sortColumn() === column"
+      aria-hidden="true"
+    >
+      @if (sortColumn() === column && sortDirection() === 'asc') {
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      } @else if (sortColumn() === column && sortDirection() === 'desc') {
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      }
+    </span>
+  </ng-template>
+
   <div class="dashboard-events-actions">
     <a routerLink="/dashboard/events/create" class="dashboard-events-actions__create app-button">
       <span>Create Event</span>
@@ -29,11 +69,50 @@
           </colgroup>
           <thead>
             <tr class="bg-card/70">
-              <th class="dashboard-events-table__heading">Title</th>
-              <th class="dashboard-events-table__heading">Date</th>
-              <th class="dashboard-events-table__heading">Visibility</th>
+              <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('title')">
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('title')"
+                >
+                  <span>Title</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'title' }"
+                  />
+                </button>
+              </th>
+              <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('date')">
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('date')"
+                >
+                  <span>Date</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'date' }"
+                  />
+                </button>
+              </th>
+              <th
+                class="dashboard-events-table__heading"
+                [attr.aria-sort]="getAriaSort('visibility')"
+              >
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('visibility')"
+                >
+                  <span>Visibility</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'visibility' }"
+                  />
+                </button>
+              </th>
               <th class="dashboard-events-table__heading dashboard-events-table__heading--actions">
-                Actions
+                <span class="sr-only">Actions</span>
               </th>
             </tr>
           </thead>
@@ -107,11 +186,50 @@
           </colgroup>
           <thead>
             <tr class="bg-card/70">
-              <th class="dashboard-events-table__heading">Title</th>
-              <th class="dashboard-events-table__heading">Date</th>
-              <th class="dashboard-events-table__heading">Visibility</th>
+              <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('title')">
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('title')"
+                >
+                  <span>Title</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'title' }"
+                  />
+                </button>
+              </th>
+              <th class="dashboard-events-table__heading" [attr.aria-sort]="getAriaSort('date')">
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('date')"
+                >
+                  <span>Date</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'date' }"
+                  />
+                </button>
+              </th>
+              <th
+                class="dashboard-events-table__heading"
+                [attr.aria-sort]="getAriaSort('visibility')"
+              >
+                <button
+                  type="button"
+                  class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+                  (click)="toggleSort('visibility')"
+                >
+                  <span>Visibility</span>
+                  <ng-container
+                    [ngTemplateOutlet]="sortIndicator"
+                    [ngTemplateOutletContext]="{ $implicit: 'visibility' }"
+                  />
+                </button>
+              </th>
               <th class="dashboard-events-table__heading dashboard-events-table__heading--actions">
-                Actions
+                <span class="sr-only">Actions</span>
               </th>
             </tr>
           </thead>

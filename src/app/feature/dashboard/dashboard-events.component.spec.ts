@@ -41,14 +41,17 @@ describe('DashboardEventsComponent', () => {
     });
   });
 
-  it('links event titles and shows plain visibility with edit actions', async () => {
+  it('renders unified sortable headers with a visually hidden actions label', async () => {
     const fixture = TestBed.createComponent(DashboardEventsComponent);
 
     await fixture.whenStable();
 
     const element = fixture.nativeElement as HTMLElement;
-    const headers = Array.from(element.querySelectorAll('th')).map((header) =>
-      header.textContent?.trim(),
+    const sortButtons = Array.from(
+      element.querySelectorAll<HTMLButtonElement>('.dashboard-events-table__sort-button'),
+    );
+    const actionsHeader = element.querySelector<HTMLElement>(
+      '.dashboard-events-table__heading--actions',
     );
     const visibilityBadges = Array.from(
       element.querySelectorAll<HTMLElement>('.dashboard-events-table__visibility'),
@@ -60,8 +63,12 @@ describe('DashboardEventsComponent', () => {
       element.querySelectorAll<HTMLAnchorElement>('.dashboard-events-table__edit-button'),
     );
 
-    expect(headers).toContain('Visibility');
-    expect(headers).toContain('Actions');
+    expect(sortButtons.map((button) => button.textContent?.trim())).toEqual([
+      'Title',
+      'Date',
+      'Visibility',
+    ]);
+    expect(actionsHeader?.querySelector('.sr-only')?.textContent?.trim()).toBe('Actions');
     expect(visibilityBadges.map((badge) => badge.textContent?.trim())).toEqual(['Public', 'Draft']);
     expect(titleLinks.map((link) => link.getAttribute('href'))).toEqual([
       '/events/angular-signals',
@@ -74,6 +81,44 @@ describe('DashboardEventsComponent', () => {
       '/dashboard/events/event-draft',
     ]);
     expect(editLinks.every((link) => link.classList.contains('app-button--ghost'))).toBe(true);
+  });
+
+  it('sorts events by date descending initially and reloads when the sort changes', async () => {
+    const supabaseService = TestBed.inject(SupabaseService);
+    const fixture = TestBed.createComponent(DashboardEventsComponent);
+
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const titleSortButton = Array.from(
+      element.querySelectorAll<HTMLButtonElement>('.dashboard-events-table__sort-button'),
+    ).find((button) => button.textContent?.trim() === 'Title');
+    const dateHeader = Array.from(element.querySelectorAll<HTMLTableCellElement>('th')).find(
+      (header) => header.textContent?.trim() === 'Date',
+    );
+    const titleHeader = Array.from(element.querySelectorAll<HTMLTableCellElement>('th')).find(
+      (header) => header.textContent?.trim() === 'Title',
+    );
+
+    expect(supabaseService.getDashboardEvents).toHaveBeenLastCalledWith({
+      page: 1,
+      pageSize: 5,
+      sortColumn: 'starts_at',
+      sortDirection: 'desc',
+    });
+    expect(dateHeader?.getAttribute('aria-sort')).toBe('descending');
+    expect(titleSortButton).toBeDefined();
+
+    titleSortButton?.click();
+    await fixture.whenStable();
+
+    expect(supabaseService.getDashboardEvents).toHaveBeenLastCalledWith({
+      page: 1,
+      pageSize: 5,
+      sortColumn: 'title',
+      sortDirection: 'asc',
+    });
+    expect(titleHeader?.getAttribute('aria-sort')).toBe('ascending');
   });
 
   it('renders the current pagination page as non-interactive', async () => {
