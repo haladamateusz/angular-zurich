@@ -4,14 +4,15 @@
   vertical-align: middle;
 }
 
-.dashboard-table-filter__trigger {
+.dashboard-table-filter__trigger.app-button {
   width: 2.75rem;
   min-width: 2.75rem;
   padding: 0;
+  --app-button-foreground: color-mix(in srgb, var(--color-primary-text) 58%, transparent);
 }
 
-.dashboard-table-filter__trigger--active {
-  color: var(--color-primary-text);
+.dashboard-table-filter__trigger--active.app-button {
+  --app-button-foreground: var(--color-primary-text);
 }
 
 .dashboard-table-filter__trigger svg {

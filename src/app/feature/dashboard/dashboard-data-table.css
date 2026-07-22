@@ -40,6 +40,14 @@
   color: color-mix(in srgb, var(--color-foreground) 78%, transparent);
 }
 
+.dashboard-data-table__empty {
+  height: 8rem;
+  padding: 1rem 1.25rem;
+  color: color-mix(in srgb, var(--color-foreground) 62%, transparent);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
 @media (max-width: 767px) {
   .dashboard-data-table th,
   .dashboard-data-table td {

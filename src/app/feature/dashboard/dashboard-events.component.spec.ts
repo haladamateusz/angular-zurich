@@ -193,6 +193,38 @@ describe('DashboardEventsComponent', () => {
     });
   });
 
+  it('keeps header controls visible when filters return no events', async () => {
+    const supabaseService = TestBed.inject(SupabaseService);
+    const fixture = TestBed.createComponent(DashboardEventsComponent);
+
+    await fixture.whenStable();
+
+    vi.mocked(supabaseService.getDashboardEvents).mockResolvedValue({
+      count: 0,
+      data: [],
+      error: null,
+      success: true,
+      status: 200,
+      statusText: 'OK',
+    });
+
+    const component = fixture.componentInstance as unknown as {
+      updateVisibilityFilter(value: string): void;
+    };
+
+    component.updateVisibilityFilter('public');
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('.dashboard-events-table')).not.toBeNull();
+    expect(element.querySelectorAll('.dashboard-events-table__sort-button')).toHaveLength(3);
+    expect(element.querySelectorAll('.dashboard-table-filter__trigger')).toHaveLength(3);
+    expect(element.querySelector('.dashboard-data-table__empty')?.textContent?.trim()).toBe(
+      'No matching events.',
+    );
+  });
+
   it('renders the current pagination page as non-interactive', async () => {
     const supabaseService = TestBed.inject(SupabaseService);
 

@@ -319,12 +319,6 @@
       </div>
       <span class="sr-only">Loading talk submissions…</span>
     </div>
-  } @else if (!hasSubmissions()) {
-    <div
-      class="mt-6 rounded-surface border border-navbar-line bg-background px-4 py-6 text-sm text-foreground/70"
-    >
-      {{ hasActiveFilters() ? 'No matching talk submissions.' : 'No talk submissions yet.' }}
-    </div>
   } @else {
     <div class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background">
       <div class="dashboard-table-scroll">
@@ -560,120 +554,134 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-navbar-line">
-            @for (submission of submissions(); track submission.id) {
-              <tr class="dashboard-table__row">
-                <td class="dashboard-table__cell dashboard-table__cell--title">
-                  <a
-                    [routerLink]="['/dashboard', 'talk-submissions', submission.id]"
-                    class="dashboard-table__title-link"
-                  >
-                    {{ submission.talk_title }}
-                  </a>
-                </td>
-                <td class="dashboard-table__cell">
-                  <div class="dashboard-table__author-cell">
-                    <div class="dashboard-table__author-avatar" aria-hidden="true">
-                      @if (submission.speakerPictureUrl) {
-                        <img
-                          [src]="submission.speakerPictureUrl"
-                          alt=""
-                          class="dashboard-table__author-image"
-                          loading="lazy"
-                        />
-                      } @else {
-                        <span>{{ submission.speakerInitials }}</span>
-                      }
+            @if (hasSubmissions()) {
+              @for (submission of submissions(); track submission.id) {
+                <tr class="dashboard-table__row">
+                  <td class="dashboard-table__cell dashboard-table__cell--title">
+                    <a
+                      [routerLink]="['/dashboard', 'talk-submissions', submission.id]"
+                      class="dashboard-table__title-link"
+                    >
+                      {{ submission.talk_title }}
+                    </a>
+                  </td>
+                  <td class="dashboard-table__cell">
+                    <div class="dashboard-table__author-cell">
+                      <div class="dashboard-table__author-avatar" aria-hidden="true">
+                        @if (submission.speakerPictureUrl) {
+                          <img
+                            [src]="submission.speakerPictureUrl"
+                            alt=""
+                            class="dashboard-table__author-image"
+                            loading="lazy"
+                          />
+                        } @else {
+                          <span>{{ submission.speakerInitials }}</span>
+                        }
+                      </div>
+                      <div class="dashboard-table__author-copy">
+                        <p class="dashboard-table__author">{{ submission.speaker_name }}</p>
+                        @if (submission.speaker_label) {
+                          <p class="dashboard-table__author-label">
+                            {{ submission.speaker_label }}
+                          </p>
+                        }
+                      </div>
                     </div>
-                    <div class="dashboard-table__author-copy">
-                      <p class="dashboard-table__author">{{ submission.speaker_name }}</p>
-                      @if (submission.speaker_label) {
-                        <p class="dashboard-table__author-label">
-                          {{ submission.speaker_label }}
-                        </p>
-                      }
-                    </div>
-                  </div>
-                </td>
-                <td class="dashboard-table__cell whitespace-nowrap">
-                  {{ submission.created_at | date: 'd MMM yyyy, HH:mm' }}
-                </td>
-                <td class="dashboard-table__cell dashboard-table__cell--status">
-                  <span
-                    class="dashboard-status"
-                    [class.dashboard-status--submitted]="
-                      submission.status === 'initially_submitted'
-                    "
-                    [class.dashboard-status--approved]="submission.status === 'approved'"
-                    [class.dashboard-status--assigned]="submission.status === 'assigned_to_event'"
-                    [class.dashboard-status--changes]="
-                      submission.status === 'changes_requested' ||
-                      submission.status === 'changes_submitted'
-                    "
-                    [class.dashboard-status--rejected]="submission.status === 'rejected'"
-                    [class.dashboard-status--adjusted]="submission.status === 'adjusted'"
-                  >
-                    {{ formatStatus(submission.status) }}
-                  </span>
+                  </td>
+                  <td class="dashboard-table__cell whitespace-nowrap">
+                    {{ submission.created_at | date: 'd MMM yyyy, HH:mm' }}
+                  </td>
+                  <td class="dashboard-table__cell dashboard-table__cell--status">
+                    <span
+                      class="dashboard-status"
+                      [class.dashboard-status--submitted]="
+                        submission.status === 'initially_submitted'
+                      "
+                      [class.dashboard-status--approved]="submission.status === 'approved'"
+                      [class.dashboard-status--assigned]="submission.status === 'assigned_to_event'"
+                      [class.dashboard-status--changes]="
+                        submission.status === 'changes_requested' ||
+                        submission.status === 'changes_submitted'
+                      "
+                      [class.dashboard-status--rejected]="submission.status === 'rejected'"
+                      [class.dashboard-status--adjusted]="submission.status === 'adjusted'"
+                    >
+                      {{ formatStatus(submission.status) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td colspan="4" class="dashboard-data-table__empty">
+                  {{
+                    hasActiveFilters()
+                      ? 'No matching talk submissions.'
+                      : 'No talk submissions yet.'
+                  }}
                 </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
-      <div class="dashboard-table__pagination" aria-label="Talk submissions pagination">
-        <p class="dashboard-table__pagination-summary">
-          Showing {{ currentPageStart() }}-{{ currentPageEnd() }} of {{ totalSubmissionCount() }}
-        </p>
+      @if (hasSubmissions()) {
+        <div class="dashboard-table__pagination" aria-label="Talk submissions pagination">
+          <p class="dashboard-table__pagination-summary">
+            Showing {{ currentPageStart() }}-{{ currentPageEnd() }} of {{ totalSubmissionCount() }}
+          </p>
 
-        @if (totalPages() > 1) {
-          <nav class="dashboard-table__pagination-controls" aria-label="Talk submissions pages">
-            <button
-              type="button"
-              class="dashboard-table__pagination-button app-button app-button--secondary app-button--compact"
-              [disabled]="currentPage() === 1"
-              (click)="goToPreviousPage()"
-            >
-              Previous
-            </button>
+          @if (totalPages() > 1) {
+            <nav class="dashboard-table__pagination-controls" aria-label="Talk submissions pages">
+              <button
+                type="button"
+                class="dashboard-table__pagination-button app-button app-button--secondary app-button--compact"
+                [disabled]="currentPage() === 1"
+                (click)="goToPreviousPage()"
+              >
+                Previous
+              </button>
 
-            <div class="dashboard-table__pagination-pages">
-              @for (item of paginationItems(); track item.key) {
-                @if (item.type === 'ellipsis') {
-                  <span class="app-pagination-ellipsis" aria-hidden="true">&hellip;</span>
-                } @else {
-                  @if (item.page === currentPage()) {
-                    <span
-                      class="dashboard-table__pagination-page app-pagination-current"
-                      aria-current="page"
-                      [attr.aria-label]="'Current page, ' + item.page"
-                    >
-                      {{ item.page }}
-                    </span>
+              <div class="dashboard-table__pagination-pages">
+                @for (item of paginationItems(); track item.key) {
+                  @if (item.type === 'ellipsis') {
+                    <span class="app-pagination-ellipsis" aria-hidden="true">&hellip;</span>
                   } @else {
-                    <button
-                      type="button"
-                      class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
-                      [attr.aria-label]="'Go to page ' + item.page"
-                      (click)="goToPage(item.page)"
-                    >
-                      {{ item.page }}
-                    </button>
+                    @if (item.page === currentPage()) {
+                      <span
+                        class="dashboard-table__pagination-page app-pagination-current"
+                        aria-current="page"
+                        [attr.aria-label]="'Current page, ' + item.page"
+                      >
+                        {{ item.page }}
+                      </span>
+                    } @else {
+                      <button
+                        type="button"
+                        class="dashboard-table__pagination-page app-button app-button--ghost app-button--page"
+                        [attr.aria-label]="'Go to page ' + item.page"
+                        (click)="goToPage(item.page)"
+                      >
+                        {{ item.page }}
+                      </button>
+                    }
                   }
                 }
-              }
-            </div>
+              </div>
 
-            <button
-              type="button"
-              class="dashboard-table__pagination-button app-button app-button--secondary app-button--compact"
-              [disabled]="currentPage() === totalPages()"
-              (click)="goToNextPage()"
-            >
-              Next
-            </button>
-          </nav>
-        }
-      </div>
+              <button
+                type="button"
+                class="dashboard-table__pagination-button app-button app-button--secondary app-button--compact"
+                [disabled]="currentPage() === totalPages()"
+                (click)="goToNextPage()"
+              >
+                Next
+              </button>
+            </nav>
+          }
+        </div>
+      }
     </div>
   }
 </section>
