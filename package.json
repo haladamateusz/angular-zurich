@@ -6,7 +6,6 @@
     "start": "ng serve",
     "build": "node ./scripts/sync-production-env.mjs && ng build --configuration production",
     "build:development": "ng build --configuration development",
-    "build:gh-pages": "node ./scripts/sync-production-env.mjs && ng build --configuration production,github-pages",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:angular-zurich": "node dist/angular-zurich/server/server.mjs",
