@@ -118,7 +118,7 @@ const EMPTY_TALK_SUBMISSIONS_RESPONSE = {
   success: true,
 } satisfies PostgrestResponse<OrganizerTalkSubmission>;
 
-function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
+function createEventResponse(event: Event | null): PostgrestSingleResponse<Event | null> {
   return {
     data: event,
     error: null,
@@ -130,7 +130,7 @@ function createEventResponse(event: Event): PostgrestSingleResponse<Event> {
 }
 
 describe('App', () => {
-  let upcomingPublicEventResponse = createEventResponse(DEFAULT_EVENT);
+  let upcomingPublicEventResponse: PostgrestSingleResponse<Event | null> = createEventResponse(DEFAULT_EVENT);
   const isAuthenticated = signal(false);
   const userProfile = signal<{ avatarUrl: string | null; displayName: string } | null>(null);
 
@@ -235,6 +235,24 @@ describe('App', () => {
 
     expect(compiled.textContent).not.toContain(DEFAULT_EVENT.title);
     expect(compiled.textContent).not.toContain('Next on Angular Zürich');
+  });
+
+  it('keeps the centered hero when no future public event is available', async () => {
+    upcomingPublicEventResponse = createEventResponse(null);
+
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('.event-preview')).toBeNull();
+    expect(compiled.querySelector('.hero-content')?.classList).toContain('hero-content--solo');
+    expect(compiled.querySelector('.hero-copy')?.classList).toContain('hero-copy--solo');
   });
 
   it('redirects unauthenticated users away from the dashboard route', async () => {
