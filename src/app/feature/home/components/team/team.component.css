@@ -96,7 +96,7 @@
 
   .team__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: stretch;
+    align-items: start;
   }
 
   .member-card__label {
@@ -109,7 +109,7 @@
   width: 100%;
   border: 1px solid var(--color-card-line);
   border-radius: var(--radius-surface);
-  padding: 1.25rem 1.35rem;
+  padding: 1rem 1.35rem 0.25rem;
   background: var(--color-card);
   text-align: left;
 }
@@ -136,7 +136,6 @@
   flex: 1;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 0.75rem;
 }
 
 .member-card__identity {
@@ -167,14 +166,13 @@
 .member-card__links {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 0;
   margin-inline-start: -0.6875rem;
 }
 
 .member-card__link {
   display: inline-flex;
-  align-items: flex-start;
   justify-content: center;
 }
 
