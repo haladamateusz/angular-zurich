@@ -4,7 +4,9 @@
 
 .dashboard-events-actions {
   display: flex;
+  align-items: flex-end;
   justify-content: flex-end;
+  min-height: 4.3rem;
 }
 
 .dashboard-events-actions__create {
