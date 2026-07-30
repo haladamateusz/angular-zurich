@@ -7,6 +7,8 @@ import { TeamComponent } from './components/team/team.component';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
 import { Sponsor } from '../../core/models/sponsor.interface';
+import { HOME_STATE_KEYS } from './data-access/home-state.keys';
+import { HomeTransferStateService } from './data-access/home-transfer-state.service';
 
 const EMPTY_EVENT: Event = {
   title: '',
@@ -33,48 +35,52 @@ const EMPTY_SPONSORS: Sponsor[] = [];
   selector: 'app-home',
   imports: [HeroComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
 })
 export class HomeComponent {
   private readonly supabaseService = inject(SupabaseService);
+  private readonly homeTransferState = inject(HomeTransferStateService);
 
   protected readonly upcomingPublicEvent = resource<Event, void>({
     defaultValue: EMPTY_EVENT,
-    loader: async () => {
-      const { data, error } = await this.supabaseService.getUpcomingPublicEvent();
+    loader: () =>
+      this.homeTransferState.load(HOME_STATE_KEYS.upcomingPublicEvent, async () => {
+        const { data, error } = await this.supabaseService.getUpcomingPublicEvent();
 
-      if (error) {
-        throw error;
-      }
+        if (error) {
+          throw error;
+        }
 
-      return data ?? EMPTY_EVENT;
-    },
+        return data ?? EMPTY_EVENT;
+      }),
   });
 
   protected readonly sponsors = resource<Sponsor[], void>({
     defaultValue: EMPTY_SPONSORS,
-    loader: async () => {
-      const { data, error } = await this.supabaseService.getSponsors();
+    loader: () =>
+      this.homeTransferState.load(HOME_STATE_KEYS.sponsors, async () => {
+        const { data, error } = await this.supabaseService.getSponsors();
 
-      if (error) {
-        throw error;
-      }
+        if (error) {
+          throw error;
+        }
 
-      return data ?? EMPTY_SPONSORS;
-    },
+        return data ?? EMPTY_SPONSORS;
+      }),
   });
 
   protected readonly pastEvents = resource<Event[], void>({
     defaultValue: EMPTY_EVENTS,
-    loader: async () => {
-      const { data, error } = await this.supabaseService.getPastEvents();
+    loader: () =>
+      this.homeTransferState.load(HOME_STATE_KEYS.pastEvents, async () => {
+        const { data, error } = await this.supabaseService.getPastEvents();
 
-      if (error) {
-        throw error;
-      }
+        if (error) {
+          throw error;
+        }
 
-      return data ?? EMPTY_EVENTS;
-    },
+        return data ?? EMPTY_EVENTS;
+      }),
   });
 
   protected readonly upcomingEvent = computed(() => {

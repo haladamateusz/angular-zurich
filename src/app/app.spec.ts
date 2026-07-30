@@ -348,20 +348,20 @@ describe('App', () => {
     const router = TestBed.inject(Router);
 
     await router.navigateByUrl('/dashboard/events/create');
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(router.url).toBe('/dashboard/events/create');
-    expect(compiled.querySelector('h1')?.textContent).toContain('Create event');
-    expect(compiled.textContent).toContain('Date');
-    expect(compiled.textContent).toContain('Time');
-    expect(compiled.textContent).toContain('Venue');
-    expect(compiled.textContent).toContain('Meetup URL');
-    expect(compiled.textContent).toContain('Talk 1');
-    expect(compiled.textContent).toContain('Talk 2');
-    expect(compiled.textContent).toContain('Add a third talk');
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(compiled.querySelector('h1')?.textContent).toContain('Create event');
+      expect(compiled.textContent).toContain('Date');
+      expect(compiled.textContent).toContain('Time');
+      expect(compiled.textContent).toContain('Venue');
+      expect(compiled.textContent).toContain('Meetup URL');
+      expect(compiled.textContent).toContain('Talk 1');
+      expect(compiled.textContent).toContain('Talk 2');
+      expect(compiled.textContent).toContain('Add a third talk');
+    });
   });
 });
