@@ -1,0 +1,82 @@
+<section class="app-toast-outlet" aria-label="Notifications">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <article
+      class="app-toast"
+      [class.app-toast--error]="toast.variant === 'error'"
+      [class.app-toast--info]="toast.variant === 'info'"
+      [class.app-toast--success]="toast.variant === 'success'"
+      [class.app-toast--warning]="toast.variant === 'warning'"
+      [attr.aria-live]="toast.variant === 'error' ? 'assertive' : 'polite'"
+      [attr.role]="toast.variant === 'error' ? 'alert' : 'status'"
+      aria-atomic="true"
+    >
+      <div class="app-toast__icon" aria-hidden="true">
+        @switch (toast.variant) {
+          @case ('success') {
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0Zm-3.47-3.03a.75.75 0 0 0-1.08.02L7.48 9.42 5.38 7.32a.75.75 0 0 0-1.06 1.06l2.65 2.65a.75.75 0 0 0 1.13-.08l3.01-4.9a.75.75 0 0 0-.02-1.08Z"
+              />
+            </svg>
+          }
+          @case ('warning') {
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm.93 4.59-1 4.7c-.07.34.03.53.3.53.2 0 .49-.07.69-.25l-.09.42c-.29.35-.92.6-1.47.6-.7 0-1-.42-.81-1.32l.74-3.47c.06-.29.01-.4-.29-.47l-.45-.08.08-.38 2.29-.29Z"
+              />
+              <circle cx="8" cy="3.5" r="1" />
+            </svg>
+          }
+          @case ('error') {
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM5.35 4.65 8 7.29l2.65-2.65a.5.5 0 0 1 .7.71L8.71 8l2.65 2.65a.5.5 0 0 1-.71.7L8 8.71l-2.65 2.65a.5.5 0 0 1-.7-.71L7.29 8 4.65 5.35a.5.5 0 1 1 .7-.7Z"
+              />
+            </svg>
+          }
+          @default {
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16Zm.93-9.41-1 4.7c-.07.34.03.53.3.53.2 0 .49-.07.69-.25l-.09.42c-.29.35-.92.6-1.47.6-.7 0-1-.42-.81-1.32l.74-3.47c.06-.29.01-.4-.29-.47l-.45-.08.08-.38 2.29-.29ZM9 3.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+              />
+            </svg>
+          }
+        }
+      </div>
+
+      <div class="app-toast__content">
+        @if (toast.title) {
+          <p class="app-toast__title">{{ toast.title }}</p>
+        }
+        <p class="app-toast__message">{{ toast.message }}</p>
+      </div>
+
+      @if (toast.dismissible) {
+        <button
+          type="button"
+          class="app-toast__dismiss"
+          (click)="toastService.dismiss(toast.id)"
+          [attr.aria-label]="'Dismiss ' + (toast.title || toast.message)"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18" />
+          </svg>
+        </button>
+      }
+
+      @if (toast.duration > 0) {
+        <span
+          class="app-toast__progress"
+          [style.--app-toast-duration]="toast.duration + 'ms'"
+          aria-hidden="true"
+        ></span>
+      }
+    </article>
+  }
+</section>
