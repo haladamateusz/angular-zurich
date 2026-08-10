@@ -21,10 +21,22 @@
       >
         <div class="space-y-4">
           <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
-            {{ isSubmissionIdInvalid() ? 'Invalid submission id' : 'Talk proposal received' }}
+            {{
+              isSubmissionIdInvalid()
+                ? 'Invalid submission id'
+                : hasSubmittedChanges()
+                  ? 'Changes received'
+                  : 'Talk proposal received'
+            }}
           </h1>
           @if (isSubmissionIdInvalid()) {
             <p class="text-sm leading-8 text-destructive sm:text-base">Invalid submission id</p>
+          } @else if (hasSubmittedChanges()) {
+            <p class="text-sm leading-8 text-foreground/85 sm:text-base">
+              Thanks for sending through the requested changes. We have received your updated
+              proposal and returned it to our review queue. We will be in touch once the review is
+              complete.
+            </p>
           } @else {
             <p class="text-sm leading-8 text-foreground/85 sm:text-base">
               Thanks for sending this over. We stored your submission in our review queue and will

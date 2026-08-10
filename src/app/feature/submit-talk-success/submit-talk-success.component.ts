@@ -32,6 +32,9 @@ export class SubmitTalkSuccessComponent {
   protected readonly isDeviceRecognized = computed(() =>
     this.talkSubmissionDeviceAuthService.hasEditToken(this.submissionId()),
   );
+  protected readonly hasSubmittedChanges = computed(
+    () => this.statusSummary()?.status === 'changes_submitted',
+  );
 
   constructor() {
     void this.loadSubmissionStatus();
