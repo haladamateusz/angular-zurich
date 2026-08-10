@@ -169,10 +169,11 @@
   /* DESTRUCTIVE                                  */
   /* ============================================ */
   
-  --destructive: var(--color-red-500);
+  --destructive: #c41e3a;
   --destructive-foreground: var(--color-white);
-  --destructive-hover: var(--color-red-600);
-  --destructive-focus: var(--color-red-600);
+  --destructive-hover: #a71932;
+  --destructive-active: #851126;
+  --destructive-focus: #c41e3a;
 
   /* ============================================ */
   /* WORKFLOW STATUS                              */
@@ -613,10 +614,11 @@
   --muted-active: var(--color-zuerich-blue-gray-700);
   
   /* DESTRUCTIVE */
-  --destructive: var(--color-red-500);
-  --destructive-foreground: var(--color-white);
-  --destructive-hover: var(--color-red-600);
-  --destructive-focus: var(--color-red-600);
+  --destructive: #ff7a91;
+  --destructive-foreground: #25060e;
+  --destructive-hover: #ff5f7a;
+  --destructive-active: #e84b68;
+  --destructive-focus: #ff9cac;
 
   /* WORKFLOW STATUS */
   --color-status-submitted-accent: var(--color-amber-400);

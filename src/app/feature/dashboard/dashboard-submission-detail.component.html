@@ -139,7 +139,7 @@
         >
           <button
             type="button"
-            class="dashboard-detail__action-button dashboard-detail__action-button--reject app-button app-button--danger"
+            class="dashboard-detail__action-button dashboard-detail__action-button--reject app-button"
             [disabled]="!canStartReviewAction('reject')"
             (click)="openReviewMessageModal('reject')"
           >
@@ -583,7 +583,6 @@
               type="button"
               class="dashboard-detail__action-button dashboard-detail__action-button--changes dashboard-detail__modal-send app-button app-button--secondary"
               [class.dashboard-detail__action-button--reject]="messageAction === 'reject'"
-              [class.app-button--danger]="messageAction === 'reject'"
               [disabled]="!canSubmitReviewAction(messageAction)"
               (click)="submitReviewAction(messageAction)"
             >

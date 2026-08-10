@@ -159,23 +159,23 @@
   min-width: 10.75rem;
 }
 
-button.dashboard-detail__action-button--remove-outline {
-  --app-button-background: transparent;
-  --app-button-background-hover: color-mix(in srgb, var(--color-red-600) 14%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-red-600) 22%, transparent);
-  --app-button-foreground: var(--color-red-600);
-  --app-button-focus: var(--color-red-600);
-
-  border: 1px solid var(--color-red-600);
+/* Use a subdued danger treatment for rejection; reserve solid danger for removal confirmation. */
+button.dashboard-detail__action-button--reject {
+  --app-button-background: color-mix(in srgb, var(--destructive) 14%, transparent);
+  --app-button-background-hover: color-mix(in srgb, var(--destructive) 22%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--destructive) 30%, transparent);
+  --app-button-foreground: var(--destructive);
+  --app-button-focus: var(--destructive-focus);
 }
 
-.dark button.dashboard-detail__action-button--remove-outline {
-  --app-button-background-hover: color-mix(in srgb, var(--color-red-400) 16%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-red-400) 24%, transparent);
-  --app-button-foreground: var(--color-red-400);
-  --app-button-focus: var(--color-red-400);
+button.dashboard-detail__action-button--remove-outline {
+  --app-button-background: transparent;
+  --app-button-background-hover: color-mix(in srgb, var(--destructive) 14%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--destructive) 22%, transparent);
+  --app-button-foreground: var(--destructive);
+  --app-button-focus: var(--destructive-focus);
 
-  border-color: var(--color-red-400);
+  border: 1px solid var(--destructive);
 }
 
 .dashboard-detail__action-row--header .dashboard-detail__action-button--remove {

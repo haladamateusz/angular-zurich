@@ -216,18 +216,11 @@
 }
 
 :is(button, a, summary).app-button.app-button--danger {
-  --app-button-background: var(--color-red-700);
-  --app-button-background-hover: var(--color-red-800);
-  --app-button-background-active: var(--color-red-900);
-  --app-button-foreground: var(--color-white);
-  --app-button-focus: var(--color-red-700);
-}
-
-.dark :is(button, a, summary).app-button.app-button--danger {
-  --app-button-background: var(--color-red-600);
-  --app-button-background-hover: var(--color-red-700);
-  --app-button-background-active: var(--color-red-800);
-  --app-button-focus: var(--color-red-400);
+  --app-button-background: var(--destructive);
+  --app-button-background-hover: var(--destructive-hover);
+  --app-button-background-active: var(--destructive-active);
+  --app-button-foreground: var(--destructive-foreground);
+  --app-button-focus: var(--destructive-focus);
 }
 
 :is(button, a, summary).app-button.app-button--compact {
