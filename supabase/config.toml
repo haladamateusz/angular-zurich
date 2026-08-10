@@ -442,6 +442,12 @@ verify_jwt = true
 import_map = "./functions/review-talk-submission/deno.json"
 entrypoint = "./functions/review-talk-submission/index.ts"
 
+[functions.remove-talk-submission]
+enabled = true
+verify_jwt = true
+import_map = "./functions/remove-talk-submission/deno.json"
+entrypoint = "./functions/remove-talk-submission/index.ts"
+
 [functions.create-event]
 enabled = true
 verify_jwt = true

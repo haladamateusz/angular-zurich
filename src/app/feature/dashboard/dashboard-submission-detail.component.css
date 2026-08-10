@@ -147,11 +147,50 @@
 }
 
 .dashboard-detail__action-row--header {
+  width: 100%;
   margin-left: 0;
 }
 
 .dashboard-detail__action-button {
   min-width: 8.5rem;
+}
+
+.dashboard-detail__action-button--remove {
+  min-width: 10.75rem;
+}
+
+button.dashboard-detail__action-button--remove-outline {
+  --app-button-background: transparent;
+  --app-button-background-hover: color-mix(in srgb, var(--color-red-600) 14%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-red-600) 22%, transparent);
+  --app-button-foreground: var(--color-red-600);
+  --app-button-focus: var(--color-red-600);
+
+  border: 1px solid var(--color-red-600);
+}
+
+.dark button.dashboard-detail__action-button--remove-outline {
+  --app-button-background-hover: color-mix(in srgb, var(--color-red-400) 16%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-red-400) 24%, transparent);
+  --app-button-foreground: var(--color-red-400);
+  --app-button-focus: var(--color-red-400);
+
+  border-color: var(--color-red-400);
+}
+
+.dashboard-detail__action-row--header .dashboard-detail__action-button--remove {
+  margin-left: auto;
+}
+
+.dashboard-detail__action-row--header .dashboard-detail__action-skeleton--remove {
+  margin-left: auto;
+}
+
+@media (width < 43rem) {
+  .dashboard-detail__action-row--header
+    :is(.dashboard-detail__action-button--remove, .dashboard-detail__action-skeleton--remove) {
+    margin-left: 0;
+  }
 }
 
 .dashboard-detail__review-alert {

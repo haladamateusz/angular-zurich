@@ -1,11 +1,6 @@
 import { DatePipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import {
   OrganizerTalkSubmissionDetail,
@@ -27,10 +22,14 @@ type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
   selector: 'app-dashboard-submission-detail',
   imports: [DatePipe, RouterLink],
   templateUrl: './dashboard-submission-detail.component.html',
-  styleUrl: './dashboard-submission-detail.component.css'
+  styleUrl: './dashboard-submission-detail.component.css',
+  host: {
+    '(document:keydown.escape)': 'closeDialogOnEscape()',
+  },
 })
 export class DashboardSubmissionDetailComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
 
   protected readonly submissionId = this.route.snapshot.paramMap.get('submissionId') ?? '';
@@ -40,6 +39,7 @@ export class DashboardSubmissionDetailComponent {
   protected readonly reviewErrorMessage = signal('');
   protected readonly reviewActionState = signal<ReviewActionState>('idle');
   protected readonly activeMessageAction = signal<ReviewMessageAction | null>(null);
+  protected readonly isRemoveDialogOpen = signal(false);
   protected readonly reviewNotes = signal('');
   protected readonly speakerPictureUrl = signal<string | null>(null);
   protected readonly submission = signal<OrganizerTalkSubmissionDetail | null>(null);
@@ -252,6 +252,60 @@ export class DashboardSubmissionDetailComponent {
     }
   }
 
+  protected closeDialogOnEscape(): void {
+    if (this.isRemoveDialogOpen()) {
+      this.closeRemoveDialog();
+      return;
+    }
+
+    if (this.activeMessageAction()) {
+      this.closeReviewMessageModal();
+    }
+  }
+
+  protected openRemoveDialog(): void {
+    if (this.reviewActionState() === 'submitting') {
+      return;
+    }
+
+    this.reviewErrorMessage.set('');
+    this.successMessage.set('');
+    this.isRemoveDialogOpen.set(true);
+  }
+
+  protected closeRemoveDialog(): void {
+    if (this.reviewActionState() === 'submitting') {
+      return;
+    }
+
+    this.isRemoveDialogOpen.set(false);
+  }
+
+  protected closeRemoveDialogFromBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeRemoveDialog();
+    }
+  }
+
+  protected async removeSubmission(): Promise<void> {
+    if (!this.submissionId || this.reviewActionState() === 'submitting') {
+      return;
+    }
+
+    this.reviewActionState.set('submitting');
+    this.reviewErrorMessage.set('');
+
+    const { data, error } = await this.supabaseService.removeTalkSubmission(this.submissionId);
+
+    if (error || !data) {
+      this.reviewErrorMessage.set('We could not remove this submission. Please try again.');
+      this.reviewActionState.set('idle');
+      return;
+    }
+
+    await this.router.navigate(['/dashboard/talk-submissions']);
+  }
+
   protected async submitReviewAction(action: TalkSubmissionReviewAction): Promise<void> {
     if (!this.submissionId || !this.canSubmitReviewAction(action)) {
       if (action !== 'approve' && this.reviewNotes().trim().length === 0) {
@@ -294,10 +348,7 @@ export class DashboardSubmissionDetailComponent {
     this.reviewActionState.set('idle');
   }
 
-  private formatSpeakerProfileLink(
-    value: string,
-    kind: SpeakerProfileLink['kind'],
-  ): string {
+  private formatSpeakerProfileLink(value: string, kind: SpeakerProfileLink['kind']): string {
     try {
       const url = new URL(value);
       const normalizedPath = url.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -329,10 +380,14 @@ export class DashboardSubmissionDetailComponent {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const { data, error } = await this.supabaseService.getOrganizerTalkSubmissionById(this.submissionId);
+    const { data, error } = await this.supabaseService.getOrganizerTalkSubmissionById(
+      this.submissionId,
+    );
 
     if (error || !data) {
-      this.errorMessage.set('We could not load this talk submission right now. Please go back and try again.');
+      this.errorMessage.set(
+        'We could not load this talk submission right now. Please go back and try again.',
+      );
       this.submission.set(null);
       this.isLoading.set(false);
       return;
@@ -342,7 +397,9 @@ export class DashboardSubmissionDetailComponent {
     await this.loadStatusEvents();
 
     if (data.speaker_picture_path) {
-      const signedUrl = await this.supabaseService.getOrganizerSpeakerPictureUrl(data.speaker_picture_path);
+      const signedUrl = await this.supabaseService.getOrganizerSpeakerPictureUrl(
+        data.speaker_picture_path,
+      );
       this.speakerPictureUrl.set(signedUrl);
     } else {
       this.speakerPictureUrl.set(null);

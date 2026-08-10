@@ -28,7 +28,7 @@
       role="status"
     >
       <div
-        class="dashboard-detail__review-header mb-8 flex items-center justify-between gap-4"
+        class="dashboard-detail__review-header mb-8 flex flex-col items-start gap-5"
         aria-hidden="true"
       >
         <div class="dashboard-detail__skeleton h-7 w-64 max-w-full"></div>
@@ -36,6 +36,9 @@
           <div class="dashboard-detail__skeleton h-11 w-32 rounded-control"></div>
           <div class="dashboard-detail__skeleton h-11 w-40 rounded-control"></div>
           <div class="dashboard-detail__skeleton h-11 w-32 rounded-control"></div>
+          <div
+            class="dashboard-detail__action-skeleton--remove dashboard-detail__skeleton h-11 w-44 rounded-control"
+          ></div>
         </div>
       </div>
 
@@ -157,6 +160,14 @@
             (click)="submitReviewAction('approve')"
           >
             Approve
+          </button>
+          <button
+            type="button"
+            class="dashboard-detail__action-button dashboard-detail__action-button--remove dashboard-detail__action-button--remove-outline app-button"
+            [disabled]="reviewActionState() === 'submitting'"
+            (click)="openRemoveDialog()"
+          >
+            Remove submission
           </button>
         </div>
       </div>
@@ -508,7 +519,6 @@
         class="dashboard-detail__modal-backdrop"
         role="presentation"
         (click)="closeReviewMessageModalFromBackdrop($event)"
-        (keydown.escape)="closeReviewMessageModal()"
       >
         <section
           class="dashboard-detail__modal"
@@ -578,6 +588,62 @@
               (click)="submitReviewAction(messageAction)"
             >
               Send
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+
+    @if (isRemoveDialogOpen()) {
+      <div
+        class="dashboard-detail__modal-backdrop"
+        role="presentation"
+        (click)="closeRemoveDialogFromBackdrop($event)"
+      >
+        <section
+          class="dashboard-detail__modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="removeSubmissionTitle"
+          aria-describedby="removeSubmissionDescription"
+        >
+          <div class="dashboard-detail__modal-header">
+            <div>
+              <h2 id="removeSubmissionTitle" class="dashboard-detail__modal-title">
+                Remove submission?
+              </h2>
+              <p id="removeSubmissionDescription" class="dashboard-detail__modal-copy">
+                This permanently removes the submission and its talk. If this is the speaker’s only
+                talk, their speaker profile and photo will also be removed. The event will remain.
+              </p>
+            </div>
+          </div>
+
+          @if (reviewErrorMessage()) {
+            <div
+              class="dashboard-detail__review-alert dashboard-detail__review-alert--error"
+              role="alert"
+            >
+              {{ reviewErrorMessage() }}
+            </div>
+          }
+
+          <div class="dashboard-detail__modal-actions">
+            <button
+              type="button"
+              class="dashboard-detail__modal-secondary app-button app-button--secondary"
+              [disabled]="reviewActionState() === 'submitting'"
+              (click)="closeRemoveDialog()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="dashboard-detail__action-button dashboard-detail__action-button--remove app-button app-button--danger"
+              [disabled]="reviewActionState() === 'submitting'"
+              (click)="removeSubmission()"
+            >
+              Remove submission
             </button>
           </div>
         </section>

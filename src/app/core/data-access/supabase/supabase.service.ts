@@ -45,6 +45,10 @@ interface ReviewTalkSubmissionResult {
   speaker_picture_url: string | null;
 }
 
+interface RemoveTalkSubmissionResult {
+  id: string;
+}
+
 export type OrganizerTalkSubmissionSortColumn =
   'created_at' | 'speaker_name' | 'status' | 'talk_title';
 
@@ -675,6 +679,52 @@ export class SupabaseService {
 
     return {
       data: body && 'status' in body ? [body] : null,
+      error: null,
+    };
+  }
+
+  async removeTalkSubmission(
+    submissionId: string,
+  ): Promise<{ data: RemoveTalkSubmissionResult | null; error: Error | null }> {
+    const accessToken = this.authService.session()?.access_token;
+
+    if (!this.supabaseUrl || !this.supabaseKey || !accessToken) {
+      return {
+        data: null,
+        error: new Error('remove_talk_submission_not_configured'),
+      };
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/remove-talk-submission`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+        authorization: `Bearer ${accessToken}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ submissionId }),
+    });
+
+    let body: RemoveTalkSubmissionResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'remove_talk_submission_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'id' in body ? body : null,
       error: null,
     };
   }
