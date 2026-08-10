@@ -19,6 +19,83 @@
   margin-bottom: 1rem;
 }
 
+.event-details__dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+button.event-details__remove-button {
+  --app-button-background: transparent;
+  --app-button-background-hover: color-mix(in srgb, var(--color-red-600) 14%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-red-600) 22%, transparent);
+  --app-button-foreground: var(--color-red-600);
+  --app-button-focus: var(--color-red-600);
+
+  border: 1px solid var(--color-red-600);
+}
+
+:host-context(.dark) button.event-details__remove-button {
+  --app-button-background-hover: color-mix(in srgb, var(--color-red-400) 16%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--color-red-400) 24%, transparent);
+  --app-button-foreground: var(--color-red-400);
+  --app-button-focus: var(--color-red-400);
+
+  border-color: var(--color-red-400);
+}
+
+.event-details__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, black 58%, transparent);
+  padding: 1.5rem;
+}
+
+.event-details__modal {
+  width: min(100%, 36rem);
+  border: 1px solid var(--color-navbar-line);
+  border-radius: var(--radius-surface);
+  background: var(--color-card);
+  padding: 1.5rem;
+  box-shadow: 0 24px 80px color-mix(in srgb, black 32%, transparent);
+}
+
+.event-details__modal-title {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.event-details__modal-copy {
+  margin: 0.45rem 0 1.25rem;
+  color: var(--color-muted-foreground-1);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.event-details__modal-error {
+  border: 1px solid color-mix(in srgb, var(--color-destructive) 36%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  padding: 0.75rem 0.9rem;
+  color: var(--color-foreground);
+  font-size: 0.9rem;
+}
+
+.event-details__modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
 .event-details__state-card,
 .talk-detail-card {
   border: 1px solid var(--color-card-line);
@@ -360,6 +437,15 @@
 }
 
 @media (max-width: 720px) {
+  .event-details__back-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .event-details__dashboard-actions {
+    justify-content: flex-start;
+  }
+
   .event-details__skeleton--title {
     width: 100%;
   }

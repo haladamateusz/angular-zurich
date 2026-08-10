@@ -1,5 +1,6 @@
+import { type WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import type { Event as MeetupEvent } from '../../core/models/event.interface';
@@ -27,6 +28,7 @@ const TEST_EVENT: MeetupEvent = {
 
 describe('EventDetailsComponent', () => {
   let fixture: ComponentFixture<EventDetailsComponent>;
+  const removeEvent = vi.fn();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -37,12 +39,14 @@ describe('EventDetailsComponent', () => {
           provide: SupabaseService,
           useValue: {
             getEventBySlug: vi.fn().mockResolvedValue({ data: TEST_EVENT, error: null }),
+            removeEvent,
           },
         },
       ],
     }).compileComponents();
 
     vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    removeEvent.mockReset();
 
     fixture = TestBed.createComponent(EventDetailsComponent);
     fixture.componentRef.setInput('slug', TEST_EVENT.slug);
@@ -80,5 +84,75 @@ describe('EventDetailsComponent', () => {
     expect(metadata?.textContent).toContain('20:00');
     expect(metadata?.textContent).toContain(TEST_EVENT.venue?.title);
     expect(metadata?.querySelector('a')).toBeNull();
+  });
+
+  it('shows a removal action with a confirmation dialog for dashboard visits', async () => {
+    const component = fixture.componentInstance as unknown as {
+      showDashboardEventsBackLink: WritableSignal<boolean>;
+    };
+    component.showDashboardEventsBackLink.set(true);
+
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const removeButton = root.querySelector<HTMLButtonElement>('.event-details__remove-button');
+
+    expect(removeButton).not.toBeNull();
+    expect(root.querySelector('.event-details__modal')).toBeNull();
+
+    removeButton?.click();
+    await fixture.whenStable();
+
+    const dialog = root.querySelector<HTMLElement>('.event-details__modal');
+    const cancelButton = dialog?.querySelector<HTMLButtonElement>('button');
+
+    expect(dialog).not.toBeNull();
+    expect(dialog?.textContent).toContain('Its assigned talks will be unassigned');
+    expect(document.activeElement).toBe(cancelButton);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }));
+    await fixture.whenStable();
+
+    expect(root.querySelector('.event-details__modal')).toBeNull();
+    expect(document.activeElement).toBe(removeButton);
+  });
+
+  it('uses trailing icons for dashboard event actions', async () => {
+    const component = fixture.componentInstance as unknown as {
+      showDashboardEventsBackLink: WritableSignal<boolean>;
+    };
+    component.showDashboardEventsBackLink.set(true);
+
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const editButton = root.querySelector<HTMLElement>('.event-details__edit-link');
+    const removeButton = root.querySelector<HTMLElement>('.event-details__remove-button');
+
+    expect(editButton?.firstElementChild?.textContent).toBe('Edit');
+    expect(editButton?.lastElementChild?.matches('svg.app-button__icon')).toBe(true);
+    expect(removeButton?.firstElementChild?.textContent).toBe('Remove event');
+    expect(removeButton?.lastElementChild?.matches('svg.app-button__icon')).toBe(true);
+  });
+
+  it('removes the current event after confirmation', async () => {
+    const component = fixture.componentInstance as unknown as {
+      showDashboardEventsBackLink: WritableSignal<boolean>;
+    };
+    component.showDashboardEventsBackLink.set(true);
+    removeEvent.mockResolvedValue({ data: { id: TEST_EVENT.id }, error: null });
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    root.querySelector<HTMLButtonElement>('.event-details__remove-button')?.click();
+    await fixture.whenStable();
+
+    root.querySelector<HTMLButtonElement>('.event-details__modal .app-button--danger')?.click();
+    await fixture.whenStable();
+
+    expect(removeEvent).toHaveBeenCalledWith(TEST_EVENT.id);
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/events']);
   });
 });

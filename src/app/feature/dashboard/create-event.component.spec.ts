@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { CreateEventComponent } from './create-event.component';
@@ -34,13 +34,26 @@ const venueOptions = [
     city: 'Zurich',
   },
 ];
+let eventId: string | null = null;
 
 describe('CreateEventComponent', () => {
   beforeEach(() => {
+    eventId = null;
+
     TestBed.configureTestingModule({
       imports: [CreateEventComponent],
       providers: [
         provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (name: string) => (name === 'eventId' ? eventId : null),
+              },
+            },
+          },
+        },
         {
           provide: SupabaseService,
           useValue: {
@@ -53,10 +66,26 @@ describe('CreateEventComponent', () => {
               error: null,
             }),
             createEvent: vi.fn(),
+            getEventForEdit: vi.fn().mockResolvedValue({ data: null, error: null }),
           },
         },
       ],
     });
+  });
+
+  it('does not show a removal action while editing an event', async () => {
+    eventId = 'event-1';
+    const fixture = TestBed.createComponent(CreateEventComponent);
+
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    const removeEventButton = Array.from(element.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Remove Event',
+    );
+
+    expect(element.querySelector('h1')?.textContent).toContain('Edit event');
+    expect(removeEventButton).toBeUndefined();
   });
 
   it('adds and removes an optional third talk selector', async () => {

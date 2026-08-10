@@ -2,80 +2,6 @@
   display: block;
 }
 
-button.create-event-header__remove {
-  --app-button-background: transparent;
-  --app-button-background-hover: color-mix(in srgb, var(--color-red-600) 14%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-red-600) 22%, transparent);
-  --app-button-foreground: var(--color-red-600);
-  --app-button-focus: var(--color-red-600);
-
-  border: 1px solid var(--color-red-600);
-}
-
-.dark button.create-event-header__remove {
-  --app-button-background-hover: color-mix(in srgb, var(--color-red-400) 16%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-red-400) 24%, transparent);
-  --app-button-foreground: var(--color-red-400);
-  --app-button-focus: var(--color-red-400);
-
-  border-color: var(--color-red-400);
-}
-
-.create-event__modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, black 58%, transparent);
-  padding: 1.5rem;
-}
-
-.create-event__modal {
-  width: min(100%, 36rem);
-  border: 1px solid var(--color-navbar-line);
-  border-radius: var(--radius-surface);
-  background: var(--color-card);
-  padding: 1.5rem;
-  box-shadow: 0 24px 80px color-mix(in srgb, black 32%, transparent);
-}
-
-.create-event__modal-title {
-  margin: 0;
-  color: var(--color-foreground);
-  font-size: 1.45rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.create-event__modal-copy {
-  margin: 0.45rem 0 1.25rem;
-  color: var(--color-muted-foreground-1);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.create-event__modal-error {
-  border: 1px solid color-mix(in srgb, var(--color-destructive) 36%, transparent);
-  border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
-  padding: 0.75rem 0.9rem;
-  color: var(--color-foreground);
-  font-size: 0.9rem;
-}
-
-.create-event__modal-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.25rem;
-}
-
-.create-event__modal-secondary {
-  min-width: 6rem;
-}
-
 .create-event-section__number {
   display: inline-flex;
   align-items: center;
@@ -442,11 +368,6 @@ button.create-event-header__remove {
 }
 
 @media (max-width: 640px) {
-  .create-event-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .create-event-section {
     padding: 1.25rem;
   }

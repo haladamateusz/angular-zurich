@@ -22,6 +22,7 @@ import {
 } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import { ToastService } from '../../core/toast/toast.service';
 import {
   AssignableTalk,
   CreateEventPayload,
@@ -102,9 +103,6 @@ function formatTimeInputValue(value: string): string {
 
 @Component({
   selector: 'app-create-event',
-  host: {
-    '(document:keydown.escape)': 'closeRemoveEventDialog()',
-  },
   imports: [
     FormField,
     RouterLink,
@@ -120,6 +118,7 @@ export class CreateEventComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
   private readonly eventId = this.route.snapshot.paramMap.get('eventId');
   private readonly featureGraphicInput = viewChild<ElementRef<HTMLInputElement>>(
     'featureGraphicInput',
@@ -128,10 +127,7 @@ export class CreateEventComponent {
   protected readonly isEditMode = this.eventId !== null;
   protected readonly optionsState = signal<OptionsState>('loading');
   protected readonly submissionState = signal<CreateEventState>('idle');
-  protected readonly removeEventState = signal<CreateEventState>('idle');
-  protected readonly isRemoveEventDialogOpen = signal(false);
   protected readonly errorMessage = signal('');
-  protected readonly removeEventErrorMessage = signal('');
   protected readonly assignableTalks = signal<AssignableTalk[]>([]);
   protected readonly venueOptions = signal<VenueOption[]>([]);
   protected readonly featureGraphic = signal<File | null>(null);
@@ -355,48 +351,6 @@ export class CreateEventComponent {
     this.featureGraphicTouched.set(true);
   }
 
-  protected openRemoveEventDialog(): void {
-    if (!this.eventId || this.isSubmitting() || this.removeEventState() === 'submitting') {
-      return;
-    }
-
-    this.removeEventErrorMessage.set('');
-    this.isRemoveEventDialogOpen.set(true);
-  }
-
-  protected closeRemoveEventDialog(): void {
-    if (this.removeEventState() === 'submitting') {
-      return;
-    }
-
-    this.isRemoveEventDialogOpen.set(false);
-  }
-
-  protected closeRemoveEventDialogFromBackdrop(event: MouseEvent): void {
-    if (event.target === event.currentTarget) {
-      this.closeRemoveEventDialog();
-    }
-  }
-
-  protected async removeEvent(): Promise<void> {
-    if (!this.eventId || this.removeEventState() === 'submitting') {
-      return;
-    }
-
-    this.removeEventState.set('submitting');
-    this.removeEventErrorMessage.set('');
-
-    const { data, error } = await this.supabaseService.removeEvent(this.eventId);
-
-    if (error || !data) {
-      this.removeEventErrorMessage.set('We could not remove this event. Please try again.');
-      this.removeEventState.set('idle');
-      return;
-    }
-
-    await this.router.navigate(['/dashboard/events']);
-  }
-
   protected async saveEvent(): Promise<void> {
     this.createAttempted.set(true);
 
@@ -456,6 +410,7 @@ export class CreateEventComponent {
           return;
         }
 
+        this.toastService.success('Event updated.');
         await this.router.navigate(['/dashboard/events']);
         return;
       }
@@ -483,6 +438,7 @@ export class CreateEventComponent {
         return;
       }
 
+      this.toastService.success('Event created.');
       await this.router.navigate(['/dashboard/events']);
     });
   }

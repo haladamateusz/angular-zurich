@@ -12,22 +12,10 @@
     </a>
   </nav>
 
-  <header class="create-event-header mb-6 flex items-end justify-between gap-6">
-    <div>
-      <h1 class="m-0 text-[clamp(1.625rem,3vw,2rem)] font-extrabold leading-[1.1] text-foreground">
-        {{ isEditMode ? 'Edit event' : 'Create event' }}
-      </h1>
-    </div>
-    @if (isEditMode) {
-      <button
-        type="button"
-        class="create-event-header__remove app-button"
-        [disabled]="isSubmitting() || removeEventState() === 'submitting'"
-        (click)="openRemoveEventDialog()"
-      >
-        Remove Event
-      </button>
-    }
+  <header class="mb-6">
+    <h1 class="m-0 text-[clamp(1.625rem,3vw,2rem)] font-extrabold leading-[1.1] text-foreground">
+      {{ isEditMode ? 'Edit event' : 'Create event' }}
+    </h1>
   </header>
 
   @if (errorMessage()) {
@@ -411,51 +399,4 @@
       </button>
     </footer>
   </form>
-
-  @if (isRemoveEventDialogOpen()) {
-    <div
-      class="create-event__modal-backdrop"
-      role="presentation"
-      (click)="closeRemoveEventDialogFromBackdrop($event)"
-    >
-      <section
-        class="create-event__modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="removeEventTitle"
-        aria-describedby="removeEventDescription"
-      >
-        <h2 id="removeEventTitle" class="create-event__modal-title">Remove event?</h2>
-        <p id="removeEventDescription" class="create-event__modal-copy">
-          This permanently removes the event. Its assigned talks will be unassigned, returned to
-          Approved, and their submission logs will record the removal.
-        </p>
-
-        @if (removeEventErrorMessage()) {
-          <div class="create-event__modal-error" role="alert">
-            {{ removeEventErrorMessage() }}
-          </div>
-        }
-
-        <div class="create-event__modal-actions">
-          <button
-            type="button"
-            class="create-event__modal-secondary app-button app-button--secondary"
-            [disabled]="removeEventState() === 'submitting'"
-            (click)="closeRemoveEventDialog()"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="app-button app-button--danger"
-            [disabled]="removeEventState() === 'submitting'"
-            (click)="removeEvent()"
-          >
-            Remove Event
-          </button>
-        </div>
-      </section>
-    </div>
-  }
 </section>

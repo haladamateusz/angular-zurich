@@ -17,22 +17,47 @@
         </a>
 
         @if (event().id) {
-          <a
-            [routerLink]="['/dashboard/events', event().id]"
-            class="event-details__edit-link app-button app-button--secondary"
-          >
-            <svg
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              class="app-button__icon"
-              aria-hidden="true"
+          <div class="event-details__dashboard-actions">
+            <a
+              [routerLink]="['/dashboard/events', event().id]"
+              class="event-details__edit-link app-button app-button--secondary"
             >
-              <path
-                d="M13.92 2.84a2.25 2.25 0 0 1 3.18 3.18l-8.6 8.6a2.25 2.25 0 0 1-1.02.58l-3.17.86a.75.75 0 0 1-.92-.92l.86-3.17c.1-.38.3-.73.58-1.02l8.6-8.6Zm2.12 1.06a.75.75 0 0 0-1.06 0l-.82.82 1.06 1.06.82-.82a.75.75 0 0 0 0-1.06Zm-1.88 2.94-1.06-1.06-7.21 7.21a.75.75 0 0 0-.2.34l-.47 1.73 1.73-.47a.75.75 0 0 0 .34-.2l7.21-7.21Z"
-              />
-            </svg>
-            <span>Edit</span>
-          </a>
+              <span>Edit</span>
+              <svg
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="app-button__icon"
+                aria-hidden="true"
+              >
+                <path
+                  d="M13.92 2.84a2.25 2.25 0 0 1 3.18 3.18l-8.6 8.6a2.25 2.25 0 0 1-1.02.58l-3.17.86a.75.75 0 0 1-.92-.92l.86-3.17c.1-.38.3-.73.58-1.02l8.6-8.6Zm2.12 1.06a.75.75 0 0 0-1.06 0l-.82.82 1.06 1.06.82-.82a.75.75 0 0 0 0-1.06Zm-1.88 2.94-1.06-1.06-7.21 7.21a.75.75 0 0 0-.2.34l-.47 1.73 1.73-.47a.75.75 0 0 0 .34-.2l7.21-7.21Z"
+                />
+              </svg>
+            </a>
+
+            <button
+              type="button"
+              class="event-details__remove-button app-button"
+              [disabled]="removeEventState() === 'submitting'"
+              (click)="openRemoveEventDialog($event)"
+            >
+              <span>Remove event</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                class="app-button__icon"
+                aria-hidden="true"
+              >
+                <path
+                  d="M14.74 9 14.394 18m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.244-1.327L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.978.562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0V4.5c0-.621-.504-1.125-1.125-1.125h-3.75c-.621 0-1.125.504-1.125 1.125v.893m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                />
+              </svg>
+            </button>
+          </div>
         }
       </nav>
     }
@@ -337,6 +362,59 @@
           }
         </div>
       </section>
+    }
+
+    @if (isRemoveEventDialogOpen()) {
+      <div
+        class="event-details__modal-backdrop"
+        role="presentation"
+        (click)="closeRemoveEventDialogFromBackdrop($event)"
+      >
+        <section
+          #removeEventDialog
+          class="event-details__modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="removeEventTitle"
+          aria-describedby="removeEventDescription"
+        >
+          <h2 id="removeEventTitle" class="event-details__modal-title">Remove event?</h2>
+          <p id="removeEventDescription" class="event-details__modal-copy">
+            This permanently removes the event. Its assigned talks will be unassigned, returned to
+            Approved, and their submission logs will record the removal.
+          </p>
+
+          @if (removeEventErrorMessage()) {
+            <div class="event-details__modal-error" role="alert">
+              {{ removeEventErrorMessage() }}
+            </div>
+          }
+
+          <div class="event-details__modal-actions">
+            <button
+              #removeEventDialogCancelButton
+              type="button"
+              class="app-button app-button--secondary"
+              [disabled]="removeEventState() === 'submitting'"
+              (click)="closeRemoveEventDialog()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="app-button app-button--danger"
+              [disabled]="removeEventState() === 'submitting'"
+              (click)="removeEvent()"
+            >
+              @if (removeEventState() === 'submitting') {
+                <span>Removing...</span>
+              } @else {
+                <span>Remove event</span>
+              }
+            </button>
+          </div>
+        </section>
+      </div>
     }
   </div>
 </section>
