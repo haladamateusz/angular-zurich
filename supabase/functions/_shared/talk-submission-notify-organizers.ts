@@ -6,6 +6,7 @@ export interface TalkSubmissionOrganizerNotification {
   talkTitle: string;
   speakerName: string;
   speakerEmail: string;
+  kind?: 'new_submission' | 'changes_submitted';
 }
 
 function escapeHtml(value: string): string {
@@ -29,8 +30,14 @@ function getEmailContent(
   text: string;
   html: string;
 } {
-  const subject = `New Angular Zürich talk proposal: ${context.talkTitle.trim()}`;
+  const isChangesSubmitted = context.kind === 'changes_submitted';
+  const subject = isChangesSubmitted
+    ? `Changes submitted for Angular Zürich talk proposal: ${context.talkTitle.trim()}`
+    : `New Angular Zürich talk proposal: ${context.talkTitle.trim()}`;
   const dashboardUrl = getDashboardUrl(getSiteUrl(), context.submissionId);
+  const notificationText = isChangesSubmitted
+    ? 'The speaker submitted the requested changes and the proposal is ready for review again.'
+    : 'A new talk proposal was submitted and is ready for review.';
 
   const speakerLine = context.speakerEmail.trim()
     ? `${context.speakerName.trim()} (${context.speakerEmail.trim()})`
@@ -39,7 +46,7 @@ function getEmailContent(
   const text = [
     `Hello ${organizerFirstName.trim() || 'there'},`,
     ``,
-    `A new talk proposal was submitted and is ready for review.`,
+    notificationText,
     ``,
     `Talk: ${context.talkTitle.trim()}`,
     `Speaker: ${speakerLine}`,
@@ -51,7 +58,7 @@ function getEmailContent(
 
   const html = [
     `<p>Hello ${escapeHtml(organizerFirstName.trim() || 'there')},</p>`,
-    `<p>A new talk proposal was submitted and is ready for review.</p>`,
+    `<p>${escapeHtml(notificationText)}</p>`,
     `<p><strong>Talk:</strong> ${escapeHtml(context.talkTitle.trim())}</p>`,
     `<p><strong>Speaker:</strong> ${escapeHtml(speakerLine)}</p>`,
     `<p><strong>Submission ID:</strong> ${escapeHtml(context.submissionId)}</p>`,

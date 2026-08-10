@@ -1,6 +1,14 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import postgres from 'npm:postgres@3.4.7';
+import {
+  getSiteUrl,
+  sendTalkSubmissionChangesReceivedEmail,
+} from '../_shared/talk-review-email.ts';
+import {
+  sendTalkSubmissionToOrganizersEmail,
+  type TalkSubmissionOrganizerNotification,
+} from '../_shared/talk-submission-notify-organizers.ts';
 
 interface TalkSubmissionUpdatePayload {
   submissionId: string;
@@ -30,6 +38,16 @@ interface EditableSubmission {
 interface UpdateResult {
   id: string;
   status: 'adjusted' | 'changes_submitted';
+}
+
+interface OrganizerNotificationResult {
+  notified: number;
+  failed: number;
+}
+
+interface OrganizerNotificationRecipient {
+  email: string;
+  firstName: string;
 }
 
 type JsonRecord = Record<string, unknown>;
@@ -87,6 +105,50 @@ function getSupabaseServiceKey(): string | undefined {
 
     return SUPABASE_SERVICE_ROLE_KEY || undefined;
   }
+}
+
+async function getActiveOrganizerRecipients(): Promise<OrganizerNotificationRecipient[]> {
+  const rows = await sql<OrganizerNotificationRecipient[]>`
+    select
+      account.email,
+      coalesce(nullif(btrim(person."first_name"), ''), '') as "firstName"
+    from private.allowed_google_accounts account
+    left join public."People" person on lower(person."email") = lower(account.email)
+    where account.active = true
+    order by account.email
+  `;
+
+  return rows;
+}
+
+async function notifyOrganizers(
+  context: TalkSubmissionOrganizerNotification,
+): Promise<OrganizerNotificationResult> {
+  const recipients = await getActiveOrganizerRecipients();
+  let notified = 0;
+  let failed = 0;
+
+  if (recipients.length === 0) {
+    console.warn('talk-submission-organizers-email skipped: no active organizer emails found');
+    return { notified, failed };
+  }
+
+  for (const recipient of recipients) {
+    try {
+      await sendTalkSubmissionToOrganizersEmail(recipient.email, recipient.firstName, context);
+      notified += 1;
+    } catch (error) {
+      failed += 1;
+
+      if (error instanceof Error) {
+        console.error('talk-submission-organizers-email failed', error.message, error.stack);
+      } else {
+        console.error('talk-submission-organizers-email failed', error);
+      }
+    }
+  }
+
+  return { notified, failed };
 }
 
 function jsonResponse(
@@ -586,6 +648,56 @@ Deno.serve(async (req) => {
     const responseBody = updateRows[0]
       ? { id: updateRows[0].id, status: updateRows[0].status }
       : { id: normalizedPayload.submissionId, status: nextStatus };
+
+    if (nextStatus === 'changes_submitted') {
+      try {
+        await sendTalkSubmissionChangesReceivedEmail({
+          submissionId: normalizedPayload.submissionId,
+          talkTitle: normalizedPayload.talkTitle,
+          speakerFirstName: normalizedPayload.speakerFirstName,
+          speakerName: normalizedPayload.speakerName,
+          speakerEmail: normalizedPayload.emailAddress,
+          siteUrl: getSiteUrl(),
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(
+            'talk-submission-changes-received-email failed',
+            error.message,
+            error.stack,
+          );
+        } else {
+          console.error('talk-submission-changes-received-email failed', error);
+        }
+      }
+
+      try {
+        const organizerNotificationResult = await notifyOrganizers({
+          submissionId: normalizedPayload.submissionId,
+          talkTitle: normalizedPayload.talkTitle,
+          speakerName: normalizedPayload.speakerName,
+          speakerEmail: normalizedPayload.emailAddress,
+          kind: 'changes_submitted',
+        });
+
+        if (organizerNotificationResult.failed > 0) {
+          console.error(
+            'talk-submission-changes-organizers-notify partially failed',
+            organizerNotificationResult,
+          );
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(
+            'talk-submission-changes-organizers-notify failed',
+            error.message,
+            error.stack,
+          );
+        } else {
+          console.error('talk-submission-changes-organizers-notify failed', error);
+        }
+      }
+    }
 
     return jsonResponse(200, responseBody, corsHeaders);
   } catch (error) {

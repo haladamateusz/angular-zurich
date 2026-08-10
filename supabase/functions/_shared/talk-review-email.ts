@@ -233,3 +233,54 @@ export async function sendTalkSubmissionReceivedEmail(
     html,
   });
 }
+
+export interface TalkSubmissionChangesReceivedEmailContext {
+  submissionId: string;
+  talkTitle: string;
+  speakerFirstName?: string | null;
+  speakerName: string;
+  speakerEmail: string;
+  siteUrl: string;
+}
+
+export async function sendTalkSubmissionChangesReceivedEmail(
+  context: TalkSubmissionChangesReceivedEmailContext,
+): Promise<void> {
+  const speakerEmail = context.speakerEmail.trim().toLowerCase();
+  const talkTitle = context.talkTitle.trim();
+  const speakerGreetingName = getSpeakerGreetingName(context.speakerFirstName, context.speakerName);
+  const siteUrl = context.siteUrl.trim();
+
+  if (!speakerEmail) {
+    console.warn('talk-submission-changes-received-email skipped: speaker email is missing');
+    return;
+  }
+
+  const statusUrl = getSubmissionStatusUrl(siteUrl, context.submissionId);
+  const subject = 'We received the changes to your Angular Zürich talk proposal';
+  const text = [
+    `Hi ${speakerGreetingName},`,
+    '',
+    `Thanks for updating "${talkTitle}" for Angular Zürich.`,
+    '',
+    'We received your changes and returned your proposal to our review queue. The organizers will review it and follow up with the next step.',
+    '',
+    `You can check the current status here: ${statusUrl}`,
+    '',
+    'Thanks again for working on this with us.',
+  ].join('\n');
+  const html = [
+    `<p>Hi ${escapeHtml(speakerGreetingName)},</p>`,
+    `<p>Thanks for updating <strong>${escapeHtml(talkTitle)}</strong> for Angular Zürich.</p>`,
+    '<p>We received your changes and returned your proposal to our review queue. The organizers will review it and follow up with the next step.</p>',
+    `<p>You can check the current status <a href="${escapeHtml(statusUrl)}">here</a>.</p>`,
+    '<p>Thanks again for working on this with us.</p>',
+  ].join('');
+
+  await sendEmail({
+    to: speakerEmail,
+    subject,
+    text,
+    html,
+  });
+}
