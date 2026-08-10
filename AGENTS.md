@@ -15,16 +15,17 @@ All commits must use this Conventional Commits format:
 
 ```text
 <type>(<scope>): <short summary>
+<type>: <short summary>
   |       |             |
   |       |             +- Summary in imperative present tense. Not capitalized. No period at the end.
   |       |
-  |       +- Commit Scope: angular|app|auth|build|dashboard|events|home|lint|navbar|
-  |                         submissions|submit-talk|supabase|talk-submissions|ui
+  |       +- Optional commit scope: angular|app|auth|build|dashboard|events|home|lint|navbar|
+  |                                  submissions|submit-talk|supabase|talk-submissions|ui
   |
   +- Commit Type: build|ci|docs|feat|fix|perf|refactor|test
 ```
 
-The `<type>`, `(<scope>)`, and `<short summary>` fields are mandatory. The commit message must always begin with both `<type>` and `(<scope>)`, for example `build(angular): increase component style budget`.
+The `<type>` and `<short summary>` fields are mandatory. The `(<scope>)` field is optional. For example, use either `build(angular): increase component style budget` or `build: increase component style budget`.
 
 #### Type
 
@@ -41,7 +42,7 @@ Must be one of the following:
 | `refactor` | A code change that neither fixes a bug nor adds a feature. |
 | `test` | Adding missing tests or correcting existing tests. |
 
-#### Scope
+#### Scope (optional)
 
 The scope should describe the main project area affected, as perceived by someone reading the Git history or changelog. Prefer existing scopes over introducing narrow one-off scopes.
 
