@@ -110,6 +110,7 @@ export class SubmitTalkComponent {
   protected readonly isEditSubmissionInvalid = signal(false);
   protected readonly isEditSubmissionLoaded = signal(false);
   protected readonly existingSpeakerPicturePath = signal<string | null>(null);
+  protected readonly existingSpeakerPictureUrl = signal<string | null>(null);
   protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
 
   protected readonly submitTalkForm = this.formBuilder.group({
@@ -368,6 +369,11 @@ export class SubmitTalkComponent {
     }
 
     this.populateForm(data);
+    this.existingSpeakerPictureUrl.set(
+      data.speaker_picture_path
+        ? await this.supabaseService.getEditableTalkSubmissionSpeakerPictureUrl(submissionId, editToken)
+        : null,
+    );
     this.isEditSubmissionInvalid.set(false);
     this.isEditSubmissionLoaded.set(true);
     this.submissionState.set('idle');
@@ -391,6 +397,7 @@ export class SubmitTalkComponent {
       companyWebsite: '',
     });
     this.existingSpeakerPicturePath.set(submission.speaker_picture_path);
+    this.existingSpeakerPictureUrl.set(null);
     if (submission.speaker_picture_path) {
       this.submitTalkForm.controls.speakerPicture.removeValidators(Validators.required);
     } else {

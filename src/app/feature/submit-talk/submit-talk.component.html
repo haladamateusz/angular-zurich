@@ -434,6 +434,24 @@
                         </button>
                       </div>
                     </div>
+                  } @else if (
+                    isEditMode() && existingSpeakerPicturePath() && existingSpeakerPictureUrl()
+                  ) {
+                    <div
+                      class="speaker-card__image-picker speaker-card__image-picker--filled"
+                      [attr.aria-invalid]="fieldHasError('speakerPicture')"
+                    >
+                      <img [src]="existingSpeakerPictureUrl()" alt="Current speaker photo" />
+                      <div class="speaker-card__image-picker-actions">
+                        <button
+                          type="button"
+                          class="app-button app-button--secondary app-button--compact"
+                          (click)="openSpeakerPicturePicker()"
+                        >
+                          Replace
+                        </button>
+                      </div>
+                    </div>
                   } @else if (isEditMode() && existingSpeakerPicturePath()) {
                     <button
                       type="button"

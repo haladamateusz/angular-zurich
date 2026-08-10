@@ -436,6 +436,12 @@ verify_jwt = false
 import_map = "./functions/update-talk-submission/deno.json"
 entrypoint = "./functions/update-talk-submission/index.ts"
 
+[functions.get-talk-submission-speaker-picture]
+enabled = true
+verify_jwt = false
+import_map = "./functions/get-talk-submission-speaker-picture/deno.json"
+entrypoint = "./functions/get-talk-submission-speaker-picture/index.ts"
+
 [functions.review-talk-submission]
 enabled = true
 verify_jwt = true

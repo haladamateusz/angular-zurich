@@ -823,6 +823,37 @@ export class SupabaseService {
       .maybeSingle();
   }
 
+  async getEditableTalkSubmissionSpeakerPictureUrl(
+    submissionId: string,
+    editToken: string,
+  ): Promise<string | null> {
+    if (!this.supabaseUrl || !this.supabaseKey) {
+      return null;
+    }
+
+    const response = await fetch(
+      `${this.supabaseUrl}/functions/v1/get-talk-submission-speaker-picture`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: this.supabaseKey,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ submissionId, editToken }),
+      },
+    );
+
+    let body: { signedUrl?: unknown } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    return response.ok && typeof body?.signedUrl === 'string' ? body.signedUrl : null;
+  }
+
   async getOrganizerSpeakerPictureUrl(path: string): Promise<string | null> {
     if (this.supabase === null || !path.trim()) {
       return null;
