@@ -102,6 +102,9 @@ function formatTimeInputValue(value: string): string {
 
 @Component({
   selector: 'app-create-event',
+  host: {
+    '(document:keydown.escape)': 'closeRemoveEventDialog()',
+  },
   imports: [
     FormField,
     RouterLink,
@@ -125,7 +128,10 @@ export class CreateEventComponent {
   protected readonly isEditMode = this.eventId !== null;
   protected readonly optionsState = signal<OptionsState>('loading');
   protected readonly submissionState = signal<CreateEventState>('idle');
+  protected readonly removeEventState = signal<CreateEventState>('idle');
+  protected readonly isRemoveEventDialogOpen = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly removeEventErrorMessage = signal('');
   protected readonly assignableTalks = signal<AssignableTalk[]>([]);
   protected readonly venueOptions = signal<VenueOption[]>([]);
   protected readonly featureGraphic = signal<File | null>(null);
@@ -347,6 +353,48 @@ export class CreateEventComponent {
   protected removeFeatureGraphic(): void {
     this.resetFeatureGraphicInput();
     this.featureGraphicTouched.set(true);
+  }
+
+  protected openRemoveEventDialog(): void {
+    if (!this.eventId || this.isSubmitting() || this.removeEventState() === 'submitting') {
+      return;
+    }
+
+    this.removeEventErrorMessage.set('');
+    this.isRemoveEventDialogOpen.set(true);
+  }
+
+  protected closeRemoveEventDialog(): void {
+    if (this.removeEventState() === 'submitting') {
+      return;
+    }
+
+    this.isRemoveEventDialogOpen.set(false);
+  }
+
+  protected closeRemoveEventDialogFromBackdrop(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeRemoveEventDialog();
+    }
+  }
+
+  protected async removeEvent(): Promise<void> {
+    if (!this.eventId || this.removeEventState() === 'submitting') {
+      return;
+    }
+
+    this.removeEventState.set('submitting');
+    this.removeEventErrorMessage.set('');
+
+    const { data, error } = await this.supabaseService.removeEvent(this.eventId);
+
+    if (error || !data) {
+      this.removeEventErrorMessage.set('We could not remove this event. Please try again.');
+      this.removeEventState.set('idle');
+      return;
+    }
+
+    await this.router.navigate(['/dashboard/events']);
   }
 
   protected async saveEvent(): Promise<void> {

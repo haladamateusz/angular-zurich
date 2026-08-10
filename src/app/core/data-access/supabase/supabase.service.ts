@@ -49,6 +49,10 @@ interface RemoveTalkSubmissionResult {
   id: string;
 }
 
+interface RemoveEventResult {
+  id: string;
+}
+
 export type OrganizerTalkSubmissionSortColumn =
   'created_at' | 'speaker_name' | 'status' | 'talk_title';
 
@@ -499,6 +503,52 @@ export class SupabaseService {
     if (!response.ok) {
       const errorMessage =
         body && 'error' in body && body.error ? body.error : 'update_event_failed';
+
+      return {
+        data: null,
+        error: new Error(errorMessage),
+      };
+    }
+
+    return {
+      data: body && 'id' in body ? body : null,
+      error: null,
+    };
+  }
+
+  async removeEvent(
+    eventId: string,
+  ): Promise<{ data: RemoveEventResult | null; error: Error | null }> {
+    const accessToken = this.authService.session()?.access_token;
+
+    if (!this.supabaseUrl || !this.supabaseKey || !accessToken) {
+      return {
+        data: null,
+        error: new Error('remove_event_not_configured'),
+      };
+    }
+
+    const response = await fetch(`${this.supabaseUrl}/functions/v1/remove-event`, {
+      method: 'POST',
+      headers: {
+        apikey: this.supabaseKey,
+        authorization: `Bearer ${accessToken}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ eventId }),
+    });
+
+    let body: RemoveEventResult | { error?: string } | null;
+
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (!response.ok) {
+      const errorMessage =
+        body && 'error' in body && body.error ? body.error : 'remove_event_failed';
 
       return {
         data: null,
