@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import { ToastService } from '../../core/toast/toast.service';
 import type { Event as MeetupEvent } from '../../core/models/event.interface';
 import { EventDetailsComponent } from './event-details.component';
 
@@ -153,6 +154,9 @@ describe('EventDetailsComponent', () => {
     await fixture.whenStable();
 
     expect(removeEvent).toHaveBeenCalledWith(TEST_EVENT.id);
+    expect(TestBed.inject(ToastService).toasts()).toContainEqual(
+      expect.objectContaining({ message: 'Event removed.', variant: 'success' }),
+    );
     expect(navigate).toHaveBeenCalledWith(['/dashboard/events']);
   });
 });

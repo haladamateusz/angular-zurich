@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import { ToastService } from '../../core/toast/toast.service';
 import { Event } from '../../core/models/event.interface';
 import { EventDateFormatPipe } from '../../core/pipes/date-format/event-date-format.pipe';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
@@ -61,6 +62,7 @@ export class EventDetailsComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
   private readonly removeEventDialog = viewChild<ElementRef<HTMLElement>>('removeEventDialog');
   private readonly removeEventDialogCancelButton = viewChild<ElementRef<HTMLButtonElement>>(
     'removeEventDialogCancelButton',
@@ -228,6 +230,7 @@ export class EventDetailsComponent {
       return;
     }
 
+    this.toastService.success('Event removed.');
     await this.router.navigate(['/dashboard/events']);
   }
 
