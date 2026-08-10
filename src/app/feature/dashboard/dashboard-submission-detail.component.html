@@ -129,7 +129,7 @@
     <header class="dashboard-detail__page-header mb-8">
       <div class="dashboard-detail__review-header flex flex-col items-start gap-5">
         <h1
-          class="m-0 text-[clamp(1.7rem,3vw,2.25rem)] font-extrabold leading-[1.1] text-foreground"
+          class="m-0 text-[clamp(1.625rem,3vw,2rem)] font-extrabold leading-[1.1] text-foreground"
         >
           Submission review
         </h1>
@@ -141,7 +141,7 @@
             type="button"
             class="dashboard-detail__action-button dashboard-detail__action-button--reject app-button"
             [disabled]="!canStartReviewAction('reject')"
-            (click)="openReviewMessageModal('reject')"
+            (click)="openReviewMessageModal('reject', $event)"
           >
             Reject
           </button>
@@ -149,7 +149,7 @@
             type="button"
             class="dashboard-detail__action-button dashboard-detail__action-button--changes app-button app-button--secondary"
             [disabled]="!canStartReviewAction('request_changes')"
-            (click)="openReviewMessageModal('request_changes')"
+            (click)="openReviewMessageModal('request_changes', $event)"
           >
             Request changes
           </button>
@@ -165,7 +165,7 @@
             type="button"
             class="dashboard-detail__action-button dashboard-detail__action-button--remove dashboard-detail__action-button--remove-outline app-button"
             [disabled]="reviewActionState() === 'submitting'"
-            (click)="openRemoveDialog()"
+            (click)="openRemoveDialog($event)"
           >
             Remove submission
           </button>
@@ -179,15 +179,6 @@
         role="alert"
       >
         {{ reviewErrorMessage() }}
-      </div>
-    }
-
-    @if (successMessage()) {
-      <div
-        class="dashboard-detail__review-alert dashboard-detail__review-alert--success mb-6"
-        role="status"
-      >
-        {{ successMessage() }}
       </div>
     }
 
@@ -223,7 +214,7 @@
           </div>
           <div class="space-y-1">
             <h2
-              class="dashboard-detail__card-title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+              class="dashboard-detail__card-title text-xl font-semibold tracking-[-0.03em] text-foreground"
             >
               Content details
             </h2>
@@ -317,7 +308,7 @@
           </div>
           <div class="space-y-1">
             <h2
-              class="dashboard-detail__card-title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+              class="dashboard-detail__card-title text-xl font-semibold tracking-[-0.03em] text-foreground"
             >
               Speaker
             </h2>
@@ -480,7 +471,7 @@
         </div>
         <div class="space-y-1">
           <h2
-            class="dashboard-detail__card-title text-2xl font-semibold tracking-[-0.03em] text-foreground"
+            class="dashboard-detail__card-title text-xl font-semibold tracking-[-0.03em] text-foreground"
           >
             Status log
           </h2>
@@ -521,6 +512,7 @@
         (click)="closeReviewMessageModalFromBackdrop($event)"
       >
         <section
+          #reviewMessageDialog
           class="dashboard-detail__modal"
           role="dialog"
           aria-modal="true"
@@ -536,19 +528,12 @@
                 {{ getReviewModalDescription(messageAction) }}
               </p>
             </div>
-            <button
-              type="button"
-              class="dashboard-detail__modal-close app-button app-button--ghost app-button--icon"
-              aria-label="Close dialog"
-              [disabled]="reviewActionState() === 'submitting'"
-              (click)="closeReviewMessageModal()"
-            >
-              ×
-            </button>
           </div>
 
           <label class="dashboard-detail__field-label" for="reviewMessage">Message</label>
           <textarea
+            #reviewMessageInput
+            autofocus
             id="reviewMessage"
             rows="6"
             [value]="reviewNotes()"
@@ -581,7 +566,7 @@
             </button>
             <button
               type="button"
-              class="dashboard-detail__action-button dashboard-detail__action-button--changes dashboard-detail__modal-send app-button app-button--secondary"
+              class="dashboard-detail__action-button dashboard-detail__action-button--changes dashboard-detail__modal-send app-button"
               [class.dashboard-detail__action-button--reject]="messageAction === 'reject'"
               [disabled]="!canSubmitReviewAction(messageAction)"
               (click)="submitReviewAction(messageAction)"
@@ -600,6 +585,7 @@
         (click)="closeRemoveDialogFromBackdrop($event)"
       >
         <section
+          #removeSubmissionDialog
           class="dashboard-detail__modal"
           role="dialog"
           aria-modal="true"
@@ -629,6 +615,7 @@
 
           <div class="dashboard-detail__modal-actions">
             <button
+              #removeDialogCancelButton
               type="button"
               class="dashboard-detail__modal-secondary app-button app-button--secondary"
               [disabled]="reviewActionState() === 'submitting'"

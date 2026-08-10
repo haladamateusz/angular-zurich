@@ -1,7 +1,17 @@
-import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { DOCUMENT, DatePipe } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  afterRenderEffect,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
+import { ToastService } from '../../core/toast/toast.service';
 import {
   OrganizerTalkSubmissionDetail,
   OrganizerTalkSubmissionStatusEvent,
@@ -17,6 +27,7 @@ interface SpeakerProfileLink {
 
 type ReviewActionState = 'idle' | 'submitting';
 type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
+type DialogFocusTarget = 'remove-cancel' | 'review-message' | HTMLElement;
 
 @Component({
   selector: 'app-dashboard-submission-detail',
@@ -24,18 +35,53 @@ type ReviewMessageAction = Exclude<TalkSubmissionReviewAction, 'approve'>;
   templateUrl: './dashboard-submission-detail.component.html',
   styleUrl: './dashboard-submission-detail.component.css',
   host: {
-    '(document:keydown.escape)': 'closeDialogOnEscape()',
+    '(document:keydown)': 'handleDialogKeydown($event)',
   },
 })
 export class DashboardSubmissionDetailComponent {
+  private readonly document = inject(DOCUMENT);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly toastService = inject(ToastService);
+  private readonly reviewMessageInput =
+    viewChild<ElementRef<HTMLTextAreaElement>>('reviewMessageInput');
+  private readonly reviewMessageDialog = viewChild<ElementRef<HTMLElement>>('reviewMessageDialog');
+  private readonly removeDialogCancelButton = viewChild<ElementRef<HTMLButtonElement>>(
+    'removeDialogCancelButton',
+  );
+  private readonly removeSubmissionDialog =
+    viewChild<ElementRef<HTMLElement>>('removeSubmissionDialog');
+  private readonly pendingDialogFocus = signal<DialogFocusTarget | null>(null);
+  private readonly applyDialogFocus = afterRenderEffect({
+    write: () => {
+      const target = this.pendingDialogFocus();
+
+      if (!target) {
+        return;
+      }
+
+      this.pendingDialogFocus.set(null);
+      this.focusDialogTarget(target);
+    },
+  });
+  private readonly lockBackgroundScrollWhileDialogIsOpen = effect((onCleanup) => {
+    if (!this.activeMessageAction() && !this.isRemoveDialogOpen()) {
+      return;
+    }
+
+    const originalOverflow = this.document.body.style.overflow;
+    this.document.body.style.overflow = 'hidden';
+
+    onCleanup(() => {
+      this.document.body.style.overflow = originalOverflow;
+    });
+  });
+  private dialogTrigger: HTMLElement | null = null;
 
   protected readonly submissionId = this.route.snapshot.paramMap.get('submissionId') ?? '';
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal('');
-  protected readonly successMessage = signal('');
   protected readonly reviewErrorMessage = signal('');
   protected readonly reviewActionState = signal<ReviewActionState>('idle');
   protected readonly activeMessageAction = signal<ReviewMessageAction | null>(null);
@@ -225,15 +271,16 @@ export class DashboardSubmissionDetailComponent {
     return this.reviewNotes().trim().length > 0;
   }
 
-  protected openReviewMessageModal(action: ReviewMessageAction): void {
+  protected openReviewMessageModal(action: ReviewMessageAction, event?: Event): void {
     if (!this.canStartReviewAction(action)) {
       return;
     }
 
+    this.captureDialogTrigger(event);
     this.reviewNotes.set('');
     this.reviewErrorMessage.set('');
-    this.successMessage.set('');
     this.activeMessageAction.set(action);
+    this.scheduleDialogFocus('review-message');
   }
 
   protected closeReviewMessageModal(): void {
@@ -244,6 +291,7 @@ export class DashboardSubmissionDetailComponent {
     this.activeMessageAction.set(null);
     this.reviewErrorMessage.set('');
     this.reviewNotes.set('');
+    this.restoreDialogTriggerFocusAfterRender();
   }
 
   protected closeReviewMessageModalFromBackdrop(event: MouseEvent): void {
@@ -252,25 +300,46 @@ export class DashboardSubmissionDetailComponent {
     }
   }
 
-  protected closeDialogOnEscape(): void {
-    if (this.isRemoveDialogOpen()) {
-      this.closeRemoveDialog();
+  protected handleDialogKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+
+      if (this.isRemoveDialogOpen()) {
+        this.closeRemoveDialog();
+        return;
+      }
+
+      if (this.activeMessageAction()) {
+        this.closeReviewMessageModal();
+      }
+
       return;
     }
 
-    if (this.activeMessageAction()) {
-      this.closeReviewMessageModal();
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const dialog = this.activeMessageAction()
+      ? this.reviewMessageDialog()?.nativeElement
+      : this.isRemoveDialogOpen()
+        ? this.removeSubmissionDialog()?.nativeElement
+        : undefined;
+
+    if (dialog) {
+      this.trapDialogFocus(event, dialog);
     }
   }
 
-  protected openRemoveDialog(): void {
+  protected openRemoveDialog(event?: Event): void {
     if (this.reviewActionState() === 'submitting') {
       return;
     }
 
+    this.captureDialogTrigger(event);
     this.reviewErrorMessage.set('');
-    this.successMessage.set('');
     this.isRemoveDialogOpen.set(true);
+    this.scheduleDialogFocus('remove-cancel');
   }
 
   protected closeRemoveDialog(): void {
@@ -279,6 +348,7 @@ export class DashboardSubmissionDetailComponent {
     }
 
     this.isRemoveDialogOpen.set(false);
+    this.restoreDialogTriggerFocusAfterRender();
   }
 
   protected closeRemoveDialogFromBackdrop(event: MouseEvent): void {
@@ -317,7 +387,6 @@ export class DashboardSubmissionDetailComponent {
 
     this.reviewActionState.set('submitting');
     this.reviewErrorMessage.set('');
-    this.successMessage.set('');
 
     const { data, error } = await this.supabaseService.reviewTalkSubmission(
       this.submissionId,
@@ -343,9 +412,83 @@ export class DashboardSubmissionDetailComponent {
 
     this.reviewNotes.set('');
     this.activeMessageAction.set(null);
-    this.successMessage.set(this.getReviewSuccessMessage(action));
+    this.dialogTrigger = null;
+    this.toastService.success(this.getReviewSuccessMessage(action));
     await this.loadStatusEvents();
     this.reviewActionState.set('idle');
+  }
+
+  private trapDialogFocus(event: KeyboardEvent, dialog: HTMLElement): void {
+    const focusableElements = Array.from(
+      dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter(
+      (element) => element.tabIndex >= 0 && element.getAttribute('aria-disabled') !== 'true',
+    );
+    const firstElement = focusableElements.at(0);
+    const lastElement = focusableElements.at(-1);
+
+    if (!firstElement || !lastElement) {
+      event.preventDefault();
+      return;
+    }
+
+    const activeElement = this.document.activeElement;
+
+    if (event.shiftKey && (activeElement === firstElement || !dialog.contains(activeElement))) {
+      event.preventDefault();
+      lastElement.focus();
+      return;
+    }
+
+    if (!event.shiftKey && (activeElement === lastElement || !dialog.contains(activeElement))) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+
+  private captureDialogTrigger(event?: Event): void {
+    const currentTarget = event?.currentTarget;
+
+    this.dialogTrigger =
+      currentTarget instanceof HTMLElement
+        ? currentTarget
+        : this.document.activeElement instanceof HTMLElement
+          ? this.document.activeElement
+          : null;
+  }
+
+  private restoreDialogTriggerFocusAfterRender(): void {
+    const trigger = this.dialogTrigger;
+    this.dialogTrigger = null;
+
+    if (!trigger) {
+      return;
+    }
+
+    this.pendingDialogFocus.set(trigger);
+  }
+
+  private scheduleDialogFocus(target: Exclude<DialogFocusTarget, HTMLElement>): void {
+    this.pendingDialogFocus.set(target);
+    this.document.defaultView?.setTimeout(() => this.focusDialogTarget(target), 0);
+  }
+
+  private focusDialogTarget(target: DialogFocusTarget): void {
+    if (target === 'review-message') {
+      this.reviewMessageInput()?.nativeElement.focus();
+      return;
+    }
+
+    if (target === 'remove-cancel') {
+      this.removeDialogCancelButton()?.nativeElement.focus();
+      return;
+    }
+
+    if (target.isConnected && !target.matches(':disabled')) {
+      target.focus();
+    }
   }
 
   private formatSpeakerProfileLink(value: string, kind: SpeakerProfileLink['kind']): string {
