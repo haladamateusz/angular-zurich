@@ -21,6 +21,7 @@ describe('ToastService', () => {
     expect(service.toasts()).toEqual([
       {
         dismissible: true,
+        dismissing: false,
         duration: 3_000,
         id,
         message: 'Event saved',
@@ -35,6 +36,9 @@ describe('ToastService', () => {
     service.warning('Draft is not published', { duration: 1_000 });
 
     vi.advanceTimersByTime(1_000);
+    expect(service.toasts()).toHaveLength(1);
+
+    vi.advanceTimersByTime(180);
 
     expect(service.toasts()).toEqual([]);
   });
@@ -47,6 +51,9 @@ describe('ToastService', () => {
     expect(service.toasts()).toHaveLength(1);
 
     service.dismiss(id);
+    expect(service.toasts()[0]?.dismissing).toBe(true);
+
+    vi.advanceTimersByTime(180);
     expect(service.toasts()).toEqual([]);
   });
 });

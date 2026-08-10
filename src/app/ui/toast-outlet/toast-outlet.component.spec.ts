@@ -19,6 +19,7 @@ describe('ToastOutletComponent', () => {
 
   afterEach(() => {
     toastService.clear();
+    vi.useRealTimers();
   });
 
   it('renders an accessible error toast', async () => {
@@ -33,11 +34,14 @@ describe('ToastOutletComponent', () => {
   });
 
   it('dismisses a toast from its close button', async () => {
-    toastService.success('Event saved');
+    toastService.success('Event saved', { duration: 0 });
     await fixture.whenStable();
 
     const dismissButton = fixture.nativeElement.querySelector('button') as HTMLButtonElement | null;
     dismissButton?.click();
+    expect(toastService.toasts()[0]?.dismissing).toBe(true);
+
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
     await fixture.whenStable();
 
     expect(fixture.nativeElement.querySelector('[role="status"]')).toBeNull();

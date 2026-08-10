@@ -373,6 +373,7 @@ export class DashboardSubmissionDetailComponent {
       return;
     }
 
+    this.toastService.success('Submission removed.');
     await this.router.navigate(['/dashboard/talk-submissions']);
   }
 

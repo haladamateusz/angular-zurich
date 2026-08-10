@@ -12,6 +12,7 @@ export interface ToastOptions {
 
 export interface Toast {
   dismissible: boolean;
+  dismissing: boolean;
   duration: number;
   id: number;
   message: string;
@@ -20,6 +21,7 @@ export interface Toast {
 }
 
 const DEFAULT_TOAST_DURATION = 5_000;
+const TOAST_EXIT_ANIMATION_DURATION = 180;
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
@@ -36,6 +38,7 @@ export class ToastService {
 
     const toast: Toast = {
       dismissible: options.dismissible ?? true,
+      dismissing: false,
       duration: Math.max(0, options.duration ?? DEFAULT_TOAST_DURATION),
       id,
       message,
@@ -66,13 +69,29 @@ export class ToastService {
   }
 
   dismiss(id: number): void {
+    const toast = this.toastList().find((item) => item.id === id);
+
+    if (!toast || toast.dismissing) {
+      return;
+    }
+
     const timeout = this.timeouts.get(id);
     if (timeout) {
       clearTimeout(timeout);
       this.timeouts.delete(id);
     }
 
-    this.toastList.update((toasts) => toasts.filter((toast) => toast.id !== id));
+    this.toastList.update((toasts) =>
+      toasts.map((item) => (item.id === id ? { ...item, dismissing: true } : item)),
+    );
+
+    if (!isPlatformBrowser(this.platformId)) {
+      this.remove(id);
+      return;
+    }
+
+    const exitTimeout = setTimeout(() => this.remove(id), TOAST_EXIT_ANIMATION_DURATION);
+    this.timeouts.set(id, exitTimeout);
   }
 
   clear(): void {
@@ -91,5 +110,10 @@ export class ToastService {
 
     const timeout = setTimeout(() => this.dismiss(toast.id), toast.duration);
     this.timeouts.set(toast.id, timeout);
+  }
+
+  private remove(id: number): void {
+    this.timeouts.delete(id);
+    this.toastList.update((toasts) => toasts.filter((toast) => toast.id !== id));
   }
 }

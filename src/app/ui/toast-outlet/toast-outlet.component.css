@@ -49,6 +49,11 @@
   --app-toast-accent: var(--color-red-500);
 }
 
+.app-toast.app-toast--leaving {
+  pointer-events: none;
+  animation: app-toast-exit 180ms ease-in both;
+}
+
 .app-toast__icon {
   display: grid;
   width: 2rem;
@@ -141,6 +146,18 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes app-toast-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(0.35rem);
   }
 }
 

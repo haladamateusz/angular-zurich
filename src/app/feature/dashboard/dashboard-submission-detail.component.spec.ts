@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { OrganizerTalkSubmissionDetail } from '../../core/models/organizer-talk-submission.interface';
+import { ToastService } from '../../core/toast/toast.service';
 import { DashboardSubmissionDetailComponent } from './dashboard-submission-detail.component';
 
 const submission: OrganizerTalkSubmissionDetail = {
@@ -22,7 +23,11 @@ const submission: OrganizerTalkSubmissionDetail = {
 };
 
 describe('DashboardSubmissionDetailComponent', () => {
+  const removeTalkSubmission = vi.fn();
+
   beforeEach(() => {
+    removeTalkSubmission.mockReset();
+
     TestBed.configureTestingModule({
       imports: [DashboardSubmissionDetailComponent],
       providers: [
@@ -48,6 +53,7 @@ describe('DashboardSubmissionDetailComponent', () => {
               data: [],
               error: null,
             }),
+            removeTalkSubmission,
           },
         },
       ],
@@ -156,5 +162,30 @@ describe('DashboardSubmissionDetailComponent', () => {
     await fixture.whenStable();
 
     expect(document.activeElement).toBe(removeButton);
+  });
+
+  it('shows a toast after removing a submission', async () => {
+    removeTalkSubmission.mockResolvedValue({ data: { id: submission.id }, error: null });
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const fixture = TestBed.createComponent(DashboardSubmissionDetailComponent);
+
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    Array.from(element.querySelectorAll<HTMLButtonElement>('button'))
+      .find((button) => button.textContent?.trim() === 'Remove submission')
+      ?.click();
+    await fixture.whenStable();
+
+    element
+      .querySelector<HTMLButtonElement>('.dashboard-detail__modal .app-button--danger')
+      ?.click();
+    await fixture.whenStable();
+
+    expect(removeTalkSubmission).toHaveBeenCalledWith(submission.id);
+    expect(TestBed.inject(ToastService).toasts()).toContainEqual(
+      expect.objectContaining({ message: 'Submission removed.', variant: 'success' }),
+    );
+    expect(navigate).toHaveBeenCalledWith(['/dashboard/talk-submissions']);
   });
 });

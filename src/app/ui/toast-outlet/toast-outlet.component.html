@@ -2,6 +2,7 @@
   @for (toast of toastService.toasts(); track toast.id) {
     <article
       class="app-toast"
+      [class.app-toast--leaving]="toast.dismissing"
       [class.app-toast--error]="toast.variant === 'error'"
       [class.app-toast--info]="toast.variant === 'info'"
       [class.app-toast--success]="toast.variant === 'success'"
