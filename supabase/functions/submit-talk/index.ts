@@ -35,6 +35,11 @@ interface OrganizerNotificationResult {
   failed: number;
 }
 
+interface OrganizerNotificationRecipient {
+  email: string;
+  firstName: string;
+}
+
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:4200',
   'http://127.0.0.1:4200',
@@ -93,21 +98,24 @@ function getSupabaseServiceKey(): string | undefined {
   }
 }
 
-async function getActiveOrganizerEmails(): Promise<string[]> {
-  const rows = await sql<{ email: string }[]>`
-    select email
-    from private.allowed_google_accounts
-    where active = true
-    order by email
+async function getActiveOrganizerRecipients(): Promise<OrganizerNotificationRecipient[]> {
+  const rows = await sql<OrganizerNotificationRecipient[]>`
+    select
+      account.email,
+      coalesce(nullif(btrim(person."first_name"), ''), '') as "firstName"
+    from private.allowed_google_accounts account
+    left join public."People" person on lower(person."email") = lower(account.email)
+    where account.active = true
+    order by account.email
   `;
 
-  return rows.map((row) => row.email);
+  return rows;
 }
 
 async function notifyOrganizers(
   context: TalkSubmissionOrganizerNotification,
 ): Promise<OrganizerNotificationResult> {
-  const recipients = await getActiveOrganizerEmails();
+  const recipients = await getActiveOrganizerRecipients();
   let notified = 0;
   let failed = 0;
 
@@ -118,7 +126,7 @@ async function notifyOrganizers(
 
   for (const recipient of recipients) {
     try {
-      await sendTalkSubmissionToOrganizersEmail(recipient, context);
+      await sendTalkSubmissionToOrganizersEmail(recipient.email, recipient.firstName, context);
       notified += 1;
     } catch (error) {
       failed += 1;

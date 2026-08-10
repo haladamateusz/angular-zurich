@@ -21,7 +21,10 @@ function getDashboardUrl(siteUrl: string, submissionId: string): string {
   return `${siteUrl.replace(/\/$/, '')}/dashboard/talk-submissions/${submissionId}`;
 }
 
-function getEmailContent(context: TalkSubmissionOrganizerNotification): {
+function getEmailContent(
+  organizerFirstName: string,
+  context: TalkSubmissionOrganizerNotification,
+): {
   subject: string;
   text: string;
   html: string;
@@ -34,7 +37,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
     : context.speakerName.trim();
 
   const text = [
-    `Hi,`,
+    `Hello ${organizerFirstName.trim() || 'there'},`,
     ``,
     `A new talk proposal was submitted and is ready for review.`,
     ``,
@@ -47,7 +50,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
   ].join('\n');
 
   const html = [
-    `<p>Hi,</p>`,
+    `<p>Hello ${escapeHtml(organizerFirstName.trim() || 'there')},</p>`,
     `<p>A new talk proposal was submitted and is ready for review.</p>`,
     `<p><strong>Talk:</strong> ${escapeHtml(context.talkTitle.trim())}</p>`,
     `<p><strong>Speaker:</strong> ${escapeHtml(speakerLine)}</p>`,
@@ -62,6 +65,7 @@ function getEmailContent(context: TalkSubmissionOrganizerNotification): {
 
 export async function sendTalkSubmissionToOrganizersEmail(
   organizerEmail: string,
+  organizerFirstName: string,
   context: TalkSubmissionOrganizerNotification,
 ): Promise<void> {
   const to = organizerEmail.trim().toLowerCase();
@@ -71,7 +75,7 @@ export async function sendTalkSubmissionToOrganizersEmail(
     return;
   }
 
-  const { subject, text, html } = getEmailContent(context);
+  const { subject, text, html } = getEmailContent(organizerFirstName, context);
 
   await sendEmail({
     to,
