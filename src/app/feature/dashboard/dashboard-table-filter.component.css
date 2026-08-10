@@ -5,8 +5,8 @@
 }
 
 .dashboard-table-filter__trigger.app-button {
-  width: 2.75rem;
-  min-width: 2.75rem;
+  width: 2.25rem;
+  min-width: 2.25rem;
   padding: 0;
   --app-button-foreground: color-mix(in srgb, var(--color-primary-text) 58%, transparent);
 }
@@ -16,8 +16,8 @@
 }
 
 .dashboard-table-filter__trigger svg {
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .dashboard-table-filter__trigger path {
