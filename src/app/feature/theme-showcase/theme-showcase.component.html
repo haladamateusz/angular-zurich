@@ -291,4 +291,25 @@ Show how to trace signal updates, isolate expensive computed state, and keep pro
       </div>
     </div>
   </section>
+
+  <section class="showcase-section" aria-labelledby="toast-heading">
+    <div class="showcase-section__header">
+      <p class="showcase-kicker">Notification feedback</p>
+      <h2 id="toast-heading">Toast notifications</h2>
+      <p>Trigger the shared notifications to review each state, its motion, and its dismissal.</p>
+    </div>
+
+    <div class="showcase-button-row" aria-label="Toast notification examples">
+      <button type="button" class="app-button" (click)="showToast('success')">Success toast</button>
+      <button type="button" class="app-button app-button--secondary" (click)="showToast('info')">
+        Info toast
+      </button>
+      <button type="button" class="app-button app-button--ghost" (click)="showToast('warning')">
+        Warning toast
+      </button>
+      <button type="button" class="app-button app-button--danger" (click)="showToast('error')">
+        Error toast
+      </button>
+    </div>
+  </section>
 </div>
