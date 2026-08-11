@@ -1,7 +1,8 @@
 <button
   #trigger
   type="button"
-  class="dashboard-table-filter__trigger app-button app-button--ghost app-button--compact"
+  class="dashboard-table-filter__trigger app-button app-button--ghost app-button--compact app-button--table-icon"
+  [class.app-button--table-icon-active]="active()"
   [class.dashboard-table-filter__trigger--active]="active()"
   [attr.aria-label]="'Filter by ' + label()"
   [attr.aria-controls]="isOpen() ? popoverId() : null"

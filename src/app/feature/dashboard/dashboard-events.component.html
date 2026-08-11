@@ -42,7 +42,7 @@
   <ng-template #sortButton let-column let-label="label">
     <button
       type="button"
-      class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact"
+      class="dashboard-events-table__sort-button app-button app-button--ghost app-button--compact app-button--table-icon"
       [attr.aria-label]="'Sort by ' + label"
       (click)="toggleSort(column)"
     >
@@ -207,7 +207,7 @@
       <span class="sr-only">Loading events...</span>
     </div>
   } @else {
-    <div class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background">
+    <div class="mt-6 rounded-surface border border-navbar-line bg-background">
       <div class="dashboard-table-scroll">
         <table
           class="dashboard-events-table dashboard-data-table min-w-full divide-y divide-navbar-line"

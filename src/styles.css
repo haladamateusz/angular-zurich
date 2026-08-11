@@ -235,6 +235,19 @@
   padding: 0;
 }
 
+:is(button, a, summary).app-button.app-button--table-icon {
+  --app-button-foreground: color-mix(in srgb, var(--color-foreground) 52%, transparent);
+
+  width: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  padding: 0;
+}
+
+:is(button, a, summary).app-button.app-button--table-icon-active {
+  --app-button-foreground: var(--color-primary-text);
+}
+
 :is(button, a, summary).app-button.app-button--block {
   width: 100%;
 }
