@@ -102,9 +102,8 @@ async function getActiveOrganizerRecipients(): Promise<OrganizerNotificationReci
   const rows = await sql<OrganizerNotificationRecipient[]>`
     select
       account.email,
-      coalesce(nullif(btrim(person."first_name"), ''), '') as "firstName"
+      account.first_name as "firstName"
     from private.allowed_google_accounts account
-    left join public."People" person on lower(person."email") = lower(account.email)
     where account.active = true
     order by account.email
   `;
