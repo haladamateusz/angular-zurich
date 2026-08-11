@@ -167,13 +167,17 @@ export class SubmitTalkComponent {
   private readonly formStatus = toSignal(this.submitTalkForm.statusChanges, {
     initialValue: this.submitTalkForm.status,
   });
+  private readonly talkDescriptionValue = toSignal(
+    this.submitTalkForm.controls.talkDescription.valueChanges,
+    { initialValue: this.submitTalkForm.controls.talkDescription.value },
+  );
+  private readonly speakerBioValue = toSignal(
+    this.submitTalkForm.controls.speakerBio.valueChanges,
+    { initialValue: this.submitTalkForm.controls.speakerBio.value },
+  );
 
-  protected readonly talkDescriptionLength = computed(
-    () => this.submitTalkForm.controls.talkDescription.value.length,
-  );
-  protected readonly speakerBioLength = computed(
-    () => this.submitTalkForm.controls.speakerBio.value.length,
-  );
+  protected readonly talkDescriptionLength = computed(() => this.talkDescriptionValue().length);
+  protected readonly speakerBioLength = computed(() => this.speakerBioValue().length);
   protected readonly isSubmitDisabled = computed(
     () => {
       this.formStatus();
