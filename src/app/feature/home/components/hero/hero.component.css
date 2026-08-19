@@ -537,6 +537,8 @@
   .hero {
     min-height: auto;
     padding-inline: 1rem;
+    /* Keep the stacked event actions outside the desktop-only hero fade. */
+    mask-image: none;
   }
 
   .hero-content {
