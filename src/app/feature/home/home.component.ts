@@ -93,4 +93,16 @@ export class HomeComponent {
 
     return event;
   });
+
+  protected retryUpcomingEvent(): void {
+    this.upcomingPublicEvent.reload();
+  }
+
+  protected retryPastEvents(): void {
+    this.pastEvents.reload();
+  }
+
+  protected retrySponsors(): void {
+    this.sponsors.reload();
+  }
 }

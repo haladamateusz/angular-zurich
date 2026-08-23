@@ -3,7 +3,7 @@
     <div class="partners__header">
       <h2 class="partners__heading">Our partners</h2>
       <p class="partners__intro">
-        Companies and community allies helping keep Angular Zürich open, welcoming, and sustainable.
+        Companies and community allies helping keep Angular&nbsp;Zürich open, welcoming, and sustainable.
       </p>
     </div>
 
@@ -15,7 +15,14 @@
           rel="noopener noreferrer"
           class="partner-card"
         >
-          <img [src]="partner.logo_url" [alt]="partner.title" class="partner-card__logo" width="160" height="40" />
+          <img
+            [src]="partner.logo_url"
+            [alt]="partner.title"
+            class="partner-card__logo"
+            width="160"
+            height="40"
+            draggable="false"
+          />
         </a>
       }
     </div>

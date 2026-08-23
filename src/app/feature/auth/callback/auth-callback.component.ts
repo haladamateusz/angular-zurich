@@ -18,8 +18,8 @@ import { AuthService } from '../../../core/auth/auth.service';
       <div
         class="w-full rounded-surface border border-navbar-line bg-navbar px-8 py-10 text-center"
       >
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-primary-text">Google sign-in</p>
-        <h1 class="mt-4 text-3xl font-inter-tight font-semibold tracking-[-0.04em] text-foreground">
+        <p class="text-sm font-semibold text-primary-text">Google sign-in</p>
+        <h1 class="mt-4 text-3xl font-display font-semibold tracking-[-0.04em] text-foreground">
           Finishing sign-in
         </h1>
         <p class="mt-4 text-base leading-7 text-foreground/75">

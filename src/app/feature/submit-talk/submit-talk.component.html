@@ -61,7 +61,7 @@
                   <span>Talk details</span>
                 </h3>
                 <p
-                  class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                  class="submission-card__eyebrow text-xs text-muted-foreground-2"
                 >
                   Step 1
                 </p>
@@ -103,7 +103,7 @@
                   <label class="text-sm font-semibold text-foreground" for="talkDescription"
                     >Talk description *</label
                   >
-                  <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                  <span class="text-xs text-muted-foreground-2">
                     {{ talkDescriptionLength() }}/{{ maxLengths.talkDescription }}
                   </span>
                 </div>
@@ -177,7 +177,7 @@
                   <span>Speaker details</span>
                 </h3>
                 <p
-                  class="submission-card__eyebrow speaker-card__step text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                  class="submission-card__eyebrow speaker-card__step text-xs text-muted-foreground-2"
                 >
                   Step 2
                 </p>
@@ -284,7 +284,7 @@
                     <label class="text-sm font-semibold text-foreground" for="speakerBio"
                       >Speaker bio *</label
                     >
-                    <span class="text-xs uppercase tracking-[0.16em] text-muted-foreground-2">
+                    <span class="text-xs text-muted-foreground-2">
                       {{ speakerBioLength() }}/{{ maxLengths.speakerBio }}
                     </span>
                   </div>
@@ -585,7 +585,7 @@
                   <span>{{ isEditMode() ? 'Review and save' : 'Verification and submit' }}</span>
                 </h3>
                 <p
-                  class="submission-card__eyebrow text-xs uppercase tracking-[0.2em] text-muted-foreground-2"
+                  class="submission-card__eyebrow text-xs text-muted-foreground-2"
                 >
                   Step 3
                 </p>
@@ -645,7 +645,9 @@
                   </p>
                   <p class="text-sm leading-7 text-muted-foreground-1">
                     Want to explore the community first?
-                    <a class="font-semibold text-primary-text hover:text-primary-text-hover" routerLink="/"
+                    <a
+                      class="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-text-hover"
+                      routerLink="/"
                       >Go back home</a
                     >.
                   </p>

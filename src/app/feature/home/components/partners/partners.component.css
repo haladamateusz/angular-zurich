@@ -61,7 +61,10 @@
   padding: 1.2rem 1.2rem 1.35rem;
   background: var(--color-card);
   text-decoration: none;
-  transition: border-color 180ms ease;
+  transition:
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
 }
 
 .partner-card:is(:hover, :focus-visible) {
@@ -78,9 +81,18 @@
   max-height: 2.7rem;
   width: auto;
   object-fit: contain;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 :host-context(.dark) .partner-card__logo {
   filter: grayscale(100%) invert();
-  opacity: 0.5;
+  opacity: 0.64;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .partner-card:hover {
+    box-shadow: var(--shadow-subtle);
+    transform: translateY(-1px);
+  }
 }

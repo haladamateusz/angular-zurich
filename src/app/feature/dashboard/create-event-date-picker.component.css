@@ -134,7 +134,7 @@ calendar-date::part(heading) {
   min-width: 0;
   color: var(--color-foreground);
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 calendar-date::part(months) {
@@ -149,9 +149,7 @@ calendar-month::part(month) {
 calendar-month::part(th) {
   color: color-mix(in srgb, var(--color-foreground) 52%, transparent);
   font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 700;
 }
 
 calendar-month::part(day) {

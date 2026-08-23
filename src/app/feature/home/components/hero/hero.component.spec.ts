@@ -129,6 +129,31 @@ describe('HeroComponent', () => {
     expect(action?.classList.contains('app-button--secondary')).toBe(false);
   });
 
+  it('guides visitors to Meetup when no upcoming event is published', async () => {
+    fixture.componentRef.setInput('event', null);
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const action = root.querySelector<HTMLAnchorElement>('.event-preview--empty .app-button');
+
+    expect(root.querySelector('.event-preview--empty')?.textContent).toContain('Next meetup coming soon');
+    expect(action?.textContent).toContain('Follow us on Meetup');
+    expect(action?.getAttribute('href')).toBe('https://www.meetup.com/angularzrh/');
+  });
+
+  it('shows an event-shaped skeleton while the upcoming event is loading', async () => {
+    fixture.componentRef.setInput('event', null);
+    fixture.componentRef.setInput('eventLoading', true);
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const preview = root.querySelector<HTMLElement>('.event-preview--loading');
+
+    expect(preview?.getAttribute('aria-busy')).toBe('true');
+    expect(preview?.querySelectorAll('.event-preview__skeleton')).toHaveLength(5);
+    expect(root.querySelector('.event-preview--empty')).toBeNull();
+  });
+
   it('labels the program as a preview when talks are truncated', async () => {
     const firstTalk = TEST_EVENT.talks[0];
     fixture.componentRef.setInput('event', {

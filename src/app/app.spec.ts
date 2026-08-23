@@ -237,7 +237,7 @@ describe('App', () => {
     expect(compiled.textContent).not.toContain('Next on Angular Zürich');
   });
 
-  it('keeps the centered hero when no future public event is available', async () => {
+  it('guides visitors to Meetup when no future public event is available', async () => {
     upcomingPublicEventResponse = createEventResponse(null);
 
     const fixture = TestBed.createComponent(App);
@@ -250,9 +250,12 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.querySelector('.event-preview')).toBeNull();
-    expect(compiled.querySelector('.hero-content')?.classList).toContain('hero-content--solo');
-    expect(compiled.querySelector('.hero-copy')?.classList).toContain('hero-copy--solo');
+    const emptyState = compiled.querySelector<HTMLElement>('.event-preview--empty');
+    const action = emptyState?.querySelector<HTMLAnchorElement>('.app-button');
+
+    expect(emptyState?.textContent).toContain('Next meetup coming soon');
+    expect(action?.textContent).toContain('Follow us on Meetup');
+    expect(action?.getAttribute('href')).toBe('https://www.meetup.com/angularzrh/');
   });
 
   it('redirects unauthenticated users away from the dashboard route', async () => {

@@ -86,11 +86,36 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
   }
 
   button:not(:disabled),
-  [role='button']:not(:disabled) {
+  [role='button']:not(:disabled),
+  a,
+  summary {
     cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
   }
 
   ::selection {
@@ -102,6 +127,12 @@
     background-color: var(--color-zuerich-blue-600);
     color: var(--color-white);
   }
+}
+
+time,
+.stats__value,
+.dashboard-data-table {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Defaults hover styles on all devices */
@@ -127,6 +158,9 @@
 }
 
 .event-meta__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
   border-radius: var(--radius-subtle);
   color: var(--foreground-link);
   text-decoration: none;
@@ -217,7 +251,8 @@
   transition:
     background-color var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard),
-    opacity var(--duration-fast) var(--ease-standard);
+    opacity var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 }
 
 :is(button, a, summary).app-button.app-button:is(:hover, :focus-visible):not(
@@ -231,6 +266,7 @@
 
 :is(button, a, summary).app-button.app-button:active:not(:disabled, [aria-disabled='true']) {
   background: var(--app-button-background-active);
+  transform: scale(0.98);
   box-shadow: none;
 }
 
@@ -365,6 +401,10 @@
 @media (prefers-reduced-motion: reduce) {
   :is(button, a, summary).app-button.app-button {
     transition-duration: 1ms;
+  }
+
+  :is(button, a, summary).app-button.app-button:active:not(:disabled, [aria-disabled='true']) {
+    transform: none;
   }
 }
 

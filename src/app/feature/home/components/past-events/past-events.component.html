@@ -1,7 +1,7 @@
 <section class="past-events" aria-labelledby="past-events-heading">
   <div class="past-events__container">
     <div class="past-events__header">
-      <h2 id="past-events-heading" class="past-events__heading">Past Events</h2>
+      <h2 id="past-events-heading" class="past-events__heading">Past events</h2>
     </div>
 
     @if (loading() && !cards().length) {
@@ -77,6 +77,7 @@
                     [alt]="card.title"
                     class="past-event-card__graphic"
                     loading="lazy"
+                    draggable="false"
                   />
                 } @else {
                   <div
@@ -170,6 +171,7 @@
                             [alt]="speaker.name"
                             class="past-event-card__speaker-avatar"
                             loading="lazy"
+                            draggable="false"
                           />
                         }
                       </div>

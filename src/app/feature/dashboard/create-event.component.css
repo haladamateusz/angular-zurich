@@ -9,9 +9,7 @@
   margin-left: auto;
   color: var(--color-muted-foreground-2);
   font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .create-event-section__header-row {

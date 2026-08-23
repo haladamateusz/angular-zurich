@@ -228,12 +228,50 @@
           }
         </div>
       </aside>
+    } @else if (eventLoading()) {
+      <aside class="event-preview event-preview--loading" aria-busy="true" aria-label="Loading next event">
+        <div class="event-preview__header" aria-hidden="true">
+          <div class="event-preview__skeleton event-preview__skeleton--kicker"></div>
+          <div class="event-preview__skeleton event-preview__skeleton--title"></div>
+        </div>
+        <div class="event-preview__skeleton event-preview__skeleton--facts" aria-hidden="true"></div>
+        <div class="event-preview__skeleton event-preview__skeleton--agenda" aria-hidden="true"></div>
+        <div class="event-preview__skeleton event-preview__skeleton--action" aria-hidden="true"></div>
+      </aside>
+    } @else {
+      <aside class="event-preview event-preview--empty" aria-labelledby="next-event-empty-title">
+        <div class="event-preview__header grid gap-[0.45rem] max-[720px]:gap-[0.35rem]">
+          <span class="event-preview__kicker">Next on Angular&nbsp;Zürich</span>
+          <h2 id="next-event-empty-title" class="event-preview__title">Next meetup coming soon</h2>
+        </div>
+        <p class="event-preview__empty-copy">
+          We’re planning the next gathering. Follow the group on Meetup to hear when it is announced.
+        </p>
+        <div class="event-preview__actions">
+          <a
+            class="app-button"
+            href="https://www.meetup.com/angularzrh/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Follow us on Meetup
+            <span class="sr-only">(opens in a new tab)</span>
+          </a>
+        </div>
+      </aside>
     }
 
     <div class="sponsors">
       <span class="sponsors__label">Supported by</span>
       <div class="sponsors__marquee">
-        @if (sponsorsLoading() && !sponsors().length) {
+        @if (sponsorsLoadFailed()) {
+          <div class="sponsors__error" role="alert">
+            <span>Partner logos are unavailable right now.</span>
+            <button type="button" class="app-button app-button--ghost" (click)="retrySponsors.emit()">
+              Try loading partners
+            </button>
+          </div>
+        } @else if (sponsorsLoading() && !sponsors().length) {
           <div class="sponsors__placeholder-row" aria-hidden="true">
             @for (placeholder of [1, 2, 3, 4]; track placeholder) {
               <span class="sponsors__item">

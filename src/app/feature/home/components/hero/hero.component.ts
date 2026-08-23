@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
@@ -13,7 +13,10 @@ import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-da
 export class HeroComponent {
   readonly sponsors = input.required<Sponsor[]>();
   readonly sponsorsLoading = input(false);
+  readonly sponsorsLoadFailed = input(false);
+  readonly eventLoading = input(false);
   readonly event = input<Event | null>(null);
+  readonly retrySponsors = output<void>();
 
   protected readonly previewTalks = computed(() =>
     (this.event()?.talks ?? []).slice(0, 3).map((talk) => {

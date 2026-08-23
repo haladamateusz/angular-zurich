@@ -6,9 +6,17 @@
 
     <div class="team__sections">
       <section class="team__column team__column--current">
-        <div class="team__grid">
-          @for (member of organizersResource.value(); track member.first_name) {
-            <article class="member-card">
+        @if (organizersResource.error()) {
+          <div class="team__state" role="alert">
+            <p>We couldn’t load the current organisers. Try again to meet the team.</p>
+            <button type="button" class="app-button app-button--secondary" (click)="retryOrganizers()">
+              Try loading the team
+            </button>
+          </div>
+        } @else {
+          <div class="team__grid">
+            @for (member of organizersResource.value(); track member.first_name) {
+              <article class="member-card">
               <div class="member-card__profile">
                 <img
                   [src]="member.picture_url"
@@ -60,9 +68,10 @@
                   </div>
                 </div>
               </div>
-            </article>
-          }
-        </div>
+              </article>
+            }
+          </div>
+        }
       </section>
 
       <section class="team__column team__column--archive">
@@ -71,9 +80,17 @@
           <p class="team__archive-intro">Former organizers who helped build the community over the years.</p>
         </div>
 
-        <div class="team__grid">
-          @for (member of formerOrganizersResource.value(); track member.first_name) {
-            <article class="member-card member-card--faded">
+        @if (formerOrganizersResource.error()) {
+          <div class="team__state" role="alert">
+            <p>We couldn’t load the Hall of Fame. Try again to view former organisers.</p>
+            <button type="button" class="app-button app-button--secondary" (click)="retryFormerOrganizers()">
+              Try loading the Hall of Fame
+            </button>
+          </div>
+        } @else {
+          <div class="team__grid">
+            @for (member of formerOrganizersResource.value(); track member.first_name) {
+              <article class="member-card member-card--faded">
               <div class="member-card__profile">
                 <img
                   [src]="member.picture_url"
@@ -122,9 +139,10 @@
                   </div>
                 </div>
               </div>
-            </article>
-          }
-        </div>
+              </article>
+            }
+          </div>
+        }
       </section>
     </div>
   </div>

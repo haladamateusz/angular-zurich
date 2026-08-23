@@ -5,8 +5,8 @@
 .app-toast-outlet {
   position: fixed;
   z-index: var(--z-toast);
-  right: var(--space-4);
-  bottom: var(--space-4);
+  right: max(var(--space-4), env(safe-area-inset-right));
+  bottom: max(var(--space-4), env(safe-area-inset-bottom));
   display: flex;
   width: min(24rem, calc(100vw - 2rem));
   flex-direction: column;
@@ -174,8 +174,8 @@
 
 @media (min-width: 40rem) {
   .app-toast-outlet {
-    top: var(--space-6);
-    right: var(--space-6);
+    top: max(var(--space-6), env(safe-area-inset-top));
+    right: max(var(--space-6), env(safe-area-inset-right));
     bottom: auto;
   }
 

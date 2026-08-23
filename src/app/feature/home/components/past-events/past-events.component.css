@@ -5,7 +5,7 @@
 
 .past-events {
   overflow-x: hidden;
-  padding: 0.5rem 1.5rem 4.5rem;
+  padding: 4.5rem 1.5rem;
 }
 
 .past-events__container {
@@ -14,7 +14,7 @@
 }
 
 .past-events__header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .past-events__heading {
@@ -147,7 +147,10 @@
   border: 1px solid var(--color-card-line);
   border-radius: var(--radius-surface);
   background: var(--color-card);
-  transition: border-color 180ms ease;
+  transition:
+    border-color var(--duration-normal) var(--ease-standard),
+    box-shadow var(--duration-normal) var(--ease-standard),
+    transform var(--duration-normal) var(--ease-standard);
 }
 
 .past-event-card__link {
@@ -179,6 +182,8 @@
 .past-event-card__graphic {
   display: block;
   width: 100%;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .past-event-card__graphic--placeholder {
@@ -232,10 +237,8 @@
 .past-event-card__speaker-label {
   margin: 0 0 0.65rem;
   color: var(--color-muted-foreground-2);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  font-size: var(--type-xs);
+  font-weight: 600;
 }
 
 .past-event-card__speaker-row {
@@ -260,6 +263,15 @@
   border-radius: var(--radius-control);
   object-fit: cover;
   object-position: center;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .past-event-card:hover {
+    box-shadow: var(--shadow-subtle);
+    transform: translateY(-1px);
+  }
 }
 
 .past-event-card__speaker-avatar:first-child {

@@ -54,7 +54,7 @@
             </p>
 
             <div class="submission-summary__item">
-              <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary-text">
+              <p class="text-xs font-semibold text-primary-text">
                 Submission ID
               </p>
               <p class="mt-2 break-all font-mono text-sm text-foreground">{{ submissionId() }}</p>
@@ -62,7 +62,7 @@
 
             @if (isLoading() || errorMessage() || statusSummary()) {
               <div class="submission-summary__item">
-                <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary-text">
+                <p class="text-xs font-semibold text-primary-text">
                   Current status
                 </p>
                 @if (isLoading()) {

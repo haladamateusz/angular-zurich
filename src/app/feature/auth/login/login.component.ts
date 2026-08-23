@@ -14,11 +14,11 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
       <div
         class="login-card w-full rounded-surface border border-card-line bg-card px-8 py-10 sm:px-10"
       >
-        <p class="relative z-[1] text-sm font-semibold uppercase tracking-[0.28em] text-primary-text">
+        <p class="relative z-[1] text-sm font-semibold text-primary-text">
           Organizer access
         </p>
         <h1
-          class="relative z-[1] mt-4 text-4xl font-inter-tight font-semibold tracking-[-0.04em] text-foreground"
+          class="relative z-[1] mt-4 text-4xl font-display font-semibold tracking-[-0.04em] text-foreground"
         >
           Sign in with an approved Google account
         </h1>

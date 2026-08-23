@@ -52,7 +52,7 @@
   margin: 0;
   color: var(--color-foreground);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .dashboard-table-filter__clear-button {

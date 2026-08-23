@@ -34,4 +34,12 @@ export class TeamComponent {
         return data ?? [];
       }),
   });
+
+  protected retryOrganizers(): void {
+    this.organizersResource.reload();
+  }
+
+  protected retryFormerOrganizers(): void {
+    this.formerOrganizersResource.reload();
+  }
 }
