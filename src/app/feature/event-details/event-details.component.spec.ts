@@ -27,6 +27,13 @@ const TEST_EVENT: MeetupEvent = {
   },
 };
 
+const PAST_EVENT: MeetupEvent = {
+  ...TEST_EVENT,
+  id: 'past-event-1',
+  slug: 'september-2020',
+  starts_at: '2020-09-08T18:00:00.000Z',
+};
+
 describe('EventDetailsComponent', () => {
   let fixture: ComponentFixture<EventDetailsComponent>;
   const removeEvent = vi.fn();
@@ -39,7 +46,9 @@ describe('EventDetailsComponent', () => {
         {
           provide: SupabaseService,
           useValue: {
-            getEventBySlug: vi.fn().mockResolvedValue({ data: TEST_EVENT, error: null }),
+            getEventBySlug: vi.fn().mockImplementation((slug: string) =>
+              Promise.resolve({ data: slug === PAST_EVENT.slug ? PAST_EVENT : TEST_EVENT, error: null }),
+            ),
             removeEvent,
           },
         },
@@ -85,6 +94,20 @@ describe('EventDetailsComponent', () => {
     expect(metadata?.textContent).toContain('20:00');
     expect(metadata?.textContent).toContain(TEST_EVENT.venue?.title);
     expect(metadata?.querySelector('a')).toBeNull();
+  });
+
+  it('hides the Meetup reservation action for a past event', async () => {
+    fixture.componentRef.setInput('slug', PAST_EVENT.slug);
+    fixture.detectChanges();
+
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect((fixture.nativeElement as HTMLElement).textContent).toContain('8 Sept 2020');
+    });
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.event-details__meetup-button'),
+    ).toBeNull();
   });
 
   it('shows a removal action with a confirmation dialog for dashboard visits', async () => {

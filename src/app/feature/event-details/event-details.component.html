@@ -225,36 +225,38 @@
           </div>
 
           <div class="event-details__actions">
-            <a
-              [href]="currentEvent.meetup_url"
-              target="_blank"
-              rel="noreferrer"
-              class="event-details__meetup-button app-button app-button--secondary"
-            >
-              <span>View on Meetup</span>
-
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                class="event-details__meetup-icon app-button__icon"
-                aria-hidden="true"
+            @if (canReserveOnMeetup(currentEvent.starts_at)) {
+              <a
+                [href]="currentEvent.meetup_url"
+                target="_blank"
+                rel="noreferrer"
+                class="event-details__meetup-button app-button app-button--secondary"
               >
-                <path
-                  d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M19.5 13.5v4.75A1.25 1.25 0 0 1 18.25 19.5H5.75A1.25 1.25 0 0 1 4.5 18.25V5.75A1.25 1.25 0 0 1 5.75 4.5H10.5"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </a>
+                <span>View on Meetup</span>
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="event-details__meetup-icon app-button__icon"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M19.5 13.5v4.75A1.25 1.25 0 0 1 18.25 19.5H5.75A1.25 1.25 0 0 1 4.5 18.25V5.75A1.25 1.25 0 0 1 5.75 4.5H10.5"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            }
           </div>
         </div>
 

@@ -157,6 +157,12 @@ export class EventDetailsComponent {
     return this.currentTimestamp() >= eventStartTimestamp + SLIDES_VISIBILITY_DELAY_MS;
   }
 
+  protected canReserveOnMeetup(eventStartsAt: string): boolean {
+    const eventStartTimestamp = Date.parse(eventStartsAt);
+
+    return !Number.isNaN(eventStartTimestamp) && this.currentTimestamp() < eventStartTimestamp;
+  }
+
   protected markFeatureGraphicAsLoaded(featureGraphicUrl: string | null): void {
     this.loadedFeatureGraphicUrl.set(featureGraphicUrl);
   }
