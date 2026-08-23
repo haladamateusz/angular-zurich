@@ -23,6 +23,65 @@
   --color-control-muted-active: var(--color-surface-1);
 }
 
+:root {
+  color-scheme: light;
+
+  /* Primitive spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-18: 4.5rem;
+  --space-20: 5rem;
+
+  /* Primitive typography */
+  --type-xs: 0.75rem;
+  --type-sm: 0.875rem;
+  --type-base: 1rem;
+  --type-lg: 1.125rem;
+  --type-xl: 1.25rem;
+  --type-2xl: 1.5rem;
+  --type-3xl: 1.875rem;
+  --type-4xl: 2.25rem;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --tracking-display: -0.02em;
+
+  /* Primitive radii and elevation */
+  --radius-pill: 999px;
+  --shadow-subtle: 0 1px 2px oklch(20.5% 0.004 251 / 0.08);
+  --shadow-floating:
+    0 1rem 2.5rem oklch(20.5% 0.004 251 / 0.12),
+    0 0.25rem 0.75rem oklch(20.5% 0.004 251 / 0.08);
+
+  /* Primitive motion */
+  --duration-fast: 140ms;
+  --duration-normal: 180ms;
+  --duration-slow: 360ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Semantic stacking */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-dropdown: 40;
+  --z-modal: 50;
+  --z-popover: 70;
+  --z-toast: 100;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
 /* Adds pointer cursor to buttons */
 @layer base {
   html {
@@ -50,26 +109,26 @@
 
 /* Shared event metadata hierarchy: accent icons, readable values, explicit links. */
 .event-meta__label {
-  color: var(--event-meta-label);
+  color: var(--foreground-secondary);
 }
 
 .event-meta__icon {
   flex: none;
-  color: var(--event-meta-icon);
+  color: var(--foreground-link);
 }
 
 .event-meta__value {
-  color: var(--event-meta-value);
-  font-weight: 600;
+  color: var(--foreground-primary);
+  font-weight: var(--weight-semibold);
 }
 
 .event-meta__secondary {
-  color: var(--event-meta-secondary);
+  color: var(--foreground-secondary);
 }
 
 .event-meta__link {
   border-radius: var(--radius-subtle);
-  color: var(--event-meta-link);
+  color: var(--foreground-link);
   text-decoration: none;
 }
 
@@ -80,7 +139,7 @@
 }
 
 .event-meta__link:is(:hover, :focus-visible) {
-  color: var(--event-meta-link-hover);
+  color: var(--action-primary-hover);
 }
 
 .event-meta__link:is(:hover, :focus-visible) .event-meta__link-label {
@@ -130,35 +189,35 @@
 
 /* Flat action system: solid hierarchy, palette tokens, no decorative depth. */
 :is(button, a, summary).app-button.app-button {
-  --app-button-background: var(--color-primary);
-  --app-button-background-hover: var(--color-primary-hover);
-  --app-button-background-active: var(--color-primary-active);
-  --app-button-foreground: var(--color-primary-foreground);
-  --app-button-focus: var(--color-primary-700);
+  --app-button-background: var(--action-primary);
+  --app-button-background-hover: var(--action-primary-hover);
+  --app-button-background-active: var(--action-primary-active);
+  --app-button-foreground: var(--action-primary-foreground);
+  --app-button-focus: var(--action-primary-focus);
 
   appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   min-height: 2.75rem;
   border: 0;
   border-radius: var(--radius-control);
   background: var(--app-button-background);
-  padding: 0.75rem 1rem;
+  padding: var(--space-3) var(--space-4);
   color: var(--app-button-foreground);
   font: inherit;
-  font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: var(--type-sm);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
   text-align: center;
   text-decoration: none;
   box-shadow: none;
   cursor: pointer;
   transition:
-    background-color 140ms ease,
-    color 140ms ease,
-    opacity 140ms ease;
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard);
 }
 
 :is(button, a, summary).app-button.app-button:is(:hover, :focus-visible):not(
@@ -189,7 +248,7 @@
   --app-button-background: var(--color-control-muted);
   --app-button-background-hover: var(--color-control-muted-hover);
   --app-button-background-active: var(--color-control-muted-active);
-  --app-button-foreground: var(--color-surface-foreground);
+  --app-button-foreground: var(--foreground-primary);
 }
 
 .dark :is(button, a, summary).app-button.app-button--secondary {
@@ -199,20 +258,20 @@
 }
 
 .dark :is(button, a, summary).app-button.app-button {
-  --app-button-focus: var(--color-primary-400);
+  --app-button-focus: var(--action-primary-focus);
 }
 
 :is(button, a, summary).app-button.app-button--ghost {
   --app-button-background: transparent;
-  --app-button-background-hover: color-mix(in srgb, var(--color-primary-500) 12%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-primary-500) 18%, transparent);
-  --app-button-foreground: var(--color-primary-text);
+  --app-button-background-hover: color-mix(in srgb, var(--action-primary) 12%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--action-primary) 18%, transparent);
+  --app-button-foreground: var(--foreground-link);
 }
 
 .dark :is(button, a, summary).app-button.app-button--ghost {
-  --app-button-background-hover: color-mix(in srgb, var(--color-primary-400) 18%, transparent);
-  --app-button-background-active: color-mix(in srgb, var(--color-primary-400) 24%, transparent);
-  --app-button-foreground: var(--color-primary-text);
+  --app-button-background-hover: color-mix(in srgb, var(--action-primary) 18%, transparent);
+  --app-button-background-active: color-mix(in srgb, var(--action-primary) 24%, transparent);
+  --app-button-foreground: var(--foreground-link);
 }
 
 :is(button, a, summary).app-button.app-button--danger {
@@ -224,7 +283,7 @@
 }
 
 :is(button, a, summary).app-button.app-button--compact {
-  padding-inline: 0.75rem;
+  padding-inline: var(--space-3);
   font-size: 0.8125rem;
 }
 
@@ -256,7 +315,7 @@
   justify-content: flex-start;
   min-height: 3.25rem;
   width: 100%;
-  padding-inline: 1rem;
+  padding-inline: var(--space-4);
   text-align: left;
 }
 

@@ -4,38 +4,38 @@
 
 .app-toast-outlet {
   position: fixed;
-  z-index: 100;
-  right: 1rem;
-  bottom: 1rem;
+  z-index: var(--z-toast);
+  right: var(--space-4);
+  bottom: var(--space-4);
   display: flex;
   width: min(24rem, calc(100vw - 2rem));
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
   pointer-events: none;
 }
 
 .app-toast {
-  --app-toast-accent: var(--color-primary-500);
+  --app-toast-accent: var(--action-primary);
   --app-toast-accent-soft: color-mix(in srgb, var(--app-toast-accent) 12%, transparent);
   --app-toast-accent-foreground: color-mix(
     in srgb,
     var(--app-toast-accent) 78%,
-    var(--color-foreground) 22%
+    var(--foreground-primary) 22%
   );
 
   position: relative;
   display: flex;
   overflow: hidden;
-  gap: 0.75rem;
-  border: 1px solid color-mix(in srgb, var(--app-toast-accent) 30%, var(--color-border));
+  gap: var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--app-toast-accent) 30%, var(--border-default));
   border-radius: var(--radius-surface);
-  background: var(--color-card);
-  box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--color-foreground) 18%, transparent);
-  color: var(--color-foreground);
-  padding: 1rem 0.875rem 1rem 1rem;
+  background: var(--background-raised);
+  box-shadow: var(--elevation-floating);
+  color: var(--foreground-primary);
+  padding: var(--space-4) var(--space-3) var(--space-4) var(--space-4);
   pointer-events: auto;
   will-change: opacity, transform;
-  animation: app-toast-enter 360ms cubic-bezier(0.16, 1, 0.3, 1) 16ms both;
+  animation: app-toast-enter var(--duration-slow) var(--ease-emphasized) 16ms both;
 }
 
 .app-toast--success {
@@ -52,7 +52,7 @@
 
 .app-toast.app-toast--leaving {
   pointer-events: none;
-  animation: app-toast-exit 180ms ease-in both;
+  animation: app-toast-exit var(--duration-normal) ease-in both;
 }
 
 .app-toast__icon {
@@ -61,7 +61,7 @@
   height: 2rem;
   flex: none;
   place-items: center;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--app-toast-accent-soft);
   color: var(--app-toast-accent-foreground);
 }
@@ -83,16 +83,16 @@
 }
 
 .app-toast__title {
-  color: var(--color-foreground);
-  font-size: 0.875rem;
-  font-weight: 700;
+  color: var(--foreground-primary);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-bold);
   line-height: 1.3;
 }
 
 .app-toast__message {
-  color: var(--color-muted-foreground-1);
-  font-size: 0.875rem;
-  line-height: 1.5;
+  color: var(--foreground-secondary);
+  font-size: var(--type-sm);
+  line-height: var(--leading-normal);
 }
 
 .app-toast__title + .app-toast__message {
@@ -108,7 +108,7 @@
   border: 0;
   border-radius: var(--radius-subtle);
   background: transparent;
-  color: var(--color-muted-foreground-1);
+  color: var(--foreground-secondary);
   cursor: pointer;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .app-toast__dismiss:focus-visible {
-  outline: 3px solid var(--color-primary-focus);
+  outline: 3px solid var(--action-primary-focus);
   outline-offset: 2px;
 }
 
@@ -174,8 +174,8 @@
 
 @media (min-width: 40rem) {
   .app-toast-outlet {
-    top: 1.5rem;
-    right: 1.5rem;
+    top: var(--space-6);
+    right: var(--space-6);
     bottom: auto;
   }
 

@@ -49,6 +49,26 @@
 :root[data-theme="theme-zuerich-blue"],
 [data-theme="theme-zuerich-blue"] {
 
+  /* SEMANTIC ALIASES — LIGHT */
+  --background-canvas: var(--background);
+  --background-raised: var(--color-white);
+  --background-overlay: var(--overlay);
+  --background-sunken: var(--background-1);
+  --foreground-primary: var(--foreground);
+  --foreground-secondary: var(--muted-foreground-1);
+  --foreground-tertiary: var(--muted-foreground);
+  --foreground-link: var(--primary-text);
+  --border-subtle: var(--border-line-1);
+  --border-default: var(--border);
+  --border-strong: var(--border-line-4);
+  --border-focus: var(--primary-focus);
+  --action-primary: var(--primary);
+  --action-primary-hover: var(--primary-hover);
+  --action-primary-active: var(--primary-active);
+  --action-primary-foreground: var(--primary-foreground);
+  --action-primary-focus: var(--primary-focus);
+  --elevation-floating: var(--shadow-floating);
+
   /* ============================================ */
   /* GLOBAL SURFACES + TEXT                       */
   /* ============================================ */
@@ -108,12 +128,12 @@
   /* EVENT METADATA                               */
   /* ============================================ */
 
-  --event-meta-icon: var(--color-primary-text);
-  --event-meta-value: var(--color-foreground);
-  --event-meta-label: var(--color-muted-foreground-1);
-  --event-meta-secondary: var(--color-muted-foreground-1);
-  --event-meta-link: var(--color-primary-text);
-  --event-meta-link-hover: var(--color-primary-text-hover);
+  --event-meta-icon: var(--foreground-link);
+  --event-meta-value: var(--foreground-primary);
+  --event-meta-label: var(--foreground-secondary);
+  --event-meta-secondary: var(--foreground-secondary);
+  --event-meta-link: var(--foreground-link);
+  --event-meta-link-hover: var(--action-primary-hover);
   
   /* ============================================ */
   /* SECONDARY                                    */
@@ -285,14 +305,14 @@
   /* NAVBAR                                       */
   /* ============================================ */
   
-  --navbar: var(--color-white);
-  --navbar-line: var(--color-zuerich-blue-gray-200);
-  --navbar-divider: var(--color-zuerich-blue-gray-200);
-  --navbar-nav-foreground: var(--color-zuerich-blue-gray-800);
-  --navbar-nav-hover: var(--color-zuerich-blue-gray-100);
-  --navbar-nav-focus: var(--color-zuerich-blue-gray-100);
-  --navbar-nav-active: var(--color-zuerich-blue-gray-100);
-  --navbar-nav-list-divider: var(--color-zuerich-blue-gray-200);
+  --navbar: var(--background-raised);
+  --navbar-line: var(--border-default);
+  --navbar-divider: var(--border-default);
+  --navbar-nav-foreground: var(--foreground-primary);
+  --navbar-nav-hover: var(--background-sunken);
+  --navbar-nav-focus: var(--background-sunken);
+  --navbar-nav-active: var(--background-sunken);
+  --navbar-nav-list-divider: var(--border-default);
   --navbar-inverse: var(--color-primary-950);
   
   --navbar-1: var(--color-zuerich-blue-gray-50);
@@ -349,11 +369,11 @@
   /* CARD                                         */
   /* ============================================ */
   
-  --card: var(--color-white);
-  --card-line: var(--color-zuerich-blue-gray-200);
-  --card-divider: var(--color-zuerich-blue-gray-200);
-  --card-header: var(--color-zuerich-blue-gray-200);
-  --card-footer: var(--color-zuerich-blue-gray-200);
+  --card: var(--background-raised);
+  --card-line: var(--border-default);
+  --card-divider: var(--border-default);
+  --card-header: var(--border-default);
+  --card-footer: var(--border-default);
   --card-inverse: var(--color-primary-950);
   
   /* ============================================ */
@@ -540,6 +560,26 @@
 
 [data-theme="theme-zuerich-blue"].dark {
 
+  /* SEMANTIC ALIASES — DARK */
+  --background-canvas: var(--background);
+  --background-raised: var(--color-zuerich-blue-gray-800);
+  --background-overlay: var(--overlay);
+  --background-sunken: var(--dropdown-1);
+  --foreground-primary: var(--foreground);
+  --foreground-secondary: var(--muted-foreground-1);
+  --foreground-tertiary: var(--muted-foreground);
+  --foreground-link: var(--primary-text);
+  --border-subtle: var(--border-line-1);
+  --border-default: var(--border);
+  --border-strong: var(--border-line-4);
+  --border-focus: var(--primary-focus);
+  --action-primary: color-mix(in oklch, var(--primary) 86%, var(--background));
+  --action-primary-hover: color-mix(in oklch, var(--primary-hover) 86%, var(--background));
+  --action-primary-active: color-mix(in oklch, var(--primary-active) 86%, var(--background));
+  --action-primary-foreground: var(--primary-foreground);
+  --action-primary-focus: var(--primary-focus);
+  --elevation-floating: 0 0 0 1px var(--border-default);
+
   /* ============================================ */
   /* DARK MODE - Blue-tinted (zuerich-blue-gray)  */
   /* ============================================ */
@@ -700,14 +740,14 @@
   --color-status-rejected-foreground: var(--color-red-300);
   
   /* NAVBAR */
-  --navbar: var(--color-zuerich-blue-gray-800);
-  --navbar-line: var(--color-zuerich-blue-gray-700);
-  --navbar-divider: var(--color-zuerich-blue-gray-700);
-  --navbar-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --navbar-nav-hover: var(--color-zuerich-blue-gray-700);
-  --navbar-nav-focus: var(--color-zuerich-blue-gray-700);
-  --navbar-nav-active: var(--color-zuerich-blue-gray-700);
-  --navbar-nav-list-divider: var(--color-zuerich-blue-gray-700);
+  --navbar: var(--background-raised);
+  --navbar-line: var(--border-default);
+  --navbar-divider: var(--border-default);
+  --navbar-nav-foreground: var(--foreground-primary);
+  --navbar-nav-hover: var(--background-sunken);
+  --navbar-nav-focus: var(--background-sunken);
+  --navbar-nav-active: var(--background-sunken);
+  --navbar-nav-list-divider: var(--border-default);
   --navbar-inverse: var(--color-zuerich-blue-950);
   
   --navbar-1: var(--color-zuerich-blue-gray-900);
@@ -758,11 +798,11 @@
   --sidebar-2-nav-list-divider: var(--color-zuerich-blue-gray-800);
   
   /* CARD */
-  --card: var(--color-zuerich-blue-gray-800);
-  --card-line: var(--color-zuerich-blue-gray-700);
-  --card-divider: var(--color-zuerich-blue-gray-700);
-  --card-header: var(--color-zuerich-blue-gray-700);
-  --card-footer: var(--color-zuerich-blue-gray-700);
+  --card: var(--background-raised);
+  --card-line: var(--border-default);
+  --card-divider: var(--border-default);
+  --card-header: var(--border-default);
+  --card-footer: var(--border-default);
   --card-inverse: var(--color-zuerich-blue-gray-900);
   
   /* DROPDOWN */
