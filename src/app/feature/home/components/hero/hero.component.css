@@ -5,6 +5,14 @@
 
 .hero {
   --_navbar: 73px;
+  --_hero-enter-delay: 180ms;
+  --_hero-enter-stagger: 120ms;
+  --_hero-title-word-stagger: 60ms;
+  --_hero-event-enter-duration: 560ms;
+  --_hero-sponsors-card-gap: 120ms;
+  --_hero-description-delay: 660ms;
+  --_hero-solo-description-delay: 480ms;
+  --_hero-solo-sponsors-delay: 700ms;
 
   position: relative;
   width: 100%;
@@ -88,13 +96,28 @@
 
 .hero-content--solo {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 26rem auto;
+  align-content: start;
   justify-items: center;
   min-height: calc(85svh - var(--_navbar));
 }
 
 .hero-copy--solo {
   align-items: center;
+  gap: 1rem;
   text-align: center;
+}
+
+.hero-copy--enter {
+  opacity: 0;
+  animation: hero-copy-enter var(--duration-slow) var(--ease-emphasized) both;
+  animation-delay: var(--_hero-enter-delay);
+}
+
+@keyframes hero-copy-enter {
+  to {
+    opacity: 1;
+  }
 }
 
 .hero-title {
@@ -110,6 +133,44 @@
   overflow-wrap: anywhere;
 }
 
+.hero-title__line {
+  display: block;
+}
+
+.hero-title__line--words {
+  display: flex;
+  gap: 0.18em;
+}
+
+.hero-title__segment {
+  display: block;
+  overflow: clip;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.hero-title__segment-content {
+  display: block;
+  transform: translateY(110%);
+  animation: hero-title-line-reveal var(--duration-slow) var(--ease-emphasized) both;
+  animation-delay: var(--_hero-enter-delay);
+  will-change: transform;
+}
+
+.hero-title__line--words .hero-title__segment:nth-child(2) .hero-title__segment-content {
+  animation-delay: calc(var(--_hero-enter-delay) + var(--_hero-title-word-stagger));
+}
+
+.hero-title__line:nth-child(2) .hero-title__segment-content {
+  animation-delay: calc(var(--_hero-enter-delay) + var(--_hero-enter-stagger));
+}
+
+@keyframes hero-title-line-reveal {
+  to {
+    transform: translateY(0);
+  }
+}
+
 .hero-description {
   max-width: 36rem;
   margin: 0;
@@ -119,14 +180,64 @@
   overflow-wrap: anywhere;
 }
 
-.hero-copy--solo .hero-title,
+.hero-description--enter,
+.sponsors--enter {
+  opacity: 0;
+  transform: translateY(0.625rem);
+  animation: hero-intro-reveal var(--duration-slow) var(--ease-emphasized) both;
+}
+
+.hero-description--enter {
+  animation-delay: var(--_hero-description-delay);
+}
+
+.sponsors--enter {
+  animation-delay: calc(
+    var(--_hero-enter-delay) + var(--_hero-enter-stagger) + var(--_hero-event-enter-duration) +
+      var(--_hero-sponsors-card-gap)
+  );
+}
+
+.hero-content--solo .sponsors--enter {
+  animation-delay: var(--_hero-solo-sponsors-delay);
+}
+
+@keyframes hero-intro-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero-copy--solo .hero-description {
   text-align: center;
+}
+
+.hero-copy--solo .hero-description--enter {
+  animation-delay: var(--_hero-solo-description-delay);
+}
+
+.hero-copy--solo .hero-title {
+  text-align: start;
 }
 
 @media (min-width: 721px) {
   .hero-copy--solo .hero-title {
     max-width: none;
+    white-space: nowrap;
+  }
+
+  .hero-copy--solo .hero-title__line {
+    display: inline-block;
+    overflow: visible;
+    padding-block: 0;
+    margin-block: 0;
+    vertical-align: bottom;
+  }
+
+  .hero-copy--solo .hero-title__line--words {
+    display: inline-flex;
+    margin-inline-end: 0.18em;
   }
 }
 
@@ -228,6 +339,23 @@
   border: 1px solid var(--color-card-line);
   border-radius: var(--radius-surface);
   background: var(--color-card);
+}
+
+.event-preview--enter {
+  animation: event-preview-enter var(--_hero-event-enter-duration) var(--ease-emphasized) both;
+  animation-delay: calc(var(--_hero-enter-delay) + var(--_hero-enter-stagger));
+}
+
+@keyframes event-preview-enter {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .event-preview__kicker,
@@ -400,13 +528,6 @@
   gap: 0.75rem;
 }
 
-.event-preview__empty-copy {
-  max-width: 34rem;
-  margin: 0;
-  color: var(--color-muted-foreground-1);
-  line-height: var(--leading-normal);
-}
-
 .event-preview--loading {
   min-height: 26rem;
 }
@@ -511,6 +632,23 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-copy--enter,
+  .hero-description--enter,
+  .sponsors--enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .hero-title__segment-content {
+    transform: none;
+    animation: none;
+  }
+
+  .event-preview--enter {
+    animation: none;
+  }
+
   .sponsors__marquee {
     overflow: visible;
     mask-image: none;
@@ -548,6 +686,8 @@
   }
 
   .hero-content--solo {
+    grid-template-rows: none;
+    align-content: normal;
     min-height: auto;
   }
 

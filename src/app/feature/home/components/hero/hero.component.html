@@ -48,16 +48,35 @@
     <div
       class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5"
       [class.hero-copy--solo]="!nextEvent"
+      [class.hero-copy--enter]="animateHeroIntro()"
     >
-      <h1 class="hero-title">Meet. Learn. Ship&nbsp;Angular.</h1>
-      <p class="hero-description">
+      <h1 class="hero-title">
+        <span class="hero-title__line hero-title__line--words">
+          <span class="hero-title__segment">
+            <span class="hero-title__segment-content">Meet.</span>
+          </span>
+          <span class="hero-title__segment">
+            <span class="hero-title__segment-content">Learn.</span>
+          </span>
+        </span>
+        <span class="hero-title__line">
+          <span class="hero-title__segment">
+            <span class="hero-title__segment-content">Ship&nbsp;Angular.</span>
+          </span>
+        </span>
+      </h1>
+      <p class="hero-description" [class.hero-description--enter]="animateHeroIntro()">
         Learn with local Angular engineers, discover practical ideas you can ship the next day, and
         build momentum with the Zürich community.
       </p>
     </div>
 
     @if (nextEvent) {
-      <aside class="event-preview" aria-labelledby="next-event-title">
+      <aside
+        class="event-preview"
+        [class.event-preview--enter]="animateEventContent()"
+        aria-labelledby="next-event-title"
+      >
         <div class="event-preview__header grid gap-[0.45rem] max-[720px]:gap-[0.35rem]">
           <span class="event-preview__kicker">Next on Angular Zürich</span>
           <h2 id="next-event-title" class="event-preview__title">{{ nextEvent.title }}</h2>
@@ -160,7 +179,9 @@
                 } @else {
                   <span class="event-preview__fact-value">
                     <span class="event-preview__venue-copy">
-                      <span class="event-preview__venue-title event-meta__value">{{ nextEvent.venue.title }}</span>
+                      <span class="event-preview__venue-title event-meta__value">{{
+                        nextEvent.venue.title
+                      }}</span>
                       <span class="event-preview__venue-address event-meta__secondary">
                         {{ nextEvent.venue.street }}, {{ nextEvent.venue.zip }}
                         {{ nextEvent.venue.city }}
@@ -229,45 +250,41 @@
         </div>
       </aside>
     } @else if (eventLoading()) {
-      <aside class="event-preview event-preview--loading" aria-busy="true" aria-label="Loading next event">
+      <aside
+        class="event-preview event-preview--loading"
+        aria-busy="true"
+        aria-label="Loading next event"
+      >
         <div class="event-preview__header" aria-hidden="true">
           <div class="event-preview__skeleton event-preview__skeleton--kicker"></div>
           <div class="event-preview__skeleton event-preview__skeleton--title"></div>
         </div>
-        <div class="event-preview__skeleton event-preview__skeleton--facts" aria-hidden="true"></div>
-        <div class="event-preview__skeleton event-preview__skeleton--agenda" aria-hidden="true"></div>
-        <div class="event-preview__skeleton event-preview__skeleton--action" aria-hidden="true"></div>
-      </aside>
-    } @else {
-      <aside class="event-preview event-preview--empty" aria-labelledby="next-event-empty-title">
-        <div class="event-preview__header grid gap-[0.45rem] max-[720px]:gap-[0.35rem]">
-          <span class="event-preview__kicker">Next on Angular&nbsp;Zürich</span>
-          <h2 id="next-event-empty-title" class="event-preview__title">Next meetup coming soon</h2>
-        </div>
-        <p class="event-preview__empty-copy">
-          We’re planning the next gathering. Follow the group on Meetup to hear when it is announced.
-        </p>
-        <div class="event-preview__actions">
-          <a
-            class="app-button"
-            href="https://www.meetup.com/angularzrh/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Follow us on Meetup
-            <span class="sr-only">(opens in a new tab)</span>
-          </a>
-        </div>
+        <div
+          class="event-preview__skeleton event-preview__skeleton--facts"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="event-preview__skeleton event-preview__skeleton--agenda"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="event-preview__skeleton event-preview__skeleton--action"
+          aria-hidden="true"
+        ></div>
       </aside>
     }
 
-    <div class="sponsors">
+    <div class="sponsors" [class.sponsors--enter]="animateHeroIntro()">
       <span class="sponsors__label">Supported by</span>
       <div class="sponsors__marquee">
         @if (sponsorsLoadFailed()) {
           <div class="sponsors__error" role="alert">
             <span>Partner logos are unavailable right now.</span>
-            <button type="button" class="app-button app-button--ghost" (click)="retrySponsors.emit()">
+            <button
+              type="button"
+              class="app-button app-button--ghost"
+              (click)="retrySponsors.emit()"
+            >
               Try loading partners
             </button>
           </div>

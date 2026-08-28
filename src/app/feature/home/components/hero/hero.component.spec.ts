@@ -74,6 +74,12 @@ describe('HeroComponent', () => {
 
     expect(title?.id).toBe('next-event-title');
     expect(preview?.getAttribute('aria-labelledby')).toBe(title?.id);
+    expect(preview?.classList.contains('event-preview--enter')).toBe(true);
+    expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--enter')).toBe(true);
+    expect(
+      root.querySelector('.hero-description')?.classList.contains('hero-description--enter'),
+    ).toBe(true);
+    expect(root.querySelector('.sponsors')?.classList.contains('sponsors--enter')).toBe(true);
   });
 
   it('renders concise semantic date and venue details', () => {
@@ -129,16 +135,17 @@ describe('HeroComponent', () => {
     expect(action?.classList.contains('app-button--secondary')).toBe(false);
   });
 
-  it('guides visitors to Meetup when no upcoming event is published', async () => {
+  it('shows only the centered hero copy when no upcoming event is published', async () => {
     fixture.componentRef.setInput('event', null);
     await fixture.whenStable();
 
     const root = fixture.nativeElement as HTMLElement;
-    const action = root.querySelector<HTMLAnchorElement>('.event-preview--empty .app-button');
 
-    expect(root.querySelector('.event-preview--empty')?.textContent).toContain('Next meetup coming soon');
-    expect(action?.textContent).toContain('Follow us on Meetup');
-    expect(action?.getAttribute('href')).toBe('https://www.meetup.com/angularzrh/');
+    expect(root.querySelector('.event-preview')).toBeNull();
+    expect(root.querySelector('.hero-content')?.classList.contains('hero-content--solo')).toBe(
+      true,
+    );
+    expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--solo')).toBe(true);
   });
 
   it('shows an event-shaped skeleton while the upcoming event is loading', async () => {

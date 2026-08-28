@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, afterNextRender, computed, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
@@ -8,7 +8,7 @@ import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-da
   selector: 'app-hero',
   imports: [EventDateFormatPipe, RouterLink],
   templateUrl: './hero.component.html',
-  styleUrl: './hero.component.css'
+  styleUrl: './hero.component.css',
 })
 export class HeroComponent {
   readonly sponsors = input.required<Sponsor[]>();
@@ -18,13 +18,18 @@ export class HeroComponent {
   readonly event = input<Event | null>(null);
   readonly retrySponsors = output<void>();
 
+  private readonly hasRendered = signal(false);
+  protected readonly animateHeroIntro = computed(() => this.hasRendered());
+  protected readonly animateEventContent = computed(() => this.hasRendered() && !!this.event());
+
   protected readonly previewTalks = computed(() =>
     (this.event()?.talks ?? []).slice(0, 3).map((talk) => {
       const speaker = talk.speaker_links.find((link) => link.speaker)?.speaker ?? null;
       const firstName = speaker?.first_name?.trim() ?? '';
       const lastName = speaker?.last_name?.trim() ?? '';
       const speakerName = `${firstName} ${lastName}`.trim() || 'Angular Zürich speaker';
-      const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.trim() || speakerName.charAt(0).toUpperCase();
+      const initials =
+        `${firstName.charAt(0)}${lastName.charAt(0)}`.trim() || speakerName.charAt(0).toUpperCase();
 
       return {
         id: talk.id,
@@ -35,4 +40,10 @@ export class HeroComponent {
       };
     }),
   );
+
+  constructor() {
+    afterNextRender({
+      read: () => this.hasRendered.set(true),
+    });
+  }
 }
