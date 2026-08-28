@@ -28,6 +28,7 @@ import {
   TalkSubmissionPayload,
 } from '../../core/models/talk-submission.interface';
 import { ThemeService } from '../../core/theme/theme.service';
+import { ViewportRevealDirective } from '../../ui/viewport-reveal/viewport-reveal.directive';
 import { environment } from '../../../environments/environment';
 
 type SubmissionState = 'idle' | 'loading' | 'submitting' | 'error';
@@ -79,7 +80,7 @@ let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
 
 @Component({
   selector: 'app-submit-talk',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ViewportRevealDirective],
   templateUrl: './submit-talk.component.html',
   styleUrl: './submit-talk.component.css'
 })

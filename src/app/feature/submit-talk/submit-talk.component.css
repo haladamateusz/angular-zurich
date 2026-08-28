@@ -12,6 +12,33 @@
   background: var(--color-card);
 }
 
+.submission-card.viewport-reveal--pending {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+.submission-card.viewport-reveal--active {
+  animation: submission-card-reveal 620ms var(--ease-emphasized) both;
+}
+
+@keyframes submission-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .submission-card--speaker.viewport-reveal--active {
+    animation-delay: 80ms;
+  }
+}
+
 .submission-card__eyebrow {
   display: inline-flex;
   align-items: center;
@@ -227,5 +254,14 @@
 @media (max-width: 640px) {
   .submission-card__title-row {
     flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submission-card.viewport-reveal--pending,
+  .submission-card.viewport-reveal--active {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
