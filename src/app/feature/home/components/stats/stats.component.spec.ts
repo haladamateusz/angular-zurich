@@ -23,8 +23,7 @@ describe('StatsComponent', () => {
           useValue: supabaseServiceMock,
         },
       ],
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StatsComponent);
     component = fixture.componentInstance;
@@ -35,14 +34,27 @@ describe('StatsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render live stats from the service', () => {
+  it('should render live stats from the service', async () => {
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    TestBed.tick();
 
-    const values = Array.from(
+    const initialValues = Array.from(
       fixture.nativeElement.querySelectorAll('.stats__value'),
       (element: Element) => element.textContent?.trim(),
     );
 
-    expect(values).toEqual(['248', '193', '81']);
+    expect(initialValues).toEqual(['0', '0', '0']);
+
+    component['countProgress'].set(1);
+    fixture.detectChanges();
+
+    const finalValues = Array.from(
+      fixture.nativeElement.querySelectorAll('.stats__value'),
+      (element: Element) => element.textContent?.trim(),
+    );
+
+    expect(finalValues).toEqual(['248', '193', '81']);
   });
 });

@@ -51,6 +51,7 @@
 
 .stats__value {
   font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   font-size: clamp(2rem, 4vw, 2.75rem);
   color: var(--color-primary);
