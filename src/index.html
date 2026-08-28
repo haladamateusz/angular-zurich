@@ -25,6 +25,37 @@
       content="Angular Zürich is a local community for developers who meet, learn, and ship Angular together."
     />
     <meta name="twitter:image" content="https://angular.zuerich/apple-touch-icon.png" />
+    <script>
+      (() => {
+        try {
+          const storedTheme = localStorage.getItem('theme-dark');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.classList.toggle(
+            'dark',
+            storedTheme === 'true' || (storedTheme === null && prefersDark),
+          );
+        } catch {
+          // Use the default theme when browser storage is unavailable.
+        }
+      })();
+    </script>
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        background: #f8f9fa;
+      }
+
+      html.dark,
+      html.dark body {
+        background: #2b2d30;
+      }
+
+      app-root:not(.app-ready) {
+        visibility: hidden;
+      }
+    </style>
     <link
       rel="preload"
       href="/fonts/lato-400.woff2"

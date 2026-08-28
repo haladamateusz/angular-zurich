@@ -21,6 +21,7 @@ export class AuthService {
   private readonly initializedState = signal(false);
   private readonly errorMessageState = signal<string | null>(null);
   private readonly supabase = inject(SupabaseClientService).getClient();
+  private initializationPromise: Promise<void> | undefined;
 
   readonly session = computed(() => this.sessionState());
   readonly user = computed(() => this.sessionState()?.user ?? null);
@@ -44,12 +45,22 @@ export class AuthService {
   }
 
   constructor() {
-    if (!this.isBrowser || this.supabase === null) {
-      this.initializedState.set(true);
-      return;
+    void this.initialize();
+  }
+
+  initialize(): Promise<void> {
+    if (this.initializationPromise) {
+      return this.initializationPromise;
     }
 
-    void this.initializeSession();
+    if (!this.isBrowser || this.supabase === null) {
+      this.initializedState.set(true);
+      this.initializationPromise = Promise.resolve();
+      return this.initializationPromise;
+    }
+
+    this.initializationPromise = this.initializeSession();
+    return this.initializationPromise;
   }
 
   async signInWithGoogle(): Promise<void> {
@@ -141,20 +152,7 @@ export class AuthService {
   }
 
   async waitUntilInitialized(): Promise<void> {
-    if (this.isInitialized()) {
-      return;
-    }
-
-    await new Promise<void>((resolve) => {
-      const intervalId = window.setInterval(() => {
-        if (!this.isInitialized()) {
-          return;
-        }
-
-        window.clearInterval(intervalId);
-        resolve();
-      }, 16);
-    });
+    await this.initialize();
   }
 
   private getAppUrl(): string {
@@ -167,14 +165,23 @@ export class AuthService {
       return;
     }
 
-    const { data } = await this.supabase.auth.getSession();
+    try {
+      const { data } = await this.supabase.auth.getSession();
 
-    if (this.destroyRef.destroyed) {
-      return;
+      if (this.destroyRef.destroyed) {
+        return;
+      }
+
+      this.sessionState.set(data.session);
+    } catch {
+      this.sessionState.set(null);
+    } finally {
+      if (this.destroyRef.destroyed) {
+        return;
+      }
+
+      this.initializedState.set(true);
     }
-
-    this.sessionState.set(data.session);
-    this.initializedState.set(true);
 
     const {
       data: { subscription },
