@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { vi } from 'vitest';
 import { HeroComponent } from './hero.component';
-import { Event } from '../../../../core/models/event.interface';
+import type { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
 
 const TEST_EVENT: Event = {
@@ -65,6 +66,40 @@ describe('HeroComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('emits when the event preview animation finishes', () => {
+    const introCompleted = vi.fn();
+    component.introCompleted.subscribe(introCompleted);
+
+    const root = fixture.nativeElement as HTMLElement;
+    const completionEvent = new Event('animationend', { bubbles: true });
+    Object.defineProperty(completionEvent, 'animationName', { value: 'event-preview-enter' });
+
+    root.querySelector<HTMLElement>('.event-preview__header')?.dispatchEvent(completionEvent);
+
+    expect(introCompleted).not.toHaveBeenCalled();
+
+    root.querySelector<HTMLElement>('.event-preview')?.dispatchEvent(completionEvent);
+
+    expect(introCompleted).toHaveBeenCalledOnce();
+  });
+
+  it('emits when the solo hero animation finishes', async () => {
+    fixture.componentRef.setInput('event', null);
+    await fixture.whenStable();
+
+    const introCompleted = vi.fn();
+    component.introCompleted.subscribe(introCompleted);
+
+    const completionEvent = new Event('animationend');
+    Object.defineProperty(completionEvent, 'animationName', { value: 'hero-intro-reveal' });
+
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLElement>('.sponsors')
+      ?.dispatchEvent(completionEvent);
+
+    expect(introCompleted).toHaveBeenCalledOnce();
   });
 
   it('associates the event preview with its visible heading', () => {

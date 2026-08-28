@@ -23,11 +23,12 @@ interface PastEventCard {
   selector: 'app-past-events',
   imports: [EventDateFormatPipe, RouterLink, ViewportRevealDirective],
   templateUrl: './past-events.component.html',
-  styleUrl: './past-events.component.css'
+  styleUrl: './past-events.component.css',
 })
 export class PastEventsComponent {
   readonly events = input.required<Event[]>();
   readonly loading = input(false);
+  readonly revealAfterHero = input(false);
 
   protected readonly cards = computed<PastEventCard[]>(() =>
     this.events().map((event) => {
@@ -57,5 +58,4 @@ export class PastEventsComponent {
       };
     }),
   );
-
 }

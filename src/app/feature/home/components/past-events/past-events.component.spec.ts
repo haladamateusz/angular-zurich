@@ -59,6 +59,25 @@ describe('PastEventsComponent', () => {
     expect(card?.querySelectorAll('a')).toHaveLength(1);
   });
 
+  it('keeps the section inert and hidden until the hero intro completes', () => {
+    const section = (fixture.nativeElement as HTMLElement).querySelector('.past-events');
+
+    expect(section?.classList.contains('past-events--reveal')).toBe(false);
+    expect(section?.getAttribute('aria-hidden')).toBe('true');
+    expect(section?.hasAttribute('inert')).toBe(true);
+  });
+
+  it('reveals the section after the hero intro completes', async () => {
+    fixture.componentRef.setInput('revealAfterHero', true);
+    await fixture.whenStable();
+
+    const section = (fixture.nativeElement as HTMLElement).querySelector('.past-events');
+
+    expect(section?.classList.contains('past-events--reveal')).toBe(true);
+    expect(section?.hasAttribute('aria-hidden')).toBe(false);
+    expect(section?.hasAttribute('inert')).toBe(false);
+  });
+
   it('waits to render cards until the past events have loaded', async () => {
     fixture.componentRef.setInput('events', []);
     fixture.componentRef.setInput('loading', true);

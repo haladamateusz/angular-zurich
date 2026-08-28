@@ -1,8 +1,22 @@
-import { Component, afterNextRender, computed, input, output, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  Component,
+  afterNextRender,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
 import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
+
+const EVENT_PREVIEW_ENTER_ANIMATION = 'event-preview-enter';
+const SOLO_HERO_ENTER_ANIMATION = 'hero-intro-reveal';
+const HERO_INTRO_FALLBACK_MS = 750;
 
 @Component({
   selector: 'app-hero',
@@ -17,8 +31,14 @@ export class HeroComponent {
   readonly eventLoading = input(false);
   readonly event = input<Event | null>(null);
   readonly retrySponsors = output<void>();
+  readonly introCompleted = output<void>();
 
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly view = this.document.defaultView;
   private readonly hasRendered = signal(false);
+  private introHasCompleted = false;
+  private introCompletionFallback: number | null = null;
   protected readonly animateHeroIntro = computed(() => this.hasRendered());
   protected readonly animateEventContent = computed(() => this.hasRendered() && !!this.event());
   protected readonly usesSoloLayout = computed(() => !this.event() && !this.eventLoading());
@@ -44,7 +64,72 @@ export class HeroComponent {
 
   constructor() {
     afterNextRender({
-      read: () => this.hasRendered.set(true),
+      write: () => {
+        this.hasRendered.set(true);
+
+        if (this.prefersReducedMotion()) {
+          this.markIntroCompleted();
+          return;
+        }
+
+        this.scheduleIntroCompletionFallback();
+      },
     });
+    this.destroyRef.onDestroy(() => this.cancelIntroCompletionFallback());
+  }
+
+  protected completeIntro(event: AnimationEvent): void {
+    if (
+      event.target !== event.currentTarget ||
+      event.animationName !== EVENT_PREVIEW_ENTER_ANIMATION
+    ) {
+      return;
+    }
+
+    this.markIntroCompleted();
+  }
+
+  protected completeSoloIntro(event: AnimationEvent): void {
+    if (event.target !== event.currentTarget || event.animationName !== SOLO_HERO_ENTER_ANIMATION) {
+      return;
+    }
+
+    this.markIntroCompleted();
+  }
+
+  private prefersReducedMotion(): boolean {
+    return (
+      this.document.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+    );
+  }
+
+  private markIntroCompleted(): void {
+    if (this.introHasCompleted) {
+      return;
+    }
+
+    this.introHasCompleted = true;
+    this.cancelIntroCompletionFallback();
+    this.introCompleted.emit();
+  }
+
+  private scheduleIntroCompletionFallback(): void {
+    if (!this.view || this.introCompletionFallback !== null) {
+      return;
+    }
+
+    this.introCompletionFallback = this.view.setTimeout(() => {
+      this.introCompletionFallback = null;
+      this.markIntroCompleted();
+    }, HERO_INTRO_FALLBACK_MS);
+  }
+
+  private cancelIntroCompletionFallback(): void {
+    if (this.introCompletionFallback === null || !this.view) {
+      return;
+    }
+
+    this.view.clearTimeout(this.introCompletionFallback);
+    this.introCompletionFallback = null;
   }
 }

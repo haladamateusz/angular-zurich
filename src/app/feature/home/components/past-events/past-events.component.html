@@ -1,4 +1,10 @@
-<section class="past-events" aria-labelledby="past-events-heading">
+<section
+  class="past-events"
+  [class.past-events--reveal]="revealAfterHero()"
+  [attr.aria-hidden]="revealAfterHero() ? null : 'true'"
+  [attr.inert]="revealAfterHero() ? null : ''"
+  aria-labelledby="past-events-heading"
+>
   <div class="past-events__container">
     <div class="past-events__header">
       <h2 id="past-events-heading" class="past-events__heading">Past events</h2>

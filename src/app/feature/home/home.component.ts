@@ -1,4 +1,4 @@
-import { Component, computed, inject, resource } from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
 import { PastEventsComponent } from './components/past-events/past-events.component';
 import { PartnersComponent } from './components/partners/partners.component';
@@ -40,6 +40,7 @@ const EMPTY_SPONSORS: Sponsor[] = [];
 export class HomeComponent {
   private readonly supabaseService = inject(SupabaseService);
   private readonly homeTransferState = inject(HomeTransferStateService);
+  private readonly hasHeroIntroCompleted = signal(false);
 
   protected readonly upcomingPublicEvent = resource<Event, void>({
     defaultValue: EMPTY_EVENT,
@@ -93,6 +94,14 @@ export class HomeComponent {
 
     return event;
   });
+
+  protected readonly shouldRevealPastEvents = computed(
+    () => this.hasHeroIntroCompleted() || !!this.upcomingPublicEvent.error(),
+  );
+
+  protected onHeroIntroCompleted(): void {
+    this.hasHeroIntroCompleted.set(true);
+  }
 
   protected retryUpcomingEvent(): void {
     this.upcomingPublicEvent.reload();

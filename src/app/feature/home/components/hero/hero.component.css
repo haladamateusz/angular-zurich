@@ -211,9 +211,7 @@
 }
 
 .sponsors--enter {
-  animation-delay: calc(
-     var(--_hero-event-enter-duration) + var(--_hero-sponsors-card-gap)
-  );
+  animation-delay: calc(var(--_hero-event-enter-duration) + var(--_hero-sponsors-card-gap));
 }
 
 .hero-content--solo .sponsors--enter {

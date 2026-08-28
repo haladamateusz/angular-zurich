@@ -80,6 +80,7 @@
         class="event-preview"
         [class.event-preview--enter]="animateEventContent()"
         aria-labelledby="next-event-title"
+        (animationend)="completeIntro($event)"
       >
         <div class="event-preview__header grid gap-[0.45rem] max-[720px]:gap-[0.35rem]">
           <span class="event-preview__kicker">Next on Angular Zürich</span>
@@ -255,7 +256,11 @@
       </aside>
     }
 
-    <div class="sponsors" [class.sponsors--enter]="animateHeroIntro()">
+    <div
+      class="sponsors"
+      [class.sponsors--enter]="animateHeroIntro()"
+      (animationend)="completeSoloIntro($event)"
+    >
       <span class="sponsors__label">Supported by</span>
       <div class="sponsors__marquee">
         @if (sponsorsLoadFailed()) {
