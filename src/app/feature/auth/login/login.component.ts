@@ -14,7 +14,7 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
       <div
         class="login-card w-full rounded-surface border border-card-line bg-card px-8 py-10 sm:px-10"
       >
-        <p class="relative z-[1] text-sm font-semibold text-primary-text">
+        <p class="relative z-[1] text-sm font-bold text-primary-text">
           Organizer access
         </p>
         <h1

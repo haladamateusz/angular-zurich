@@ -102,7 +102,7 @@
   border-radius: var(--radius-control);
   color: var(--color-foreground);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
   text-decoration: none;
 }
@@ -132,7 +132,7 @@
 .dashboard-events-table__visibility {
   color: var(--color-foreground);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -197,7 +197,7 @@
   margin: 0;
   color: color-mix(in srgb, var(--color-foreground) 58%, transparent);
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 

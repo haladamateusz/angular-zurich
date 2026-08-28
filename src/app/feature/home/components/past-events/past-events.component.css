@@ -145,7 +145,7 @@
   margin: 0;
   color: var(--color-foreground);
   font-size: 1.34rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.32;
 }
 
@@ -161,7 +161,7 @@
   gap: 0.45rem;
   max-width: 100%;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
 }
 
@@ -181,7 +181,7 @@
   margin: 0 0 0.65rem;
   color: var(--color-muted-foreground-2);
   font-size: var(--type-xs);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .past-event-card__speaker-row {
@@ -250,7 +250,7 @@
   padding: 0.35rem 0;
   color: var(--color-primary-text);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
   transition:

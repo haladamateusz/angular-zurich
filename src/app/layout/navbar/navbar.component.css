@@ -10,6 +10,26 @@
   transform: rotate(180deg);
 }
 
+.navbar-profile-menu {
+  transform-origin: top right;
+}
+
+details[open] .navbar-profile-menu {
+  animation: navbar-profile-menu-enter var(--duration-normal) var(--ease-standard) both;
+}
+
+@keyframes navbar-profile-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .navbar-desktop-action.app-button.app-button {
   display: none;
 }
@@ -59,7 +79,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .navbar-mobile-backdrop,
-  .navbar-mobile-panel {
+  .navbar-mobile-panel,
+  .navbar-profile-menu {
+    animation-duration: 1ms;
     transition-duration: 1ms;
   }
 }

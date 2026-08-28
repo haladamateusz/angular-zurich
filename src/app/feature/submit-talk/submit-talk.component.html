@@ -13,7 +13,7 @@
 
       @if (!isBlockingEditError()) {
         <div class="space-y-3">
-          <h1 class="text-3xl font-semibold tracking-[-0.04em] text-foreground">
+          <h1 class="text-3xl font-bold tracking-[-0.04em] text-foreground">
             {{ isEditMode() ? 'Edit your talk proposal' : 'Tell us about your talk' }}
           </h1>
           <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
@@ -41,7 +41,7 @@
               <div class="submission-card__title-row">
                 <h3
                   id="talk-details-heading"
-                  class="submission-card__title text-xl font-semibold tracking-[-0.03em] text-foreground"
+                  class="submission-card__title text-xl font-bold tracking-[-0.03em] text-foreground"
                 >
                   <span class="submission-card__title-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none">
@@ -77,7 +77,7 @@
 
             <div class="submission-card__body relative z-[1] mt-7 flex flex-col gap-5">
               <div class="space-y-2">
-                <label class="text-sm font-semibold text-foreground" for="talkTitle"
+                <label class="text-sm font-bold text-foreground" for="talkTitle"
                   >Talk title *</label
                 >
                 <input
@@ -101,7 +101,7 @@
 
               <div class="space-y-2">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                  <label class="text-sm font-semibold text-foreground" for="talkDescription"
+                  <label class="text-sm font-bold text-foreground" for="talkDescription"
                     >Talk description *</label
                   >
                   <span class="text-xs text-muted-foreground-2">
@@ -126,7 +126,7 @@
               </div>
 
               <div class="space-y-2">
-                <label class="text-sm font-semibold text-foreground" for="slidesLink"
+                <label class="text-sm font-bold text-foreground" for="slidesLink"
                   >Link to slides *</label
                 >
                 <input
@@ -159,7 +159,7 @@
               <div class="submission-card__title-row">
                 <h3
                   id="speaker-details-heading"
-                  class="submission-card__title text-xl font-semibold tracking-[-0.03em] text-foreground"
+                  class="submission-card__title text-xl font-bold tracking-[-0.03em] text-foreground"
                 >
                   <span class="submission-card__title-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none">
@@ -197,7 +197,7 @@
               <div class="speaker-card__form-column min-w-0 flex flex-col gap-5">
                 <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
                   <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="speakerFirstName"
+                    <label class="text-sm font-bold text-foreground" for="speakerFirstName"
                       >First name *</label
                     >
                     <input
@@ -217,7 +217,7 @@
                   </div>
 
                   <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="speakerLastName"
+                    <label class="text-sm font-bold text-foreground" for="speakerLastName"
                       >Last name *</label
                     >
                     <input
@@ -239,7 +239,7 @@
 
                 <div class="speaker-card__identity-grid grid gap-4 md:grid-cols-2 md:items-start">
                   <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="emailAddress"
+                    <label class="text-sm font-bold text-foreground" for="emailAddress"
                       >Email address *</label
                     >
                     <input
@@ -259,7 +259,7 @@
                   </div>
 
                   <div class="space-y-2">
-                    <label class="text-sm font-semibold text-foreground" for="speakerLabel"
+                    <label class="text-sm font-bold text-foreground" for="speakerLabel"
                       >Role or title (optional)</label
                     >
                     <input
@@ -283,7 +283,7 @@
 
                 <div class="space-y-2">
                   <div class="flex flex-wrap items-center justify-between gap-3">
-                    <label class="text-sm font-semibold text-foreground" for="speakerBio"
+                    <label class="text-sm font-bold text-foreground" for="speakerBio"
                       >Speaker bio *</label
                     >
                     <span class="text-xs text-muted-foreground-2">
@@ -310,7 +310,7 @@
                 <div class="space-y-3">
                   <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
                     <div class="space-y-2">
-                      <label class="text-sm font-semibold text-foreground" for="personalUrl"
+                      <label class="text-sm font-bold text-foreground" for="personalUrl"
                         >Personal website</label
                       >
                       <input
@@ -332,7 +332,7 @@
                     </div>
 
                     <div class="space-y-2">
-                      <label class="text-sm font-semibold text-foreground" for="twitterUrl"
+                      <label class="text-sm font-bold text-foreground" for="twitterUrl"
                         >X / Twitter</label
                       >
                       <input
@@ -356,7 +356,7 @@
 
                   <div class="speaker-card__link-grid grid gap-3 sm:grid-cols-2">
                     <div class="space-y-2">
-                      <label class="text-sm font-semibold text-foreground" for="linkedinUrl"
+                      <label class="text-sm font-bold text-foreground" for="linkedinUrl"
                         >LinkedIn</label
                       >
                       <input
@@ -378,7 +378,7 @@
                     </div>
 
                     <div class="space-y-2">
-                      <label class="text-sm font-semibold text-foreground" for="githubUrl"
+                      <label class="text-sm font-bold text-foreground" for="githubUrl"
                         >GitHub</label
                       >
                       <input
@@ -405,7 +405,7 @@
               <aside class="speaker-card__portrait-panel flex min-w-0 flex-col gap-4">
                 <div class="speaker-card__upload-block flex flex-col gap-[0.65rem]">
                   <div class="speaker-card__portrait-header">
-                    <label class="text-sm font-semibold text-foreground" for="speakerPicture">
+                    <label class="text-sm font-bold text-foreground" for="speakerPicture">
                       Speaker photo{{ isEditMode() ? '' : ' *' }}
                     </label>
                   </div>
@@ -566,7 +566,7 @@
               <div class="submission-card__title-row">
                 <h3
                   id="submission-heading"
-                  class="submission-card__title text-xl font-semibold tracking-[-0.03em] text-foreground"
+                  class="submission-card__title text-xl font-bold tracking-[-0.03em] text-foreground"
                 >
                   <span class="submission-card__title-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none">
@@ -611,7 +611,7 @@
                 class="mt-6 rounded-surface border border-destructive/25 bg-destructive/10 p-5 text-destructive"
                 role="alert"
               >
-                <h4 class="text-base font-semibold">Submission failed</h4>
+                <h4 class="text-base font-bold">Submission failed</h4>
                 <p class="mt-2 text-sm leading-7">{{ errorMessage() }}</p>
               </div>
             }
@@ -649,7 +649,7 @@
                   <p class="text-sm leading-7 text-muted-foreground-1">
                     Want to explore the community first?
                     <a
-                      class="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-text-hover"
+                      class="inline-flex min-h-11 items-center font-bold text-primary-text hover:text-primary-text-hover"
                       routerLink="/"
                       >Go back home</a
                     >.

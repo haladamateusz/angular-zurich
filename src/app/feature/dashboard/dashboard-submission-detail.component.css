@@ -11,14 +11,14 @@
   padding: 0.55rem 0.85rem;
   color: var(--color-primary-text);
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dashboard-detail__meta-chip--muted {
   border-color: color-mix(in srgb, var(--color-border) 88%, transparent);
   background: color-mix(in srgb, var(--color-background) 60%, transparent);
   color: var(--color-muted-foreground-1);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: normal;
   text-transform: none;
 }
@@ -39,7 +39,7 @@
   margin: 0;
   color: var(--color-primary-text);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dashboard-detail__meta-row {
@@ -64,7 +64,7 @@
 .dashboard-detail__title-value {
   margin: 0;
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
 }
@@ -324,7 +324,7 @@ button.dashboard-detail__action-button--remove-outline {
 .dashboard-detail__log-action {
   color: var(--color-foreground);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dashboard-detail__log-date,
@@ -334,7 +334,7 @@ button.dashboard-detail__action-button--remove-outline {
 
 .dashboard-detail__log-date {
   font-size: 0.86rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .dashboard-detail__log-meta,
@@ -359,7 +359,7 @@ button.dashboard-detail__action-button--remove-outline {
   margin: 0;
   color: var(--color-foreground);
   font-size: clamp(1.5rem, 2.25vw, 1.75rem);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.08;
 }
@@ -416,7 +416,7 @@ button.dashboard-detail__action-button--remove-outline {
   flex: 1;
   min-width: 0;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   color: currentcolor;
   overflow-wrap: anywhere;
 }

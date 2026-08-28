@@ -378,7 +378,7 @@
 .event-preview__agenda-label {
   color: var(--color-muted-foreground-1);
   font-size: var(--type-xs);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .event-preview__title {
@@ -399,7 +399,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: var(--type-xs);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .event-preview__fact dd {
@@ -441,7 +441,7 @@
   gap: 0.25rem;
   width: fit-content;
   max-width: 100%;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .event-preview__venue-address {
@@ -525,7 +525,7 @@
 
 .event-preview__talk-copy h3 {
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
   color: var(--color-foreground);
   overflow-wrap: anywhere;

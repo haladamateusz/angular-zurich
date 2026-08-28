@@ -26,7 +26,7 @@
   margin: 0;
   color: var(--color-muted-foreground-2);
   font-size: var(--type-sm);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .stats__item {

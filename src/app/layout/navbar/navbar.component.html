@@ -93,7 +93,7 @@
                 />
               } @else {
                 <div
-                  class="navbar-profile-avatar inline-flex h-7 w-7 items-center justify-center rounded-control text-xs font-semibold"
+                  class="navbar-profile-avatar inline-flex h-7 w-7 items-center justify-center rounded-control text-xs font-bold"
                   [class.text-primary-text]="!dark()"
                   [ngClass]="{
                     'bg-primary/10': !dark(),
@@ -118,7 +118,7 @@
             </summary>
 
             <div
-              class="absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-surface border bg-card p-2"
+              class="navbar-profile-menu absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-surface border bg-card p-2"
               [class.border-navbar-line]="!dark()"
               [ngClass]="{
                 'border-primary/30': dark(),
@@ -178,7 +178,7 @@
               <div class="min-w-0 px-4">
                 <p
                   id="guest-mobile-menu-title"
-                  class="text-xs font-semibold"
+                  class="text-xs font-bold"
                   [class.text-primary-text]="!dark()"
                   [class.text-primary-200]="dark()"
                 >
@@ -197,7 +197,7 @@
                       />
                     } @else {
                       <div
-                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-subtle text-[10px] font-semibold"
+                        class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-subtle text-[10px] font-bold"
                         [class.text-primary-text]="!dark()"
                         [ngClass]="{
                           'bg-primary/10': !dark(),
@@ -210,7 +210,7 @@
                     }
 
                     <p
-                      class="min-w-0 truncate text-sm font-semibold"
+                      class="min-w-0 truncate text-sm font-bold"
                       [class.text-foreground]="!dark()"
                       [class.text-primary-50]="dark()"
                     >
