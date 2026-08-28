@@ -6,10 +6,11 @@ import {
   TalkSubmissionStatus,
   TalkSubmissionStatusSummary,
 } from '../../core/models/talk-submission.interface';
+import { ViewportRevealDirective } from '../../ui/viewport-reveal/viewport-reveal.directive';
 
 @Component({
   selector: 'app-submit-talk-success',
-  imports: [RouterLink],
+  imports: [RouterLink, ViewportRevealDirective],
   templateUrl: './submit-talk-success.component.html',
   styleUrl: './submit-talk-success.component.css'
 })

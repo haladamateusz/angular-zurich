@@ -8,6 +8,27 @@
   background: var(--color-card);
 }
 
+.submit-talk-success-card.viewport-reveal--pending {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+.submit-talk-success-card.viewport-reveal--active {
+  animation: submit-talk-success-card-reveal 620ms var(--ease-emphasized) both;
+}
+
+@keyframes submit-talk-success-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .submission-summary {
   display: grid;
   gap: 1.5rem;
@@ -37,5 +58,14 @@
 
   .submission-summary__item:nth-of-type(2) {
     text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submit-talk-success-card.viewport-reveal--pending,
+  .submit-talk-success-card.viewport-reveal--active {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
