@@ -44,10 +44,14 @@
   </svg>
 
   @let nextEvent = event();
-  <div class="hero-content max-[720px]:gap-6" [class.hero-content--solo]="!nextEvent">
+  <div
+    class="hero-content max-[720px]:gap-6"
+    [class.hero-content--pre-enter]="!animateHeroIntro()"
+    [class.hero-content--solo]="usesSoloLayout()"
+  >
     <div
       class="hero-copy flex min-w-0 flex-col items-start gap-6 max-[960px]:gap-5"
-      [class.hero-copy--solo]="!nextEvent"
+      [class.hero-copy--solo]="usesSoloLayout()"
       [class.hero-copy--enter]="animateHeroIntro()"
     >
       <h1 class="hero-title">
@@ -248,29 +252,6 @@
             </a>
           }
         </div>
-      </aside>
-    } @else if (eventLoading()) {
-      <aside
-        class="event-preview event-preview--loading"
-        aria-busy="true"
-        aria-label="Loading next event"
-      >
-        <div class="event-preview__header" aria-hidden="true">
-          <div class="event-preview__skeleton event-preview__skeleton--kicker"></div>
-          <div class="event-preview__skeleton event-preview__skeleton--title"></div>
-        </div>
-        <div
-          class="event-preview__skeleton event-preview__skeleton--facts"
-          aria-hidden="true"
-        ></div>
-        <div
-          class="event-preview__skeleton event-preview__skeleton--agenda"
-          aria-hidden="true"
-        ></div>
-        <div
-          class="event-preview__skeleton event-preview__skeleton--action"
-          aria-hidden="true"
-        ></div>
       </aside>
     }
 

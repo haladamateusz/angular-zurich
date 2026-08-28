@@ -16,8 +16,8 @@
         } @else {
           <div
             class="team__grid"
-            [class.team__grid--reveal-pending]="cardsRevealPending()"
-            [class.team__grid--reveal-active]="cardsRevealActive()"
+            [class.team__grid--reveal-pending]="currentCardsRevealPending()"
+            [class.team__grid--reveal-active]="currentCardsRevealActive()"
           >
             @for (member of organizersResource.value(); track member.first_name; let index = $index) {
               <article class="member-card" [style.animation-delay.ms]="80 + index * 70">
@@ -94,13 +94,13 @@
         } @else {
           <div
             class="team__grid"
-            [class.team__grid--reveal-pending]="cardsRevealPending()"
-            [class.team__grid--reveal-active]="cardsRevealActive()"
+            [class.team__grid--reveal-pending]="archiveCardsRevealPending()"
+            [class.team__grid--reveal-active]="archiveCardsRevealActive()"
           >
             @for (member of formerOrganizersResource.value(); track member.first_name; let index = $index) {
               <article
                 class="member-card member-card--faded"
-                [style.animation-delay.ms]="archiveRevealStartDelay() + index * 70"
+                [style.animation-delay.ms]="80 + index * 70"
               >
               <div class="member-card__profile">
                 <img

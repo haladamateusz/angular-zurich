@@ -148,17 +148,17 @@ describe('HeroComponent', () => {
     expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--solo')).toBe(true);
   });
 
-  it('shows an event-shaped skeleton while the upcoming event is loading', async () => {
+  it('waits to show the event preview until the upcoming event has loaded', async () => {
     fixture.componentRef.setInput('event', null);
     fixture.componentRef.setInput('eventLoading', true);
     await fixture.whenStable();
 
     const root = fixture.nativeElement as HTMLElement;
-    const preview = root.querySelector<HTMLElement>('.event-preview--loading');
-
-    expect(preview?.getAttribute('aria-busy')).toBe('true');
-    expect(preview?.querySelectorAll('.event-preview__skeleton')).toHaveLength(5);
-    expect(root.querySelector('.event-preview--empty')).toBeNull();
+    expect(root.querySelector('.event-preview')).toBeNull();
+    expect(root.querySelector('.hero-content')?.classList.contains('hero-content--solo')).toBe(
+      false,
+    );
+    expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--solo')).toBe(false);
   });
 
   it('labels the program as a preview when talks are truncated', async () => {

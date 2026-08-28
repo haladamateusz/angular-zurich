@@ -2,6 +2,7 @@ import { RouterLink } from '@angular/router';
 import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
+import { ViewportRevealDirective } from '../../../../ui/viewport-reveal/viewport-reveal.directive';
 
 interface PastEventCard {
   id: string;
@@ -20,14 +21,13 @@ interface PastEventCard {
 
 @Component({
   selector: 'app-past-events',
-  imports: [EventDateFormatPipe, RouterLink],
+  imports: [EventDateFormatPipe, RouterLink, ViewportRevealDirective],
   templateUrl: './past-events.component.html',
   styleUrl: './past-events.component.css'
 })
 export class PastEventsComponent {
   readonly events = input.required<Event[]>();
   readonly loading = input(false);
-  protected readonly loadingCards = [1, 2, 3];
 
   protected readonly cards = computed<PastEventCard[]>(() =>
     this.events().map((event) => {
@@ -57,4 +57,5 @@ export class PastEventsComponent {
       };
     }),
   );
+
 }

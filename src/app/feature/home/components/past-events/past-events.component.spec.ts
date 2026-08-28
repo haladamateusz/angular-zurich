@@ -58,4 +58,14 @@ describe('PastEventsComponent', () => {
     expect(link?.querySelector('h3')?.id).toBe('past-event-title-event-1');
     expect(card?.querySelectorAll('a')).toHaveLength(1);
   });
+
+  it('waits to render cards until the past events have loaded', async () => {
+    fixture.componentRef.setInput('events', []);
+    fixture.componentRef.setInput('loading', true);
+    await fixture.whenStable();
+
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.querySelector('.past-event-card')).toBeNull();
+  });
 });

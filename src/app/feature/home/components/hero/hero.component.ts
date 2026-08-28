@@ -21,6 +21,7 @@ export class HeroComponent {
   private readonly hasRendered = signal(false);
   protected readonly animateHeroIntro = computed(() => this.hasRendered());
   protected readonly animateEventContent = computed(() => this.hasRendered() && !!this.event());
+  protected readonly usesSoloLayout = computed(() => !this.event() && !this.eventLoading());
 
   protected readonly previewTalks = computed(() =>
     (this.event()?.talks ?? []).slice(0, 3).map((talk) => {

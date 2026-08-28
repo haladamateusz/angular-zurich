@@ -4,67 +4,10 @@
       <h2 id="past-events-heading" class="past-events__heading">Past events</h2>
     </div>
 
-    @if (loading() && !cards().length) {
-      <div class="past-events__grid" aria-hidden="true">
-        @for (card of loadingCards; track card) {
-          <article class="past-event-card past-event-card--loading">
-            <div class="past-event-card__graphic-shell">
-              <div class="past-events__skeleton past-events__skeleton--graphic"></div>
-            </div>
-
-            <div class="past-event-card__content">
-              <div class="past-events__skeleton past-events__skeleton--title"></div>
-
-              <div class="past-event-card__meta">
-                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
-                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
-                  <div
-                    class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-date"
-                  ></div>
-                </div>
-
-                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
-                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
-                  <div
-                    class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-time"
-                  ></div>
-                </div>
-
-                <div class="past-event-card__meta-item past-event-card__meta-item--loading">
-                  <div class="past-events__skeleton past-events__skeleton--meta-icon"></div>
-                  <div
-                    class="past-events__skeleton past-events__skeleton--meta-text past-events__skeleton--meta-location"
-                  ></div>
-                </div>
-              </div>
-
-              <div class="past-event-card__speaker-group">
-                <div class="past-events__skeleton past-events__skeleton--speaker-label"></div>
-
-                <div class="past-event-card__speaker-row">
-                  <div class="past-event-card__speakers">
-                    @for (speaker of [1, 2, 3]; track speaker) {
-                      <div
-                        class="past-events__skeleton past-events__skeleton--speaker-avatar"
-                      ></div>
-                    }
-                  </div>
-
-                  <div class="past-events__skeleton past-events__skeleton--details"></div>
-                </div>
-              </div>
-            </div>
-          </article>
-        }
-      </div>
-
-      <div class="past-events__actions" aria-hidden="true">
-        <div class="past-events__skeleton past-events__skeleton--browse-button"></div>
-      </div>
-    } @else {
+    @if (!loading() || cards().length) {
       <div class="past-events__grid">
         @for (card of cards(); track card.id) {
-          <article class="past-event-card">
+          <article class="past-event-card" [appViewportReveal]="'desktop-immediate'">
             <a
               [routerLink]="['/events', card.slug]"
               class="past-event-card__link"
