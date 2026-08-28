@@ -67,6 +67,27 @@
     transform var(--duration-normal) var(--ease-standard);
 }
 
+.partners__grid--reveal-pending .partner-card {
+  opacity: 0;
+  transform: translateY(1rem);
+}
+
+.partners__grid--reveal-active .partner-card {
+  animation: partner-card-reveal 620ms var(--ease-emphasized) both;
+}
+
+@keyframes partner-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .partner-card:is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-card-line));
 }
@@ -83,6 +104,15 @@
   object-fit: contain;
   -webkit-user-drag: none;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partners__grid--reveal-pending .partner-card,
+  .partners__grid--reveal-active .partner-card {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
 }
 
 :host-context(.dark) .partner-card__logo {

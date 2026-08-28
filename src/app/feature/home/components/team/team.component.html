@@ -14,9 +14,13 @@
             </button>
           </div>
         } @else {
-          <div class="team__grid">
-            @for (member of organizersResource.value(); track member.first_name) {
-              <article class="member-card">
+          <div
+            class="team__grid"
+            [class.team__grid--reveal-pending]="cardsRevealPending()"
+            [class.team__grid--reveal-active]="cardsRevealActive()"
+          >
+            @for (member of organizersResource.value(); track member.first_name; let index = $index) {
+              <article class="member-card" [style.animation-delay.ms]="80 + index * 70">
               <div class="member-card__profile">
                 <img
                   [src]="member.picture_url"
@@ -88,9 +92,16 @@
             </button>
           </div>
         } @else {
-          <div class="team__grid">
-            @for (member of formerOrganizersResource.value(); track member.first_name) {
-              <article class="member-card member-card--faded">
+          <div
+            class="team__grid"
+            [class.team__grid--reveal-pending]="cardsRevealPending()"
+            [class.team__grid--reveal-active]="cardsRevealActive()"
+          >
+            @for (member of formerOrganizersResource.value(); track member.first_name; let index = $index) {
+              <article
+                class="member-card member-card--faded"
+                [style.animation-delay.ms]="archiveRevealStartDelay() + index * 70"
+              >
               <div class="member-card__profile">
                 <img
                   [src]="member.picture_url"

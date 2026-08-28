@@ -7,13 +7,18 @@
       </p>
     </div>
 
-    <div class="partners__grid">
-      @for (partner of partners(); track partner.id) {
+    <div
+      class="partners__grid"
+      [class.partners__grid--reveal-pending]="cardsRevealPending()"
+      [class.partners__grid--reveal-active]="cardsRevealActive()"
+    >
+      @for (partner of partners(); track partner.id; let index = $index) {
         <a
           [href]="partner.website_url | partnerTrackingUrl"
           target="_blank"
           rel="noopener noreferrer"
           class="partner-card"
+          [style.animation-delay.ms]="80 + index * 70"
         >
           <img
             [src]="partner.logo_url"
