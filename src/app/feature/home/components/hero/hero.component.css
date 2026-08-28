@@ -8,11 +8,12 @@
   --_hero-enter-delay: 180ms;
   --_hero-enter-stagger: 120ms;
   --_hero-title-word-stagger: 60ms;
+  --_hero-event-enter-delay: 440ms;
   --_hero-event-enter-duration: 560ms;
-  --_hero-sponsors-card-gap: 120ms;
-  --_hero-description-delay: 660ms;
-  --_hero-solo-description-delay: 480ms;
-  --_hero-solo-sponsors-delay: 700ms;
+  --_hero-sponsors-card-gap: 30ms;
+  --_hero-description-delay: 400ms;
+  --_hero-solo-description-delay: 400ms;
+  --_hero-solo-sponsors-delay: 500ms;
 
   position: relative;
   width: 100%;
@@ -193,8 +194,7 @@
 
 .sponsors--enter {
   animation-delay: calc(
-    var(--_hero-enter-delay) + var(--_hero-enter-stagger) + var(--_hero-event-enter-duration) +
-      var(--_hero-sponsors-card-gap)
+     var(--_hero-event-enter-duration) + var(--_hero-sponsors-card-gap)
   );
 }
 
@@ -343,7 +343,7 @@
 
 .event-preview--enter {
   animation: event-preview-enter var(--_hero-event-enter-duration) var(--ease-emphasized) both;
-  animation-delay: calc(var(--_hero-enter-delay) + var(--_hero-enter-stagger));
+  animation-delay: var(--_hero-event-enter-delay);
 }
 
 @keyframes event-preview-enter {
