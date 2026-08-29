@@ -90,10 +90,6 @@
                 ></div>
               </div>
             </div>
-
-            <div class="event-details__actions">
-              <div class="event-details__skeleton event-details__skeleton--button"></div>
-            </div>
           </div>
 
           <div class="event-details__hero-graphic-shell event-details__hero-graphic-shell--loading">
@@ -275,14 +271,20 @@
                 class="event-details__skeleton event-details__skeleton--graphic event-details__hero-graphic-placeholder"
                 aria-hidden="true"
               ></div>
+              <img
+                [src]="currentEvent.feature_graphic"
+                alt=""
+                class="event-details__hero-graphic-preloader"
+                (load)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
+                (error)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
+              />
+            } @else {
+              <img
+                [src]="currentEvent.feature_graphic"
+                [alt]="pageTitle()"
+                class="event-details__hero-graphic"
+              />
             }
-            <img
-              [src]="currentEvent.feature_graphic"
-              [alt]="pageTitle()"
-              class="event-details__hero-graphic"
-              (load)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
-              (error)="markFeatureGraphicAsLoaded(currentEvent.feature_graphic)"
-            />
           }
         </div>
       </div>

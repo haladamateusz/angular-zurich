@@ -17,7 +17,18 @@ const TEST_EVENT: MeetupEvent = {
   meetup_url: 'https://www.meetup.com/angularzrh/',
   starts_at: '2099-09-08T18:00:00.000Z',
   venue_id: 'venue-1',
-  talks: [],
+  talks: [
+    {
+      id: 'talk-1',
+      title: 'Building accessible Angular applications',
+      description: 'Practical patterns for inclusive Angular applications.',
+      slides_url: null,
+      event_id: 'event-1',
+      presentation_time: 1,
+      created_by: 'organizer-1',
+      speaker_links: [],
+    },
+  ],
   venue: {
     title: 'Constructor Nexademy',
     street: 'Foerrlibuckstrasse 150',
@@ -47,7 +58,10 @@ describe('EventDetailsComponent', () => {
           provide: SupabaseService,
           useValue: {
             getEventBySlug: vi.fn().mockImplementation((slug: string) =>
-              Promise.resolve({ data: slug === PAST_EVENT.slug ? PAST_EVENT : TEST_EVENT, error: null }),
+              Promise.resolve({
+                data: slug === PAST_EVENT.slug ? PAST_EVENT : TEST_EVENT,
+                error: null,
+              }),
             ),
             removeEvent,
           },
@@ -65,23 +79,28 @@ describe('EventDetailsComponent', () => {
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(
-        (fixture.nativeElement as HTMLElement).querySelector('.event-details__hero-graphic'),
+        (fixture.nativeElement as HTMLElement).querySelector(
+          '.event-details__hero-graphic-preloader',
+        ),
       ).not.toBeNull();
     });
   });
 
   it('removes the feature graphic placeholder when the image loads', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const graphic = root.querySelector<HTMLImageElement>('.event-details__hero-graphic');
+    const graphicPreloader = root.querySelector<HTMLImageElement>(
+      '.event-details__hero-graphic-preloader',
+    );
     const shell = root.querySelector<HTMLElement>('.event-details__hero-graphic-shell');
 
     expect(root.querySelector('.event-details__hero-graphic-placeholder')).not.toBeNull();
     expect(shell?.classList.contains('event-details__hero-graphic-shell--pending')).toBe(true);
 
-    graphic?.dispatchEvent(new Event('load'));
+    graphicPreloader?.dispatchEvent(new Event('load'));
     fixture.detectChanges();
 
     expect(root.querySelector('.event-details__hero-graphic-placeholder')).toBeNull();
+    expect(root.querySelector('.event-details__hero-graphic')).not.toBeNull();
     expect(shell?.classList.contains('event-details__hero-graphic-shell--pending')).toBe(false);
     expect(shell?.classList.contains('event-details__hero-graphic-shell--loaded')).toBe(true);
   });

@@ -120,15 +120,14 @@ export class EventDetailsComponent {
 
     return Boolean(featureGraphicUrl) && this.loadedFeatureGraphicUrl() === featureGraphicUrl;
   });
-  protected readonly pageTitle = computed(() =>
-    this.event().title.replace(/^Angular Zurich\s+/i, '') || 'Event details',
+  protected readonly pageTitle = computed(
+    () => this.event().title.replace(/^Angular Zurich\s+/i, '') || 'Event details',
   );
 
   private readonly scrollToTopOnSlugChange = afterRenderEffect(() => {
     this.slug();
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   });
-
   constructor() {
     if (!this.isBrowser) {
       return;

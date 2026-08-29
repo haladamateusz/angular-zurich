@@ -174,12 +174,25 @@ button.event-details__remove-button {
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 
+.event-details__hero-graphic-shell--loaded {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
 .event-details__hero-graphic {
-  position: relative;
-  z-index: 1;
   display: block;
   width: 100%;
-  height: auto;
+}
+
+.event-details__hero-graphic-preloader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.event-details__hero-graphic-shell--loaded .event-details__hero-graphic {
+  animation: event-details-hero-graphic-reveal var(--duration-slow) var(--ease-emphasized) both;
 }
 
 .event-details__hero-graphic-placeholder {
@@ -203,9 +216,13 @@ button.event-details__remove-button {
 .event-details__talk-grid {
   display: flex;
   gap: 1.25rem;
-  overflow-x: auto;
+  overflow: auto hidden;
   padding-bottom: 0.4rem;
   scroll-snap-type: x proximity;
+}
+
+.talk-detail-card:not(.talk-detail-card--loading) {
+  animation: talk-detail-card-reveal 960ms var(--ease-emphasized) both;
 }
 
 .talk-detail-card {
@@ -336,7 +353,7 @@ button.event-details__remove-button {
 
 .event-details__skeleton--title {
   width: min(26rem, 100%);
-  height: clamp(3.2rem, 8vw, 4.75rem);
+  height: clamp(2.25rem, 5vw, 3.25rem);
 }
 
 .event-details__skeleton--icon {
@@ -415,9 +432,42 @@ button.event-details__remove-button {
   }
 }
 
+@keyframes talk-detail-card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes event-details-hero-graphic-reveal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .event-details__skeleton::after {
+  .event-details__skeleton::after,
+  .event-details__hero-graphic-shell--loaded .event-details__hero-graphic,
+  .talk-detail-card:not(.talk-detail-card--loading) {
     animation: none;
+  }
+
+  .talk-detail-card:not(.talk-detail-card--loading) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .event-details__hero-graphic-shell--loaded .event-details__hero-graphic {
+    opacity: 1;
   }
 }
 
@@ -433,6 +483,20 @@ button.event-details__remove-button {
 
   .talk-detail-card {
     min-width: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .talk-detail-card:not(.talk-detail-card--loading) {
+    animation-delay: 80ms;
+  }
+
+  .talk-detail-card:nth-child(2):not(.talk-detail-card--loading) {
+    animation-delay: 160ms;
+  }
+
+  .talk-detail-card:nth-child(3):not(.talk-detail-card--loading) {
+    animation-delay: 240ms;
   }
 }
 
@@ -457,7 +521,7 @@ button.event-details__remove-button {
   .event-details__talk-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    overflow-x: visible;
+    overflow: visible;
     padding-bottom: 0;
     scroll-snap-type: none;
   }
