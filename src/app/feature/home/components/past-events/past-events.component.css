@@ -123,20 +123,6 @@
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-card));
 }
 
-.past-event-card__graphic-shell::after {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  content: '';
-  background: radial-gradient(
-    ellipse 86% 160% at center,
-    color-mix(in srgb, var(--color-zuerich-blue-950) 58%, transparent),
-    color-mix(in srgb, var(--color-zuerich-blue-950) 18%, transparent) 70%,
-    transparent
-  );
-  pointer-events: none;
-}
-
 .past-event-card__graphic {
   display: block;
   width: 100%;
