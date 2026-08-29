@@ -19,13 +19,19 @@
   width: 100%;
   min-height: calc(85svh - var(--_navbar));
   padding-inline: 1.5rem;
+  overflow: hidden;
+}
+
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     to bottom,
     var(--color-zuerich-blue-gray-100),
     var(--color-zuerich-blue-gray-200)
   );
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-  overflow: hidden;
+  pointer-events: none;
 }
 
 .cross-overlay {
@@ -592,7 +598,7 @@
   opacity: 0.95;
 }
 
-:host-context(.dark) .hero {
+:host-context(.dark) .hero__backdrop {
   background: linear-gradient(
     to top,
     var(--color-zuerich-blue-gray-800),
@@ -704,8 +710,6 @@
   .hero {
     min-height: auto;
     padding-inline: 1rem;
-    /* Keep the stacked event actions outside the desktop-only hero fade. */
-    mask-image: none;
   }
 
   .hero-content {
