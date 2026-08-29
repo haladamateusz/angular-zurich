@@ -1,27 +1,36 @@
 import { RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { Event } from '../../../../core/models/event.interface';
 import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
 import { ViewportRevealDirective } from '../../../../ui/viewport-reveal/viewport-reveal.directive';
 
+const PAST_EVENT_BACKGROUNDS: readonly string[] = [
+  '/past-talks/Abstract background with logos_1.svg',
+  '/past-talks/Abstract background with logos_2.svg',
+  '/past-talks/Abstract background with logos_3.svg',
+];
+
 interface PastEventCard {
   id: string;
   slug: string;
   title: string;
-  featureGraphic: string | null;
+  abstractBackground: string;
   meetupUrl: string;
   startsAt: string;
   venueLabel: string;
-  speakers: {
+  talks: {
     id: string;
-    name: string;
-    image: string;
+    title: string;
+    speakerName: string;
+    speakerImage: string | null;
+    initials: string;
   }[];
 }
 
 @Component({
   selector: 'app-past-events',
-  imports: [EventDateFormatPipe, RouterLink, ViewportRevealDirective],
+  imports: [EventDateFormatPipe, NgOptimizedImage, RouterLink, ViewportRevealDirective],
   templateUrl: './past-events.component.html',
   styleUrl: './past-events.component.css',
 })
@@ -31,30 +40,34 @@ export class PastEventsComponent {
   readonly revealAfterHero = input(false);
 
   protected readonly cards = computed<PastEventCard[]>(() =>
-    this.events().map((event) => {
-      const speakers = event.talks
-        .flatMap((talk) => talk.speaker_links)
-        .map((link) => link.speaker)
-        .filter((speaker): speaker is NonNullable<typeof speaker> => Boolean(speaker))
-        .filter((speaker, index, allSpeakers) => {
-          return allSpeakers.findIndex((candidate) => candidate.id === speaker.id) === index;
-        })
-        .filter((speaker) => Boolean(speaker.picture_url))
-        .map((speaker) => ({
-          id: speaker.id,
-          name: [speaker.first_name, speaker.last_name].filter(Boolean).join(' ') || 'Speaker',
-          image: speaker.picture_url!,
-        }));
+    this.events().map((event, index) => {
+      const talks = event.talks.slice(0, 3).map((talk) => {
+        const speaker = talk.speaker_links.find((link) => link.speaker)?.speaker ?? null;
+        const firstName = speaker?.first_name?.trim() ?? '';
+        const lastName = speaker?.last_name?.trim() ?? '';
+        const speakerName = `${firstName} ${lastName}`.trim() || 'Angular Zürich speaker';
+        const initials =
+          `${firstName.charAt(0)}${lastName.charAt(0)}`.trim() ||
+          speakerName.charAt(0).toUpperCase();
+
+        return {
+          id: talk.id,
+          title: talk.title,
+          speakerName,
+          speakerImage: speaker?.picture_url ?? null,
+          initials,
+        };
+      });
 
       return {
         id: event.id,
         slug: event.slug,
         title: event.title.replace(/^Angular Zurich\s+/i, ''),
-        featureGraphic: event.feature_graphic,
+        abstractBackground: PAST_EVENT_BACKGROUNDS[index % PAST_EVENT_BACKGROUNDS.length],
         meetupUrl: event.meetup_url,
         startsAt: event.starts_at,
         venueLabel: event.venue?.title || event.venue?.city || 'Venue to be announced',
-        speakers,
+        talks,
       };
     }),
   );

@@ -20,27 +20,21 @@
               [attr.aria-labelledby]="'past-event-title-' + card.id"
             >
               <div class="past-event-card__graphic-shell">
-                @if (card.featureGraphic) {
-                  <img
-                    [src]="card.featureGraphic"
-                    [alt]="card.title"
-                    class="past-event-card__graphic"
-                    loading="lazy"
-                    draggable="false"
-                  />
-                } @else {
-                  <div
-                    class="past-event-card__graphic past-event-card__graphic--placeholder"
-                    aria-hidden="true"
-                  ></div>
-                }
-              </div>
-
-              <div class="past-event-card__content">
+                <img
+                  [ngSrc]="card.abstractBackground"
+                  alt=""
+                  width="1920"
+                  height="1080"
+                  class="past-event-card__graphic"
+                  loading="lazy"
+                  draggable="false"
+                />
                 <h3 [id]="'past-event-title-' + card.id" class="past-event-card__title">
                   {{ card.title }}
                 </h3>
+              </div>
 
+              <div class="past-event-card__content">
                 <div class="past-event-card__meta" aria-label="Event details">
                   <span class="past-event-card__meta-item">
                     <svg
@@ -108,41 +102,55 @@
                   </span>
                 </div>
 
-                @if (card.speakers.length) {
-                  <div class="past-event-card__speaker-group">
-                    <p class="past-event-card__speaker-label">Speakers</p>
+                @if (card.talks.length) {
+                  <div class="past-event-card__program">
+                    <p class="past-event-card__program-label">Program</p>
+                    <ul class="past-event-card__talks">
+                      @for (talk of card.talks; track talk.id) {
+                        <li class="past-event-card__talk">
+                          <div
+                            class="past-event-card__avatar"
+                            [class.past-event-card__avatar--image]="!!talk.speakerImage"
+                          >
+                            @if (talk.speakerImage) {
+                              <img
+                                [src]="talk.speakerImage"
+                                [alt]="talk.speakerName"
+                                width="40"
+                                height="40"
+                                loading="lazy"
+                                draggable="false"
+                              />
+                            } @else {
+                              <span>{{ talk.initials }}</span>
+                            }
+                          </div>
 
-                    <div class="past-event-card__speaker-row">
-                      <div class="past-event-card__speakers" aria-label="Speakers">
-                        @for (speaker of card.speakers; track speaker.id) {
-                          <img
-                            [src]="speaker.image"
-                            [alt]="speaker.name"
-                            class="past-event-card__speaker-avatar"
-                            loading="lazy"
-                            draggable="false"
-                          />
-                        }
-                      </div>
-
-                      <span class="past-event-card__details-button">
-                        <span>View details</span>
-                        <svg
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          class="past-event-card__details-icon"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                      </span>
-                    </div>
+                          <div class="past-event-card__talk-copy">
+                            <h4>{{ talk.title }}</h4>
+                            <p>{{ talk.speakerName }}</p>
+                          </div>
+                        </li>
+                      }
+                    </ul>
                   </div>
                 }
+
+                <span class="past-event-card__details-button">
+                  <span>View details</span>
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="past-event-card__details-icon"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </span>
               </div>
             </a>
           </article>

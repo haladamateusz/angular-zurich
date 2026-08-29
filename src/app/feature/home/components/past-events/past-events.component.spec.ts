@@ -11,7 +11,29 @@ const TEST_EVENT: Event = {
   meetup_url: 'https://www.meetup.com/angularzrh/',
   starts_at: '2026-02-17T17:00:00.000Z',
   venue_id: 'venue-1',
-  talks: [],
+  talks: [
+    {
+      id: 'talk-1',
+      title: 'Building accessible Angular applications',
+      description: '',
+      slides_url: null,
+      event_id: 'event-1',
+      presentation_time: 1,
+      created_by: 'organizer-1',
+      speaker_links: [
+        {
+          speaker: {
+            id: 'speaker-1',
+            first_name: 'Ada',
+            last_name: 'Lovelace',
+            picture_url: null,
+            label: null,
+            company_name: null,
+          },
+        },
+      ],
+    },
+  ],
   venue: {
     title: 'Constructor Nexademy',
     street: 'Foerrlibuckstrasse 150',
@@ -57,6 +79,31 @@ describe('PastEventsComponent', () => {
     expect(link?.getAttribute('aria-labelledby')).toBe('past-event-title-event-1');
     expect(link?.querySelector('h3')?.id).toBe('past-event-title-event-1');
     expect(card?.querySelectorAll('a')).toHaveLength(1);
+  });
+
+  it('uses an abstract background with the event title overlaid on the graphic', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const graphicShell = root.querySelector<HTMLElement>('.past-event-card__graphic-shell');
+    const graphic = graphicShell?.querySelector<HTMLImageElement>('.past-event-card__graphic');
+    const title = graphicShell?.querySelector<HTMLHeadingElement>('.past-event-card__title');
+
+    expect(graphic?.getAttribute('src')).toBe('/past-talks/Abstract background with logos_1.svg');
+    expect(graphic?.getAttribute('alt')).toBe('');
+    expect(title?.textContent?.trim()).toBe('February 2026');
+  });
+
+  it('renders the event program as ordered talk rows', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const program = root.querySelector<HTMLUListElement>('.past-event-card__talks');
+
+    expect(root.querySelector('.past-event-card__program-label')?.textContent?.trim()).toBe(
+      'Program',
+    );
+    expect(program?.children).toHaveLength(1);
+    expect(program?.querySelector('.past-event-card__talk')?.tagName).toBe('LI');
+    expect(program?.textContent).toContain('Building accessible Angular applications');
+    expect(program?.textContent).toContain('Ada Lovelace');
+    expect(program?.querySelector('.past-event-card__avatar')?.textContent?.trim()).toBe('AL');
   });
 
   it('keeps the section inert and hidden until the hero intro completes', () => {
