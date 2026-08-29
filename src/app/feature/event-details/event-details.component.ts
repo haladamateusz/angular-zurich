@@ -56,6 +56,7 @@ export class EventDetailsComponent {
   protected readonly loadingCards = [1, 2, 3];
   private readonly currentTimestamp = signal(Date.now());
   private readonly loadedFeatureGraphicUrl = signal<string | null>(null);
+  private readonly resolvedEventSlug = signal<string | null>(null);
 
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly document = inject(DOCUMENT);
@@ -110,11 +111,18 @@ export class EventDetailsComponent {
         throw error;
       }
 
+      if (this.isBrowser) {
+        this.resolvedEventSlug.set(params);
+      }
+
       return data ?? EMPTY_EVENT;
     },
   });
 
   protected readonly event = computed(() => this.eventResource.value());
+  protected readonly hasCurrentEvent = computed(
+    () => this.resolvedEventSlug() === this.slug() && this.event().slug === this.slug(),
+  );
   protected readonly featureGraphicLoaded = computed(() => {
     const featureGraphicUrl = this.event().feature_graphic;
 

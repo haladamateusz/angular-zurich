@@ -62,7 +62,7 @@
       </nav>
     }
 
-    @if (eventResource.isLoading()) {
+    @if (!eventResource.error() && !hasCurrentEvent()) {
       <section class="event-details__loading" aria-label="Loading event details" aria-busy="true">
         <div class="event-details__hero event-details__hero--loading">
           <div class="event-details__hero-content event-details__hero-content--loading">
