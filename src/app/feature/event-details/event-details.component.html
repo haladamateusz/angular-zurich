@@ -60,6 +60,19 @@
           </div>
         }
       </nav>
+    } @else if (showPastEventsArchiveBackLink()) {
+      <nav class="event-details__back-nav" aria-label="Event navigation">
+        <a routerLink="/events" class="event-details__back-link app-button app-button--ghost">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M11.78 4.47a.75.75 0 0 1 0 1.06L7.31 10l4.47 4.47a.75.75 0 1 1-1.06 1.06l-5-5a.75.75 0 0 1 0-1.06l5-5a.75.75 0 0 1 1.06 0Z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Back to past events</span>
+        </a>
+      </nav>
     }
 
     @if (!eventResource.error() && !hasCurrentEvent()) {

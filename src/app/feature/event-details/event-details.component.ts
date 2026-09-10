@@ -97,6 +97,9 @@ export class EventDetailsComponent {
   protected readonly showDashboardEventsBackLink = signal(
     this.router.currentNavigation()?.extras.state?.['fromDashboardEvents'] === true,
   );
+  protected readonly showPastEventsArchiveBackLink = signal(
+    this.router.currentNavigation()?.extras.state?.['fromPastEventsArchive'] === true,
+  );
   protected readonly isRemoveEventDialogOpen = signal(false);
   protected readonly removeEventState = signal<RemoveEventState>('idle');
   protected readonly removeEventErrorMessage = signal('');

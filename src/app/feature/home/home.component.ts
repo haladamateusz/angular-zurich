@@ -74,7 +74,7 @@ export class HomeComponent {
     defaultValue: EMPTY_EVENTS,
     loader: () =>
       this.homeTransferState.load(HOME_STATE_KEYS.pastEvents, async () => {
-        const { data, error } = await this.supabaseService.getPastEvents();
+        const { data, error } = await this.supabaseService.getPastEvents(3);
 
         if (error) {
           throw error;

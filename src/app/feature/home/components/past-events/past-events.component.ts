@@ -11,6 +11,8 @@ const PAST_EVENT_BACKGROUNDS: readonly string[] = [
   '/past-talks/Abstract background with logos_3.svg',
 ];
 
+const PAST_EVENTS_ARCHIVE_NAVIGATION_STATE = { fromPastEventsArchive: true } as const;
+
 interface PastEventCard {
   id: string;
   slug: string;
@@ -38,6 +40,11 @@ export class PastEventsComponent {
   readonly events = input.required<Event[]>();
   readonly loading = input(false);
   readonly revealAfterHero = input(false);
+  readonly showHeading = input(true);
+  readonly showBrowseAction = input(true);
+  readonly compact = input(false);
+  readonly fromArchive = input(false);
+  protected readonly pastEventsArchiveNavigationState = PAST_EVENTS_ARCHIVE_NAVIGATION_STATE;
 
   protected readonly cards = computed<PastEventCard[]>(() =>
     this.events().map((event, index) => {

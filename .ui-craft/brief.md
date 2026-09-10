@@ -28,7 +28,7 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 - Does not provide public attendee accounts.
 - Does not synchronize an internal event database with Meetup.com.
 - Does not expose talk-submission review or event-management tools publicly.
-- Does not provide a separate browsable past-events archive; the three past events appear on the home page.
+- Does not provide a browsable event archive for events before February 2026, because that historical data is incomplete.
 
 ## Learned constraints
 

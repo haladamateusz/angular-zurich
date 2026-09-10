@@ -35,8 +35,18 @@ export const routes: Routes = [
       import('./feature/theme-showcase/theme-showcase.routes').then((m) => m.THEME_SHOWCASE_ROUTES),
   },
   {
+    path: 'events',
+    title: 'Past events | Angular Zürich',
+    loadComponent: () =>
+      import('./feature/past-events/past-events-page.component').then(
+        (m) => m.PastEventsPageComponent,
+      ),
+  },
+  {
     path: 'events/:slug',
     loadComponent: () =>
-      import('./feature/event-details/event-details.component').then((m) => m.EventDetailsComponent),
+      import('./feature/event-details/event-details.component').then(
+        (m) => m.EventDetailsComponent,
+      ),
   },
 ];

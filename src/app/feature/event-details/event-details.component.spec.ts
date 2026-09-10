@@ -129,6 +129,22 @@ describe('EventDetailsComponent', () => {
     ).toBeNull();
   });
 
+  it('links back to the public archive for archive visits', async () => {
+    const component = fixture.componentInstance as unknown as {
+      showPastEventsArchiveBackLink: WritableSignal<boolean>;
+    };
+    component.showPastEventsArchiveBackLink.set(true);
+
+    await fixture.whenStable();
+
+    const backLink = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>(
+      '.event-details__back-link',
+    );
+
+    expect(backLink?.getAttribute('href')).toBe('/events');
+    expect(backLink?.textContent).toContain('Back to past events');
+  });
+
   it('shows a removal action with a confirmation dialog for dashboard visits', async () => {
     const component = fixture.componentInstance as unknown as {
       showDashboardEventsBackLink: WritableSignal<boolean>;

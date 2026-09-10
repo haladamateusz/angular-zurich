@@ -81,6 +81,15 @@ describe('PastEventsComponent', () => {
     expect(card?.querySelectorAll('a')).toHaveLength(1);
   });
 
+  it('links to the curated past-events archive instead of Meetup', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const browseLink = root.querySelector<HTMLAnchorElement>('.past-events__browse-button');
+
+    expect(browseLink?.getAttribute('href')).toBe('/events');
+    expect(browseLink?.textContent).toContain('Browse all past events');
+    expect(browseLink?.hasAttribute('target')).toBe(false);
+  });
+
   it('uses an abstract background with the event title overlaid on the graphic', () => {
     const root = fixture.nativeElement as HTMLElement;
     const graphicShell = root.querySelector<HTMLElement>('.past-event-card__graphic-shell');

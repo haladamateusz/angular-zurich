@@ -1,0 +1,36 @@
+<section
+  class="past-events-page"
+  aria-labelledby="past-events-page-title"
+  [attr.aria-busy]="pastEvents.isLoading() ? 'true' : null"
+>
+  <div class="past-events-page__container">
+    <header class="past-events-page__header">
+      <h1 id="past-events-page-title" class="past-events-page__title">Past events</h1>
+    </header>
+
+    @if (pastEvents.error()) {
+      <div class="past-events-page__state" role="alert">
+        <h2>Past events unavailable</h2>
+        <p>We couldn’t load past event details. Try again to view the talks and slides.</p>
+        <button type="button" class="app-button app-button--secondary" (click)="retryPastEvents()">
+          Try loading past events
+        </button>
+      </div>
+    } @else if (pastEvents.isLoading()) {
+    } @else if (pastEvents.value().length) {
+      <app-past-events
+        [events]="pastEvents.value()"
+        [revealAfterHero]="true"
+        [showHeading]="false"
+        [showBrowseAction]="false"
+        [compact]="true"
+        [fromArchive]="true"
+      />
+    } @else {
+      <div class="past-events-page__state">
+        <h2>No past events yet</h2>
+        <p>Check back after the next Angular Zürich meetup.</p>
+      </div>
+    }
+  </div>
+</section>

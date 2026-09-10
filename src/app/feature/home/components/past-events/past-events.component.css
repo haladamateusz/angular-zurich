@@ -4,8 +4,12 @@
 }
 
 .past-events {
-  overflow-x: hidden;
+  overflow: clip;
   padding: 4.5rem 1.5rem;
+}
+
+.past-events--compact {
+  padding: 0;
 }
 
 .past-events:not(.past-events--reveal) .past-events__header,
@@ -46,6 +50,12 @@
 
 .past-events__browse-icon {
   transform: translateY(0.02rem);
+}
+
+@media (min-width: 34rem) {
+  .past-events__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 768px) {

@@ -1,14 +1,18 @@
 <section
   class="past-events"
   [class.past-events--reveal]="revealAfterHero()"
+  [class.past-events--compact]="compact()"
   [attr.aria-hidden]="revealAfterHero() ? null : 'true'"
   [attr.inert]="revealAfterHero() ? null : ''"
-  aria-labelledby="past-events-heading"
+  [attr.aria-labelledby]="showHeading() ? 'past-events-heading' : null"
+  [attr.aria-label]="showHeading() ? null : 'Past events'"
 >
   <div class="past-events__container">
-    <div class="past-events__header">
-      <h2 id="past-events-heading" class="past-events__heading">Past events</h2>
-    </div>
+    @if (showHeading()) {
+      <div class="past-events__header">
+        <h2 id="past-events-heading" class="past-events__heading">Past events</h2>
+      </div>
+    }
 
     @if (!loading() || cards().length) {
       <div class="past-events__grid">
@@ -16,6 +20,7 @@
           <article class="past-event-card" [appViewportReveal]="'desktop-immediate'">
             <a
               [routerLink]="['/events', card.slug]"
+              [state]="fromArchive() ? pastEventsArchiveNavigationState : undefined"
               class="past-event-card__link"
               [attr.aria-labelledby]="'past-event-title-' + card.id"
             >
@@ -157,33 +162,28 @@
         }
       </div>
 
-      <div class="past-events__actions">
-        <a
-          href="https://www.meetup.com/angularzrh/events/past/"
-          target="_blank"
-          rel="noreferrer"
-          class="past-events__browse-button app-button app-button--secondary"
-        >
-          <span>Browse all past events</span>
-          <svg
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            class="past-events__browse-icon app-button__icon"
-            aria-hidden="true"
+      @if (showBrowseAction()) {
+        <div class="past-events__actions">
+          <a
+            routerLink="/events"
+            class="past-events__browse-button app-button app-button--secondary"
           >
-            <path
-              fill-rule="evenodd"
-              d="M11.25 3.75a.75.75 0 0 0 0 1.5h2.19l-5.72 5.72a.75.75 0 1 0 1.06 1.06l5.72-5.72v2.19a.75.75 0 0 0 1.5 0v-4a.75.75 0 0 0-.75-.75h-4Z"
-              clip-rule="evenodd"
-            />
-            <path
-              fill-rule="evenodd"
-              d="M5 5.75A1.75 1.75 0 0 0 3.25 7.5v7.5c0 .966.784 1.75 1.75 1.75h7.5A1.75 1.75 0 0 0 14.25 15v-2a.75.75 0 0 0-1.5 0v2a.25.25 0 0 1-.25.25H5A.25.25 0 0 1 4.75 15V7.5A.25.25 0 0 1 5 7.25h2a.75.75 0 0 0 0-1.5H5Z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </a>
-      </div>
+            <span>Browse all past events</span>
+            <svg
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="past-events__browse-icon app-button__icon"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+      }
     }
   </div>
 </section>

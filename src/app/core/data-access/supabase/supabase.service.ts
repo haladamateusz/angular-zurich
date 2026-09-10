@@ -157,12 +157,12 @@ export class SupabaseService {
       .maybeSingle();
   }
 
-  async getPastEvents(limit = 3): Promise<PostgrestResponse<Event>> {
+  async getPastEvents(limit?: number): Promise<PostgrestResponse<Event>> {
     if (this.supabase === null) {
       return this.createEmptyListResponse<Event>([]);
     }
 
-    const response = await this.supabase
+    const query = this.supabase
       .from('Events')
       .select(
         `
@@ -202,9 +202,11 @@ export class SupabaseService {
       `,
       )
       .lt('starts_at', new Date().toISOString())
+      .gte('starts_at', '2026-02-01T00:00:00.000Z')
       .order('sort_order', { ascending: true, referencedTable: 'Talks' })
-      .order('starts_at', { ascending: false })
-      .limit(limit);
+      .order('starts_at', { ascending: false });
+
+    const response = limit === undefined ? await query : await query.limit(limit);
 
     return response as PostgrestResponse<Event>;
   }
