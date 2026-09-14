@@ -40,3 +40,6 @@ enterprise-architecture/
 Thumbs.db
 
 environment.development.ts
+
+# Audit reports may contain production-security details.
+/docs/*audit*.md
