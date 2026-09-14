@@ -1,6 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
+import { assertBrowserSafeSupabaseKey } from './supabase-browser-key.mjs';
+
 const requiredVars = ['SUPABASE_URL', 'SUPABASE_KEY', 'TURNSTILE_SITE_KEY'];
 const missingVars = requiredVars.filter((name) => {
   const value = process.env[name];
@@ -12,6 +14,8 @@ if (missingVars.length > 0) {
     `Missing required environment variables for production build: ${missingVars.join(', ')}`,
   );
 }
+
+assertBrowserSafeSupabaseKey(process.env.SUPABASE_KEY);
 
 const environmentFilePath = resolve('src/environments/environment.production.ts');
 const fileContents = `export const environment = {
