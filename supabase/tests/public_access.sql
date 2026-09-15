@@ -18,12 +18,28 @@ create temporary table access_fixture on commit drop as
 select gen_random_uuid() as person_id, gen_random_uuid() as venue_id,
   gen_random_uuid() as public_event_id, gen_random_uuid() as private_event_id,
   gen_random_uuid() as public_talk_id, gen_random_uuid() as private_talk_id,
-  gen_random_uuid() as unassigned_talk_id,
+  gen_random_uuid() as unassigned_talk_id, gen_random_uuid() as submission_id,
+  'submissions.talk_submission_rate_limits'::regclass::oid as rate_limit_table_oid,
   'rls-test-' || gen_random_uuid()::text || '@gmail.com' as organizer_email;
 grant select on access_fixture to anon, authenticated, service_role;
 
 insert into private.allowed_google_accounts (email, active, first_name, last_name)
 select organizer_email, true, 'Access', 'Test' from access_fixture;
+
+insert into submissions.talk_submissions (
+  id, talk_title, talk_description, speaker_name, speaker_email,
+  speaker_bio, slides_url, speaker_picture_path
+)
+select submission_id, 'Access regression test',
+  'A synthetic talk used to verify organizer contact access in isolation.',
+  'Access Test', 'submission-contact@example.invalid',
+  'A synthetic speaker used only inside this rolled-back transaction.',
+  'https://example.invalid/slides',
+  'access-test/speaker.png'
+from access_fixture;
+
+insert into submissions.talk_submission_rate_limits (scope, key_hash, window_bucket)
+select 'ip_15m', submission_id::text, now() from access_fixture;
 
 insert into public."People" (id, first_name, last_name, slug, email)
 select person_id, 'Access', 'Test', person_id::text, 'private-contact@example.invalid'
@@ -108,6 +124,13 @@ begin
     and not has_table_privilege(current_user, 'public."People"', 'UPDATE')
     and not has_table_privilege(current_user, 'public."People"', 'DELETE'),
     'browser roles cannot modify people');
+
+  perform pg_temp.assert_access(
+    not has_table_privilege(current_user, (select rate_limit_table_oid from access_fixture), 'SELECT')
+    and not has_table_privilege(current_user, (select rate_limit_table_oid from access_fixture), 'INSERT')
+    and not has_table_privilege(current_user, (select rate_limit_table_oid from access_fixture), 'UPDATE')
+    and not has_table_privilege(current_user, (select rate_limit_table_oid from access_fixture), 'DELETE'),
+    'browser roles have no rate-limit table privileges');
 end;
 $$;
 
@@ -120,7 +143,8 @@ set local request.jwt.claims = '{"email":"outsider@example.invalid","role":"auth
 set local role authenticated;
 select pg_temp.check_reader(false);
 select pg_temp.assert_access(
-  (select count(*) = 0 from public.organizer_talk_submissions),
+  (select count(*) = 0 from public.organizer_talk_submissions s
+    join access_fixture f on s.id = f.submission_id),
   'signed-in outsider cannot read submission contacts');
 reset role;
 
@@ -136,8 +160,11 @@ set local role authenticated;
 select pg_temp.check_reader(true);
 select pg_temp.assert_access(private.can_current_user_read_talk_submissions(),
   'allowlisted organizer is authorized');
--- Existing organizer contacts remain queryable. Do not print personal data.
-do $$ begin perform speaker_email from public.organizer_talk_submissions; end; $$;
+select pg_temp.assert_access(
+  (select count(*) = 1 from public.organizer_talk_submissions s
+    join access_fixture f on s.id = f.submission_id
+    where s.speaker_email = 'submission-contact@example.invalid'),
+  'allowlisted organizer can read the fixture submission contact');
 reset role;
 
 set local role service_role;
@@ -145,6 +172,33 @@ select pg_temp.assert_access(
   (select count(*) = 1 from public."People" p join access_fixture f on p.id = f.person_id
     where p.email = 'private-contact@example.invalid'),
   'service role retains contact access for privileged workflows');
+update submissions.talk_submission_rate_limits r
+set request_count = request_count + 1
+from access_fixture f
+where r.scope = 'ip_15m' and r.key_hash = f.submission_id::text;
+select pg_temp.assert_access(
+  (select count(*) = 1 from submissions.talk_submission_rate_limits r
+    join access_fixture f on r.key_hash = f.submission_id::text
+    where r.scope = 'ip_15m' and r.request_count = 2),
+  'service role can read and update rate limits');
+reset role;
+
+-- Prove the restrictive policy still denies browser roles if a future migration
+-- accidentally grants privileges and introduces a permissive policy.
+grant usage on schema submissions to anon;
+grant select on submissions.talk_submission_rate_limits to anon, authenticated;
+create policy access_test_permissive_read
+  on submissions.talk_submission_rate_limits for select to anon, authenticated
+  using (true);
+set local role anon;
+select pg_temp.assert_access(
+  (select count(*) = 0 from submissions.talk_submission_rate_limits),
+  'restrictive policy denies anonymous reads despite permissive access');
+reset role;
+set local role authenticated;
+select pg_temp.assert_access(
+  (select count(*) = 0 from submissions.talk_submission_rate_limits),
+  'restrictive policy denies organizer reads despite permissive access');
 reset role;
 
 rollback;
