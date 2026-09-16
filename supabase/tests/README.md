@@ -30,6 +30,47 @@ temporary grants and policy used to test rate-limit denial also roll back.
 These checks exercise database authorization; they do not exercise
 the OAuth login flow or hosted Auth hook configuration.
 
+## Auth allowlist hooks
+
+Run `supabase db query --local --file supabase/tests/auth_hooks.sql`, or use
+`--linked` to check the deployed functions. The rollback-only script invokes both
+hooks as the database owner, using a synthetic allowlist entry. It separately
+checks `supabase_auth_admin` schema/table/function privileges and verifies that
+allowlist RLS is disabled (hosted postgres cannot assume this managed role). It checks active
+organizer enrollment and unchanged token claims, rejection of unknown/missing
+emails, and rejection after deactivating the organizer. It creates no Auth users
+and sends no messages. Existing access tokens are not revoked by this test or by
+deactivating an allowlist entry; the token hook checks subsequent token issuance.
+
+### Hosted configuration verified on 2026-09-16
+
+A read-only Management API check confirmed:
+
+- Google enabled; email, phone, anonymous, and all other returned external providers disabled.
+- Before-user-created hook enabled: `pg-functions://postgres/private/allowlist_google_before_user_created`.
+- Custom-access-token hook enabled: `pg-functions://postgres/private/allowlist_google_custom_access_token`.
+- Google email required and nonce checking enabled.
+- Refresh-token rotation enabled; access-token lifetime 3,600 seconds.
+- Manual identity linking disabled; Auth rate limits configured.
+- Site URL: `https://www.angular.zuerich`.
+- Redirect allowlist: `http://localhost:4200/auth/callback`,
+  `https://angularzurich.dev/auth/callback`, `https://angular.zuerich/auth/callback`.
+
+Global signup remains enabled so a newly allowlisted Google organizer can enroll;
+the before-user-created hook controls eligibility. No hosted settings needed changing.
+Do not push the local `config.toml` wholesale to production: its URLs and some
+provider settings are intended for local development.
+
+Leaked-password protection is disabled. It requires
+[Pro or above](https://supabase.com/docs/guides/auth/password-security) and does not
+protect Google's password; this project disables Supabase email/password sign-in.
+CAPTCHA is also disabled. Enabling it is a separate integration requiring provider
+credentials and [frontend support](https://supabase.com/docs/guides/auth/auth-captcha),
+not an unverified configuration toggle.
+
+This snapshot and the SQL assertions do not constitute an end-to-end Google OAuth
+login test. Recheck the hosted configuration after changing providers or hooks.
+
 ## Applied migration history
 
 The September 15 access-hardening migrations are already applied to the linked
