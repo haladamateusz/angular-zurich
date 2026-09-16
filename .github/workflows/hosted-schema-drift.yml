@@ -1,0 +1,54 @@
+name: Hosted schema drift
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-schema-drift-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compare:
+    name: Compare production schema with migrations
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: krjsmflnjjbdwzzxmmtt
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v2
+        with:
+          version: 2.109.1
+
+      - name: Link the production project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Detect public schema drift
+        run: |
+          supabase db diff --linked --schema public --use-migra --output-format json > schema-drift.json
+
+          node --input-type=module <<'EOF'
+          import { readFileSync } from 'node:fs';
+
+          const { diff } = JSON.parse(readFileSync('schema-drift.json', 'utf8'));
+
+          if (diff.trim()) {
+            console.error('Production public schema differs from the repository migrations:');
+            console.error(diff);
+            process.exit(1);
+          }
+
+          console.log('Production public schema matches the repository migrations.');
+          EOF
