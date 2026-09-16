@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create CI development environment
+        run: cp src/environments/environment.ts src/environments/environment.development.ts
+
       - name: Lint
         run: npm run lint
 
