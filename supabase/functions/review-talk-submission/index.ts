@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import postgres from 'postgres';
+import { createDatabaseClient } from '../_shared/database.ts';
 import {
   getSiteUrl,
   sendTalkReviewEmail,
@@ -32,9 +32,7 @@ interface SubmissionNotificationSummary {
   speaker_email: string;
 }
 
-const sql = postgres(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '', {
-  prepare: false,
-});
+const sql = createDatabaseClient(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '');
 
 type JsonRecord = Record<string, unknown>;
 

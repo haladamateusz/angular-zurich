@@ -1,6 +1,6 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import postgres from 'npm:postgres@3.4.7';
+import { createDatabaseClient } from '../_shared/database.ts';
 import {
   getSiteUrl,
   sendTalkSubmissionReceivedEmail,
@@ -67,9 +67,7 @@ const SPEAKER_PICTURE_BUCKET = 'talk-submission-assets';
 const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 const SPEAKER_PICTURE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
-const sql = postgres(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '', {
-  prepare: false,
-});
+const sql = createDatabaseClient(Deno.env.get('TALK_SUBMISSIONS_DB_URL') ?? '');
 
 const SUPABASE_SECRET_KEYS = Deno.env.get('SUPABASE_SECRET_KEYS');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');

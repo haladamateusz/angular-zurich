@@ -55,3 +55,26 @@ speakers. Private events, their speakers, and unassigned talks are excluded.
 Deploy this migration before deploying the frontend that calls `get_public_stats`.
 The RPC retains row-level security and returns one aggregate row, so Data API row
 limits no longer truncate the speaker input.
+
+## Edge database connections
+
+The five database-backed Edge Functions share `_shared/database.ts`: one client
+connection per instance, a 20-second idle timeout, a 10-second connect timeout,
+and prepared statements disabled. This is a per-instance limit, not a global
+connection cap. Keep clients at module scope for reuse across requests.
+
+`TALK_SUBMISSIONS_DB_URL` must use the project's Transaction pooler URL from
+Supabase Connect (shared pooler port `6543`). Updating an `.env.example` does not
+update the deployed secret. Keep database credentials out of logs and Git.
+
+With the URL supplied securely in the environment, run:
+
+```sh
+deno test --allow-env --allow-net supabase/tests/edge_database_test.ts
+```
+
+This opt-in integration test queues concurrent reads through the shared client,
+checks transactions and rollback recovery, and closes its connection. It skips
+when the URL is absent. Run it against the intended pooler before changing the
+hosted secret. Deploy the five affected functions and check errors, connection
+counts, and latency under representative traffic before raising the pool limit.

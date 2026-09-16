@@ -1,6 +1,6 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import postgres from 'npm:postgres@3.4.7';
+import { createDatabaseClient } from '../_shared/database.ts';
 import {
   getSiteUrl,
   sendTalkSubmissionChangesReceivedEmail,
@@ -86,7 +86,7 @@ const supabaseServiceKey = getSupabaseServiceKey();
 const supabaseAdmin = SUPABASE_URL && supabaseServiceKey
   ? createClient(SUPABASE_URL, supabaseServiceKey)
   : null;
-const sql = postgres(DATABASE_URL, { prepare: false });
+const sql = createDatabaseClient(DATABASE_URL);
 
 function getSupabaseServiceKey(): string | undefined {
   if (!SUPABASE_SECRET_KEYS) {

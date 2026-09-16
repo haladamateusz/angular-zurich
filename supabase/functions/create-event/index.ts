@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import postgres from "postgres";
+import { createDatabaseClient } from "../_shared/database.ts";
 import { getSiteUrl } from "../_shared/talk-review-email.ts";
 import { sendTalkEventAssignmentEmail } from "../_shared/talk-event-assignment-email.ts";
 
@@ -40,7 +40,7 @@ const supabaseServiceKey = getSupabaseServiceKey();
 const supabaseAdmin = SUPABASE_URL && supabaseServiceKey
   ? createClient(SUPABASE_URL, supabaseServiceKey)
   : null;
-const sql = postgres(DATABASE_URL, { prepare: false });
+const sql = createDatabaseClient(DATABASE_URL);
 
 function getSupabaseServiceKey(): string | undefined {
   if (!SUPABASE_SECRET_KEYS) {
