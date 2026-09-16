@@ -54,7 +54,10 @@ interface RemoveEventResult {
 }
 
 export type OrganizerTalkSubmissionSortColumn =
-  'created_at' | 'speaker_name' | 'status' | 'talk_title';
+  | 'created_at'
+  | 'speaker_name'
+  | 'status'
+  | 'talk_title';
 
 export interface OrganizerTalkSubmissionListOptions {
   page: number;
@@ -1043,29 +1046,13 @@ export class SupabaseService {
       };
     }
 
-    const [speakerResponse, talksResponse, eventsResponse] = await Promise.all([
-      this.supabase.from('SpeakerOnTalk').select('speaker_id'),
-      this.supabase.from('Talks').select('*', { count: 'exact', head: true }),
-      this.supabase.from('Events').select('*', { count: 'exact', head: true }),
-    ]);
+    const { data, error } = await this.supabase.rpc('get_public_stats').single<StatsCounts>();
 
-    if (speakerResponse.error) {
-      throw speakerResponse.error;
+    if (error) {
+      throw error;
     }
 
-    if (talksResponse.error) {
-      throw talksResponse.error;
-    }
-
-    if (eventsResponse.error) {
-      throw eventsResponse.error;
-    }
-
-    return {
-      speakers: new Set(speakerResponse.data.map(({ speaker_id }) => speaker_id)).size,
-      talks: talksResponse.count ?? 0,
-      events: eventsResponse.count ?? 0,
-    };
+    return data;
   }
 
   private createEmptyListResponse<T>(data: T[]): PostgrestResponse<T> {

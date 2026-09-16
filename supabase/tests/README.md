@@ -43,3 +43,15 @@ database. Preserve their versions and SQL rather than squashing or deleting them
   already denied by grants and default-deny RLS. The policy additionally blocks
   future permissive policies; the regression script verifies that protection
   and service-role access explicitly.
+
+## Homepage counts
+
+Run `supabase db query --local --file supabase/tests/public_stats.sql` after applying
+`20260916091328_add_public_stats.sql`. Use `--linked` to verify a deployed database.
+The rollback-only suite checks identical anonymous, outsider, and organizer counts:
+all public events (past, future, and without talks), only their talks, and distinct
+speakers. Private events, their speakers, and unassigned talks are excluded.
+
+Deploy this migration before deploying the frontend that calls `get_public_stats`.
+The RPC retains row-level security and returns one aggregate row, so Data API row
+limits no longer truncate the speaker input.
