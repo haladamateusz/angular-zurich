@@ -14,6 +14,7 @@
     "knip": "knip",
     "knip:mcp": "knip-mcp",
     "test:build-config": "node --test ./scripts/supabase-browser-key.spec.mjs",
+    "test:browser-build": "node ./scripts/browser-build-credential-scan.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

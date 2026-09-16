@@ -54,3 +54,6 @@ jobs:
           SUPABASE_KEY: sb_publishable_ci
           TURNSTILE_SITE_KEY: ci-placeholder
         run: npm run build
+
+      - name: Check browser bundle for privileged credentials
+        run: npm run test:browser-build
