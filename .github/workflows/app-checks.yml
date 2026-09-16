@@ -35,6 +35,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check unused code and dependencies
+        run: npm run knip
+
       - name: Test browser-key validation
         run: npm run test:build-config
 
