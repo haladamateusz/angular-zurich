@@ -1,0 +1,3 @@
+[mcp_servers.knip]
+command = "npm"
+args = ["run", "--silent", "knip:mcp"]

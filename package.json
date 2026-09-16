@@ -11,6 +11,8 @@
     "serve:ssr:angular-zurich": "node dist/angular-zurich/server/server.mjs",
     "lint": "ng lint && npm run lint:styles",
     "lint:styles": "stylelint \"src/**/*.css\"",
+    "knip": "knip",
+    "knip:mcp": "knip-mcp",
     "test:build-config": "node --test ./scripts/supabase-browser-key.spec.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -39,11 +41,13 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "22.0.0",
     "@angular/build": "^22.0.4",
     "@angular/cli": "^22.0.4",
     "@angular/compiler-cli": "^22.1.6",
     "@dreamsicle.io/stylelint-config-tailwindcss": "^1.2.2",
     "@eslint/js": "^10.0.1",
+    "@knip/mcp": "^0.0.36",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
@@ -51,6 +55,7 @@
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^27.1.0",
+    "knip": "^6.36.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.3",
     "stylelint": "^17.12.0",
