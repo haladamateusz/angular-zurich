@@ -41,5 +41,13 @@ Thumbs.db
 
 environment.development.ts
 
+# Local credentials; keep sanitized environment examples trackable.
+.env
+.env.*
+!.env.example
+
+# Local database exports can contain production and personal data.
+/supabase/backups/
+
 # Audit reports may contain production-security details.
 /docs/*audit*.md
