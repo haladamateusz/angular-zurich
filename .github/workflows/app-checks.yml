@@ -1,0 +1,50 @@
+name: App checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: App checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test browser-key validation
+        run: npm run test:build-config
+
+      - name: Run unit tests
+        run: npm test -- --watch=false
+
+      - name: Build production bundle
+        env:
+          APP_URL: https://example.invalid
+          SUPABASE_URL: https://example.invalid
+          SUPABASE_KEY: sb_publishable_ci
+          TURNSTILE_SITE_KEY: ci-placeholder
+        run: npm run build

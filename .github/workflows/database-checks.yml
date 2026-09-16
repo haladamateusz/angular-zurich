@@ -1,0 +1,53 @@
+name: Database checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: database-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  database:
+    name: Database regression checks
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ci-client-id
+      SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET: ci-client-secret
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v2
+        with:
+          version: 2.109.1
+
+      - name: Start local database and apply migrations
+        run: supabase db start
+
+      - name: Check database access rules
+        run: >-
+          docker exec -i supabase_db_angular-zurich
+          psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
+          < supabase/tests/public_access.sql
+
+      - name: Check Auth allowlist hooks
+        run: >-
+          docker exec -i supabase_db_angular-zurich
+          psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
+          < supabase/tests/auth_hooks.sql
+
+      - name: Check public homepage statistics
+        run: >-
+          docker exec -i supabase_db_angular-zurich
+          psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
+          < supabase/tests/public_stats.sql
