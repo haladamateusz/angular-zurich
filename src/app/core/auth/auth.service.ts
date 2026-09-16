@@ -6,7 +6,7 @@ import { SupabaseClientService } from '../data-access/supabase/supabase-client.s
 
 const GENERIC_AUTH_ERROR_MESSAGE = 'We could not complete sign-in. Please try again.';
 const UNAUTHORIZED_AUTH_ERROR_MESSAGE =
-  'This Google account is not authorized for organizer access.';
+  'This Google account doesn’t have organizer access. Sign in with an approved account.';
 
 interface UserProfileSummary {
   avatarUrl: string | null;
@@ -39,10 +39,6 @@ export class AuthService {
       displayName: this.getDisplayName(user),
     };
   });
-
-  getDebugErrorMessage(): string | null {
-    return this.errorMessageState();
-  }
 
   constructor() {
     void this.initialize();
@@ -175,13 +171,13 @@ export class AuthService {
       this.sessionState.set(data.session);
     } catch {
       this.sessionState.set(null);
-    } finally {
-      if (this.destroyRef.destroyed) {
-        return;
-      }
-
-      this.initializedState.set(true);
     }
+
+    if (this.destroyRef.destroyed) {
+      return;
+    }
+
+    this.initializedState.set(true);
 
     const {
       data: { subscription },

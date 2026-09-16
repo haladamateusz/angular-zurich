@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 
 const LOGIN_ERROR_MESSAGES: Record<string, string> = {
-  'access-denied': 'This Google account is not authorized for organizer access.',
+  'access-denied':
+    'This Google account doesn’t have organizer access. Sign in with an approved account.',
   'auth-failed': 'We could not complete sign-in. Please try again.',
 };
 
@@ -30,7 +31,6 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
           <div
             class="mt-6 rounded-surface border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
             role="alert"
-            aria-live="polite"
           >
             {{ errorMessage() }}
           </div>
@@ -44,7 +44,7 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
             [disabled]="isSubmitting()"
             aria-label="Sign in with Google"
           >
-            {{ isSubmitting() ? 'Redirecting…' : 'Sign in' }}
+            {{ isSubmitting() ? 'Redirecting…' : 'Sign in with Google' }}
           </button>
         </div>
       </div>
@@ -81,11 +81,6 @@ export class LoginComponent {
 
   private resolveErrorMessage(): string | null {
     const errorCode = this.route.snapshot.queryParamMap.get('error');
-    const errorReason = this.route.snapshot.queryParamMap.get('reason');
-
-    if (errorReason) {
-      return `${LOGIN_ERROR_MESSAGES[errorCode ?? 'auth-failed'] ?? LOGIN_ERROR_MESSAGES['auth-failed']} (${errorReason})`;
-    }
 
     if (errorCode === null) {
       return null;

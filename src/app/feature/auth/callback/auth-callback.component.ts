@@ -63,7 +63,6 @@ export class AuthCallbackComponent {
     await this.router.navigate(['/login'], {
       queryParams: {
         error: result === 'unauthorized' ? 'access-denied' : 'auth-failed',
-        reason: this.authService.getDebugErrorMessage() ?? undefined,
       },
     });
   }
