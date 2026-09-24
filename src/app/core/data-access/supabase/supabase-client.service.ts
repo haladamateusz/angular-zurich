@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, Service, inject } from '@angular/core';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../../environments/environment';
+import { browserAuthLock } from './browser-auth-lock';
 
 @Service()
 export class SupabaseClientService {
@@ -26,6 +27,7 @@ export class SupabaseClientService {
         detectSessionInUrl: false,
         persistSession: this.isBrowser,
         autoRefreshToken: this.isBrowser,
+        ...(this.isBrowser && globalThis.navigator?.locks ? { lock: browserAuthLock } : {}),
       },
     });
   }

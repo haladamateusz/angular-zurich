@@ -1,6 +1,13 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": ["api/index.js", "src/**/*.spec.ts", "scripts/**/*.spec.mjs"],
-  "project": ["src/**/*.{ts,css}", "api/**/*.js", "scripts/**/*.mjs", "*.{js,mjs,ts}"],
+  "entry": [
+    "api/index.js",
+    "src/**/*.spec.ts",
+    "scripts/**/*.spec.{mjs,ts}",
+    "scripts/**/*.e2e.ts",
+    "scripts/**/*.eval.ts",
+    "vitest.chat-eval.config.ts"
+  ],
+  "project": ["src/**/*.{ts,css}", "api/**/*.js", "scripts/**/*.{mjs,ts}", "*.{js,mjs,ts}"],
   "ignoreFiles": ["src/**/*.css"]
 }

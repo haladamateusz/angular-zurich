@@ -12,6 +12,7 @@
   ],
   "functions": {
     "api/index.js": {
+      "maxDuration": 180,
       "includeFiles": "dist/angular-zurich/**"
     }
   }

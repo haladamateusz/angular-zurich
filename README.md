@@ -72,10 +72,11 @@ ng test
 
 ## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
+The archive chat has browser tests with synthetic authentication and mocked responses:
 
 ```bash
-ng e2e
+npx playwright install chromium
+npm run test:chat:browser
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+See [archive chat setup](docs/chatbot-setup.md) for OpenRouter configuration, approved-user access, local development, quotas, MCP tools, and deployment steps.

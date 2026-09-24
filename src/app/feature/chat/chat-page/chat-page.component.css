@@ -1,0 +1,296 @@
+:host {
+  display: block;
+}
+
+.archive-chat {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: clamp(1.25rem, 4vw, 3rem) 1.25rem;
+  color: var(--foreground-primary);
+}
+
+.archive-chat-header {
+  margin-bottom: var(--space-8);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.archive-chat-footnote {
+  color: var(--foreground-secondary);
+}
+
+.archive-chat-surface {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-surface);
+  background: var(--background-raised);
+  overflow: hidden;
+}
+
+.archive-chat-footnote {
+  max-width: 52rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+.archive-chat-notice {
+  margin-block: 2rem;
+  padding: 2rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-surface);
+}
+
+.archive-chat-notice p {
+  margin-bottom: 1.5rem;
+}
+
+.archive-chat-error {
+  border-left: 3px solid var(--action-primary);
+  padding: 0.75rem 1rem;
+  margin-block: 1rem;
+}
+
+@media (width <= 40rem) {
+  .archive-chat-notice {
+    padding: 1.25rem;
+  }
+}
+
+.archive-chat-transcript {
+  min-height: 18rem;
+  max-height: 55dvh;
+  overflow-y: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+  scroll-padding: 1rem;
+}
+
+.archive-chat-empty {
+  min-height: 16rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+  color: var(--foreground-secondary);
+}
+
+.archive-chat-empty h2 {
+  color: var(--foreground-primary);
+  margin: 0;
+}
+
+.archive-message {
+  padding-block: 1rem;
+}
+
+.archive-message-user {
+  width: fit-content;
+  max-width: min(100%, 75ch);
+  padding: 1rem;
+  margin-left: auto;
+  margin-bottom: 1rem;
+  background: var(--background-sunken);
+  border-radius: var(--radius-control);
+}
+
+.archive-message-label {
+  font: 700 0.75rem var(--font-sans);
+  margin-bottom: 0.5rem;
+  color: var(--foreground-secondary);
+}
+
+.archive-message-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.archive-source {
+  border-left: 2px solid var(--action-primary);
+  padding: 0.25rem 0 0.25rem 1rem;
+  margin-block: 1.5rem;
+}
+
+.archive-source h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-block: 0.5rem;
+}
+
+.archive-source-date {
+  color: var(--foreground-secondary);
+  font-size: 0.75rem;
+}
+
+.archive-source-speakers {
+  font-weight: 700;
+}
+
+.archive-source-description {
+  line-height: 1.6;
+  margin-block: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.archive-source-link {
+  color: var(--foreground-link);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.75rem;
+}
+
+.archive-chat-composer {
+  border-top: 1px solid var(--border-default);
+  padding: 1rem 1.25rem;
+}
+
+.archive-chat-composer label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.archive-chat-composer textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 5rem;
+  max-height: 12rem;
+  background: var(--background-canvas);
+  color: var(--foreground-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  padding: 0.75rem;
+}
+
+.archive-chat-composer textarea::placeholder {
+  color: var(--foreground-secondary);
+}
+
+.archive-chat-composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.archive-chat-composer-actions p {
+  color: var(--foreground-secondary);
+  font-size: 0.75rem;
+}
+
+.archive-chat-composer-controls {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.archive-chat-status {
+  min-height: 1.5rem;
+  color: var(--foreground-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+:where(a, button, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--foreground-link);
+  outline-offset: 3px;
+}
+
+.archive-activity {
+  margin-bottom: var(--space-4);
+  font-size: var(--type-xs);
+}
+
+.archive-activity-heading {
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding-block: var(--space-3);
+}
+
+.archive-activity-steps {
+  padding-inline-start: var(--space-4);
+  border-left: 1px solid var(--border-default);
+}
+
+.archive-activity-step summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  cursor: pointer;
+  min-height: 2.75rem;
+}
+
+.archive-activity-step p {
+  overflow-wrap: anywhere;
+  color: var(--foreground-secondary);
+  padding: var(--space-2) var(--space-4);
+}
+
+.archive-activity-state {
+  color: var(--foreground-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-activity-marker {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--foreground-secondary);
+}
+
+.archive-activity-marker.is-running {
+  background: var(--foreground-link);
+  animation: activity-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes activity-pulse {
+  to {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-activity-marker.is-running {
+    animation: none;
+  }
+}
+
+summary:focus-visible {
+  outline: 2px solid var(--foreground-link);
+  outline-offset: -2px;
+}
+
+.archive-results-table {
+  width: 100%;
+  margin-block: var(--space-4);
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-results-table caption {
+  text-align: start;
+  padding-block: var(--space-2);
+  color: var(--foreground-secondary);
+}
+
+.archive-results-table th,
+.archive-results-table td {
+  padding: var(--space-2);
+  text-align: start;
+  border-bottom: 1px solid var(--border-default);
+  overflow-wrap: anywhere;
+}

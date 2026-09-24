@@ -3,6 +3,11 @@ import { organizerAuthGuard } from './core/auth/organizer-auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'chat',
+    canActivate: [organizerAuthGuard],
+    loadChildren: () => import('./feature/chat/chat.routes').then((m) => m.CHAT_ROUTES),
+  },
+  {
     path: '',
     loadChildren: () => import('./feature/home/home.routes').then((m) => m.HOME_ROUTES),
   },

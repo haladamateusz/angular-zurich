@@ -32,6 +32,8 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-09-18** — Chat sends on Enter (Shift+Enter inserts a line), with a text-only send button. Show actual tool activity as it happens, including inspectable parameters and outcomes. Keep it inside each response above the answer, open while running and automatically folded when finished; users can expand previous searches. *Why:* users need keyboard fluency and visible evidence of progress instead of a static searching label.
+
 - **2026-08-23** — Use sentence case for headings and UI labels; avoid decorative uppercase. *Why:* it reads as generic template language.
 - **2026-08-23** — Place equivalent edit and delete actions consistently across talk-submission and event workflows. *Why:* organisers should not need to relearn controls between related tasks.
 - **2026-08-23** — Reuse one card and button language across pages. *Why:* consistency should carry the visual system; any exceptions must serve a distinct purpose.

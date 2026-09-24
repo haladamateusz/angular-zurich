@@ -6,11 +6,30 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { existsSync } from 'node:fs';
+import { loadEnvFile } from 'node:process';
+import { isDevMode } from '@angular/core';
+
+// Also support direct `ng serve`/IDE launches. This file is server-only;
+// production reads its host's environment and never loads a local secrets file.
+if (isDevMode() && process.env['NODE_ENV'] !== 'production') {
+  const localEnv = join(process.cwd(), '.env.local');
+  if (existsSync(localEnv)) loadEnvFile(localEnv);
+}
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 export const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+app.use('/api/chat', async (req, res, next) => {
+  try {
+    const { chatRouter } = await import('./server/chat/router');
+    chatRouter(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.

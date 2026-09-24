@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SECRET_KEY_PATTERN = /\bsb_secret_[\w-]*/g;
+const OPENROUTER_KEY_PATTERN = /\bsk-or-v1-[a-zA-Z0-9_-]+/g;
 const LEGACY_JWT_PATTERN = /\beyJ[\w-]*\.[\w-]+\.[\w-]+\b/g;
 
 function getLegacyJwtRole(token) {
@@ -22,6 +23,8 @@ function getLegacyJwtRole(token) {
 
 function findCredentialKinds(content) {
   const kinds = [];
+  OPENROUTER_KEY_PATTERN.lastIndex = 0;
+  if (OPENROUTER_KEY_PATTERN.test(content)) kinds.push('OpenRouter API key');
 
   SECRET_KEY_PATTERN.lastIndex = 0;
   if (SECRET_KEY_PATTERN.test(content)) {
@@ -78,5 +81,5 @@ export async function assertNoBrowserBuildCredentials(directory) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await assertNoBrowserBuildCredentials(process.argv[2] ?? 'dist/angular-zurich/browser');
-  console.log('Browser build contains no privileged Supabase credentials.');
+  console.log('Browser build contains no privileged Supabase or OpenRouter credentials.');
 }

@@ -51,3 +51,9 @@ jobs:
           docker exec -i supabase_db_angular-zurich
           psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
           < supabase/tests/public_stats.sql
+
+      - name: Check chat access, archive search, and quotas
+        run: >-
+          docker exec -i supabase_db_angular-zurich
+          psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
+          < supabase/tests/chat_access.sql
