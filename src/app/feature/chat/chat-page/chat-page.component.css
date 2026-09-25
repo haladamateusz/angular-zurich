@@ -21,6 +21,10 @@ h2 {
 
 .archive-chat-footnote {
   color: var(--foreground-secondary);
+  max-width: 52rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-top: 1rem;
 }
 
 .archive-chat-surface {
@@ -28,13 +32,6 @@ h2 {
   border-radius: var(--radius-surface);
   background: var(--background-raised);
   overflow: hidden;
-}
-
-.archive-chat-footnote {
-  max-width: 52rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  margin-top: 1rem;
 }
 
 .archive-chat-notice {
