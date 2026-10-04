@@ -30,6 +30,17 @@ interface TalkSubmissionUpdatePayload {
 }
 
 interface EditableSubmission {
+  organizer_speaker_id: string | null;
+  speaker_first_name: string;
+  speaker_last_name: string;
+  speaker_name: string;
+  speaker_label: string | null;
+  speaker_email: string;
+  speaker_bio: string;
+  personal_url: string | null;
+  twitter_url: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
   id: string;
   status: 'initially_submitted' | 'adjusted' | 'changes_requested';
   speaker_picture_path: string | null;
@@ -353,15 +364,7 @@ async function enforceRateLimit(
   return (rows[0]?.request_count ?? 0) <= maxCount;
 }
 
-function validatePayload(payload: TalkSubmissionUpdatePayload): string | null {
-  if (!UUID_PATTERN.test(payload.submissionId)) {
-    return 'submission_id_invalid';
-  }
-
-  if (!payload.editToken.trim()) {
-    return 'edit_token_invalid';
-  }
-
+function validatePayload(payload: TalkSubmissionUpdatePayload, isOrganizer = false): string | null {
   if (!payload.talkTitle || payload.talkTitle.trim().length < 5) {
     return 'talk_title_invalid';
   }
@@ -386,7 +389,8 @@ function validatePayload(payload: TalkSubmissionUpdatePayload): string | null {
     return 'email_address_invalid';
   }
 
-  if (!payload.speakerBio || payload.speakerBio.trim().length < 20) {
+  const bioLength = payload.speakerBio.trim().length;
+  if ((bioLength < 20 && !(isOrganizer && bioLength === 0)) || bioLength > SPEAKER_BIO_MAX_LENGTH) {
     return 'speaker_bio_invalid';
   }
 
@@ -415,7 +419,9 @@ async function getEditableSubmission(
   editTokenHash: string,
 ): Promise<EditableSubmission | null> {
   const rows = await sql<EditableSubmission[]>`
-    select id, status, speaker_picture_path
+    select id, status, speaker_picture_path, organizer_speaker_id,
+      speaker_first_name, speaker_last_name, speaker_name, speaker_label, speaker_email,
+      speaker_bio, personal_url, twitter_url, linkedin_url, github_url
     from submissions.talk_submissions
     where id = ${submissionId}::uuid
       and edit_token_hash = ${editTokenHash}
@@ -520,10 +526,11 @@ Deno.serve(async (req) => {
       normalizedPayload.speakerLastName,
     ).slice(0, SPEAKER_NAME_MAX_LENGTH);
 
-    const validationError = validatePayload(normalizedPayload);
-
-    if (validationError) {
-      return jsonResponse(400, { error: validationError }, corsHeaders);
+    if (!UUID_PATTERN.test(normalizedPayload.submissionId)) {
+      return jsonResponse(400, { error: 'submission_id_invalid' }, corsHeaders);
+    }
+    if (!normalizedPayload.editToken) {
+      return jsonResponse(400, { error: 'edit_token_invalid' }, corsHeaders);
     }
 
     const now = new Date();
@@ -563,6 +570,28 @@ Deno.serve(async (req) => {
 
     if (!existingSubmission) {
       return jsonResponse(403, { error: 'edit_not_allowed' }, corsHeaders);
+    }
+
+    if (existingSubmission.organizer_speaker_id) {
+      Object.assign(normalizedPayload, {
+        speakerFirstName: existingSubmission.speaker_first_name,
+        speakerLastName: existingSubmission.speaker_last_name,
+        speakerName: existingSubmission.speaker_name,
+        speakerLabel: existingSubmission.speaker_label ?? undefined,
+        emailAddress: existingSubmission.speaker_email,
+        speakerBio: existingSubmission.speaker_bio,
+        personalUrl: existingSubmission.personal_url ?? undefined,
+        twitterUrl: existingSubmission.twitter_url ?? undefined,
+        linkedinUrl: existingSubmission.linkedin_url ?? undefined,
+        githubUrl: existingSubmission.github_url ?? undefined,
+        speakerPicture: null,
+      });
+    }
+
+    const validationError = validatePayload(normalizedPayload, existingSubmission.organizer_speaker_id !== null);
+
+    if (validationError) {
+      return jsonResponse(400, { error: validationError }, corsHeaders);
     }
 
     let speakerPicturePath: string | null = null;

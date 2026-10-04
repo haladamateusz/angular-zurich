@@ -1,5 +1,6 @@
 import '@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { resolveOrganizerSpeaker, type OrganizerSpeakerProfile } from '../_shared/organizer-speaker.ts';
 import { createDatabaseClient } from '../_shared/database.ts';
 import {
   getSiteUrl,
@@ -11,6 +12,7 @@ import {
 } from '../_shared/talk-submission-notify-organizers.ts';
 
 type TalkSubmissionPayload = {
+  organizerSpeakerSlug?: string;
   talkTitle: string;
   talkDescription: string;
   slidesLink: string;
@@ -273,6 +275,7 @@ async function parseSubmissionPayload(req: Request): Promise<TalkSubmissionPaylo
     const speakerPictureField = formData.get('speakerPicture');
 
     return {
+      ...(formData.has('organizerSpeakerSlug') ? { organizerSpeakerSlug: String(formData.get('organizerSpeakerSlug')) } : {}),
       talkTitle: String(formData.get('talkTitle') ?? ''),
       talkDescription: String(formData.get('talkDescription') ?? ''),
       slidesLink: String(formData.get('slidesLink') ?? ''),
@@ -407,7 +410,7 @@ async function enforceRateLimit(
   return (rows[0]?.request_count ?? 0) <= maxCount;
 }
 
-function validatePayload(payload: TalkSubmissionPayload): string | null {
+function validatePayload(payload: TalkSubmissionPayload, isOrganizer = false): string | null {
   if (!payload.talkTitle || payload.talkTitle.trim().length < 5) {
     return 'talk_title_invalid';
   }
@@ -432,7 +435,8 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
     return 'email_address_invalid';
   }
 
-  if (!payload.speakerBio || payload.speakerBio.trim().length < 20) {
+  const bioLength = payload.speakerBio.trim().length;
+  if ((bioLength < 20 && !(isOrganizer && bioLength === 0)) || bioLength > SPEAKER_BIO_MAX_LENGTH) {
     return 'speaker_bio_invalid';
   }
 
@@ -444,6 +448,8 @@ function validatePayload(payload: TalkSubmissionPayload): string | null {
   ) {
     return 'speaker_profile_url_invalid';
   }
+
+  if (isOrganizer) return null;
 
   if (!payload.speakerPicture) {
     return 'speaker_picture_required';
@@ -481,7 +487,53 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const payload = await parseSubmissionPayload(req);
+    let payload = await parseSubmissionPayload(req);
+    let organizerProfile: OrganizerSpeakerProfile | null = null;
+    if ('organizerSpeakerSlug' in payload) {
+      const result = await resolveOrganizerSpeaker(req.headers.get('authorization'), payload.organizerSpeakerSlug, {
+        getUserEmail: async (token) => {
+          if (!supabaseAdmin) throw new Error('supabase_not_configured');
+          const { data, error } = await supabaseAdmin.auth.getUser(token);
+          return error ? null : data.user?.email ?? null;
+        },
+        isAllowed: async (email) => {
+          const rows = await sql<{ allowed: boolean }[]>`
+            select private.is_allowed_google_account(${email}) as allowed
+          `;
+          return rows[0]?.allowed === true;
+        },
+        getProfile: async (slug) => {
+          const rows = await sql<OrganizerSpeakerProfile[]>`
+            select p.id, p.first_name, p.last_name, p.email, p.abstract, p.label,
+              p.personal_url, p.twitter_url, p.linkedin_url, p.github_url, p.picture_url
+            from public."People" p
+            join public."PeopleOnRoles" r on r.person_id = p.id and r.role = 'ORGANIZER'::public."ROLES"
+            where p.slug = ${slug}
+            limit 1
+          `;
+          return rows[0] ?? null;
+        },
+      });
+      if (result.error) return jsonResponse(result.status, { error: result.error }, corsHeaders);
+      organizerProfile = result.profile!;
+      // Only server-owned profile fields may become the organizer's speaker snapshot.
+      payload = {
+        talkTitle: payload.talkTitle,
+        talkDescription: payload.talkDescription,
+        slidesLink: payload.slidesLink,
+        speakerFirstName: organizerProfile.first_name!,
+        speakerLastName: organizerProfile.last_name!,
+        speakerName: '',
+        emailAddress: organizerProfile.email!,
+        speakerBio: organizerProfile.abstract ?? '',
+        speakerLabel: organizerProfile.label ?? undefined,
+        personalUrl: organizerProfile.personal_url ?? undefined,
+        twitterUrl: organizerProfile.twitter_url ?? undefined,
+        linkedinUrl: organizerProfile.linkedin_url ?? undefined,
+        githubUrl: organizerProfile.github_url ?? undefined,
+        speakerPicture: null,
+      };
+    }
     const normalizedPayload: TalkSubmissionPayload = {
       talkTitle: normalizeText(payload.talkTitle ?? '', TALK_TITLE_MAX_LENGTH),
       talkDescription: normalizeText(payload.talkDescription ?? '', TALK_DESCRIPTION_MAX_LENGTH),
@@ -504,14 +556,14 @@ Deno.serve(async (req) => {
       normalizedPayload.speakerLastName,
     ).slice(0, SPEAKER_NAME_MAX_LENGTH);
 
-    const validationError = validatePayload(normalizedPayload);
+    const validationError = validatePayload(normalizedPayload, organizerProfile !== null);
 
     if (validationError) {
       return jsonResponse(400, { error: validationError }, corsHeaders);
     }
 
     const ipAddress = extractIpAddress(req);
-    const captchaValid = await verifyCaptchaToken(normalizedPayload.captchaToken, ipAddress);
+    const captchaValid = organizerProfile !== null || await verifyCaptchaToken(normalizedPayload.captchaToken, ipAddress);
 
     if (!captchaValid) {
       return jsonResponse(400, { error: 'captcha_invalid' }, corsHeaders);
@@ -610,7 +662,9 @@ Deno.serve(async (req) => {
         email_hash,
         user_agent,
         origin,
-        edit_token_hash
+        edit_token_hash,
+        organizer_speaker_id,
+        organizer_speaker_picture_url
       )
       values (
         ${submissionId}::uuid,
@@ -632,7 +686,9 @@ Deno.serve(async (req) => {
         ${emailHash},
         ${req.headers.get('user-agent')?.slice(0, USER_AGENT_MAX_LENGTH) ?? null},
         ${origin?.slice(0, ORIGIN_MAX_LENGTH) ?? null},
-        ${editTokenHash}
+        ${editTokenHash},
+        ${organizerProfile?.id ?? null}::uuid,
+        ${organizerProfile?.picture_url ?? null}
       )
       returning id
     `;
