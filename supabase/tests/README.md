@@ -119,3 +119,45 @@ checks transactions and rollback recovery, and closes its connection. It skips
 when the URL is absent. Run it against the intended pooler before changing the
 hosted secret. Deploy the five affected functions and check errors, connection
 counts, and latency under representative traffic before raising the pool limit.
+
+## Organizer talk proposals
+
+Run `npm run test:submissions` for isolated Edge request-handler checks. These mock
+Auth, database writes, storage and email delivery; they never submit proposals or
+send notifications to the live project. They cover organizer authorization,
+server-owned profile snapshots, normal public validation, CAPTCHA requirements,
+and fixed-speaker edits.
+
+After applying `20260925204215_add_organizer_speaker_submissions.sql` and
+`20260926172107_allow_empty_organizer_biographies.sql`, run
+`supabase db query --local --file supabase/tests/organizer_submissions.sql`.
+The rollback-only fixtures check normal initial status, device-token reads,
+identity preservation when names collide, idempotent talk/speaker linking,
+unchanged organizer profiles, optional organizer biographies, and the standard
+speaker-creation path. Run the
+existing public access, auth hook, stats and chat regressions alongside it.
+
+For browser checks, run `npm run test:submissions:browser` with a configured
+`environment.development.ts` and an installed Playwright browser. Alternatively,
+set `PLAYWRIGHT_CHANNEL=chrome` to use installed Chrome. The suite mocks backend
+requests and checks both modes with AXE at mobile and desktop widths in both
+themes. `PLAYWRIGHT_BASE_URL` can target an existing development server.
+
+Roll out both migrations before the two changed Edge Functions (`submit-talk` and
+`update-talk-submission`), then deploy the frontend. Inspect
+`supabase db push --linked --dry-run` first; only the intended pending migrations
+should be present. Deploy those functions with
+`supabase functions deploy submit-talk update-talk-submission --use-api`.
+Keep the existing `verify_jwt = false` configuration: public submissions and
+device-token edits remain supported, while organizer submissions explicitly
+verify a user token and the current account allowlist inside the function.
+
+Organizer options come from `organizers_public`. Their `People` records must
+have valid names, email and an HTTP(S) photo URL. Biographies may be absent for
+organizers; when present they must contain 20–4,000 characters. The submission
+snapshots the existing biography or an empty string without changing the profile.
+Standard proposals still require a biography. Other incomplete profiles
+produce an actionable form error without creating a submission. Organizer
+submission photos reference existing profile images; they are neither uploaded
+again nor promoted on approval. Speaker changes through the edit endpoint are
+ignored for linked proposals; only talk content changes.

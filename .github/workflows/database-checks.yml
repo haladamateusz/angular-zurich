@@ -57,3 +57,9 @@ jobs:
           docker exec -i supabase_db_angular-zurich
           psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
           < supabase/tests/chat_access.sql
+
+      - name: Check organizer talk submissions
+        run: >-
+          docker exec -i supabase_db_angular-zurich
+          psql --username postgres --dbname postgres --set ON_ERROR_STOP=1
+          < supabase/tests/organizer_submissions.sql

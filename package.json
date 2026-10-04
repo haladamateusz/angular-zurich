@@ -17,6 +17,8 @@
     "test:browser-build": "node ./scripts/browser-build-credential-scan.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test:submissions:browser": "playwright test --config playwright.submissions.config.ts",
+    "test:submissions": "vitest run --config vitest.submissions.config.ts",
     "test:chat": "vitest run --config vitest.chat.config.ts",
     "start:chat": "node --env-file-if-exists=.env.local node_modules/@angular/cli/bin/ng.js serve",
     "test:chat:browser": "playwright test --config playwright.chat.config.ts",
