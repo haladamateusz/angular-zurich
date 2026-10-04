@@ -22,6 +22,7 @@ import { Person } from '../../models/person.interface';
 import { Sponsor } from '../../models/sponsor.interface';
 import { Talk } from '../../models/talk.interface';
 import {
+  OrganizerTalkSubmissionPayload,
   TalkSubmissionEditable,
   TalkSubmissionEditPayload,
   TalkSubmissionEditResult,
@@ -664,7 +665,7 @@ export class SupabaseService {
     return this.supabase
       .from('organizer_talk_submissions')
       .select(
-        'id, created_at, status, talk_title, talk_description, slides_url, speaker_name, speaker_label, speaker_picture_path, speaker_email, personal_url, linkedin_url, github_url',
+        'id, created_at, status, talk_title, talk_description, slides_url, speaker_name, speaker_label, speaker_picture_path, speaker_email, personal_url, linkedin_url, github_url, organizer_speaker_id, organizer_speaker_picture_url',
       )
       .eq('id', submissionId)
       .single();
@@ -876,7 +877,7 @@ export class SupabaseService {
   }
 
   async submitTalk(
-    payload: TalkSubmissionPayload,
+    payload: TalkSubmissionPayload | OrganizerTalkSubmissionPayload,
   ): Promise<{ data: TalkSubmissionResult | null; error: Error | null }> {
     if (this.supabase === null) {
       return {
@@ -889,49 +890,41 @@ export class SupabaseService {
 
     formData.set('talkTitle', payload.talkTitle);
     formData.set('talkDescription', payload.talkDescription);
-    formData.set('speakerFirstName', payload.speakerFirstName);
-    formData.set('speakerLastName', payload.speakerLastName);
+    formData.set('slidesLink', payload.slidesLink);
+    const headers: Record<string, string> = { apikey: this.supabaseKey };
 
-    if (payload.speakerLabel?.trim()) {
-      formData.set('speakerLabel', payload.speakerLabel.trim());
-    }
-
-    formData.set('emailAddress', payload.emailAddress);
-    formData.set('speakerBio', payload.speakerBio);
-
-    if (payload.slidesLink?.trim()) {
-      formData.set('slidesLink', payload.slidesLink.trim());
-    }
-
-    if (payload.personalUrl?.trim()) {
-      formData.set('personalUrl', payload.personalUrl.trim());
-    }
-
-    if (payload.twitterUrl?.trim()) {
-      formData.set('twitterUrl', payload.twitterUrl.trim());
-    }
-
-    if (payload.linkedinUrl?.trim()) {
-      formData.set('linkedinUrl', payload.linkedinUrl.trim());
-    }
-
-    if (payload.githubUrl?.trim()) {
-      formData.set('githubUrl', payload.githubUrl.trim());
-    }
-
-    if (payload.captchaToken?.trim()) {
-      formData.set('captchaToken', payload.captchaToken.trim());
-    }
-
-    if (payload.speakerPicture) {
-      formData.set('speakerPicture', payload.speakerPicture);
+    if ('organizerSpeakerSlug' in payload) {
+      const accessToken = this.authService.session()?.access_token;
+      if (!accessToken) {
+        return { data: null, error: new Error('organizer_authorization_required') };
+      }
+      headers['authorization'] = `Bearer ${accessToken}`;
+      formData.set('organizerSpeakerSlug', payload.organizerSpeakerSlug);
+    } else {
+      formData.set('speakerFirstName', payload.speakerFirstName);
+      formData.set('speakerLastName', payload.speakerLastName);
+      formData.set('emailAddress', payload.emailAddress);
+      formData.set('speakerBio', payload.speakerBio);
+      for (const key of [
+        'speakerLabel',
+        'personalUrl',
+        'twitterUrl',
+        'linkedinUrl',
+        'githubUrl',
+        'captchaToken',
+      ] as const) {
+        if (payload[key]?.trim()) {
+          formData.set(key, payload[key].trim());
+        }
+      }
+      if (payload.speakerPicture) {
+        formData.set('speakerPicture', payload.speakerPicture);
+      }
     }
 
     const response = await fetch(`${this.supabaseUrl}/functions/v1/submit-talk`, {
       method: 'POST',
-      headers: {
-        apikey: this.supabaseKey,
-      },
+      headers,
       body: formData,
     });
 

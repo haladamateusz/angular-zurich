@@ -215,7 +215,7 @@
 }
 
 .speaker-card__image-picker > span:last-child {
-  color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+  color: var(--color-muted-foreground-1);
   font-size: 0.76rem;
 }
 
@@ -263,5 +263,65 @@
     animation: none;
     opacity: 1;
     transform: none;
+  }
+}
+
+.organizer-checkbox input {
+  width: var(--space-5);
+  height: var(--space-5);
+  accent-color: var(--primary);
+}
+
+.organizer-speaker-label {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.organizer-select-field {
+  position: relative;
+}
+
+.organizer-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 2.85rem;
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, transparent);
+  border-radius: var(--radius-control);
+  background: var(--color-background);
+  padding: 0.65rem 2.9rem 0.65rem 0.85rem;
+  color: var(--color-foreground);
+  font: inherit;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.organizer-select:hover:not(:disabled) {
+  border-color: var(--color-primary-text);
+}
+
+.organizer-select[aria-invalid='true'] {
+  border-color: color-mix(in srgb, var(--color-destructive) 64%, var(--color-border) 36%);
+}
+
+.organizer-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.organizer-select-field .app-select-chevron {
+  position: absolute;
+  top: 50%;
+  right: 1.15rem;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 640px) {
+  .organizer-select {
+    font-size: 1rem;
   }
 }

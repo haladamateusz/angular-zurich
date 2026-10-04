@@ -540,7 +540,9 @@ export class DashboardSubmissionDetailComponent {
     this.submission.set(data);
     await this.loadStatusEvents();
 
-    if (data.speaker_picture_path) {
+    if (data.organizer_speaker_picture_url) {
+      this.speakerPictureUrl.set(data.organizer_speaker_picture_url);
+    } else if (data.speaker_picture_path) {
       const signedUrl = await this.supabaseService.getOrganizerSpeakerPictureUrl(
         data.speaker_picture_path,
       );

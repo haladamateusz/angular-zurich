@@ -7,6 +7,8 @@ import { ToastService } from '../../core/toast/toast.service';
 import { DashboardSubmissionDetailComponent } from './dashboard-submission-detail.component';
 
 const submission: OrganizerTalkSubmissionDetail = {
+  organizer_speaker_id: null,
+  organizer_speaker_picture_url: null,
   id: 'submission-1',
   created_at: '2026-08-10T12:00:00.000Z',
   status: 'initially_submitted',

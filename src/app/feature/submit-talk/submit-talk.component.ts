@@ -4,7 +4,7 @@ import {
   DestroyRef,
   ElementRef,
   PLATFORM_ID,
-  afterNextRender,
+  afterRenderEffect,
   computed,
   effect,
   inject,
@@ -24,9 +24,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { TalkSubmissionDeviceAuthService } from '../../core/data-access/talk-submission-device-auth.service';
 import {
+  OrganizerTalkSubmissionPayload,
   TalkSubmissionEditable,
   TalkSubmissionPayload,
 } from '../../core/models/talk-submission.interface';
+import { AuthService } from '../../core/auth/auth.service';
+import { Person } from '../../core/models/person.interface';
 import { ThemeService } from '../../core/theme/theme.service';
 import { ViewportRevealDirective } from '../../ui/viewport-reveal/viewport-reveal.directive';
 import { environment } from '../../../environments/environment';
@@ -36,7 +39,8 @@ type SubmissionState = 'idle' | 'loading' | 'submitting' | 'error';
 type TurnstileApi = NonNullable<Window['turnstile']>;
 
 const TURNSTILE_SCRIPT_ID = 'cloudflare-turnstile-script';
-const TURNSTILE_SCRIPT_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+const TURNSTILE_SCRIPT_SRC =
+  'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
 const SLIDES_LINK_PATTERN = /^https?:\/\/.+/i;
 const SPEAKER_PICTURE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
@@ -58,14 +62,20 @@ const MAX_LENGTHS = {
   companyWebsite: 200,
 } as const;
 
-function optionalImageFileValidator(control: AbstractControl<File | null>): ValidationErrors | null {
+function optionalImageFileValidator(
+  control: AbstractControl<File | null>,
+): ValidationErrors | null {
   const file = control.value;
 
   if (!file) {
     return null;
   }
 
-  if (!SPEAKER_PICTURE_ALLOWED_TYPES.includes(file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number])) {
+  if (
+    !SPEAKER_PICTURE_ALLOWED_TYPES.includes(
+      file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number],
+    )
+  ) {
     return { invalidFileType: true };
   }
 
@@ -82,9 +92,10 @@ let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
   selector: 'app-submit-talk',
   imports: [ReactiveFormsModule, RouterLink, ViewportRevealDirective],
   templateUrl: './submit-talk.component.html',
-  styleUrl: './submit-talk.component.css'
+  styleUrl: './submit-talk.component.css',
 })
 export class SubmitTalkComponent {
+  protected readonly authService = inject(AuthService);
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
@@ -94,15 +105,30 @@ export class SubmitTalkComponent {
   private readonly talkSubmissionDeviceAuthService = inject(TalkSubmissionDeviceAuthService);
   private readonly themeService = inject(ThemeService);
   private readonly turnstileContainer = viewChild<ElementRef<HTMLElement>>('turnstileContainer');
-  private readonly speakerPictureInput = viewChild<ElementRef<HTMLInputElement>>('speakerPictureInput');
+  private readonly speakerPictureInput =
+    viewChild<ElementRef<HTMLInputElement>>('speakerPictureInput');
 
   private widgetId: string | null = null;
   private turnstileThemeAtRender: 'light' | 'dark' | null = null;
 
+  protected readonly organizerMode = signal(false);
+  protected readonly existingOrganizerName = signal('');
+  protected readonly organizers = signal<Person[]>([]);
+  protected readonly organizerLoadState = signal<'idle' | 'loading' | 'ready' | 'error'>('idle');
+  protected readonly canSelectOrganizer = computed(
+    () =>
+      !this.isEditMode() && this.authService.isInitialized() && this.authService.isAuthenticated(),
+  );
+  protected readonly usesOrganizerProfile = computed(
+    () =>
+      Boolean(this.existingOrganizerName()) || (this.canSelectOrganizer() && this.organizerMode()),
+  );
+
   protected readonly editSubmissionId = signal(this.route.snapshot.paramMap.get('submissionId'));
   protected readonly isEditMode = computed(() => this.editSubmissionId() !== null);
   protected readonly maxLengths = MAX_LENGTHS;
-  protected readonly maxSpeakerPictureSizeInMegabytes = SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
+  protected readonly maxSpeakerPictureSizeInMegabytes =
+    SPEAKER_PICTURE_MAX_SIZE_BYTES / (1024 * 1024);
   protected readonly turnstileSiteKey = environment.turnstileSiteKey;
   protected readonly submissionState = signal<SubmissionState>('idle');
   protected readonly captchaError = signal('');
@@ -115,7 +141,11 @@ export class SubmitTalkComponent {
   protected readonly speakerPicturePreviewUrl = signal<string | null>(null);
 
   protected readonly submitTalkForm = this.formBuilder.group({
-    talkTitle: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(MAX_LENGTHS.talkTitle)]],
+    organizerSpeakerSlug: [{ value: '', disabled: true }, Validators.required],
+    talkTitle: [
+      '',
+      [Validators.required, Validators.minLength(5), Validators.maxLength(MAX_LENGTHS.talkTitle)],
+    ],
     talkDescription: [
       '',
       [
@@ -126,7 +156,11 @@ export class SubmitTalkComponent {
     ],
     slidesLink: [
       '',
-      [Validators.required, Validators.maxLength(MAX_LENGTHS.slidesLink), Validators.pattern(SLIDES_LINK_PATTERN)],
+      [
+        Validators.required,
+        Validators.maxLength(MAX_LENGTHS.slidesLink),
+        Validators.pattern(SLIDES_LINK_PATTERN),
+      ],
     ],
     speakerFirstName: [
       '',
@@ -153,10 +187,22 @@ export class SubmitTalkComponent {
       '',
       [Validators.required, Validators.minLength(20), Validators.maxLength(MAX_LENGTHS.speakerBio)],
     ],
-    personalUrl: ['', [Validators.maxLength(MAX_LENGTHS.personalUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
-    twitterUrl: ['', [Validators.maxLength(MAX_LENGTHS.twitterUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
-    linkedinUrl: ['', [Validators.maxLength(MAX_LENGTHS.linkedinUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
-    githubUrl: ['', [Validators.maxLength(MAX_LENGTHS.githubUrl), Validators.pattern(SLIDES_LINK_PATTERN)]],
+    personalUrl: [
+      '',
+      [Validators.maxLength(MAX_LENGTHS.personalUrl), Validators.pattern(SLIDES_LINK_PATTERN)],
+    ],
+    twitterUrl: [
+      '',
+      [Validators.maxLength(MAX_LENGTHS.twitterUrl), Validators.pattern(SLIDES_LINK_PATTERN)],
+    ],
+    linkedinUrl: [
+      '',
+      [Validators.maxLength(MAX_LENGTHS.linkedinUrl), Validators.pattern(SLIDES_LINK_PATTERN)],
+    ],
+    githubUrl: [
+      '',
+      [Validators.maxLength(MAX_LENGTHS.githubUrl), Validators.pattern(SLIDES_LINK_PATTERN)],
+    ],
     speakerPicture: new FormControl<File | null>(null, {
       validators: this.isEditMode()
         ? [optionalImageFileValidator]
@@ -179,49 +225,75 @@ export class SubmitTalkComponent {
 
   protected readonly talkDescriptionLength = computed(() => this.talkDescriptionValue().length);
   protected readonly speakerBioLength = computed(() => this.speakerBioValue().length);
-  protected readonly isSubmitDisabled = computed(
-    () => {
-      this.formStatus();
+  protected readonly isSubmitDisabled = computed(() => {
+    this.formStatus();
 
-      return this.submissionState() === 'loading' ||
+    return (
+      this.submissionState() === 'loading' ||
       this.submissionState() === 'submitting' ||
       this.submitTalkForm.invalid ||
-      (this.isEditMode() && (!this.isEditSubmissionLoaded() || this.isEditSubmissionInvalid()));
-    },
-  );
+      (this.organizerMode() && !this.isEditMode() && this.organizerLoadState() !== 'ready') ||
+      (this.isEditMode() && (!this.isEditSubmissionLoaded() || this.isEditSubmissionInvalid()))
+    );
+  });
   protected readonly isBlockingEditError = computed(
     () => this.isEditMode() && this.isEditSubmissionInvalid() && this.submissionState() === 'error',
   );
 
   constructor() {
-    afterNextRender(async () => {
-      if (!isPlatformBrowser(this.platformId) || !this.turnstileSiteKey || this.isEditMode()) {
-        return;
+    effect(() => {
+      if (!this.canSelectOrganizer()) {
+        this.organizerMode.set(false);
       }
-
-      const turnstile = await this.loadTurnstile();
-
-      if (!turnstile) {
-        this.captchaError.set('We could not load verification. Please refresh the page and try again.');
-        return;
+      const organizerProfile = this.usesOrganizerProfile();
+      for (const name of [
+        'speakerFirstName',
+        'speakerLastName',
+        'speakerLabel',
+        'emailAddress',
+        'speakerBio',
+        'personalUrl',
+        'twitterUrl',
+        'linkedinUrl',
+        'githubUrl',
+        'speakerPicture',
+      ] as const) {
+        const control = this.submitTalkForm.controls[name];
+        if (organizerProfile && control.enabled) control.disable();
+        if (!organizerProfile && control.disabled) control.enable();
       }
-
-      this.renderTurnstile(turnstile);
+      const selection = this.submitTalkForm.controls.organizerSpeakerSlug;
+      if (organizerProfile && !this.isEditMode() && selection.disabled) selection.enable();
+      if ((!organizerProfile || this.isEditMode()) && selection.enabled) selection.disable();
     });
 
-    effect(() => {
+    afterRenderEffect((onCleanup) => {
+      const container = this.turnstileContainer()?.nativeElement;
       const theme = this.themeService.turnstileTheme();
-
-      if (
-        !isPlatformBrowser(this.platformId) ||
-        !this.widgetId ||
-        !window.turnstile ||
-        this.turnstileThemeAtRender === theme
-      ) {
+      if (!isPlatformBrowser(this.platformId)) return;
+      if (!container) {
+        if (this.widgetId && window.turnstile) window.turnstile.remove(this.widgetId);
+        this.widgetId = null;
+        this.captchaToken.set(null);
+        this.captchaError.set('');
         return;
       }
-
-      this.renderTurnstile(window.turnstile);
+      if (!this.turnstileSiteKey || (this.widgetId && this.turnstileThemeAtRender === theme))
+        return;
+      let cancelled = false;
+      onCleanup(() => {
+        cancelled = true;
+      });
+      void this.loadTurnstile().then((turnstile) => {
+        if (cancelled || this.destroyRef.destroyed) return;
+        if (!turnstile) {
+          this.captchaError.set(
+            'We could not load verification. Please refresh the page and try again.',
+          );
+          return;
+        }
+        this.renderTurnstile(turnstile);
+      });
     });
 
     this.destroyRef.onDestroy(() => {
@@ -237,18 +309,50 @@ export class SubmitTalkComponent {
     }
   }
 
+  protected toggleOrganizerMode(event: Event): void {
+    this.organizerMode.set((event.target as HTMLInputElement).checked);
+    if (this.organizerMode() && this.organizerLoadState() === 'idle') {
+      void this.loadOrganizers();
+    }
+  }
+
+  protected async loadOrganizers(): Promise<void> {
+    this.organizerLoadState.set('loading');
+    try {
+      const { data, error } = await this.supabaseService.getOrganizers();
+      if (error) throw error;
+      if (this.destroyRef.destroyed) return;
+      this.organizers.set(
+        (data ?? [])
+          .slice()
+          .sort((a, b) =>
+            `${a.first_name} ${a.last_name}`.localeCompare(`${b.first_name} ${b.last_name}`),
+          ),
+      );
+      this.organizerLoadState.set('ready');
+    } catch {
+      if (!this.destroyRef.destroyed) this.organizerLoadState.set('error');
+    }
+  }
+
   protected async submitTalk(): Promise<void> {
+    if (this.submissionState() === 'submitting' || this.submissionState() === 'loading') return;
     if (this.submitTalkForm.controls.companyWebsite.value.trim().length > 0) {
       this.errorMessage.set('');
       this.submitTalkForm.reset();
       this.resetSpeakerPictureInput();
-      await this.router.navigate(this.isEditMode()
-        ? ['/talk-submission', this.editSubmissionId() ?? 'submitted']
-        : ['/talk-submission', 'submitted']);
+      await this.router.navigate(
+        this.isEditMode()
+          ? ['/talk-submission', this.editSubmissionId() ?? 'submitted']
+          : ['/talk-submission', 'submitted'],
+      );
       return;
     }
 
-    if (this.submitTalkForm.invalid) {
+    if (
+      this.submitTalkForm.invalid ||
+      (this.organizerMode() && this.organizerLoadState() !== 'ready')
+    ) {
       this.submitTalkForm.markAllAsTouched();
       return;
     }
@@ -258,7 +362,7 @@ export class SubmitTalkComponent {
       return;
     }
 
-    if (!this.turnstileSiteKey || !this.captchaToken()) {
+    if (!this.usesOrganizerProfile() && (!this.turnstileSiteKey || !this.captchaToken())) {
       this.captchaError.set('Please complete verification before submitting.');
       return;
     }
@@ -267,17 +371,22 @@ export class SubmitTalkComponent {
     this.captchaError.set('');
     this.errorMessage.set('');
 
-    const submissionPayload: TalkSubmissionPayload = {
-      ...this.createSubmissionPayload(),
-      captchaToken: this.captchaToken() ?? undefined,
-    };
-    const { data, error } = await this.supabaseService.submitTalk(submissionPayload);
+    const submissionPayload: TalkSubmissionPayload | OrganizerTalkSubmissionPayload =
+      this.usesOrganizerProfile()
+        ? {
+            talkTitle: this.submitTalkForm.controls.talkTitle.value,
+            talkDescription: this.submitTalkForm.controls.talkDescription.value,
+            slidesLink: this.submitTalkForm.controls.slidesLink.value,
+            organizerSpeakerSlug: this.submitTalkForm.controls.organizerSpeakerSlug.value,
+          }
+        : { ...this.createSubmissionPayload(), captchaToken: this.captchaToken() ?? undefined };
+    const { data, error } = await this.supabaseService
+      .submitTalk(submissionPayload)
+      .catch(() => ({ data: null, error: new Error('network_error') }));
 
     if (error || !data) {
       this.submissionState.set('error');
-      this.errorMessage.set(
-        'We could not submit your talk right now. Please try again in a moment or contact us directly.',
-      );
+      this.errorMessage.set(this.submissionErrorMessage(error?.message));
       this.resetTurnstile();
       return;
     }
@@ -289,6 +398,22 @@ export class SubmitTalkComponent {
     this.submitTalkForm.reset();
     this.resetSpeakerPictureInput();
     await this.router.navigate(['/talk-submission', data.id ?? 'submitted']);
+  }
+
+  private submissionErrorMessage(code?: string): string {
+    switch (code) {
+      case 'organizer_authorization_required':
+      case 'organizer_not_allowed':
+        return 'Your organizer access could not be verified. Please sign in again and retry.';
+      case 'organizer_profile_unavailable':
+        return 'This organizer profile is no longer available. Refresh the page and select an organizer again.';
+      case 'organizer_profile_incomplete':
+        return 'The organizer profile needs a valid name, email, biography, and photo. Update the existing profile before submitting.';
+      case 'rate_limit_exceeded':
+        return 'Too many proposals have been submitted recently. Please try again later.';
+      default:
+        return 'We could not submit your talk right now. Please try again in a moment or contact us directly.';
+    }
   }
 
   protected fieldHasError(controlName: keyof typeof this.submitTalkForm.controls): boolean {
@@ -309,7 +434,11 @@ export class SubmitTalkComponent {
     control.markAsDirty();
     control.markAsTouched();
 
-    if (!SPEAKER_PICTURE_ALLOWED_TYPES.includes(file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number])) {
+    if (
+      !SPEAKER_PICTURE_ALLOWED_TYPES.includes(
+        file.type as (typeof SPEAKER_PICTURE_ALLOWED_TYPES)[number],
+      )
+    ) {
       input.value = '';
       control.setErrors({ invalidFileType: true });
       return;
@@ -375,9 +504,13 @@ export class SubmitTalkComponent {
 
     this.populateForm(data);
     this.existingSpeakerPictureUrl.set(
-      data.speaker_picture_path
-        ? await this.supabaseService.getEditableTalkSubmissionSpeakerPictureUrl(submissionId, editToken)
-        : null,
+      data.organizer_speaker_picture_url ??
+        (data.speaker_picture_path
+          ? await this.supabaseService.getEditableTalkSubmissionSpeakerPictureUrl(
+              submissionId,
+              editToken,
+            )
+          : null),
     );
     this.isEditSubmissionInvalid.set(false);
     this.isEditSubmissionLoaded.set(true);
@@ -385,6 +518,11 @@ export class SubmitTalkComponent {
   }
 
   private populateForm(submission: TalkSubmissionEditable): void {
+    this.existingOrganizerName.set(
+      submission.organizer_speaker_id
+        ? `${submission.speaker_first_name} ${submission.speaker_last_name}`
+        : '',
+    );
     this.submitTalkForm.patchValue({
       talkTitle: submission.talk_title,
       talkDescription: submission.talk_description,
@@ -431,11 +569,13 @@ export class SubmitTalkComponent {
     this.submissionState.set('submitting');
     this.errorMessage.set('');
 
-    const { data, error } = await this.supabaseService.updateTalkSubmission({
-      ...this.createSubmissionPayload(),
-      editToken,
-      submissionId,
-    });
+    const { data, error } = await this.supabaseService
+      .updateTalkSubmission({
+        ...this.createSubmissionPayload(),
+        editToken,
+        submissionId,
+      })
+      .catch(() => ({ data: null, error: new Error('network_error') }));
 
     if (error || !data) {
       this.submissionState.set('error');
@@ -449,8 +589,13 @@ export class SubmitTalkComponent {
   }
 
   private createSubmissionPayload(): TalkSubmissionPayload {
-    const { companyWebsite: _honeypot, ...payload } = this.submitTalkForm.getRawValue();
+    const {
+      companyWebsite: _honeypot,
+      organizerSpeakerSlug: _organizer,
+      ...payload
+    } = this.submitTalkForm.getRawValue();
     void _honeypot;
+    void _organizer;
 
     return payload;
   }
@@ -466,7 +611,9 @@ export class SubmitTalkComponent {
 
     if (!turnstileScriptPromise) {
       turnstileScriptPromise = new Promise<TurnstileApi | null>((resolve) => {
-        const existingScript = document.getElementById(TURNSTILE_SCRIPT_ID) as HTMLScriptElement | null;
+        const existingScript = document.getElementById(
+          TURNSTILE_SCRIPT_ID,
+        ) as HTMLScriptElement | null;
 
         const handleResolve = (): void => {
           resolve(window.turnstile ?? null);

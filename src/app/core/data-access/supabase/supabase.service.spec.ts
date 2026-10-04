@@ -55,3 +55,58 @@ describe('SupabaseService public stats', () => {
     await expect(TestBed.inject(SupabaseService).getStatsCounts()).rejects.toBe(error);
   });
 });
+
+describe('SupabaseService organizer submission transport', () => {
+  const fetchMock = vi.fn();
+  const session = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('fetch', fetchMock);
+    session.mockReturnValue({ access_token: 'organizer-token' });
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ id: 'proposal', status: 'initially_submitted' }), {
+        status: 201,
+      }),
+    );
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: SupabaseClientService, useValue: { getClient: () => ({}) } },
+        { provide: AuthService, useValue: { session } },
+      ],
+    });
+  });
+
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('sends the organizer token and no editable speaker fields', async () => {
+    await TestBed.inject(SupabaseService).submitTalk({
+      talkTitle: 'Signals',
+      talkDescription: 'Description',
+      slidesLink: 'https://example.com',
+      organizerSpeakerSlug: 'tomas-trajan',
+    });
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.headers).toEqual(
+      expect.objectContaining({ authorization: 'Bearer organizer-token' }),
+    );
+    expect(Array.from((options.body as FormData).keys())).toEqual([
+      'talkTitle',
+      'talkDescription',
+      'slidesLink',
+      'organizerSpeakerSlug',
+    ]);
+  });
+
+  it('rejects organizer submissions locally when the session is absent', async () => {
+    session.mockReturnValue(null);
+    const result = await TestBed.inject(SupabaseService).submitTalk({
+      talkTitle: 'Signals',
+      talkDescription: 'Description',
+      slidesLink: 'https://example.com',
+      organizerSpeakerSlug: 'tomas-trajan',
+    });
+    expect(result.error?.message).toBe('organizer_authorization_required');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

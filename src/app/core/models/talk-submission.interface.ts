@@ -15,6 +15,13 @@ export interface TalkSubmissionPayload {
   captchaToken?: string;
 }
 
+export interface OrganizerTalkSubmissionPayload {
+  talkTitle: string;
+  talkDescription: string;
+  slidesLink: string;
+  organizerSpeakerSlug: string;
+}
+
 export interface TalkSubmissionEditPayload extends TalkSubmissionPayload {
   editToken: string;
   submissionId: string;
@@ -56,6 +63,8 @@ export interface TalkSubmissionEditable {
   github_url: string | null;
   speaker_picture_path: string | null;
   can_edit: boolean;
+  organizer_speaker_id: string | null;
+  organizer_speaker_picture_url: string | null;
 }
 
 export type TalkSubmissionStatus =
