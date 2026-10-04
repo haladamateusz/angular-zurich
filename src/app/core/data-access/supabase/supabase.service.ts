@@ -631,7 +631,7 @@ export class SupabaseService {
     let query = this.supabase
       .from('organizer_talk_submissions')
       .select(
-        'id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path',
+        'id, created_at, status, talk_title, speaker_name, speaker_label, speaker_picture_path, organizer_speaker_picture_url',
         { count: 'exact' },
       );
 

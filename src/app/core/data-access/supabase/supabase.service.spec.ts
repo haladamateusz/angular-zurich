@@ -56,6 +56,32 @@ describe('SupabaseService public stats', () => {
   });
 });
 
+describe('SupabaseService organizer submission list', () => {
+  it('requests the organizer photo snapshot alongside uploaded-photo paths', async () => {
+    const range = vi.fn().mockResolvedValue({ data: [], error: null, count: 0 });
+    const order = vi.fn(() => ({ range }));
+    const select = vi.fn(() => ({ order }));
+    const from = vi.fn(() => ({ select }));
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: SupabaseClientService, useValue: { getClient: () => ({ from }) } },
+        { provide: AuthService, useValue: {} },
+      ],
+    });
+    await TestBed.inject(SupabaseService).getOrganizerTalkSubmissions({
+      page: 1,
+      pageSize: 5,
+      sortColumn: 'created_at',
+      sortDirection: 'desc',
+    });
+    expect(from).toHaveBeenCalledWith('organizer_talk_submissions');
+    expect(select).toHaveBeenCalledWith(
+      expect.stringContaining('speaker_picture_path, organizer_speaker_picture_url'),
+      { count: 'exact' },
+    );
+  });
+});
+
 describe('SupabaseService organizer submission transport', () => {
   const fetchMock = vi.fn();
   const session = vi.fn();

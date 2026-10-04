@@ -10,11 +10,11 @@ export interface OrganizerTalkSubmission {
   speaker_name: string;
   speaker_label: string | null;
   speaker_picture_path: string | null;
+  organizer_speaker_picture_url: string | null;
 }
 
 export interface OrganizerTalkSubmissionDetail extends OrganizerTalkSubmission {
   organizer_speaker_id: string | null;
-  organizer_speaker_picture_url: string | null;
   talk_description: string;
   slides_url: string;
   speaker_email: string;

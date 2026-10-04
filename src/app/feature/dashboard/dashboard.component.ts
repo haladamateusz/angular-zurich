@@ -238,11 +238,13 @@ export class DashboardComponent {
       submissions.map(async (submission) => ({
         ...submission,
         speakerInitials: this.getSpeakerInitials(submission.speaker_name),
-        speakerPictureUrl: submission.speaker_picture_path
-          ? await this.supabaseService.getOrganizerSpeakerPictureUrl(
-              submission.speaker_picture_path,
-            )
-          : null,
+        speakerPictureUrl:
+          submission.organizer_speaker_picture_url ??
+          (submission.speaker_picture_path
+            ? await this.supabaseService.getOrganizerSpeakerPictureUrl(
+                submission.speaker_picture_path,
+              )
+            : null),
       })),
     );
   }
