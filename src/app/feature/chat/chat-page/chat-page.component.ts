@@ -48,6 +48,11 @@ export class ChatPageComponent {
     return name?.trim().split(/\s+/)[0] ?? null;
   });
 
+  protected readonly welcomeQuestion = computed(() => {
+    const name = this.userFirstName();
+    return `Which talk are you looking for${name ? `, ${name}` : ''}?`;
+  });
+
   constructor() {
     afterRenderEffect(() => {
       this.chat.messages();

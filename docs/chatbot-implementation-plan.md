@@ -261,3 +261,13 @@ Applied the relevant guidance from _Agentic UI with Angular_, v2.0.0:
 - Add an opt-in 20-question real-model evaluation catalogue against fixed archive facts, separately from deterministic API, SQL, protocol, UI and access tests. `npm run eval:chat` runs six cases by default, reserving 10 cents per case; larger runs require explicit case/budget environment settings, capped at 20 cases / $2. A fixture-backed model evaluation does not replace a live database/browser integration test.
 
 OpenRouter compatibility: do not send `parallel_tool_calls` to endpoints that do not advertise support when `require_parameters` is true. Tool execution is serialized and terminal results cannot be overwritten by another tool in the same model step. Preserve provider data policies and price caps. Development prebundling excludes `@copilotkit/runtime` to avoid Vite analyzing its optional variable import.
+
+## Streaming answer update (2026-10-05)
+
+After validating retrieved sources, publish the result cards and tables, then stream a
+short model-written answer below them. Use one tool-free synthesis call restricted to
+those archive facts. The cap is now three retrieval calls plus one answer call, under
+the same request/output limits, 90-second deadline, approved-user checks and 10-cent
+reservation. Keep fixed off-topic, clarification and no-result replies. Treat generated
+prose as an AI summary; source cards and aggregate tables remain server-validated.
+Preserve partial text and verified context on Stop or failure, and label incomplete answers.

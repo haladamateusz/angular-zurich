@@ -291,3 +291,24 @@ summary:focus-visible {
   border-bottom: 1px solid var(--border-default);
   overflow-wrap: anywhere;
 }
+
+.archive-answer {
+  max-width: 70ch;
+  margin-block: var(--space-4);
+}
+
+.archive-answer-cursor {
+  display: inline-block;
+  width: 0.4em;
+  height: 1em;
+  margin-inline-start: 0.2em;
+  vertical-align: -0.1em;
+  background: var(--foreground-link);
+  animation: activity-pulse 1s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-answer-cursor {
+    animation: none;
+  }
+}

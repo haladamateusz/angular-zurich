@@ -18,14 +18,16 @@ interface ChatMessage {
   nextQuestion: string;
   result?: ChatResult;
   activity?: SearchActivity;
+  interrupted?: 'stopped' | 'failed';
 }
 
 @Service()
 export class ArchiveChatService {
   private readonly auth = inject(AuthService);
   private readonly sources = new Map<string, ChatSource[]>();
-  private readonly summaries = new Map<string, string>();
+  private readonly answerIds = new Map<string, string>();
   private readonly nextQuestions = new Map<string, string>();
+  private readonly interruptedAnswers = new Map<string, 'stopped' | 'failed'>();
   private readonly searches = new Map<string, SearchActivity>();
   private questionId = '';
   private contextToken: string | undefined;
@@ -33,6 +35,7 @@ export class ArchiveChatService {
   private agent = this.createAgent();
   readonly messages = signal<ChatMessage[]>([]);
   readonly running = signal(false);
+  readonly writingAnswer = signal(false);
   readonly error = signal('');
   readonly accessRevoked = signal(false);
   readonly status = signal('');
@@ -49,9 +52,10 @@ export class ArchiveChatService {
     this.contextToken = undefined;
     this.results.clear();
     this.sources.clear();
-    this.summaries.clear();
+    this.answerIds.clear();
     this.nextQuestions.clear();
     this.searches.clear();
+    this.interruptedAnswers.clear();
     this.questionId = '';
     this.activity.set([]);
     this.messages.set([]);
@@ -59,16 +63,20 @@ export class ArchiveChatService {
     this.error.set('');
     this.status.set('');
     this.running.set(false);
+    this.writingAnswer.set(false);
     this.accessRevoked.set(false);
   }
 
   stop() {
+    if (this.writingAnswer()) this.interruptedAnswers.set(this.questionId, 'stopped');
     const previous = this.agent;
     this.agent = this.createAgent([...previous.messages], previous.threadId);
     previous.abortRun();
     this.running.set(false);
-    this.status.set('Search stopped. You can send another question.');
-    this.finishActivity('cancelled');
+    this.writingAnswer.set(false);
+    this.status.set('Response stopped. You can send another question.');
+    if (this.searches.get(this.questionId)?.state === 'running') this.finishActivity('cancelled');
+    else this.updateMessages(this.agent.messages);
   }
 
   async send(question: string): Promise<boolean> {
@@ -87,7 +95,7 @@ export class ArchiveChatService {
     try {
       await agent.runAgent();
       if (agent === this.agent && !this.error() && this.running())
-        this.status.set('Search complete.');
+        this.status.set('Answer complete.');
       return true;
     } catch (error) {
       if (agent === this.agent && this.running()) {
@@ -100,7 +108,12 @@ export class ArchiveChatService {
     } finally {
       if (agent === this.agent) {
         this.running.set(false);
-        this.finishActivity(this.error() ? 'failed' : 'complete');
+        if (this.error() && this.answerIds.has(this.questionId))
+          this.interruptedAnswers.set(this.questionId, 'failed');
+        this.writingAnswer.set(false);
+        if (this.searches.get(this.questionId)?.state === 'running')
+          this.finishActivity(this.error() ? 'failed' : 'complete');
+        else this.updateMessages(agent.messages);
       }
     }
   }
@@ -110,8 +123,7 @@ export class ArchiveChatService {
     const rendered = messages.flatMap<ChatMessage>((message) => {
       if (
         (message.role !== 'user' && message.role !== 'assistant') ||
-        typeof message.content !== 'string' ||
-        (message.role === 'assistant' && !message.content)
+        typeof message.content !== 'string'
       )
         return [];
       const sources = this.sources.get(message.id) ?? [];
@@ -120,13 +132,13 @@ export class ArchiveChatService {
         {
           id: message.role === 'assistant' ? `${questionId}-response` : message.id,
           role: message.role,
-          text:
-            this.summaries.get(message.id) ||
-            (sources.length ? 'From the published Angular Zürich archive:' : message.content),
+          text: message.content,
           sources,
           result: this.results.get(message.id),
           nextQuestion: this.nextQuestions.get(message.id) ?? '',
           activity: message.role === 'assistant' ? this.searches.get(questionId) : undefined,
+          interrupted:
+            message.role === 'assistant' ? this.interruptedAnswers.get(questionId) : undefined,
         },
       ];
     });
@@ -142,9 +154,11 @@ export class ArchiveChatService {
             id: `${message.id}-response`,
             role: 'assistant' as const,
             text: '',
-            sources: [],
-            nextQuestion: '',
+            sources: this.sources.get(this.answerIds.get(message.id) ?? '') ?? [],
+            result: this.results.get(this.answerIds.get(message.id) ?? ''),
+            nextQuestion: this.nextQuestions.get(this.answerIds.get(message.id) ?? '') ?? '',
             activity,
+            interrupted: this.interruptedAnswers.get(message.id),
           },
         ];
       }),
@@ -242,10 +256,16 @@ export class ArchiveChatService {
           if (parsed.success) {
             this.sources.set(parsed.data.messageId, parsed.data.sources);
             if (parsed.data.result) this.results.set(parsed.data.messageId, parsed.data.result);
-            this.summaries.set(parsed.data.messageId, parsed.data.summary ?? '');
+            this.answerIds.set(this.questionId, parsed.data.messageId);
+            this.finishActivity('complete');
+            this.writingAnswer.set(true);
+            this.status.set('Writing the answer…');
             this.nextQuestions.set(parsed.data.messageId, parsed.data.nextQuestion ?? '');
           }
         }
+      },
+      onTextMessageEndEvent: () => {
+        if (agent === this.agent) this.writingAnswer.set(false);
       },
       onRunErrorEvent: ({ event }) => {
         if (agent === this.agent) {

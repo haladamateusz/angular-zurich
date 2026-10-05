@@ -129,7 +129,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
       {
         type: 'TEXT_MESSAGE_CONTENT',
         messageId: id,
-        delta: 'From the published Angular Zürich archive:',
+        delta: 'Test Speaker discussed Angular signals at the 2019 meetup.',
       },
       { type: 'TEXT_MESSAGE_END', messageId: id },
       { type: 'RUN_FINISHED', threadId: body.threadId, runId: body.runId },
@@ -143,7 +143,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await expect(page.getByLabel('Your question', { exact: true })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-auth-lock-contention-tested', 'true');
   expect(runs).toBe(0);
-  await page.getByRole('button', { name: 'Who gave a talk about signals?' }).click();
+  await page.getByLabel('Your question', { exact: true }).fill('Who gave a talk about signals?');
   await expect(page.getByLabel('Your question', { exact: true })).toBeFocused();
   expect(runs).toBe(0);
   const question = page.getByLabel('Your question', { exact: true });
@@ -167,6 +167,20 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
     page.getByRole('link', { name: 'View event source for Signals in practice' }),
   ).toHaveAttribute('href', '/events/2019-meetup');
   await expect(page.getByRole('log')).toContainText('Test Speaker');
+  await expect(page.locator('.archive-answer')).toContainText(
+    'Test Speaker discussed Angular signals',
+  );
+  expect(
+    await page
+      .locator('.archive-source')
+      .evaluate((card) =>
+        Boolean(
+          card.compareDocumentPosition(document.querySelector('.archive-answer')!) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+        ),
+      ),
+  ).toBe(true);
+  await page.locator('.archive-answer').scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'tmp/chat-desktop.png', fullPage: true });
   await page.addScriptTag({ content: axe.source });
   const violations = await page.evaluate(async () => {
@@ -183,6 +197,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => document.documentElement.classList.add('dark'));
   await expect(page.locator('.archive-source-link')).toHaveCSS('color', 'rgb(66, 165, 245)');
+  await page.locator('.archive-answer').scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'tmp/chat-mobile-dark.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,

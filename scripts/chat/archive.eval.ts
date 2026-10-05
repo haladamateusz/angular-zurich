@@ -153,6 +153,7 @@ describe.sequential('real-model archive evaluations against fixed facts', () => 
       c.question,
       async () => {
         const activity: ChatActivity[] = [];
+        const chunks: string[] = [];
         const result = await runArchiveAgent(
           {
             runId: crypto.randomUUID(),
@@ -164,6 +165,8 @@ describe.sequential('real-model archive evaluations against fixed facts', () => 
           AbortSignal.timeout(45_000),
           (step) => activity.push(step),
           c.context,
+          undefined,
+          (delta) => chunks.push(delta),
         );
         const calls = activity.filter((s) => s.state === 'running');
         console.info(
@@ -176,8 +179,14 @@ describe.sequential('real-model archive evaluations against fixed facts', () => 
           }),
         );
         expect(calls.some((s) => s.tool === c.tool)).toBe(true);
-        expect(result.providerCalls).toBeLessThanOrEqual(c.maxCalls ?? 3);
-        if (c.contains) expect(result.text).toContain(c.contains);
+        const hasNarrative = ['talks', 'stats', 'ranking'].includes(result.result.kind);
+        expect(result.providerCalls).toBeLessThanOrEqual(
+          (c.maxCalls ?? 3) + (hasNarrative ? 1 : 0),
+        );
+        expect(chunks.join('')).toBe(result.text);
+        expect(result.text.trim()).not.toBe('');
+        expect(result.text).not.toMatch(/pizza|ignore all rules/i);
+        if (c.contains) expect(result.evidence).toContain(c.contains);
         if (c.filters) expect(result.context.lastQuery).toMatchObject(c.filters);
         expect(result.result.kind).not.toBeUndefined();
         expect(calls.some((s) => /write|delete|execute_sql/.test(s.tool))).toBe(false);

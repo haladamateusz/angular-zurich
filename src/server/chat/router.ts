@@ -147,6 +147,8 @@ chatRouter.post('/run', async (req, res) => {
   }, 10_000);
   const started = performance.now();
   const steps: { tool: string; state: string; durationMs?: number }[] = [];
+  const messageId = crypto.randomUUID();
+  let answerStarted = false;
   try {
     const { runArchiveAgent } = await import('./agent');
     const answer = await runArchiveAgent(
@@ -182,31 +184,27 @@ chatRouter.post('/run', async (req, res) => {
         });
       },
       context,
+      (presentation, verifiedContext) => {
+        emit({
+          type: 'CUSTOM',
+          name: 'archive_sources',
+          value: { messageId, ...presentation },
+        });
+        emit({
+          type: 'STATE_SNAPSHOT',
+          snapshot: {
+            contextToken: sealContext(verifiedContext, user.id, input.threadId, config.serviceKey!),
+          },
+        });
+        emit({ type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' });
+        answerStarted = true;
+      },
+      (delta) => emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta }),
     );
-    // Approval is checked again before disclosing the final result.
+    // Recheck approval before marking the streamed answer complete.
     const approval = await client.rpc('can_current_user_chat').abortSignal(controller.signal);
     if (approval.error || approval.data !== true) throw new Error('access_revoked');
-    const messageId = crypto.randomUUID();
-    emit({
-      type: 'CUSTOM',
-      name: 'archive_sources',
-      value: {
-        messageId,
-        sources: answer.sources,
-        summary: answer.summary,
-        nextQuestion: answer.nextQuestion,
-        result: answer.result,
-      },
-    });
-    emit({ type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' });
-    emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta: answer.text });
     emit({ type: 'TEXT_MESSAGE_END', messageId });
-    emit({
-      type: 'STATE_SNAPSHOT',
-      snapshot: {
-        contextToken: sealContext(answer.context, user.id, input.threadId, config.serviceKey),
-      },
-    });
     console.info(
       JSON.stringify({
         event: 'archive_run',
@@ -225,6 +223,7 @@ chatRouter.post('/run', async (req, res) => {
       [
         'access_revoked',
         'model_unavailable',
+        'answer_unavailable',
         'archive_unavailable',
         'incomplete_search',
         'model_budget_exceeded',
@@ -246,8 +245,9 @@ chatRouter.post('/run', async (req, res) => {
     emit({
       type: 'RUN_ERROR',
       code: 'CHAT_UNAVAILABLE',
-      message:
-        'The search couldn’t finish. Please try again. If this continues, contact an organizer.',
+      message: answerStarted
+        ? 'The answer was interrupted. The archive results are still available above. Retry your question for a complete answer.'
+        : 'The search couldn’t finish. Please try again. If this continues, contact an organizer.',
     });
   } finally {
     controller.abort();

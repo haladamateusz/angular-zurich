@@ -123,7 +123,7 @@ describe('ChatPageComponent', () => {
     await pending;
     fixture.detectChanges();
     expect(disclosure.open).toBe(false);
-    expect(disclosure.nextElementSibling?.textContent).toBe('Here are the talks.');
+    expect(disclosure.nextElementSibling?.textContent?.trim()).toBe('Here are the talks.');
     disclosure.open = true;
     const previousStream = stream;
     const nextRun = chat.send('And testing?');
@@ -145,6 +145,89 @@ describe('ChatPageComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.archive-activity')).toBeNull();
   });
+
+  it.each(['complete', 'stop', 'error'] as const)(
+    'shows cards before the first token and preserves incremental prose on %s',
+    async (outcome) => {
+      let stream!: ReadableStreamDefaultController<Uint8Array>;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(
+          async () =>
+            new Response(
+              new ReadableStream({
+                start(controller) {
+                  stream = controller;
+                },
+              }),
+              { headers: { 'Content-Type': 'text/event-stream' } },
+            ),
+        ),
+      );
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const chat = fixture.debugElement.injector.get(ArchiveChatService);
+      const pending = chat.send('Who spoke about signals?');
+      await vi.waitFor(() => expect(stream).toBeDefined());
+      const emit = (event: object) =>
+        stream.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(event)}\n\n`));
+      const messageId = crypto.randomUUID();
+      emit({ type: 'RUN_STARTED', threadId: 'thread', runId: 'run' });
+      emit({
+        type: 'CUSTOM',
+        name: 'archive_sources',
+        value: {
+          messageId,
+          summary: 'A fixed summary that must not replace the answer.',
+          sources: [
+            {
+              id: crypto.randomUUID(),
+              title: 'Signals in practice',
+              speakers: ['Ada'],
+              description: 'Signals and computed values.',
+              eventTitle: 'Angular Zürich 2023',
+              date: '2023-11-01',
+              url: '/events/2023-meetup',
+            },
+          ],
+        },
+      });
+      emit({ type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' });
+      await vi.waitFor(() => expect(chat.writingAnswer()).toBe(true));
+      fixture.detectChanges();
+      const card = fixture.nativeElement.querySelector('.archive-source') as HTMLElement;
+      expect(card?.textContent).toContain('Signals in practice');
+      expect(fixture.nativeElement.querySelector('.archive-activity').open).toBe(false);
+      expect(fixture.nativeElement.querySelector('.archive-answer-cursor')).not.toBeNull();
+      expect(fixture.nativeElement.textContent).not.toContain('A fixed summary');
+      emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta: 'Ada discussed ' });
+      await vi.waitFor(() => expect(chat.messages()[1].text).toBe('Ada discussed '));
+      fixture.detectChanges();
+      const answer = fixture.nativeElement.querySelector('.archive-answer') as HTMLElement;
+      expect(card.compareDocumentPosition(answer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(answer.textContent).toContain('Ada discussed');
+      expect(chat.running()).toBe(true);
+      emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta: '<script>signals</script>.' });
+      await vi.waitFor(() =>
+        expect(chat.messages()[1].text).toContain('<script>signals</script>.'),
+      );
+      if (outcome === 'complete') {
+        emit({ type: 'TEXT_MESSAGE_END', messageId });
+        emit({ type: 'RUN_FINISHED', threadId: 'thread', runId: 'run' });
+      } else if (outcome === 'stop') chat.stop();
+      else emit({ type: 'RUN_ERROR', message: 'The answer was interrupted.' });
+      stream.close();
+      await pending;
+      fixture.detectChanges();
+      expect(chat.running()).toBe(false);
+      expect(fixture.nativeElement.querySelector('.archive-answer-cursor')).toBeNull();
+      expect(answer.textContent).toContain('Ada discussed <script>signals</script>.');
+      expect(answer.querySelector('script')).toBeNull();
+      expect(fixture.nativeElement.querySelector('.archive-source')).toBe(card);
+      if (outcome !== 'complete')
+        expect(fixture.nativeElement.textContent).toContain('may be incomplete');
+    },
+  );
 
   it('renders typed results and preserves context across Stop, but clears it on new chat', async () => {
     const requests: { threadId: string; contextToken?: string }[] = [];

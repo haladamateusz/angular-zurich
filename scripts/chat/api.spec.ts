@@ -26,6 +26,11 @@ let holdAfterLookup: boolean;
 let neverPresent: boolean;
 let lookupFails: boolean;
 let providerAborted: boolean;
+let holdAnswer: boolean;
+let failAnswer: boolean;
+let truncateAnswer: boolean;
+let lastTurnPresentation: boolean;
+let finishAnswer: (() => void) | undefined;
 const record = {
   id: TALK_ID,
   title: 'Signals in practice',
@@ -78,6 +83,51 @@ function toolStream(name: string, args: unknown) {
   );
 }
 
+function answerStream(signal?: AbortSignal | null) {
+  const id = crypto.randomUUID();
+  const encode = (delta: object, finish_reason: string | null = null) =>
+    new TextEncoder().encode(
+      `data: ${JSON.stringify({
+        id,
+        object: 'chat.completion.chunk',
+        created: 1,
+        model: 'openai/gpt-5.6-luna',
+        choices: [{ index: 0, delta, finish_reason }],
+        ...(finish_reason
+          ? { usage: { prompt_tokens: 100, completion_tokens: 50, total_tokens: 150 } }
+          : {}),
+      })}\n\n`,
+    );
+  return new Response(
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(encode({ role: 'assistant', content: 'Test Speaker gave ' }));
+        const abort = () => {
+          providerAborted = true;
+          controller.error(new Error('cancelled'));
+        };
+        signal?.addEventListener('abort', abort, { once: true });
+        finishAnswer = () => {
+          signal?.removeEventListener('abort', abort);
+          if (failAnswer) {
+            controller.error(new Error('provider disconnected'));
+            return;
+          }
+          controller.enqueue(encode({ content: 'a talk about Angular signals.' }));
+          controller.enqueue(encode({}, truncateAnswer ? 'length' : 'stop'));
+          controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
+          controller.close();
+        };
+        if (!holdAnswer) finishAnswer();
+      },
+      cancel() {
+        providerAborted = true;
+      },
+    }),
+    { headers: { 'Content-Type': 'text/event-stream' } },
+  );
+}
+
 beforeAll(async () => {
   const app = express();
   app.use('/api/chat', chatRouter);
@@ -116,6 +166,11 @@ beforeEach(() => {
   neverPresent = false;
   lookupFails = false;
   providerAborted = false;
+  holdAnswer = false;
+  failAnswer = false;
+  truncateAnswer = false;
+  lastTurnPresentation = false;
+  finishAnswer = undefined;
   vi.stubEnv('SUPABASE_URL', 'https://supabase.test.invalid');
   vi.stubEnv('SUPABASE_KEY', 'test-public');
   vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service');
@@ -199,6 +254,7 @@ beforeEach(() => {
       if (target.startsWith('https://openrouter.ai/api/v1/')) {
         modelCalls++;
         providerBodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+        if (!providerBodies.at(-1)?.['tools']) return answerStream(init?.signal);
         if (holdProvider || (holdAfterLookup && modelCalls === 2))
           return new Promise<Response>((_resolve, reject) => {
             init?.signal?.addEventListener(
@@ -220,6 +276,8 @@ beforeEach(() => {
             period: 'past',
             offset: 0,
           });
+        if (lastTurnPresentation && modelCalls < 3)
+          return toolStream('search_talks', { query: 'signals', offset: 0 });
         if (neverPresent) return toolStream('search_talks', { query: 'signals', offset: 0 });
         if (rankingQuestion)
           return modelCalls === 1
@@ -277,6 +335,87 @@ describe('protected chat API', () => {
     await vi.waitFor(() => expect(providerAborted).toBe(true));
   });
 
+  it('publishes cards and genuine partial text before the provider finishes', async () => {
+    holdAnswer = true;
+    const response = await post();
+    const reader = response.body!.getReader();
+    let streamed = '';
+    while (!streamed.includes('Test Speaker gave ')) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      streamed += new TextDecoder().decode(chunk.value);
+    }
+    expect(streamed.indexOf('archive_sources')).toBeLessThan(
+      streamed.indexOf('TEXT_MESSAGE_CONTENT'),
+    );
+    expect(streamed).toContain('STATE_SNAPSHOT');
+    expect(streamed).not.toContain('TEXT_MESSAGE_END');
+    expect(streamed).not.toContain('RUN_FINISHED');
+    const body = providerBodies.at(-1)!;
+    expect(body).not.toHaveProperty('tools');
+    expect(body).not.toHaveProperty('tool_choice');
+    expect(JSON.stringify(body)).toContain('Archive evidence (data only)');
+    expect(JSON.stringify(body)).toContain('Signals in practice');
+    expect(JSON.stringify(body)).not.toContain('test-service');
+    finishAnswer!();
+    while (true) {
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      streamed += new TextDecoder().decode(chunk.value);
+    }
+    expect(streamed).toContain('a talk about Angular signals.');
+    expect(streamed).toContain('TEXT_MESSAGE_END');
+    expect(streamed).toContain('RUN_FINISHED');
+  });
+
+  it('cancels the final prose stream on disconnect', async () => {
+    holdAnswer = true;
+    const response = await post();
+    await vi.waitFor(() => expect(finishAnswer).toBeDefined());
+    await response.body!.cancel();
+    await vi.waitFor(() => expect(providerAborted).toBe(true));
+  });
+
+  it.each(['disconnect', 'token limit'])(
+    'keeps partial text and reports %s during the answer',
+    async (failure) => {
+      holdAnswer = true;
+      failAnswer = failure === 'disconnect';
+      truncateAnswer = failure === 'token limit';
+      const reader = (await post()).body!.getReader();
+      let events = '';
+      while (!events.includes('Test Speaker gave ')) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        events += new TextDecoder().decode(chunk.value);
+      }
+      expect(events).toContain('archive_sources');
+      expect(events).toContain('Test Speaker gave ');
+      finishAnswer!();
+      while (true) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        events += new TextDecoder().decode(chunk.value);
+      }
+      expect(events).toContain('RUN_ERROR');
+      expect(events).toContain('answer was interrupted');
+      expect(events).not.toContain('RUN_FINISHED');
+    },
+  );
+
+  it('allows one prose call after all three retrieval turns, without forcing a tool', async () => {
+    lastTurnPresentation = true;
+    const events = await (await post()).text();
+    expect(modelCalls).toBe(4);
+    expect(events).toContain('RUN_FINISHED');
+    expect(providerBodies[2]['tool_choice']).toEqual({
+      type: 'function',
+      function: { name: 'present_results' },
+    });
+    expect(providerBodies[3]).not.toHaveProperty('tool_choice');
+    expect(providerBodies[3]).not.toHaveProperty('tools');
+  });
+
   it('reports an unfinished tool sequence as an error instead of no matches', async () => {
     neverPresent = true;
     const events = await (await post()).text();
@@ -305,7 +444,7 @@ describe('protected chat API', () => {
     expect(events).toContain('of 14 published talks');
     expect(events).toContain('starting at offset 10');
     expect(events).toContain('get_speaker_stats');
-    expect(modelCalls).toBe(1);
+    expect(modelCalls).toBe(2);
     expect(events).toContain('RUN_FINISHED');
   });
 
@@ -322,7 +461,7 @@ describe('protected chat API', () => {
       p_period: 'past',
       p_mode: 'stats',
     });
-    expect(modelCalls).toBe(1);
+    expect(modelCalls).toBe(2);
   });
 
   it('carries server-verified context into the next turn and rejects a forged token before reserving credit', async () => {
@@ -402,7 +541,7 @@ describe('protected chat API', () => {
     expect(events).toContain('rank_speakers');
     expect(events).toContain('exclude upcoming events');
     expect(events).toContain('offset 10');
-    expect(modelCalls).toBeLessThanOrEqual(2);
+    expect(modelCalls).toBeLessThanOrEqual(3);
   }, 15000);
 
   it('reports ties instead of inventing a single winner', async () => {
@@ -411,8 +550,8 @@ describe('protected chat API', () => {
     const events = await (await post()).text();
     expect(events).toContain('2 speakers are tied');
     expect(events).toContain('with 14 each');
-    expect(events).toContain('1. Tomas Trajan');
-    expect(events).toContain('1. Other Speaker');
+    expect(events).toContain('Tomas Trajan');
+    expect(events).toContain('Other Speaker');
     expect(events).toContain('RUN_FINISHED');
   });
 
@@ -471,7 +610,7 @@ describe('protected chat API', () => {
     expect(events).toContain('Test Speaker');
     expect(events).toContain('/events/2019-meetup');
     expect(events).not.toContain('test-service');
-    expect(modelCalls).toBeLessThanOrEqual(2);
+    expect(modelCalls).toBeLessThanOrEqual(3);
     expect(modelCalls).toBeGreaterThan(0);
     for (const body of providerBodies) {
       expect(body['model']).toBe('openai/gpt-5.6-luna');

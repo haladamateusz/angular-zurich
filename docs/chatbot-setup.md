@@ -74,7 +74,7 @@ not prove remote provider availability, configured prices, or deployed streaming
   This is a conservative allocation, **not a claim that each question costs 10 cents**.
 - No refunds on failures/cancellation: provider billing can be uncertain after a
   disconnect. Leases expire after two minutes if a process dies.
-- At most 3 model calls, 800 output tokens/call, 40,000 serialized request bytes/call,
+- At most 3 archive-selection model calls plus 1 final answer call, 800 output tokens/call, 40,000 serialized request bytes/call,
   8 archive calls/run, and 10 results/page. OpenRouter provider price ceilings are
   $0.20/M input tokens and $1.20/M output tokens. If no provider satisfies these
   ceilings, the request fails; it never silently upgrades to a more expensive model.
@@ -83,9 +83,18 @@ not prove remote provider availability, configured prices, or deployed streaming
 - Only the last six user questions, capped at 6,000 characters in total, are forwarded
   as context. Client system messages, tool results, model choices and instructions
   are discarded. There is no saved conversation history or server-side thread replay.
-- Model-written prose is never displayed. The agent selects retrieved IDs; the server
-  builds text and source cards from published records. This deliberately prioritizes
-  archive discovery over general conversation or generated coding advice.
+- The agent selects retrieved IDs; the server validates the result and publishes source
+  cards/tables first. One separate, tool-free model call then writes a short answer using
+  only those published records and verified totals. Actual text deltas stream below the
+  components through AG-UI; there is no simulated typing delay. Generated prose is an AI
+  summary, not a separately verified database fact. It is rendered as escaped plain text,
+  so model-written HTML and links cannot execute or create destinations.
+- Clarifications, no-result and off-topic replies use fixed text without a synthesis call.
+  Stop/disconnect cancels the provider; cards and partial prose remain with an incomplete
+  label. Verified search context is sent before prose so follow-ups still work after Stop.
+  Search activity folds when the cards are ready; the writing cursor lasts until text ends.
+  The same 90-second run timeout, price ceilings, approval checks and 10-cent reservation
+  cover both retrieval and the final answer call.
 
 ## Tools and MCP
 
@@ -205,6 +214,6 @@ npm run eval:chat
 CHAT_EVAL_LIMIT=20 CHAT_EVAL_BUDGET_CENTS=200 npm run eval:chat
 ```
 
-The first command runs six fixed-data cases with a conservative 60-cent reservation. The full catalogue reserves $2 maximum; the normal three-call, 40 KB request and 800-output-token caps and provider price ceiling still apply. Evaluations use the configured OpenRouter key and a synthetic read-only archive, not production user accounts or database mutations. Do not add these paid calls to automatic CI without a separately agreed budget.
+The first command runs six fixed-data cases with a conservative 60-cent reservation. The full catalogue reserves $2 maximum; the normal three retrieval calls plus one answer call, 40 KB request and 800-output-token caps and provider price ceiling still apply. Evaluations use the configured OpenRouter key and a synthetic read-only archive, not production user accounts or database mutations. Do not add these paid calls to automatic CI without a separately agreed budget.
 
 Verification on 24 September 2026: the migration was applied locally and to the linked Supabase project; transactional archive/access/quota regressions passed and the local security advisor reported no issues. The 20-case real-model evaluation pass succeeded after correcting nullable filter schemas and filtered-speaker tool guidance. Ordinary counts/rankings completed in one model call in that pass. Model evaluations are samples, not guarantees for every phrasing. Desktop/mobile light/dark browser checks and AXE checks passed using installed Chrome (`PLAYWRIGHT_CHANNEL=chrome npm run test:chat:browser`). Production still reports the existing initial-bundle warning and server dependency CommonJS warnings.

@@ -59,9 +59,7 @@
         >
           @if (!chat.messages().length) {
             <div class="archive-chat-empty">
-              <h2>
-                Which talk are you looking for@if (userFirstName(); as firstName) {, {{ firstName }}}?
-              </h2>
+              <h2>{{ welcomeQuestion() }}</h2>
               <p>Search topics, trace a speaker’s talks, or revisit an event.</p>
             </div>
           }
@@ -112,7 +110,7 @@
                   </div>
                 </details>
               }
-              @if (message.text) {
+              @if (message.role === 'user' && message.text) {
                 <p class="archive-message-text">{{ message.text }}</p>
               }
               @if (message.result; as result) {
@@ -185,6 +183,29 @@
                   >
                 </article>
               }
+              @if (
+                message.role === 'assistant' && (message.text || ($last && chat.writingAnswer()))
+              ) {
+                <p
+                  class="archive-message-text archive-answer"
+                  [attr.aria-busy]="$last && chat.writingAnswer()"
+                >
+                  {{ message.text }}
+                  @if ($last && chat.writingAnswer()) {
+                    <span class="archive-answer-cursor" aria-hidden="true"></span>
+                  }
+                </p>
+              }
+              @if (message.interrupted) {
+                <p class="archive-activity-state">
+                  {{
+                    message.interrupted === 'stopped'
+                      ? 'Response stopped.'
+                      : 'Response interrupted.'
+                  }}
+                  This answer may be incomplete.
+                </p>
+              }
               @if (message.nextQuestion && $last) {
                 <button
                   class="app-button app-button--secondary"
@@ -235,7 +256,7 @@
                   class="app-button app-button--secondary"
                   (click)="chat.stop()"
                 >
-                  Stop search
+                  {{ chat.writingAnswer() ? 'Stop response' : 'Stop search' }}
                 </button>
               } @else {
                 <button
