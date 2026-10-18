@@ -96,7 +96,7 @@ describe('PastEventsComponent', () => {
     const graphic = graphicShell?.querySelector<HTMLImageElement>('.past-event-card__graphic');
     const title = graphicShell?.querySelector<HTMLHeadingElement>('.past-event-card__title');
 
-    expect(graphic?.getAttribute('src')).toBe('/past-talks/Abstract background with logos_1.svg');
+    expect(graphic?.getAttribute('src')).toBe('/past-talks/abstract-background-with-logos.svg');
     expect(graphic?.getAttribute('alt')).toBe('');
     expect(title?.textContent?.trim()).toBe('February 2026');
   });

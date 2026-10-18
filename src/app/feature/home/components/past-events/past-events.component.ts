@@ -5,19 +5,12 @@ import { Event } from '../../../../core/models/event.interface';
 import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
 import { ViewportRevealDirective } from '../../../../ui/viewport-reveal/viewport-reveal.directive';
 
-const PAST_EVENT_BACKGROUNDS: readonly string[] = [
-  '/past-talks/Abstract background with logos_1.svg',
-  '/past-talks/Abstract background with logos_2.svg',
-  '/past-talks/Abstract background with logos_3.svg',
-];
-
 const PAST_EVENTS_ARCHIVE_NAVIGATION_STATE = { fromPastEventsArchive: true } as const;
 
 interface PastEventCard {
   id: string;
   slug: string;
   title: string;
-  abstractBackground: string;
   meetupUrl: string;
   startsAt: string;
   venueLabel: string;
@@ -44,10 +37,11 @@ export class PastEventsComponent {
   readonly showBrowseAction = input(true);
   readonly compact = input(false);
   readonly fromArchive = input(false);
+  protected readonly abstractBackground = '/past-talks/abstract-background-with-logos.svg';
   protected readonly pastEventsArchiveNavigationState = PAST_EVENTS_ARCHIVE_NAVIGATION_STATE;
 
   protected readonly cards = computed<PastEventCard[]>(() =>
-    this.events().map((event, index) => {
+    this.events().map((event) => {
       const talks = event.talks.slice(0, 3).map((talk) => {
         const speaker = talk.speaker_links.find((link) => link.speaker)?.speaker ?? null;
         const firstName = speaker?.first_name?.trim() ?? '';
@@ -70,7 +64,6 @@ export class PastEventsComponent {
         id: event.id,
         slug: event.slug,
         title: event.title.replace(/^Angular Zurich\s+/i, ''),
-        abstractBackground: PAST_EVENT_BACKGROUNDS[index % PAST_EVENT_BACKGROUNDS.length],
         meetupUrl: event.meetup_url,
         startsAt: event.starts_at,
         venueLabel: event.venue?.title || event.venue?.city || 'Venue to be announced',
