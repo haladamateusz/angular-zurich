@@ -111,7 +111,7 @@ export class EventDetailsComponent {
       const { data, error } = await this.supabaseService.getEventBySlug(params);
 
       if (error) {
-        throw error;
+        throw new Error(error.message, { cause: error });
       }
 
       if (this.isBrowser) {
@@ -122,7 +122,9 @@ export class EventDetailsComponent {
     },
   });
 
-  protected readonly event = computed(() => this.eventResource.value());
+  protected readonly event = computed(() =>
+    this.eventResource.hasValue() ? this.eventResource.value() : EMPTY_EVENT,
+  );
   protected readonly hasCurrentEvent = computed(
     () => this.resolvedEventSlug() === this.slug() && this.event().slug === this.slug(),
   );

@@ -1,6 +1,7 @@
 import { type WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { PostgrestError } from '@supabase/supabase-js';
 import { describe, expect, it, vi } from 'vitest';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { ToastService } from '../../core/toast/toast.service';
@@ -103,6 +104,47 @@ describe('EventDetailsComponent', () => {
     expect(root.querySelector('.event-details__hero-graphic')).not.toBeNull();
     expect(shell?.classList.contains('event-details__hero-graphic-shell--pending')).toBe(false);
     expect(shell?.classList.contains('event-details__hero-graphic-shell--loaded')).toBe(true);
+  });
+
+  it('renders the error state without reading a failed resource and recovers on navigation', async () => {
+    const getEvent = vi.mocked(TestBed.inject(SupabaseService).getEventBySlug);
+    getEvent.mockResolvedValueOnce({
+      success: false,
+      data: null,
+      error: new PostgrestError({
+        code: '42703',
+        message: 'column Events.description does not exist',
+        details: '',
+        hint: '',
+      }),
+      count: null,
+      status: 400,
+      statusText: 'Bad Request',
+    });
+    const component = fixture.componentInstance as unknown as {
+      showDashboardEventsBackLink: WritableSignal<boolean>;
+    };
+    component.showDashboardEventsBackLink.set(true);
+    fixture.componentRef.setInput('slug', 'failed-event');
+    fixture.detectChanges();
+
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.querySelector('[role="alert"]')?.textContent).toContain(
+        'We couldn’t load this event right now.',
+      );
+      expect(root.querySelector('.event-details__edit-link')).toBeNull();
+    });
+
+    fixture.componentRef.setInput('slug', PAST_EVENT.slug);
+    fixture.detectChanges();
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      const root = fixture.nativeElement as HTMLElement;
+      expect(root.textContent).toContain('8 Sept 2020');
+      expect(root.querySelector('[role="alert"]')).toBeNull();
+    });
   });
 
   it('uses readable metadata values without linking the venue', () => {

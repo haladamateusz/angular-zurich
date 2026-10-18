@@ -2,6 +2,7 @@ export interface Event {
   id: string;
   slug: string;
   title: string;
+  description?: string;
   feature_graphic: string | null;
   meetup_url: string;
   starts_at: string;
