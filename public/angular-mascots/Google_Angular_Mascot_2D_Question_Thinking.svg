@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><svg id="art" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080"><defs><style>.cls-1{fill:#06244f;}.cls-2{fill:url(#linear-gradient-2);}.cls-3{fill:#1976d2;}.cls-4{fill:#1e88e5;}.cls-5{fill:url(#linear-gradient-4);}.cls-6{stroke:#e3f2fd;stroke-width:68.81px;}.cls-6,.cls-7{fill:none;stroke-linecap:round;stroke-linejoin:round;}.cls-8{fill:url(#radial-gradient);}.cls-9{fill:url(#linear-gradient-3);}.cls-10{fill:url(#linear-gradient-5);}.cls-11{fill:#0d47a1;}.cls-12{fill:#1565c0;}.cls-7{stroke:#06244f;stroke-width:9.65px;}.cls-13{fill:url(#linear-gradient);}.cls-14{fill:#1565c0;}
+/* Five-second gesture with a faster 2.5-second question-mark cycle.
+   Sampled cosine easing keeps the reach,
+   scratch reversals, and return smooth; the forearm follows the hand. */
+.question-scratch-arm { animation: question-reach 5s linear infinite; }
+@keyframes question-reach {
+  0% { d: path("M296,694C275,714,231,725,237,692C238,685,240,679,242.41,674.18"); }
+  0.8% { d: path("M296,694C273.899,713.535,229.874,722.798,236.046,689.21C237.217,681.647,239.413,675.598,242.043,670.632"); }
+  1.6% { d: path("M296,694C270.703,712.186,226.607,716.406,233.276,681.114C234.944,671.918,237.708,665.727,240.978,660.334"); }
+  2.4% { d: path("M296,694C265.725,710.084,221.519,706.45,228.962,668.504C231.405,656.763,235.053,650.351,239.318,644.294"); }
+  3.2% { d: path("M296,694C259.453,707.436,215.107,693.906,223.526,652.614C226.944,637.668,231.708,630.977,237.228,624.084"); }
+  4% { d: path("M296,694C252.5,704.5,208,680,217.5,635C222,616.5,228,609.5,234.91,601.68"); }
+  4.8% { d: path("M296,694C245.547,701.564,200.893,666.094,211.474,617.386C217.056,595.332,224.292,588.023,232.592,579.276"); }
+  5.6% { d: path("M296,694C239.275,698.916,194.481,653.55,206.038,601.496C212.595,576.237,220.947,568.649,230.502,559.066"); }
+  6.4% { d: path("M296,694C234.297,696.814,189.393,643.594,201.724,588.886C209.056,561.082,218.292,553.273,228.842,543.026"); }
+  7.2% { d: path("M296,694C231.101,695.465,186.126,637.202,198.954,580.79C206.783,551.353,216.587,543.402,227.777,532.728"); }
+  8% { d: path("M296,694C230,695,185,635,198,578C206,548,216,540,227.41,529.18"); }
+  8.8% { d: path("M296,694C230,695,185,635,198,578C206.179,547.71,216.357,539.419,227.946,528.309"); }
+  9.6% { d: path("M296,694C230,695,185,635,198,578C206.667,546.917,217.333,537.833,229.41,525.93"); }
+  10.4% { d: path("M296,694C230,695,185,635,198,578C207.333,545.833,218.667,535.667,231.41,522.68"); }
+  11.2% { d: path("M296,694C230,695,185,635,198,578C208,544.75,220,533.5,233.41,519.43"); }
+  12% { d: path("M296,694C230,695,185,635,198,578C208.488,543.957,220.976,531.914,234.874,517.051"); }
+  12.8% { d: path("M296,694C230,695,185,635,198,578C208.667,543.667,221.333,531.333,235.41,516.18"); }
+  13.6% { d: path("M296,694C230,695,185,635,198,578C208.488,543.957,220.976,531.914,234.874,517.051"); }
+  14.4% { d: path("M296,694C230,695,185,635,198,578C208,544.75,220,533.5,233.41,519.43"); }
+  15.2% { d: path("M296,694C230,695,185,635,198,578C207.333,545.833,218.667,535.667,231.41,522.68"); }
+  16% { d: path("M296,694C230,695,185,635,198,578C206.667,546.917,217.333,537.833,229.41,525.93"); }
+  16.8% { d: path("M296,694C230,695,185,635,198,578C206.179,547.71,216.357,539.419,227.946,528.309"); }
+  17.6% { d: path("M296,694C230,695,185,635,198,578C206,548,216,540,227.41,529.18"); }
+  18.4% { d: path("M296,694C230,695,185,635,198,578C206.179,547.71,216.357,539.419,227.946,528.309"); }
+  19.2% { d: path("M296,694C230,695,185,635,198,578C206.667,546.917,217.333,537.833,229.41,525.93"); }
+  20% { d: path("M296,694C230,695,185,635,198,578C207.333,545.833,218.667,535.667,231.41,522.68"); }
+  20.8% { d: path("M296,694C230,695,185,635,198,578C208,544.75,220,533.5,233.41,519.43"); }
+  21.6% { d: path("M296,694C230,695,185,635,198,578C208.488,543.957,220.976,531.914,234.874,517.051"); }
+  22.4% { d: path("M296,694C230,695,185,635,198,578C208.667,543.667,221.333,531.333,235.41,516.18"); }
+  23.2% { d: path("M296,694C230,695,185,635,198,578C208.488,543.957,220.976,531.914,234.874,517.051"); }
+  24% { d: path("M296,694C230,695,185,635,198,578C208,544.75,220,533.5,233.41,519.43"); }
+  24.8% { d: path("M296,694C230,695,185,635,198,578C207.333,545.833,218.667,535.667,231.41,522.68"); }
+  25.6% { d: path("M296,694C230,695,185,635,198,578C206.667,546.917,217.333,537.833,229.41,525.93"); }
+  26.4% { d: path("M296,694C230,695,185,635,198,578C206.179,547.71,216.357,539.419,227.946,528.309"); }
+  27.2% { d: path("M296,694C230,695,185,635,198,578C206,548,216,540,227.41,529.18"); }
+  28% { d: path("M296,694C230,695,185,635,198,578C206.179,547.71,216.357,539.419,227.946,528.309"); }
+  28.8% { d: path("M296,694C230,695,185,635,198,578C206.667,546.917,217.333,537.833,229.41,525.93"); }
+  29.6% { d: path("M296,694C230,695,185,635,198,578C207.333,545.833,218.667,535.667,231.41,522.68"); }
+  30.4% { d: path("M296,694C230,695,185,635,198,578C208,544.75,220,533.5,233.41,519.43"); }
+  31.2% { d: path("M296,694C230,695,185,635,198,578C208.488,543.957,220.976,531.914,234.874,517.051"); }
+  32% { d: path("M296,694C230,695,185,635,198,578C208.667,543.667,221.333,531.333,235.41,516.18"); }
+  32.8% { d: path("M296,694C230.432,695.183,185.442,635.865,198.375,579.095C208.948,545.025,221.513,532.752,235.477,517.698"); }
+  33.6% { d: path("M296,694C231.713,695.723,186.751,638.425,199.484,582.339C209.783,549.046,222.044,536.954,235.676,522.194"); }
+  34.4% { d: path("M296,694C233.792,696.601,188.876,642.584,201.286,587.606C211.138,555.576,222.906,543.776,236,529.494"); }
+  35.2% { d: path("M296,694C236.59,697.782,191.737,648.18,203.711,594.695C212.962,564.364,224.067,552.959,236.435,539.319"); }
+  36% { d: path("M296,694C240,699.222,195.222,654.999,206.666,603.332C215.185,575.073,225.481,564.147,236.966,551.29"); }
+  36.8% { d: path("M296,694C243.89,700.865,199.198,662.779,210.038,613.187C217.721,587.29,227.095,576.912,237.571,564.948"); }
+  37.6% { d: path("M296,694C248.11,702.647,203.513,671.221,213.696,623.88C220.472,600.547,228.846,590.762,238.227,579.768"); }
+  38.4% { d: path("M296,694C252.5,704.5,208,680,217.5,635C223.333,614.333,230.667,605.167,238.91,595.18"); }
+  39.2% { d: path("M296,694C256.89,706.353,212.487,688.779,221.304,646.12C226.195,628.12,232.488,619.571,239.593,610.592"); }
+  40% { d: path("M296,694C261.11,708.135,216.802,697.221,224.962,656.813C228.946,641.376,234.238,633.421,240.249,625.412"); }
+  40.8% { d: path("M296,694C265,709.778,220.778,705.001,228.334,666.668C231.482,653.594,235.852,646.186,240.854,639.07"); }
+  41.6% { d: path("M296,694C268.41,711.218,224.263,711.82,231.289,675.305C233.704,664.302,237.266,657.375,241.385,651.041"); }
+  42.4% { d: path("M296,694C271.208,712.399,227.124,717.416,233.714,682.394C235.528,673.091,238.427,666.557,241.82,660.866"); }
+  43.2% { d: path("M296,694C273.287,713.277,229.249,721.575,235.516,687.661C236.884,679.621,239.29,673.38,242.144,668.166"); }
+  44% { d: path("M296,694C274.568,713.817,230.558,724.135,236.625,690.905C237.718,683.642,239.821,677.581,242.343,672.662"); }
+  44.8%, 100% { d: path("M296,694C275,714,231,725,237,692C238,685,240,679,242.41,674.18"); }
+}
+.question-scratch-hand { animation: question-scratch 5s linear infinite; }
+@keyframes question-scratch {
+  0% { transform: translate(0px, 0px); }
+  0.8% { transform: translate(-0.367px, -3.548px); }
+  1.6% { transform: translate(-1.432px, -13.846px); }
+  2.4% { transform: translate(-3.092px, -29.886px); }
+  3.2% { transform: translate(-5.182px, -50.096px); }
+  4% { transform: translate(-7.5px, -72.5px); }
+  4.8% { transform: translate(-9.818px, -94.904px); }
+  5.6% { transform: translate(-11.908px, -115.114px); }
+  6.4% { transform: translate(-13.568px, -131.154px); }
+  7.2% { transform: translate(-14.633px, -141.452px); }
+  8% { transform: translate(-15px, -145px); }
+  8.8% { transform: translate(-14.464px, -145.871px); }
+  9.6% { transform: translate(-13px, -148.25px); }
+  10.4% { transform: translate(-11px, -151.5px); }
+  11.2% { transform: translate(-9px, -154.75px); }
+  12% { transform: translate(-7.536px, -157.129px); }
+  12.8% { transform: translate(-7px, -158px); }
+  13.6% { transform: translate(-7.536px, -157.129px); }
+  14.4% { transform: translate(-9px, -154.75px); }
+  15.2% { transform: translate(-11px, -151.5px); }
+  16% { transform: translate(-13px, -148.25px); }
+  16.8% { transform: translate(-14.464px, -145.871px); }
+  17.6% { transform: translate(-15px, -145px); }
+  18.4% { transform: translate(-14.464px, -145.871px); }
+  19.2% { transform: translate(-13px, -148.25px); }
+  20% { transform: translate(-11px, -151.5px); }
+  20.8% { transform: translate(-9px, -154.75px); }
+  21.6% { transform: translate(-7.536px, -157.129px); }
+  22.4% { transform: translate(-7px, -158px); }
+  23.2% { transform: translate(-7.536px, -157.129px); }
+  24% { transform: translate(-9px, -154.75px); }
+  24.8% { transform: translate(-11px, -151.5px); }
+  25.6% { transform: translate(-13px, -148.25px); }
+  26.4% { transform: translate(-14.464px, -145.871px); }
+  27.2% { transform: translate(-15px, -145px); }
+  28% { transform: translate(-14.464px, -145.871px); }
+  28.8% { transform: translate(-13px, -148.25px); }
+  29.6% { transform: translate(-11px, -151.5px); }
+  30.4% { transform: translate(-9px, -154.75px); }
+  31.2% { transform: translate(-7.536px, -157.129px); }
+  32% { transform: translate(-7px, -158px); }
+  32.8% { transform: translate(-6.933px, -156.482px); }
+  33.6% { transform: translate(-6.734px, -151.986px); }
+  34.4% { transform: translate(-6.41px, -144.686px); }
+  35.2% { transform: translate(-5.975px, -134.861px); }
+  36% { transform: translate(-5.444px, -122.89px); }
+  36.8% { transform: translate(-4.839px, -109.232px); }
+  37.6% { transform: translate(-4.183px, -94.412px); }
+  38.4% { transform: translate(-3.5px, -79px); }
+  39.2% { transform: translate(-2.817px, -63.588px); }
+  40% { transform: translate(-2.161px, -48.768px); }
+  40.8% { transform: translate(-1.556px, -35.11px); }
+  41.6% { transform: translate(-1.025px, -23.139px); }
+  42.4% { transform: translate(-0.59px, -13.314px); }
+  43.2% { transform: translate(-0.266px, -6.014px); }
+  44% { transform: translate(-0.067px, -1.518px); }
+  44.8%, 100% { transform: translate(0px, 0px); }
+}
+.question-brow { transform-box: fill-box; transform-origin: center; }
+.question-brow-1 { animation: question-brow-right 5s ease-out infinite; }
+.question-brow-2 { animation: question-brow-left 5s ease-out infinite; }
+@keyframes question-brow-right {
+  0%, 48%, 100% { transform: translateY(0) rotate(0deg); }
+  9.6%, 28.8% { transform: translateY(5px) rotate(-6deg); }
+  19.2%, 36.8% { transform: translateY(-7px) rotate(3deg); }
+}
+@keyframes question-brow-left {
+  0%, 48%, 100% { transform: translateY(0) rotate(0deg); }
+  9.6%, 28.8% { transform: translateY(-12px) rotate(5deg); }
+  19.2%, 36.8% { transform: translateY(-4px) rotate(-3deg); }
+}
+.question-original { opacity: 0; animation: question-mark-original 2.5s ease-out infinite; }
+@keyframes question-mark-original {
+  4%, 20% { opacity: 1; }
+  0%, 28%, 100% { opacity: 0; }
+}
+.question-extra { opacity: 0; }
+.question-extra-left-far { animation: question-mark-left-far 2.5s ease-out infinite; }
+.question-extra-left-high { animation: question-mark-left-high 2.5s ease-out infinite; }
+.question-extra-right-high { animation: question-mark-right-high 2.5s ease-out infinite; }
+@keyframes question-mark-left-far {
+  0%, 8%, 44%, 100% { opacity: 0; transform: translateY(8px); }
+  14%, 34% { opacity: 1; transform: translateY(0); }
+}
+@keyframes question-mark-left-high {
+  0%, 24%, 60%, 100% { opacity: 0; transform: translateY(8px); }
+  30%, 50% { opacity: 1; transform: translateY(0); }
+}
+@keyframes question-mark-right-high {
+  0%, 40%, 76%, 100% { opacity: 0; transform: translateY(8px); }
+  46%, 66% { opacity: 1; transform: translateY(0); }
+}
+/* Lean away from the raised hand, around the feet. Keeping the scratch
+   inside this group preserves the hand-to-temple contact. */
+.question-body {
+  transform-box: view-box;
+  transform-origin: 540px 925px;
+  animation: question-counter-lean 5s linear infinite;
+}
+@keyframes question-counter-lean {
+  0% { transform: rotate(0deg); }
+  0.8% { transform: rotate(0.04deg); }
+  1.6% { transform: rotate(0.158deg); }
+  2.4% { transform: rotate(0.34deg); }
+  3.2% { transform: rotate(0.571deg); }
+  4% { transform: rotate(0.826deg); }
+  4.8% { transform: rotate(1.081deg); }
+  5.6% { transform: rotate(1.311deg); }
+  6.4% { transform: rotate(1.494deg); }
+  7.2% { transform: rotate(1.611deg); }
+  8% { transform: rotate(1.652deg); }
+  8.8% { transform: rotate(1.662deg); }
+  9.6% { transform: rotate(1.689deg); }
+  10.4% { transform: rotate(1.726deg); }
+  11.2% { transform: rotate(1.763deg); }
+  12% { transform: rotate(1.79deg); }
+  12.8% { transform: rotate(1.8deg); }
+  13.6% { transform: rotate(1.79deg); }
+  14.4% { transform: rotate(1.763deg); }
+  15.2% { transform: rotate(1.726deg); }
+  16% { transform: rotate(1.689deg); }
+  16.8% { transform: rotate(1.662deg); }
+  17.6% { transform: rotate(1.652deg); }
+  18.4% { transform: rotate(1.662deg); }
+  19.2% { transform: rotate(1.689deg); }
+  20% { transform: rotate(1.726deg); }
+  20.8% { transform: rotate(1.763deg); }
+  21.6% { transform: rotate(1.79deg); }
+  22.4% { transform: rotate(1.8deg); }
+  23.2% { transform: rotate(1.79deg); }
+  24% { transform: rotate(1.763deg); }
+  24.8% { transform: rotate(1.726deg); }
+  25.6% { transform: rotate(1.689deg); }
+  26.4% { transform: rotate(1.662deg); }
+  27.2% { transform: rotate(1.652deg); }
+  28% { transform: rotate(1.662deg); }
+  28.8% { transform: rotate(1.689deg); }
+  29.6% { transform: rotate(1.726deg); }
+  30.4% { transform: rotate(1.763deg); }
+  31.2% { transform: rotate(1.79deg); }
+  32% { transform: rotate(1.8deg); }
+  32.8% { transform: rotate(1.783deg); }
+  33.6% { transform: rotate(1.731deg); }
+  34.4% { transform: rotate(1.648deg); }
+  35.2% { transform: rotate(1.536deg); }
+  36% { transform: rotate(1.4deg); }
+  36.8% { transform: rotate(1.244deg); }
+  37.6% { transform: rotate(1.076deg); }
+  38.4% { transform: rotate(0.9deg); }
+  39.2% { transform: rotate(0.724deg); }
+  40% { transform: rotate(0.556deg); }
+  40.8% { transform: rotate(0.4deg); }
+  41.6% { transform: rotate(0.264deg); }
+  42.4% { transform: rotate(0.152deg); }
+  43.2% { transform: rotate(0.069deg); }
+  44% { transform: rotate(0.017deg); }
+  44.8%, 100% { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .question-body, .question-scratch-arm, .question-scratch-hand, .question-brow, .question-extra, .question-original {
+    animation: none;
+    transform: none;
+  }
+  .question-extra { opacity: 0; }
+}
+/* Extend the legs toward the leaning torso; their lower ends and feet stay planted. */
+.mascot-leg-stretch {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: mascot-leg-extension 5s linear infinite;
+}
+@keyframes mascot-leg-extension {
+  0% { transform: scaleY(1); }
+  0.8% { transform: scaleY(1.00133); }
+  1.6% { transform: scaleY(1.00527); }
+  2.4% { transform: scaleY(1.01133); }
+  3.2% { transform: scaleY(1.01903); }
+  4% { transform: scaleY(1.02753); }
+  4.8% { transform: scaleY(1.03603); }
+  5.6% { transform: scaleY(1.0437); }
+  6.4% { transform: scaleY(1.0498); }
+  7.2% { transform: scaleY(1.0537); }
+  8% { transform: scaleY(1.05507); }
+  8.8% { transform: scaleY(1.0554); }
+  9.6% { transform: scaleY(1.0563); }
+  10.4% { transform: scaleY(1.05753); }
+  11.2% { transform: scaleY(1.05877); }
+  12% { transform: scaleY(1.05967); }
+  12.8% { transform: scaleY(1.06); }
+  13.6% { transform: scaleY(1.05967); }
+  14.4% { transform: scaleY(1.05877); }
+  15.2% { transform: scaleY(1.05753); }
+  16% { transform: scaleY(1.0563); }
+  16.8% { transform: scaleY(1.0554); }
+  17.6% { transform: scaleY(1.05507); }
+  18.4% { transform: scaleY(1.0554); }
+  19.2% { transform: scaleY(1.0563); }
+  20% { transform: scaleY(1.05753); }
+  20.8% { transform: scaleY(1.05877); }
+  21.6% { transform: scaleY(1.05967); }
+  22.4% { transform: scaleY(1.06); }
+  23.2% { transform: scaleY(1.05967); }
+  24% { transform: scaleY(1.05877); }
+  24.8% { transform: scaleY(1.05753); }
+  25.6% { transform: scaleY(1.0563); }
+  26.4% { transform: scaleY(1.0554); }
+  27.2% { transform: scaleY(1.05507); }
+  28% { transform: scaleY(1.0554); }
+  28.8% { transform: scaleY(1.0563); }
+  29.6% { transform: scaleY(1.05753); }
+  30.4% { transform: scaleY(1.05877); }
+  31.2% { transform: scaleY(1.05967); }
+  32% { transform: scaleY(1.06); }
+  32.8% { transform: scaleY(1.05943); }
+  33.6% { transform: scaleY(1.0577); }
+  34.4% { transform: scaleY(1.05493); }
+  35.2% { transform: scaleY(1.0512); }
+  36% { transform: scaleY(1.04667); }
+  36.8% { transform: scaleY(1.04147); }
+  37.6% { transform: scaleY(1.03587); }
+  38.4% { transform: scaleY(1.03); }
+  39.2% { transform: scaleY(1.02413); }
+  40% { transform: scaleY(1.01853); }
+  40.8% { transform: scaleY(1.01333); }
+  41.6% { transform: scaleY(1.0088); }
+  42.4% { transform: scaleY(1.00507); }
+  43.2% { transform: scaleY(1.0023); }
+  44% { transform: scaleY(1.00057); }
+  44.8%, 100% { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-leg-stretch { animation: none; transform: none; }
+}
+</style><linearGradient id="linear-gradient" x1="627.64" y1="931.61" x2="627.64" y2="761.82" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".36" stop-color="#deeffd"/><stop offset=".49" stop-color="#d5ebfc"/><stop offset=".58" stop-color="#c5e3fb"/><stop offset=".61" stop-color="#bbdefb"/></linearGradient><linearGradient id="linear-gradient-2" x1="434.43" y1="932.65" x2="434.43" y2="763.63" xlink:href="#linear-gradient"/><linearGradient id="linear-gradient-3" x1="340.33" y1="317.33" x2="618.77" y2="799.61" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#64b5f6"/><stop offset="0" stop-color="#62b3f5"/><stop offset=".08" stop-color="#55aaf1"/><stop offset=".15" stop-color="#47a0ee"/><stop offset=".23" stop-color="#3897eb"/><stop offset=".33" stop-color="#2c90e8"/><stop offset=".45" stop-color="#228be6"/><stop offset=".6" stop-color="#1e88e5"/><stop offset=".99" stop-color="#1e88e5"/></linearGradient><linearGradient id="linear-gradient-4" x1="694.8" y1="198.3" x2="694.8" y2="856.67" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1e88e5"/><stop offset=".29" stop-color="#1c82dd"/><stop offset=".75" stop-color="#1770cb"/><stop offset="1" stop-color="#1565c0"/></linearGradient><radialGradient id="radial-gradient" cx="537.18" cy="632.95" fx="537.18" fy="632.95" r="275.44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".52" stop-color="#dfeffd"/><stop offset=".76" stop-color="#d3eafb"/><stop offset=".96" stop-color="#c1e1fb"/><stop offset="1" stop-color="#bbdefb"/></radialGradient><linearGradient id="linear-gradient-5" x1="776.57" y1="172.36" x2="736.31" y2="311.72" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#64b5f6"/><stop offset=".26" stop-color="#55aaf1"/><stop offset=".6" stop-color="#3897eb"/><stop offset=".86" stop-color="#228be6"/><stop offset="1" stop-color="#1565c0"/></linearGradient><g id="thinking-question-mark"><path class="cls-10" d="M746.96,252.27c1.22-6.03,3.53-11.03,6.92-14.99,3.39-3.96,8.95-8.16,16.69-12.61,5.44-3.27,9.47-6.14,12.09-8.62,2.62-2.47,4.34-5.75,5.16-9.82,1.03-5.12.14-9.67-2.67-13.65-2.82-3.98-7.24-6.59-13.28-7.81-5.78-1.17-10.78-.37-15.03,2.39-4.25,2.76-7.65,6.41-10.2,10.95l-18.01-12.25c4.22-7.34,10.44-13.32,18.69-17.94,8.24-4.62,17.74-5.84,28.5-3.66,8,1.62,14.83,4.67,20.48,9.16,5.65,4.49,9.63,9.94,11.96,16.35,2.32,6.41,2.77,13.16,1.34,20.25s-4.28,12.56-8.62,16.8-9.8,8.44-16.37,12.57c-5.13,3.06-8.91,6.06-11.34,8.98-2.44,2.92-4.08,6.49-4.93,10.68l-1.15,5.71-21.85-4.42,1.63-8.07ZM737.05,301.79c-2.36-3.55-3.11-7.42-2.26-11.62s3.04-7.44,6.58-9.73c3.54-2.29,7.4-3.01,11.6-2.16,4.2.85,7.45,3.01,9.75,6.48,2.3,3.47,3.03,7.31,2.18,11.51s-3.02,7.48-6.5,9.85c-3.48,2.37-7.33,3.13-11.52,2.28-4.2-.85-7.48-3.05-9.83-6.6Z"/></g></defs><g class="mascot-legs"><g class="mascot-leg-stretch"><path class="cls-13" d="M581.93,919.07c0,6.92,5.61,12.53,12.53,12.53h39s26.49-45.51,39.88-146.52h0c-20.22-27.68-60.19-31.24-84.98-7.57h0c-4.11,3.92-6.43,9.35-6.43,15.03v126.52Z"/></g><path class="cls-4" d="M632.47,876.94h2.7c22.1,0,40.04,17.94,40.04,40.04v1.57c0,7.78-6.32,14.1-14.1,14.1h-62.09c-3.64,0-6.59-2.95-6.59-6.59v-9.08c0-22.1,17.94-40.04,40.04-40.04Z"/><g class="mascot-leg-stretch"><path class="cls-2" d="M489.96,916.23c1.08,6.84-4.59,15.34-11.43,16.42h-40.49s-30.29-50.3-59.28-147.99h0c15.65-30.5,54.58-24.06,82.76-4.54h0c4.67,3.23,7.81,8.23,8.69,13.84l19.74,122.27Z"/></g><path class="cls-4" d="M402.34,876.94h62.09c7.78,0,14.1,6.32,14.1,14.1v1.57c0,22.1-17.94,40.04-40.04,40.04h-2.7c-22.1,0-40.04-17.94-40.04-40.04v-9.08c0-3.64,2.95-6.59,6.59-6.59Z" transform="translate(874.28 1809.59) rotate(-180)"/></g><g class="question-body"><path class="cls-6 question-scratch-arm" d="M296,694C275,714,231,725,237,692C238,685,240,679,242.41,674.18"/><path class="cls-6" d="M802.01,725.43s91.34-36.44,3.59-107.68"/><path class="cls-9" d="M554.95,198.3c-5.34-.28-10.76,1.06-15.48,4.08l-306.29,194.88c-14.96,9.58-22.2,27.48-18.09,44.68l68.9,264.5c3.66,14.39,13.06,26.7,26.04,34.08l189.38,110.11c6.41,3.59,13.49,5.59,20.64,5.97l34.89-658.3Z"/><path class="cls-5" d="M520.06,856.6c7.16.38,14.4-.86,21.16-3.75l199.96-89.48c13.69-5.97,24.33-17.21,29.49-31.14l96.48-255.73c5.91-16.67.59-35.23-13.27-46.34l-283.97-226.17c-4.37-3.5-9.62-5.41-14.96-5.7l-34.89,658.3Z"/><path class="cls-11" d="M349.58,706.57c6.04-2.57,15.36-6.47,24.7-10.36-5.22-3.17-9.01-8.28-10.47-14.27l-36.91-151.58c-5.12-21.04,15.51-38.93,35.44-31.32l-19.48-8.36c-22.69-9.74-46.75,10.61-40.91,34.6l41.33,169.74c1.07,4.39,3.28,8.34,6.29,11.55Z"/><path class="cls-14" d="M374.28,696.2c-9.34,3.89-18.66,7.79-24.7,10.36,2.16,2.3,4.72,4.24,7.63,5.64l166.27,79.93,1.24-23.47-148.48-71.38c-.68-.33-1.33-.7-1.96-1.08Z"/><path class="cls-8" d="M713.56,518.02l-178.48,55.15-171.65-73.71c-20.26-8.7-41.75,9.48-36.53,30.9l36.91,151.58c1.64,6.72,6.2,12.35,12.43,15.35l148.48,71.38,155.19-55.28c6.52-2.32,11.65-7.44,13.99-13.95l52.73-146.83c7.45-20.75-12-41.1-33.06-34.59Z"/><path class="cls-11" d="M705.44,725.43c-5.74-3.19-14.59-8.06-23.47-12.92,5.52-2.6,9.84-7.28,11.92-13.08l52.73-146.83c7.32-20.38-11.31-40.35-31.93-34.89l20.25-6.26c23.59-7.29,45.37,15.49,37.02,38.73l-59.04,164.42c-1.53,4.25-4.14,7.94-7.48,10.82Z"/><path class="cls-14" d="M681.98,712.51c8.87,4.86,17.73,9.72,23.47,12.92-2.39,2.06-5.14,3.71-8.18,4.8l-173.79,61.91,1.24-23.47,155.19-55.28c.71-.25,1.39-.55,2.07-.87Z"/><ellipse class="cls-1" cx="608.92" cy="650.7" rx="29.25" ry="18.11" transform="translate(-73.09 1224.33) rotate(-86.97)"/><g class="question-brow question-brow-1"><rect class="cls-12" x="591.95" y="598.54" width="42.54" height="26.4" rx="13.2" ry="13.2" transform="translate(58.22 -53.27) rotate(5.22)"/></g><ellipse class="cls-1" cx="453.46" cy="642.46" rx="29.25" ry="18.11" transform="translate(-212.1 1061.28) rotate(-86.97)"/><g class="question-brow question-brow-2"><rect class="cls-12" x="431.38" y="567.82" width="42.54" height="26.4" rx="13.2" ry="13.2" transform="translate(1023.59 1046.32) rotate(167.1)"/></g><path class="cls-4" d="M825.23,754.51s6.6-4.04,16.45-10.61c.05-.04,23.68-16.79,20.92-41.88-.82-7.48-4.83-14.32-10.96-18.69-20.56-14.66-46.71-2.21-46.77-2.18,0,0,0,0,0,0-8.68-2.18-30.29-6.21-37.26,5.6-2.48,4.2-.95,8.6,2.53,12.74-1.19.7-2.36,1.4-3.49,2.1-41.83,25.91-4.49,89.57,38.54,65.7,6.24-3.46,12.91-7.68,20.04-12.78Z"/><g class="question-scratch-hand"><path class="cls-3" d="M225.64,628.35s-3.6,6.85-8.7,17.54c-.03.06-11.75,26.55,3.49,46.68,4.55,6.01,11.5,9.82,19.01,10.44,25.19,2.05,41.28-22.03,41.32-22.09,0,0,0,0,0,0,8.58-2.57,29.23-10.18,29.16-23.89-.02-4.88-3.59-7.87-8.71-9.65.66-1.21,1.31-2.41,1.92-3.59,22.67-43.68-42.07-79.22-66.82-36.68-3.59,6.17-7.16,13.21-10.68,21.24Z"/></g><path class="cls-7" d="M504.99,701.54c14.59-6,30.92-7.68,46.42-4.77"/></g><g class="question-original"><use href="#thinking-question-mark"/></g>
+<g class="question-extra question-extra-left-far"><use href="#thinking-question-mark" transform="translate(-230 25) scale(.7)"/></g>
+<g class="question-extra question-extra-left-high"><use href="#thinking-question-mark" transform="translate(15 -60) scale(.55)"/></g>
+<g class="question-extra question-extra-right-high"><use href="#thinking-question-mark" transform="translate(410 -25) scale(.6)"/></g></svg>

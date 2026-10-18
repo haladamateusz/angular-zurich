@@ -34,7 +34,7 @@
 
 ## Motion
 
-- Durations: `--duration-fast` (140ms), `--duration-normal` (180ms), and `--duration-slow` (360ms).
+- Durations: `--duration-fast` (140ms), `--duration-normal` (180ms), `--duration-medium` (240ms), and `--duration-slow` (360ms).
 - Easings: `--ease-standard` for routine interaction and `--ease-emphasized` for entry and exit transitions.
 - All animation must respect the existing reduced-motion rules.
 

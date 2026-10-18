@@ -178,6 +178,7 @@
   /* Primitive motion */
   --duration-fast: 140ms;
   --duration-normal: 180ms;
+  --duration-medium: 240ms;
   --duration-slow: 360ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
@@ -198,6 +199,7 @@
 /* Adds pointer cursor to buttons */
 @layer base {
   html {
+    scrollbar-gutter: stable;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-synthesis: none;
@@ -276,20 +278,15 @@ time,
   border-radius: var(--radius-subtle);
   color: var(--foreground-link);
   text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .event-meta__link-label {
   color: inherit;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
 }
 
 .event-meta__link:is(:hover, :focus-visible) {
-  color: var(--action-primary-hover);
-}
-
-.event-meta__link:is(:hover, :focus-visible) .event-meta__link-label {
-  text-decoration: underline;
+  color: color-mix(in oklch, var(--foreground-link) 70%, var(--foreground-primary));
 }
 
 .event-meta__link:focus-visible {

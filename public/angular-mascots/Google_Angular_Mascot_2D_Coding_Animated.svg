@@ -1,0 +1,1358 @@
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080"><defs><style>.cls-1{fill:#06244f;}.cls-2{fill:#1565c0;}.cls-3{fill:url(#linear-gradient-2);}.cls-4{stroke:#06244f;stroke-width:8px;}.cls-4,.cls-5,.cls-6{fill:none;stroke-linecap:round;stroke-linejoin:round;}.cls-7{mix-blend-mode:multiply;opacity:.7;}.cls-8{fill:#1e88e5;}.cls-9{fill:url(#linear-gradient-4);}.cls-5{stroke:#e3f2fd;stroke-width:68.81px;}.cls-10{fill:url(#radial-gradient);}.cls-11{fill:url(#linear-gradient-3);}.cls-12{fill:url(#linear-gradient-5);}.cls-13{fill:#0d47a1;}.cls-14{isolation:isolate;}.cls-6{stroke:#0d47a1;stroke-width:4.05px;}.cls-15{fill:#0d47a1;}.cls-16{fill:#1565c0;}.cls-17{fill:url(#linear-gradient-6);}.cls-18{fill:#1e88e5;}.cls-19{fill:url(#linear-gradient);}.cls-20{fill:#64b5f6;}.cls-21{fill:#1565c0;}.cls-22{fill:#1565c0;}
+/* Smooth console reach: 329 poses use continuous-acceleration easing; lean follows the hand.
+   All tracks share a three-second cycle and settle before repeating. */
+.coding-body { transform-box: view-box; transform-origin: 650px 900px; animation: coding-lean 3s linear infinite; }
+.coding-hand { animation: coding-tap 3s linear infinite; }
+.coding-arm { animation: coding-reach 3s linear infinite; }
+@keyframes coding-lean {
+  0% { transform: rotate(0deg); }
+  0.25% { transform: rotate(0deg); }
+  0.5% { transform: rotate(-0.001deg); }
+  0.75% { transform: rotate(-0.002deg); }
+  1% { transform: rotate(-0.005deg); }
+  1.25% { transform: rotate(-0.009deg); }
+  1.5% { transform: rotate(-0.015deg); }
+  1.75% { transform: rotate(-0.022deg); }
+  2% { transform: rotate(-0.033deg); }
+  2.25% { transform: rotate(-0.045deg); }
+  2.5% { transform: rotate(-0.06deg); }
+  2.75% { transform: rotate(-0.078deg); }
+  3% { transform: rotate(-0.098deg); }
+  3.25% { transform: rotate(-0.122deg); }
+  3.5% { transform: rotate(-0.147deg); }
+  3.75% { transform: rotate(-0.176deg); }
+  4% { transform: rotate(-0.207deg); }
+  4.25% { transform: rotate(-0.241deg); }
+  4.5% { transform: rotate(-0.277deg); }
+  4.75% { transform: rotate(-0.316deg); }
+  5% { transform: rotate(-0.357deg); }
+  5.25% { transform: rotate(-0.4deg); }
+  5.5% { transform: rotate(-0.445deg); }
+  5.75% { transform: rotate(-0.491deg); }
+  6% { transform: rotate(-0.54deg); }
+  6.25% { transform: rotate(-0.589deg); }
+  6.5% { transform: rotate(-0.64deg); }
+  6.75% { transform: rotate(-0.692deg); }
+  7% { transform: rotate(-0.744deg); }
+  7.25% { transform: rotate(-0.797deg); }
+  7.5% { transform: rotate(-0.85deg); }
+  7.75% { transform: rotate(-0.903deg); }
+  8% { transform: rotate(-0.956deg); }
+  8.25% { transform: rotate(-1.008deg); }
+  8.5% { transform: rotate(-1.06deg); }
+  8.75% { transform: rotate(-1.111deg); }
+  9% { transform: rotate(-1.16deg); }
+  9.25% { transform: rotate(-1.209deg); }
+  9.5% { transform: rotate(-1.255deg); }
+  9.75% { transform: rotate(-1.3deg); }
+  10% { transform: rotate(-1.343deg); }
+  10.25% { transform: rotate(-1.384deg); }
+  10.5% { transform: rotate(-1.423deg); }
+  10.75% { transform: rotate(-1.459deg); }
+  11% { transform: rotate(-1.493deg); }
+  11.25% { transform: rotate(-1.524deg); }
+  11.5% { transform: rotate(-1.553deg); }
+  11.75% { transform: rotate(-1.579deg); }
+  12% { transform: rotate(-1.602deg); }
+  12.25% { transform: rotate(-1.622deg); }
+  12.5% { transform: rotate(-1.64deg); }
+  12.75% { transform: rotate(-1.655deg); }
+  13% { transform: rotate(-1.668deg); }
+  13.25% { transform: rotate(-1.678deg); }
+  13.5% { transform: rotate(-1.686deg); }
+  13.75% { transform: rotate(-1.692deg); }
+  14% { transform: rotate(-1.696deg); }
+  14.25% { transform: rotate(-1.698deg); }
+  14.5% { transform: rotate(-1.7deg); }
+  14.75% { transform: rotate(-1.7deg); }
+  15% { transform: rotate(-1.7deg); }
+  15.25% { transform: rotate(-1.7deg); }
+  15.5% { transform: rotate(-1.699deg); }
+  15.75% { transform: rotate(-1.697deg); }
+  16% { transform: rotate(-1.694deg); }
+  16.25% { transform: rotate(-1.689deg); }
+  16.5% { transform: rotate(-1.684deg); }
+  16.75% { transform: rotate(-1.68deg); }
+  17% { transform: rotate(-1.675deg); }
+  17.25% { transform: rotate(-1.672deg); }
+  17.5% { transform: rotate(-1.67deg); }
+  17.75% { transform: rotate(-1.669deg); }
+  18% { transform: rotate(-1.669deg); }
+  18.25% { transform: rotate(-1.669deg); }
+  18.5% { transform: rotate(-1.669deg); }
+  18.75% { transform: rotate(-1.67deg); }
+  19% { transform: rotate(-1.672deg); }
+  19.25% { transform: rotate(-1.674deg); }
+  19.5% { transform: rotate(-1.677deg); }
+  19.75% { transform: rotate(-1.681deg); }
+  20% { transform: rotate(-1.684deg); }
+  20.25% { transform: rotate(-1.688deg); }
+  20.5% { transform: rotate(-1.692deg); }
+  20.75% { transform: rotate(-1.695deg); }
+  21% { transform: rotate(-1.697deg); }
+  21.25% { transform: rotate(-1.699deg); }
+  21.5% { transform: rotate(-1.7deg); }
+  21.75% { transform: rotate(-1.7deg); }
+  22% { transform: rotate(-1.7deg); }
+  22.25% { transform: rotate(-1.7deg); }
+  22.5% { transform: rotate(-1.701deg); }
+  22.75% { transform: rotate(-1.702deg); }
+  23% { transform: rotate(-1.704deg); }
+  23.25% { transform: rotate(-1.707deg); }
+  23.5% { transform: rotate(-1.712deg); }
+  23.75% { transform: rotate(-1.718deg); }
+  24% { transform: rotate(-1.726deg); }
+  24.25% { transform: rotate(-1.735deg); }
+  24.5% { transform: rotate(-1.747deg); }
+  24.75% { transform: rotate(-1.761deg); }
+  25% { transform: rotate(-1.776deg); }
+  25.25% { transform: rotate(-1.794deg); }
+  25.5% { transform: rotate(-1.813deg); }
+  25.75% { transform: rotate(-1.835deg); }
+  26% { transform: rotate(-1.858deg); }
+  26.25% { transform: rotate(-1.884deg); }
+  26.5% { transform: rotate(-1.911deg); }
+  26.75% { transform: rotate(-1.939deg); }
+  27% { transform: rotate(-1.97deg); }
+  27.25% { transform: rotate(-2.001deg); }
+  27.5% { transform: rotate(-2.034deg); }
+  27.75% { transform: rotate(-2.068deg); }
+  28% { transform: rotate(-2.102deg); }
+  28.25% { transform: rotate(-2.138deg); }
+  28.5% { transform: rotate(-2.174deg); }
+  28.75% { transform: rotate(-2.21deg); }
+  29% { transform: rotate(-2.247deg); }
+  29.25% { transform: rotate(-2.284deg); }
+  29.5% { transform: rotate(-2.32deg); }
+  29.75% { transform: rotate(-2.356deg); }
+  30% { transform: rotate(-2.391deg); }
+  30.25% { transform: rotate(-2.426deg); }
+  30.5% { transform: rotate(-2.46deg); }
+  30.75% { transform: rotate(-2.493deg); }
+  31% { transform: rotate(-2.524deg); }
+  31.25% { transform: rotate(-2.554deg); }
+  31.5% { transform: rotate(-2.583deg); }
+  31.75% { transform: rotate(-2.61deg); }
+  32% { transform: rotate(-2.635deg); }
+  32.25% { transform: rotate(-2.659deg); }
+  32.5% { transform: rotate(-2.681deg); }
+  32.75% { transform: rotate(-2.7deg); }
+  33% { transform: rotate(-2.718deg); }
+  33.25% { transform: rotate(-2.733deg); }
+  33.5% { transform: rotate(-2.747deg); }
+  33.75% { transform: rotate(-2.759deg); }
+  34% { transform: rotate(-2.768deg); }
+  34.25% { transform: rotate(-2.776deg); }
+  34.5% { transform: rotate(-2.782deg); }
+  34.75% { transform: rotate(-2.787deg); }
+  35% { transform: rotate(-2.79deg); }
+  35.25% { transform: rotate(-2.792deg); }
+  35.5% { transform: rotate(-2.793deg); }
+  35.75% { transform: rotate(-2.794deg); }
+  36% { transform: rotate(-2.794deg); }
+  36.25% { transform: rotate(-2.794deg); }
+  36.5% { transform: rotate(-2.793deg); }
+  36.75% { transform: rotate(-2.79deg); }
+  37% { transform: rotate(-2.787deg); }
+  37.25% { transform: rotate(-2.783deg); }
+  37.5% { transform: rotate(-2.778deg); }
+  37.75% { transform: rotate(-2.773deg); }
+  38% { transform: rotate(-2.769deg); }
+  38.25% { transform: rotate(-2.765deg); }
+  38.5% { transform: rotate(-2.763deg); }
+  38.75% { transform: rotate(-2.762deg); }
+  39% { transform: rotate(-2.762deg); }
+  39.25% { transform: rotate(-2.762deg); }
+  39.5% { transform: rotate(-2.763deg); }
+  39.75% { transform: rotate(-2.764deg); }
+  40% { transform: rotate(-2.765deg); }
+  40.25% { transform: rotate(-2.768deg); }
+  40.5% { transform: rotate(-2.771deg); }
+  40.75% { transform: rotate(-2.774deg); }
+  41% { transform: rotate(-2.778deg); }
+  41.25% { transform: rotate(-2.782deg); }
+  41.5% { transform: rotate(-2.785deg); }
+  41.75% { transform: rotate(-2.788deg); }
+  42% { transform: rotate(-2.79deg); }
+  42.25% { transform: rotate(-2.792deg); }
+  42.5% { transform: rotate(-2.793deg); }
+  42.75% { transform: rotate(-2.794deg); }
+  43% { transform: rotate(-2.794deg); }
+  43.25% { transform: rotate(-2.794deg); }
+  43.5% { transform: rotate(-2.793deg); }
+  43.75% { transform: rotate(-2.79deg); }
+  44% { transform: rotate(-2.785deg); }
+  44.25% { transform: rotate(-2.778deg); }
+  44.5% { transform: rotate(-2.767deg); }
+  44.75% { transform: rotate(-2.753deg); }
+  45% { transform: rotate(-2.735deg); }
+  45.25% { transform: rotate(-2.712deg); }
+  45.5% { transform: rotate(-2.685deg); }
+  45.75% { transform: rotate(-2.653deg); }
+  46% { transform: rotate(-2.617deg); }
+  46.25% { transform: rotate(-2.576deg); }
+  46.5% { transform: rotate(-2.531deg); }
+  46.75% { transform: rotate(-2.481deg); }
+  47% { transform: rotate(-2.426deg); }
+  47.25% { transform: rotate(-2.367deg); }
+  47.5% { transform: rotate(-2.304deg); }
+  47.75% { transform: rotate(-2.238deg); }
+  48% { transform: rotate(-2.168deg); }
+  48.25% { transform: rotate(-2.094deg); }
+  48.5% { transform: rotate(-2.018deg); }
+  48.75% { transform: rotate(-1.94deg); }
+  49% { transform: rotate(-1.859deg); }
+  49.25% { transform: rotate(-1.776deg); }
+  49.5% { transform: rotate(-1.693deg); }
+  49.75% { transform: rotate(-1.608deg); }
+  50% { transform: rotate(-1.523deg); }
+  50.25% { transform: rotate(-1.438deg); }
+  50.5% { transform: rotate(-1.353deg); }
+  50.75% { transform: rotate(-1.27deg); }
+  51% { transform: rotate(-1.187deg); }
+  51.25% { transform: rotate(-1.107deg); }
+  51.5% { transform: rotate(-1.028deg); }
+  51.75% { transform: rotate(-0.952deg); }
+  52% { transform: rotate(-0.878deg); }
+  52.25% { transform: rotate(-0.808deg); }
+  52.5% { transform: rotate(-0.742deg); }
+  52.75% { transform: rotate(-0.679deg); }
+  53% { transform: rotate(-0.62deg); }
+  53.25% { transform: rotate(-0.566deg); }
+  53.5% { transform: rotate(-0.515deg); }
+  53.75% { transform: rotate(-0.47deg); }
+  54% { transform: rotate(-0.429deg); }
+  54.25% { transform: rotate(-0.393deg); }
+  54.5% { transform: rotate(-0.361deg); }
+  54.75% { transform: rotate(-0.334deg); }
+  55% { transform: rotate(-0.312deg); }
+  55.25% { transform: rotate(-0.293deg); }
+  55.5% { transform: rotate(-0.279deg); }
+  55.75% { transform: rotate(-0.268deg); }
+  56% { transform: rotate(-0.261deg); }
+  56.25% { transform: rotate(-0.256deg); }
+  56.5% { transform: rotate(-0.253deg); }
+  56.75% { transform: rotate(-0.253deg); }
+  57% { transform: rotate(-0.252deg); }
+  57.25% { transform: rotate(-0.252deg); }
+  57.5% { transform: rotate(-0.251deg); }
+  57.75% { transform: rotate(-0.249deg); }
+  58% { transform: rotate(-0.246deg); }
+  58.25% { transform: rotate(-0.241deg); }
+  58.5% { transform: rotate(-0.237deg); }
+  58.75% { transform: rotate(-0.232deg); }
+  59% { transform: rotate(-0.228deg); }
+  59.25% { transform: rotate(-0.224deg); }
+  59.5% { transform: rotate(-0.222deg); }
+  59.75% { transform: rotate(-0.221deg); }
+  60% { transform: rotate(-0.221deg); }
+  60.25% { transform: rotate(-0.221deg); }
+  60.5% { transform: rotate(-0.221deg); }
+  60.75% { transform: rotate(-0.222deg); }
+  61% { transform: rotate(-0.224deg); }
+  61.25% { transform: rotate(-0.227deg); }
+  61.5% { transform: rotate(-0.23deg); }
+  61.75% { transform: rotate(-0.233deg); }
+  62% { transform: rotate(-0.237deg); }
+  62.25% { transform: rotate(-0.24deg); }
+  62.5% { transform: rotate(-0.244deg); }
+  62.75% { transform: rotate(-0.247deg); }
+  63% { transform: rotate(-0.249deg); }
+  63.25% { transform: rotate(-0.251deg); }
+  63.5% { transform: rotate(-0.252deg); }
+  63.75% { transform: rotate(-0.252deg); }
+  64% { transform: rotate(-0.252deg); }
+  64.25% { transform: rotate(-0.252deg); }
+  64.5% { transform: rotate(-0.252deg); }
+  64.75% { transform: rotate(-0.252deg); }
+  65% { transform: rotate(-0.252deg); }
+  65.25% { transform: rotate(-0.252deg); }
+  65.5% { transform: rotate(-0.251deg); }
+  65.75% { transform: rotate(-0.25deg); }
+  66% { transform: rotate(-0.249deg); }
+  66.25% { transform: rotate(-0.248deg); }
+  66.5% { transform: rotate(-0.247deg); }
+  66.75% { transform: rotate(-0.245deg); }
+  67% { transform: rotate(-0.243deg); }
+  67.25% { transform: rotate(-0.241deg); }
+  67.5% { transform: rotate(-0.239deg); }
+  67.75% { transform: rotate(-0.236deg); }
+  68% { transform: rotate(-0.233deg); }
+  68.25% { transform: rotate(-0.23deg); }
+  68.5% { transform: rotate(-0.226deg); }
+  68.75% { transform: rotate(-0.222deg); }
+  69% { transform: rotate(-0.218deg); }
+  69.25% { transform: rotate(-0.214deg); }
+  69.5% { transform: rotate(-0.209deg); }
+  69.75% { transform: rotate(-0.204deg); }
+  70% { transform: rotate(-0.199deg); }
+  70.25% { transform: rotate(-0.194deg); }
+  70.5% { transform: rotate(-0.189deg); }
+  70.75% { transform: rotate(-0.183deg); }
+  71% { transform: rotate(-0.177deg); }
+  71.25% { transform: rotate(-0.171deg); }
+  71.5% { transform: rotate(-0.165deg); }
+  71.75% { transform: rotate(-0.159deg); }
+  72% { transform: rotate(-0.152deg); }
+  72.25% { transform: rotate(-0.146deg); }
+  72.5% { transform: rotate(-0.139deg); }
+  72.75% { transform: rotate(-0.133deg); }
+  73% { transform: rotate(-0.126deg); }
+  73.25% { transform: rotate(-0.12deg); }
+  73.5% { transform: rotate(-0.113deg); }
+  73.75% { transform: rotate(-0.107deg); }
+  74% { transform: rotate(-0.1deg); }
+  74.25% { transform: rotate(-0.094deg); }
+  74.5% { transform: rotate(-0.087deg); }
+  74.75% { transform: rotate(-0.081deg); }
+  75% { transform: rotate(-0.075deg); }
+  75.25% { transform: rotate(-0.069deg); }
+  75.5% { transform: rotate(-0.064deg); }
+  75.75% { transform: rotate(-0.058deg); }
+  76% { transform: rotate(-0.053deg); }
+  76.25% { transform: rotate(-0.048deg); }
+  76.5% { transform: rotate(-0.043deg); }
+  76.75% { transform: rotate(-0.038deg); }
+  77% { transform: rotate(-0.034deg); }
+  77.25% { transform: rotate(-0.03deg); }
+  77.5% { transform: rotate(-0.026deg); }
+  77.75% { transform: rotate(-0.023deg); }
+  78% { transform: rotate(-0.019deg); }
+  78.25% { transform: rotate(-0.016deg); }
+  78.5% { transform: rotate(-0.014deg); }
+  78.75% { transform: rotate(-0.011deg); }
+  79% { transform: rotate(-0.009deg); }
+  79.25% { transform: rotate(-0.007deg); }
+  79.5% { transform: rotate(-0.005deg); }
+  79.75% { transform: rotate(-0.004deg); }
+  80% { transform: rotate(-0.003deg); }
+  80.25% { transform: rotate(-0.002deg); }
+  80.5% { transform: rotate(-0.001deg); }
+  80.75% { transform: rotate(-0.001deg); }
+  81% { transform: rotate(0deg); }
+  81.25% { transform: rotate(0deg); }
+  81.5% { transform: rotate(0deg); }
+  81.75% { transform: rotate(0deg); }
+  82%, 100% { transform: rotate(0deg); }
+}
+@keyframes coding-tap {
+  0% { transform: translate(0px, 0px); }
+  0.25% { transform: translate(-0.003px, -0.006px); }
+  0.5% { transform: translate(-0.02px, -0.048px); }
+  0.75% { transform: translate(-0.065px, -0.156px); }
+  1% { transform: translate(-0.15px, -0.361px); }
+  1.25% { transform: translate(-0.285px, -0.687px); }
+  1.5% { transform: translate(-0.479px, -1.156px); }
+  1.75% { transform: translate(-0.741px, -1.786px); }
+  2% { transform: translate(-1.076px, -2.594px); }
+  2.25% { transform: translate(-1.49px, -3.593px); }
+  2.5% { transform: translate(-1.988px, -4.792px); }
+  2.75% { transform: translate(-2.571px, -6.199px); }
+  3% { transform: translate(-3.244px, -7.819px); }
+  3.25% { transform: translate(-4.005px, -9.655px); }
+  3.5% { transform: translate(-4.857px, -11.708px); }
+  3.75% { transform: translate(-5.797px, -13.975px); }
+  4% { transform: translate(-6.825px, -16.452px); }
+  4.25% { transform: translate(-7.938px, -19.135px); }
+  4.5% { transform: translate(-9.132px, -22.016px); }
+  4.75% { transform: translate(-10.406px, -25.085px); }
+  5% { transform: translate(-11.753px, -28.333px); }
+  5.25% { transform: translate(-13.169px, -31.748px); }
+  5.5% { transform: translate(-14.65px, -35.316px); }
+  5.75% { transform: translate(-16.187px, -39.023px); }
+  6% { transform: translate(-17.777px, -42.854px); }
+  6.25% { transform: translate(-19.411px, -46.794px); }
+  6.5% { transform: translate(-21.083px, -50.824px); }
+  6.75% { transform: translate(-22.785px, -54.928px); }
+  7% { transform: translate(-24.51px, -59.087px); }
+  7.25% { transform: translate(-26.251px, -63.284px); }
+  7.5% { transform: translate(-28px, -67.5px); }
+  7.75% { transform: translate(-29.749px, -71.716px); }
+  8% { transform: translate(-31.49px, -75.913px); }
+  8.25% { transform: translate(-33.215px, -80.072px); }
+  8.5% { transform: translate(-34.917px, -84.176px); }
+  8.75% { transform: translate(-36.589px, -88.206px); }
+  9% { transform: translate(-38.223px, -92.146px); }
+  9.25% { transform: translate(-39.813px, -95.977px); }
+  9.5% { transform: translate(-41.35px, -99.684px); }
+  9.75% { transform: translate(-42.831px, -103.252px); }
+  10% { transform: translate(-44.247px, -106.667px); }
+  10.25% { transform: translate(-45.594px, -109.915px); }
+  10.5% { transform: translate(-46.868px, -112.984px); }
+  10.75% { transform: translate(-48.062px, -115.865px); }
+  11% { transform: translate(-49.175px, -118.548px); }
+  11.25% { transform: translate(-50.203px, -121.025px); }
+  11.5% { transform: translate(-51.143px, -123.292px); }
+  11.75% { transform: translate(-51.995px, -125.345px); }
+  12% { transform: translate(-52.756px, -127.181px); }
+  12.25% { transform: translate(-53.429px, -128.801px); }
+  12.5% { transform: translate(-54.012px, -130.208px); }
+  12.75% { transform: translate(-54.51px, -131.407px); }
+  13% { transform: translate(-54.924px, -132.406px); }
+  13.25% { transform: translate(-55.259px, -133.214px); }
+  13.5% { transform: translate(-55.521px, -133.844px); }
+  13.75% { transform: translate(-55.715px, -134.313px); }
+  14% { transform: translate(-55.85px, -134.639px); }
+  14.25% { transform: translate(-55.935px, -134.844px); }
+  14.5% { transform: translate(-55.98px, -134.952px); }
+  14.75% { transform: translate(-55.997px, -134.994px); }
+  15% { transform: translate(-56px, -135px); }
+  15.25% { transform: translate(-56px, -134.959px); }
+  15.5% { transform: translate(-56px, -134.716px); }
+  15.75% { transform: translate(-56px, -134.172px); }
+  16% { transform: translate(-56px, -133.321px); }
+  16.25% { transform: translate(-56px, -132.227px); }
+  16.5% { transform: translate(-56px, -131px); }
+  16.75% { transform: translate(-56px, -129.773px); }
+  17% { transform: translate(-56px, -128.679px); }
+  17.25% { transform: translate(-56px, -127.828px); }
+  17.5% { transform: translate(-56px, -127.284px); }
+  17.75% { transform: translate(-56px, -127.041px); }
+  18% { transform: translate(-56px, -127px); }
+  18.25% { transform: translate(-56px, -127.018px); }
+  18.5% { transform: translate(-56px, -127.128px); }
+  18.75% { transform: translate(-56px, -127.39px); }
+  19% { transform: translate(-56px, -127.828px); }
+  19.25% { transform: translate(-56px, -128.44px); }
+  19.5% { transform: translate(-56px, -129.202px); }
+  19.75% { transform: translate(-56px, -130.072px); }
+  20% { transform: translate(-56px, -131px); }
+  20.25% { transform: translate(-56px, -131.928px); }
+  20.5% { transform: translate(-56px, -132.798px); }
+  20.75% { transform: translate(-56px, -133.56px); }
+  21% { transform: translate(-56px, -134.172px); }
+  21.25% { transform: translate(-56px, -134.61px); }
+  21.5% { transform: translate(-56px, -134.872px); }
+  21.75% { transform: translate(-56px, -134.982px); }
+  22% { transform: translate(-56px, -135px); }
+  22.25% { transform: translate(-56.003px, -134.998px); }
+  22.5% { transform: translate(-56.025px, -134.985px); }
+  22.75% { transform: translate(-56.084px, -134.95px); }
+  23% { transform: translate(-56.193px, -134.886px); }
+  23.25% { transform: translate(-56.366px, -134.783px); }
+  23.5% { transform: translate(-56.614px, -134.636px); }
+  23.75% { transform: translate(-56.947px, -134.438px); }
+  24% { transform: translate(-57.373px, -134.186px); }
+  24.25% { transform: translate(-57.897px, -133.875px); }
+  24.5% { transform: translate(-58.524px, -133.503px); }
+  24.75% { transform: translate(-59.258px, -133.068px); }
+  25% { transform: translate(-60.099px, -132.568px); }
+  25.25% { transform: translate(-61.05px, -132.005px); }
+  25.5% { transform: translate(-62.107px, -131.377px); }
+  25.75% { transform: translate(-63.271px, -130.687px); }
+  26% { transform: translate(-64.537px, -129.935px); }
+  26.25% { transform: translate(-65.902px, -129.126px); }
+  26.5% { transform: translate(-67.361px, -128.26px); }
+  26.75% { transform: translate(-68.908px, -127.343px); }
+  27% { transform: translate(-70.535px, -126.377px); }
+  27.25% { transform: translate(-72.237px, -125.368px); }
+  27.5% { transform: translate(-74.005px, -124.319px); }
+  27.75% { transform: translate(-75.831px, -123.236px); }
+  28% { transform: translate(-77.705px, -122.124px); }
+  28.25% { transform: translate(-79.619px, -120.989px); }
+  28.5% { transform: translate(-81.563px, -119.836px); }
+  28.75% { transform: translate(-83.526px, -118.671px); }
+  29% { transform: translate(-85.5px, -117.5px); }
+  29.25% { transform: translate(-87.474px, -116.329px); }
+  29.5% { transform: translate(-89.437px, -115.164px); }
+  29.75% { transform: translate(-91.381px, -114.011px); }
+  30% { transform: translate(-93.295px, -112.876px); }
+  30.25% { transform: translate(-95.169px, -111.764px); }
+  30.5% { transform: translate(-96.995px, -110.681px); }
+  30.75% { transform: translate(-98.763px, -109.632px); }
+  31% { transform: translate(-100.465px, -108.623px); }
+  31.25% { transform: translate(-102.092px, -107.657px); }
+  31.5% { transform: translate(-103.639px, -106.74px); }
+  31.75% { transform: translate(-105.098px, -105.874px); }
+  32% { transform: translate(-106.463px, -105.065px); }
+  32.25% { transform: translate(-107.729px, -104.313px); }
+  32.5% { transform: translate(-108.893px, -103.623px); }
+  32.75% { transform: translate(-109.95px, -102.995px); }
+  33% { transform: translate(-110.901px, -102.432px); }
+  33.25% { transform: translate(-111.742px, -101.932px); }
+  33.5% { transform: translate(-112.476px, -101.497px); }
+  33.75% { transform: translate(-113.103px, -101.125px); }
+  34% { transform: translate(-113.627px, -100.814px); }
+  34.25% { transform: translate(-114.053px, -100.562px); }
+  34.5% { transform: translate(-114.386px, -100.364px); }
+  34.75% { transform: translate(-114.634px, -100.217px); }
+  35% { transform: translate(-114.807px, -100.114px); }
+  35.25% { transform: translate(-114.916px, -100.05px); }
+  35.5% { transform: translate(-114.975px, -100.015px); }
+  35.75% { transform: translate(-114.997px, -100.002px); }
+  36% { transform: translate(-115px, -100px); }
+  36.25% { transform: translate(-115px, -99.959px); }
+  36.5% { transform: translate(-115px, -99.716px); }
+  36.75% { transform: translate(-115px, -99.172px); }
+  37% { transform: translate(-115px, -98.321px); }
+  37.25% { transform: translate(-115px, -97.227px); }
+  37.5% { transform: translate(-115px, -96px); }
+  37.75% { transform: translate(-115px, -94.773px); }
+  38% { transform: translate(-115px, -93.679px); }
+  38.25% { transform: translate(-115px, -92.828px); }
+  38.5% { transform: translate(-115px, -92.284px); }
+  38.75% { transform: translate(-115px, -92.041px); }
+  39% { transform: translate(-115px, -92px); }
+  39.25% { transform: translate(-115px, -92.018px); }
+  39.5% { transform: translate(-115px, -92.128px); }
+  39.75% { transform: translate(-115px, -92.39px); }
+  40% { transform: translate(-115px, -92.828px); }
+  40.25% { transform: translate(-115px, -93.44px); }
+  40.5% { transform: translate(-115px, -94.202px); }
+  40.75% { transform: translate(-115px, -95.072px); }
+  41% { transform: translate(-115px, -96px); }
+  41.25% { transform: translate(-115px, -96.928px); }
+  41.5% { transform: translate(-115px, -97.798px); }
+  41.75% { transform: translate(-115px, -98.56px); }
+  42% { transform: translate(-115px, -99.172px); }
+  42.25% { transform: translate(-115px, -99.61px); }
+  42.5% { transform: translate(-115px, -99.872px); }
+  42.75% { transform: translate(-115px, -99.982px); }
+  43% { transform: translate(-115px, -100px); }
+  43.25% { transform: translate(-114.994px, -99.996px); }
+  43.5% { transform: translate(-114.953px, -99.969px); }
+  43.75% { transform: translate(-114.847px, -99.897px); }
+  44% { transform: translate(-114.647px, -99.762px); }
+  44.25% { transform: translate(-114.331px, -99.548px); }
+  44.5% { transform: translate(-113.876px, -99.24px); }
+  44.75% { transform: translate(-113.266px, -98.828px); }
+  45% { transform: translate(-112.487px, -98.302px); }
+  45.25% { transform: translate(-111.528px, -97.653px); }
+  45.5% { transform: translate(-110.38px, -96.877px); }
+  45.75% { transform: translate(-109.037px, -95.969px); }
+  46% { transform: translate(-107.496px, -94.928px); }
+  46.25% { transform: translate(-105.757px, -93.752px); }
+  46.5% { transform: translate(-103.82px, -92.443px); }
+  46.75% { transform: translate(-101.69px, -91.004px); }
+  47% { transform: translate(-99.372px, -89.437px); }
+  47.25% { transform: translate(-96.874px, -87.748px); }
+  47.5% { transform: translate(-94.203px, -85.943px); }
+  47.75% { transform: translate(-91.373px, -84.03px); }
+  48% { transform: translate(-88.393px, -82.015px); }
+  48.25% { transform: translate(-85.278px, -79.91px); }
+  48.5% { transform: translate(-82.041px, -77.722px); }
+  48.75% { transform: translate(-78.7px, -75.464px); }
+  49% { transform: translate(-75.269px, -73.145px); }
+  49.25% { transform: translate(-71.765px, -70.777px); }
+  49.5% { transform: translate(-68.208px, -68.372px); }
+  49.75% { transform: translate(-64.613px, -65.942px); }
+  50% { transform: translate(-61px, -63.5px); }
+  50.25% { transform: translate(-57.387px, -61.058px); }
+  50.5% { transform: translate(-53.792px, -58.628px); }
+  50.75% { transform: translate(-50.235px, -56.223px); }
+  51% { transform: translate(-46.731px, -53.855px); }
+  51.25% { transform: translate(-43.3px, -51.536px); }
+  51.5% { transform: translate(-39.959px, -49.278px); }
+  51.75% { transform: translate(-36.722px, -47.09px); }
+  52% { transform: translate(-33.607px, -44.985px); }
+  52.25% { transform: translate(-30.627px, -42.97px); }
+  52.5% { transform: translate(-27.797px, -41.057px); }
+  52.75% { transform: translate(-25.126px, -39.252px); }
+  53% { transform: translate(-22.628px, -37.563px); }
+  53.25% { transform: translate(-20.31px, -35.996px); }
+  53.5% { transform: translate(-18.18px, -34.557px); }
+  53.75% { transform: translate(-16.243px, -33.248px); }
+  54% { transform: translate(-14.504px, -32.072px); }
+  54.25% { transform: translate(-12.963px, -31.031px); }
+  54.5% { transform: translate(-11.62px, -30.123px); }
+  54.75% { transform: translate(-10.472px, -29.347px); }
+  55% { transform: translate(-9.513px, -28.698px); }
+  55.25% { transform: translate(-8.734px, -28.172px); }
+  55.5% { transform: translate(-8.124px, -27.76px); }
+  55.75% { transform: translate(-7.669px, -27.452px); }
+  56% { transform: translate(-7.353px, -27.238px); }
+  56.25% { transform: translate(-7.153px, -27.103px); }
+  56.5% { transform: translate(-7.047px, -27.031px); }
+  56.75% { transform: translate(-7.006px, -27.004px); }
+  57% { transform: translate(-7px, -27px); }
+  57.25% { transform: translate(-7px, -26.959px); }
+  57.5% { transform: translate(-7px, -26.716px); }
+  57.75% { transform: translate(-7px, -26.172px); }
+  58% { transform: translate(-7px, -25.321px); }
+  58.25% { transform: translate(-7px, -24.227px); }
+  58.5% { transform: translate(-7px, -23px); }
+  58.75% { transform: translate(-7px, -21.773px); }
+  59% { transform: translate(-7px, -20.679px); }
+  59.25% { transform: translate(-7px, -19.828px); }
+  59.5% { transform: translate(-7px, -19.284px); }
+  59.75% { transform: translate(-7px, -19.041px); }
+  60% { transform: translate(-7px, -19px); }
+  60.25% { transform: translate(-7px, -19.018px); }
+  60.5% { transform: translate(-7px, -19.128px); }
+  60.75% { transform: translate(-7px, -19.39px); }
+  61% { transform: translate(-7px, -19.828px); }
+  61.25% { transform: translate(-7px, -20.44px); }
+  61.5% { transform: translate(-7px, -21.202px); }
+  61.75% { transform: translate(-7px, -22.072px); }
+  62% { transform: translate(-7px, -23px); }
+  62.25% { transform: translate(-7px, -23.928px); }
+  62.5% { transform: translate(-7px, -24.798px); }
+  62.75% { transform: translate(-7px, -25.56px); }
+  63% { transform: translate(-7px, -26.172px); }
+  63.25% { transform: translate(-7px, -26.61px); }
+  63.5% { transform: translate(-7px, -26.872px); }
+  63.75% { transform: translate(-7px, -26.982px); }
+  64% { transform: translate(-7px, -27px); }
+  64.25% { transform: translate(-7px, -26.999px); }
+  64.5% { transform: translate(-6.999px, -26.994px); }
+  64.75% { transform: translate(-6.995px, -26.982px); }
+  65% { transform: translate(-6.989px, -26.957px); }
+  65.25% { transform: translate(-6.979px, -26.919px); }
+  65.5% { transform: translate(-6.964px, -26.863px); }
+  65.75% { transform: translate(-6.945px, -26.787px); }
+  66% { transform: translate(-6.919px, -26.689px); }
+  66.25% { transform: translate(-6.888px, -26.567px); }
+  66.5% { transform: translate(-6.849px, -26.419px); }
+  66.75% { transform: translate(-6.804px, -26.244px); }
+  67% { transform: translate(-6.752px, -26.042px); }
+  67.25% { transform: translate(-6.692px, -25.81px); }
+  67.5% { transform: translate(-6.624px, -25.549px); }
+  67.75% { transform: translate(-6.548px, -25.258px); }
+  68% { transform: translate(-6.465px, -24.937px); }
+  68.25% { transform: translate(-6.374px, -24.586px); }
+  68.5% { transform: translate(-6.275px, -24.205px); }
+  68.75% { transform: translate(-6.169px, -23.795px); }
+  69% { transform: translate(-6.055px, -23.356px); }
+  69.25% { transform: translate(-5.934px, -22.89px); }
+  69.5% { transform: translate(-5.806px, -22.396px); }
+  69.75% { transform: translate(-5.672px, -21.877px); }
+  70% { transform: translate(-5.531px, -21.333px); }
+  70.25% { transform: translate(-5.384px, -20.766px); }
+  70.5% { transform: translate(-5.231px, -20.178px); }
+  70.75% { transform: translate(-5.074px, -19.569px); }
+  71% { transform: translate(-4.911px, -18.943px); }
+  71.25% { transform: translate(-4.744px, -18.299px); }
+  71.5% { transform: translate(-4.574px, -17.641px); }
+  71.75% { transform: translate(-4.4px, -16.971px); }
+  72% { transform: translate(-4.223px, -16.289px); }
+  72.25% { transform: translate(-4.044px, -15.6px); }
+  72.5% { transform: translate(-3.864px, -14.903px); }
+  72.75% { transform: translate(-3.682px, -14.203px); }
+  73% { transform: translate(-3.5px, -13.5px); }
+  73.25% { transform: translate(-3.318px, -12.797px); }
+  73.5% { transform: translate(-3.136px, -12.097px); }
+  73.75% { transform: translate(-2.956px, -11.4px); }
+  74% { transform: translate(-2.777px, -10.711px); }
+  74.25% { transform: translate(-2.6px, -10.029px); }
+  74.5% { transform: translate(-2.426px, -9.359px); }
+  74.75% { transform: translate(-2.256px, -8.701px); }
+  75% { transform: translate(-2.089px, -8.057px); }
+  75.25% { transform: translate(-1.926px, -7.431px); }
+  75.5% { transform: translate(-1.769px, -6.822px); }
+  75.75% { transform: translate(-1.616px, -6.234px); }
+  76% { transform: translate(-1.469px, -5.667px); }
+  76.25% { transform: translate(-1.328px, -5.123px); }
+  76.5% { transform: translate(-1.194px, -4.604px); }
+  76.75% { transform: translate(-1.066px, -4.11px); }
+  77% { transform: translate(-0.945px, -3.644px); }
+  77.25% { transform: translate(-0.831px, -3.205px); }
+  77.5% { transform: translate(-0.725px, -2.795px); }
+  77.75% { transform: translate(-0.626px, -2.414px); }
+  78% { transform: translate(-0.535px, -2.063px); }
+  78.25% { transform: translate(-0.452px, -1.742px); }
+  78.5% { transform: translate(-0.376px, -1.451px); }
+  78.75% { transform: translate(-0.308px, -1.19px); }
+  79% { transform: translate(-0.248px, -0.958px); }
+  79.25% { transform: translate(-0.196px, -0.756px); }
+  79.5% { transform: translate(-0.151px, -0.581px); }
+  79.75% { transform: translate(-0.112px, -0.433px); }
+  80% { transform: translate(-0.081px, -0.311px); }
+  80.25% { transform: translate(-0.055px, -0.213px); }
+  80.5% { transform: translate(-0.036px, -0.137px); }
+  80.75% { transform: translate(-0.021px, -0.081px); }
+  81% { transform: translate(-0.011px, -0.043px); }
+  81.25% { transform: translate(-0.005px, -0.018px); }
+  81.5% { transform: translate(-0.001px, -0.006px); }
+  81.75% { transform: translate(0px, -0.001px); }
+  82%, 100% { transform: translate(0px, 0px); }
+}
+@keyframes coding-reach {
+  0% { d: path("M461.06,642.51C433.75,640.63,406.34,636.43,380.82,626.53C355.3,616.63,331.63,600.7,315.58,578.52"); }
+  0.25% { d: path("M461.06,642.51C433.749,640.629,406.339,636.428,380.819,626.527C355.298,616.626,331.628,600.695,315.577,578.514"); }
+  0.5% { d: path("M461.057,642.512C433.744,640.624,406.332,636.415,380.809,626.507C355.286,616.599,331.613,600.661,315.56,578.472"); }
+  0.75% { d: path("M461.051,642.516C433.732,640.609,406.312,636.382,380.783,626.455C355.254,616.528,331.574,600.571,315.515,578.364"); }
+  1% { d: path("M461.04,642.525C433.708,640.582,406.276,636.32,380.735,626.357C355.193,616.394,331.502,600.402,315.43,578.159"); }
+  1.25% { d: path("M461.021,642.539C433.67,640.539,406.219,636.22,380.658,626.201C355.097,616.182,331.386,600.132,315.295,577.833"); }
+  1.5% { d: path("M460.995,642.558C433.616,640.477,406.137,636.077,380.548,625.976C354.959,615.876,331.22,599.745,315.101,577.364"); }
+  1.75% { d: path("M460.959,642.584C433.542,640.394,406.026,635.884,380.399,625.674C354.772,615.464,330.996,599.224,314.839,576.734"); }
+  2% { d: path("M460.913,642.618C433.448,640.287,405.883,635.637,380.209,625.287C354.534,614.937,330.709,598.556,314.504,575.926"); }
+  2.25% { d: path("M460.857,642.659C433.332,640.156,405.708,635.332,379.973,624.808C354.239,614.285,330.354,597.731,314.09,574.927"); }
+  2.5% { d: path("M460.789,642.709C433.193,639.997,405.497,634.966,379.691,624.234C353.885,613.502,329.928,596.74,313.592,573.728"); }
+  2.75% { d: path("M460.709,642.768C433.029,639.812,405.249,634.536,379.359,623.559C353.469,612.583,329.429,595.577,313.009,572.321"); }
+  3% { d: path("M460.618,642.835C432.841,639.598,404.964,634.04,378.977,622.783C352.99,611.526,328.853,594.238,312.336,570.701"); }
+  3.25% { d: path("M460.514,642.912C432.627,639.355,404.641,633.479,378.544,621.903C352.448,610.327,328.201,592.721,311.575,568.865"); }
+  3.5% { d: path("M460.398,642.997C432.389,639.085,404.28,632.852,378.061,620.92C351.842,608.987,327.473,591.025,310.723,566.812"); }
+  3.75% { d: path("M460.27,643.092C432.125,638.786,403.881,632.16,377.527,619.833C351.172,607.507,326.668,589.151,309.783,564.545"); }
+  4% { d: path("M460.13,643.195C431.838,638.459,403.445,631.403,376.943,618.646C350.44,605.89,325.788,587.104,308.755,562.068"); }
+  4.25% { d: path("M459.979,643.307C431.526,638.105,402.973,630.583,376.311,617.361C349.648,604.139,324.835,584.887,307.642,559.385"); }
+  4.5% { d: path("M459.816,643.427C431.191,637.725,402.467,629.703,375.632,615.981C348.797,602.259,323.812,582.506,306.448,556.504"); }
+  4.75% { d: path("M459.643,643.556C430.835,637.321,401.927,628.765,374.909,614.51C347.891,600.255,322.722,579.97,305.174,553.435"); }
+  5% { d: path("M459.46,643.692C430.458,636.893,401.356,627.773,374.143,612.954C346.931,598.135,321.569,577.286,303.827,550.187"); }
+  5.25% { d: path("M459.268,643.835C430.062,636.443,400.755,626.731,373.339,611.318C345.923,595.906,320.357,574.464,302.411,546.772"); }
+  5.5% { d: path("M459.067,643.984C429.647,635.973,400.128,625.641,372.499,609.609C344.869,593.578,319.09,571.516,300.93,543.204"); }
+  5.75% { d: path("M458.858,644.14C429.217,635.485,399.476,624.509,371.625,607.833C343.775,591.158,317.774,568.452,299.393,539.497"); }
+  6% { d: path("M458.643,644.301C428.773,634.98,398.803,623.339,370.723,605.998C342.643,588.657,316.413,565.287,297.803,535.666"); }
+  6.25% { d: path("M458.422,644.467C428.316,634.462,398.111,622.137,369.795,604.112C341.48,586.087,315.015,562.031,296.169,531.726"); }
+  6.5% { d: path("M458.195,644.637C427.849,633.932,397.403,620.907,368.846,602.181C340.29,583.456,313.584,558.701,294.497,527.696"); }
+  6.75% { d: path("M457.965,644.81C427.373,633.392,396.682,619.654,367.88,600.216C339.078,580.778,312.127,555.31,292.795,523.592"); }
+  7% { d: path("M457.732,644.986C426.891,632.845,395.951,618.385,366.901,598.224C337.85,578.064,310.65,551.873,291.07,519.433"); }
+  7.25% { d: path("M457.497,645.163C426.405,632.293,395.214,617.104,365.913,596.214C336.611,575.325,309.16,548.405,289.329,515.236"); }
+  7.5% { d: path("M457.261,645.342C425.917,631.74,394.474,615.818,364.92,594.196C335.367,572.574,307.663,544.922,287.58,511.02"); }
+  7.75% { d: path("M457.025,645.52C425.429,631.186,393.734,614.532,363.928,592.177C334.122,569.823,306.167,541.439,285.831,506.804"); }
+  8% { d: path("M456.79,645.698C424.943,630.635,392.997,613.251,362.94,590.168C332.884,567.084,304.677,537.971,284.09,502.607"); }
+  8.25% { d: path("M456.558,645.875C424.462,630.089,392.267,611.983,361.961,588.177C331.656,564.37,303.2,534.534,282.365,498.448"); }
+  8.5% { d: path("M456.328,646.05C423.987,629.55,391.546,610.731,360.995,586.212C330.444,561.693,301.744,531.143,280.663,494.344"); }
+  8.75% { d: path("M456.104,646.221C423.521,629.022,390.839,609.502,360.047,584.283C329.255,559.063,300.313,527.813,278.991,490.314"); }
+  9% { d: path("M455.884,646.389C423.066,628.505,390.148,608.301,359.12,582.397C328.092,556.493,298.915,524.559,277.357,486.374"); }
+  9.25% { d: path("M455.67,646.553C422.623,628.003,389.476,607.133,358.219,580.563C326.962,553.993,297.555,521.393,275.767,482.543"); }
+  9.5% { d: path("M455.464,646.711C422.195,627.517,388.826,606.003,357.347,578.789C325.868,551.574,296.239,518.33,274.23,478.836"); }
+  9.75% { d: path("M455.265,646.864C421.783,627.05,388.2,604.915,356.507,577.081C324.815,549.247,294.972,515.382,272.749,475.268"); }
+  10% { d: path("M455.075,647.01C421.388,626.602,387.601,603.875,355.704,575.447C323.807,547.019,293.76,512.561,271.333,471.853"); }
+  10.25% { d: path("M454.895,647.149C421.013,626.177,387.032,602.885,354.94,573.892C322.849,544.9,292.607,509.878,269.986,468.605"); }
+  10.5% { d: path("M454.724,647.281C420.659,625.775,386.494,601.949,354.218,572.423C321.943,542.898,291.518,507.342,268.712,465.536"); }
+  10.75% { d: path("M454.564,647.405C420.326,625.398,385.989,601.072,353.541,571.045C321.093,541.018,290.495,504.962,267.518,462.655"); }
+  11% { d: path("M454.415,647.52C420.017,625.047,385.518,600.254,352.91,569.761C320.302,539.268,289.543,502.745,266.405,459.972"); }
+  11.25% { d: path("M454.278,647.627C419.731,624.723,385.084,599.499,352.327,568.576C319.571,537.652,288.664,500.698,265.377,457.495"); }
+  11.5% { d: path("M454.152,647.724C419.47,624.427,384.687,598.809,351.794,567.491C318.902,536.173,287.859,498.825,264.437,455.228"); }
+  11.75% { d: path("M454.038,647.813C419.233,624.158,384.327,598.184,351.312,566.509C318.296,534.834,287.131,497.13,263.585,453.175"); }
+  12% { d: path("M453.937,647.892C419.021,623.918,384.006,597.624,350.88,565.63C317.755,533.637,286.479,495.613,262.824,451.339"); }
+  12.25% { d: path("M453.847,647.962C418.834,623.706,383.722,597.131,350.499,564.855C317.277,532.58,285.904,494.274,262.151,449.719"); }
+  12.5% { d: path("M453.769,648.022C418.672,623.522,383.475,596.702,350.168,564.182C316.861,531.662,285.405,493.112,261.568,448.312"); }
+  12.75% { d: path("M453.702,648.074C418.534,623.365,383.265,596.337,349.886,563.608C316.508,530.88,284.979,492.121,261.07,447.113"); }
+  13% { d: path("M453.647,648.117C418.419,623.235,383.09,596.033,349.652,563.131C316.213,530.228,284.625,491.296,260.656,446.114"); }
+  13.25% { d: path("M453.602,648.152C418.325,623.129,382.949,595.787,349.462,562.744C315.975,529.701,284.338,490.629,260.321,445.306"); }
+  13.5% { d: path("M453.568,648.179C418.253,623.047,382.838,595.595,349.313,562.442C315.789,529.29,284.114,490.108,260.059,444.676"); }
+  13.75% { d: path("M453.542,648.199C418.199,622.986,382.756,595.452,349.203,562.218C315.65,528.984,283.948,489.721,259.865,444.207"); }
+  14% { d: path("M453.524,648.214C418.161,622.943,382.699,595.353,349.127,562.062C315.554,528.772,283.832,489.451,259.73,443.881"); }
+  14.25% { d: path("M453.512,648.222C418.138,622.916,382.663,595.29,349.079,561.964C315.494,528.638,283.759,489.282,259.645,443.676"); }
+  14.5% { d: path("M453.506,648.227C418.125,622.902,382.644,595.257,349.053,561.912C315.462,528.567,283.721,489.192,259.6,443.568"); }
+  14.75% { d: path("M453.504,648.229C418.12,622.897,382.637,595.245,349.043,561.892C315.45,528.54,283.706,489.158,259.583,443.526"); }
+  15% { d: path("M453.504,648.229C418.12,622.896,382.636,595.243,349.042,561.89C315.448,528.536,283.704,489.153,259.58,443.52"); }
+  15.25% { d: path("M453.504,648.229C418.12,622.902,382.636,595.256,349.042,561.91C315.448,528.563,283.704,489.187,259.58,443.561"); }
+  15.5% { d: path("M453.508,648.225C418.124,622.94,382.639,595.335,349.044,562.03C315.449,528.724,283.705,489.389,259.58,443.804"); }
+  15.75% { d: path("M453.518,648.218C418.132,623.025,382.645,595.511,349.049,562.298C315.453,529.085,283.706,489.841,259.58,444.348"); }
+  16% { d: path("M453.533,648.206C418.144,623.157,382.655,595.787,349.056,562.718C315.458,529.648,283.709,490.549,259.58,445.199"); }
+  16.25% { d: path("M453.552,648.192C418.16,623.327,382.668,596.142,349.066,563.257C315.464,530.373,283.712,491.458,259.58,446.293"); }
+  16.5% { d: path("M453.573,648.175C418.177,623.518,382.682,596.54,349.076,563.863C315.471,531.185,283.715,492.478,259.58,447.52"); }
+  16.75% { d: path("M453.594,648.159C418.195,623.708,382.696,596.938,349.087,564.468C315.478,531.998,283.719,493.497,259.58,448.747"); }
+  17% { d: path("M453.613,648.144C418.211,623.878,382.709,597.293,349.096,565.007C315.484,532.722,283.722,494.406,259.58,449.841"); }
+  17.25% { d: path("M453.628,648.132C418.223,624.011,382.718,597.569,349.104,565.427C315.489,533.285,283.725,495.114,259.58,450.692"); }
+  17.5% { d: path("M453.637,648.125C418.231,624.095,382.725,597.745,349.109,565.696C315.492,533.646,283.726,495.566,259.58,451.236"); }
+  17.75% { d: path("M453.641,648.122C418.234,624.133,382.728,597.824,349.111,565.815C315.494,533.807,283.727,495.768,259.58,451.479"); }
+  18% { d: path("M453.642,648.121C418.235,624.139,382.728,597.837,349.111,565.836C315.494,533.834,283.727,495.802,259.58,451.52"); }
+  18.25% { d: path("M453.642,648.121C418.235,624.137,382.728,597.832,349.111,565.827C315.494,533.822,283.727,495.787,259.58,451.502"); }
+  18.5% { d: path("M453.64,648.123C418.233,624.119,382.727,597.796,349.11,565.772C315.493,533.749,283.727,495.695,259.58,451.392"); }
+  18.75% { d: path("M453.635,648.126C418.229,624.079,382.723,597.711,349.108,565.643C315.492,533.575,283.726,495.478,259.58,451.13"); }
+  19% { d: path("M453.628,648.132C418.223,624.011,382.718,597.569,349.104,565.427C315.489,533.285,283.725,495.114,259.58,450.692"); }
+  19.25% { d: path("M453.617,648.141C418.214,623.915,382.711,597.37,349.099,565.125C315.486,532.88,283.723,494.605,259.58,450.08"); }
+  19.5% { d: path("M453.604,648.151C418.203,623.797,382.703,597.123,349.092,564.75C315.481,532.376,283.721,493.972,259.58,449.318"); }
+  19.75% { d: path("M453.589,648.163C418.191,623.662,382.693,596.841,349.084,564.32C315.476,531.799,283.718,493.249,259.58,448.448"); }
+  20% { d: path("M453.573,648.175C418.177,623.518,382.682,596.54,349.076,563.863C315.471,531.185,283.715,492.478,259.58,447.52"); }
+  20.25% { d: path("M453.557,648.188C418.164,623.373,382.671,596.239,349.068,563.405C315.466,530.571,283.713,491.706,259.58,446.592"); }
+  20.5% { d: path("M453.542,648.199C418.151,623.238,382.661,595.957,349.061,562.976C315.461,529.994,283.71,490.983,259.58,445.722"); }
+  20.75% { d: path("M453.528,648.21C418.14,623.12,382.652,595.71,349.054,562.6C315.456,529.49,283.708,490.35,259.58,444.96"); }
+  21% { d: path("M453.518,648.218C418.132,623.025,382.645,595.511,349.049,562.298C315.453,529.085,283.706,489.841,259.58,444.348"); }
+  21.25% { d: path("M453.51,648.224C418.125,622.957,382.64,595.369,349.045,562.082C315.45,528.795,283.705,489.477,259.58,443.91"); }
+  21.5% { d: path("M453.506,648.227C418.121,622.916,382.637,595.284,349.043,561.953C315.449,528.621,283.704,489.26,259.58,443.648"); }
+  21.75% { d: path("M453.504,648.229C418.12,622.899,382.636,595.249,349.042,561.898C315.448,528.548,283.704,489.168,259.58,443.538"); }
+  22% { d: path("M453.504,648.229C418.12,622.896,382.636,595.243,349.042,561.89C315.448,528.536,283.704,489.153,259.58,443.52"); }
+  22.25% { d: path("M453.503,648.229C418.119,622.896,382.634,595.244,349.04,561.891C315.446,528.538,283.701,489.155,259.577,443.522"); }
+  22.5% { d: path("M453.501,648.231C418.114,622.9,382.626,595.249,349.028,561.898C315.43,528.547,283.682,489.166,259.555,443.535"); }
+  22.75% { d: path("M453.497,648.234C418.1,622.909,382.603,595.263,348.997,561.917C315.39,528.571,283.633,489.195,259.496,443.57"); }
+  23% { d: path("M453.488,648.241C418.074,622.925,382.561,595.289,348.938,561.953C315.314,528.617,283.541,489.25,259.387,443.634"); }
+  23.25% { d: path("M453.474,648.252C418.034,622.951,382.494,595.331,348.844,562.01C315.194,528.689,283.394,489.338,259.214,443.737"); }
+  23.5% { d: path("M453.454,648.268C417.976,622.989,382.398,595.39,348.71,562.091C315.022,528.792,283.184,489.463,258.966,443.884"); }
+  23.75% { d: path("M453.426,648.289C417.898,623.04,382.269,595.47,348.53,562.201C314.791,528.931,282.902,489.631,258.633,444.082"); }
+  24% { d: path("M453.392,648.316C417.798,623.104,382.104,595.572,348.3,562.34C314.496,529.108,282.541,489.846,258.207,444.334"); }
+  24.25% { d: path("M453.349,648.35C417.675,623.184,381.901,595.698,348.016,562.512C314.132,529.327,282.098,490.111,257.683,444.645"); }
+  24.5% { d: path("M453.298,648.39C417.528,623.279,381.657,595.849,347.677,562.718C313.697,529.588,281.566,490.428,257.056,445.017"); }
+  24.75% { d: path("M453.238,648.436C417.356,623.391,381.373,596.025,347.28,562.959C313.188,529.894,280.945,490.798,256.322,445.452"); }
+  25% { d: path("M453.17,648.49C417.158,623.519,381.047,596.227,346.825,563.236C312.604,530.245,280.232,491.223,255.481,445.952"); }
+  25.25% { d: path("M453.093,648.55C416.936,623.663,380.679,596.455,346.312,563.548C311.945,530.64,279.427,491.703,254.53,446.515"); }
+  25.5% { d: path("M453.007,648.618C416.688,623.824,380.269,596.71,345.74,563.895C311.211,531.081,278.532,492.237,253.473,447.143"); }
+  25.75% { d: path("M452.912,648.692C416.415,624.001,379.818,596.989,345.11,564.278C310.403,531.566,277.546,492.825,252.309,447.833"); }
+  26% { d: path("M452.809,648.773C416.118,624.193,379.327,597.293,344.426,564.694C309.525,532.094,276.474,493.464,251.043,448.585"); }
+  26.25% { d: path("M452.698,648.86C415.798,624.401,378.798,597.621,343.688,565.142C308.578,532.663,275.318,494.154,249.678,449.394"); }
+  26.5% { d: path("M452.58,648.953C415.456,624.622,378.233,597.972,342.899,565.621C307.566,533.271,274.082,494.89,248.219,450.26"); }
+  26.75% { d: path("M452.454,649.052C415.094,624.858,377.633,598.344,342.063,566.129C306.493,533.915,272.773,495.671,246.672,451.177"); }
+  27% { d: path("M452.322,649.156C414.712,625.105,377.003,598.735,341.183,566.664C305.364,534.594,271.394,496.493,245.045,452.143"); }
+  27.25% { d: path("M452.184,649.265C414.314,625.364,376.343,599.144,340.263,567.223C304.183,535.303,269.953,497.353,243.343,453.152"); }
+  27.5% { d: path("M452.041,649.378C413.9,625.633,375.659,599.569,339.308,567.804C302.957,536.04,268.456,498.245,241.575,454.201"); }
+  27.75% { d: path("M451.893,649.495C413.472,625.911,374.951,600.008,338.321,568.404C301.69,536.801,266.91,499.167,239.749,455.284"); }
+  28% { d: path("M451.741,649.615C413.033,626.197,374.225,600.459,337.308,569.02C300.39,537.582,265.323,500.114,237.875,456.396"); }
+  28.25% { d: path("M451.586,649.738C412.585,626.488,373.484,600.919,336.273,569.649C299.063,538.38,263.702,501.081,235.961,457.531"); }
+  28.5% { d: path("M451.428,649.863C412.13,626.784,372.731,601.386,335.223,570.288C297.714,539.19,262.056,502.062,234.017,458.684"); }
+  28.75% { d: path("M451.27,649.989C411.67,627.084,371.971,601.859,334.162,570.934C296.352,540.009,260.393,503.054,232.054,459.849"); }
+  29% { d: path("M451.11,650.116C411.208,627.385,371.207,602.334,333.095,571.583C294.983,540.832,258.722,504.051,230.08,461.02"); }
+  29.25% { d: path("M450.95,650.243C410.746,627.686,370.442,602.809,332.028,572.232C293.614,541.655,257.05,505.048,228.106,462.191"); }
+  29.5% { d: path("M450.792,650.369C410.287,627.985,369.682,603.281,330.967,572.877C292.252,542.474,255.387,506.04,226.143,463.356"); }
+  29.75% { d: path("M450.635,650.494C409.832,628.282,368.93,603.749,329.917,573.517C290.904,543.284,253.742,507.021,224.199,464.509"); }
+  30% { d: path("M450.481,650.618C409.385,628.574,368.189,604.21,328.883,574.146C289.577,544.082,252.121,507.988,222.285,465.644"); }
+  30.25% { d: path("M450.329,650.739C408.946,628.86,367.463,604.661,327.87,574.762C288.277,544.864,250.534,508.935,220.411,466.756"); }
+  30.5% { d: path("M450.182,650.857C408.519,629.139,366.757,605.101,326.884,575.363C287.011,545.625,248.988,509.857,218.585,467.839"); }
+  30.75% { d: path("M450.04,650.971C408.106,629.409,366.072,605.527,325.928,575.944C285.785,546.362,247.491,510.75,216.817,468.888"); }
+  31% { d: path("M449.903,651.081C407.708,629.669,365.414,605.937,325.009,576.504C284.605,547.072,246.05,511.61,215.115,469.897"); }
+  31.25% { d: path("M449.772,651.187C407.328,629.918,364.784,606.329,324.13,577.04C283.476,547.751,244.672,512.432,213.488,470.863"); }
+  31.5% { d: path("M449.647,651.287C406.966,630.154,364.185,606.701,323.294,577.549C282.403,548.396,243.362,513.213,211.941,471.78"); }
+  31.75% { d: path("M449.53,651.382C406.625,630.377,363.621,607.053,322.506,578.029C281.392,549.004,242.127,513.95,210.482,472.646"); }
+  32% { d: path("M449.42,651.47C406.306,630.586,363.093,607.382,321.769,578.478C280.445,549.574,240.971,514.64,209.117,473.455"); }
+  32.25% { d: path("M449.318,651.552C406.01,630.78,362.603,607.687,321.085,578.894C279.567,550.102,239.899,515.279,207.851,474.207"); }
+  32.5% { d: path("M449.225,651.628C405.739,630.958,362.152,607.968,320.456,579.277C278.76,550.587,238.914,515.867,206.687,474.897"); }
+  32.75% { d: path("M449.14,651.697C405.491,631.12,361.743,608.223,319.885,579.626C278.026,551.029,238.018,516.402,205.63,475.525"); }
+  33% { d: path("M449.064,651.758C405.269,631.265,361.375,608.452,319.371,579.938C277.367,551.425,237.213,516.882,204.679,476.088"); }
+  33.25% { d: path("M448.996,651.813C405.073,631.394,361.05,608.655,318.917,580.215C276.784,551.776,236.501,517.307,203.838,476.588"); }
+  33.5% { d: path("M448.937,651.861C404.902,631.506,360.766,608.831,318.521,580.457C276.275,552.082,235.879,517.677,203.104,477.023"); }
+  33.75% { d: path("M448.887,651.902C404.755,631.602,360.523,608.983,318.182,580.663C275.84,552.344,235.348,517.994,202.477,477.395"); }
+  34% { d: path("M448.845,651.936C404.633,631.682,360.321,609.109,317.899,580.836C275.477,552.562,234.905,518.259,201.953,477.706"); }
+  34.25% { d: path("M448.81,651.963C404.533,631.747,360.156,609.212,317.669,580.976C275.182,552.74,234.544,518.474,201.527,477.958"); }
+  34.5% { d: path("M448.784,651.985C404.455,631.798,360.027,609.292,317.489,581.085C274.951,552.879,234.262,518.642,201.194,478.156"); }
+  34.75% { d: path("M448.764,652.001C404.397,631.836,359.931,609.352,317.355,581.167C274.778,552.982,234.052,518.768,200.946,478.303"); }
+  35% { d: path("M448.75,652.012C404.357,631.863,359.864,609.394,317.261,581.224C274.658,553.055,233.906,518.855,200.773,478.406"); }
+  35.25% { d: path("M448.741,652.02C404.332,631.88,359.822,609.42,317.202,581.26C274.583,553.1,233.813,518.91,200.664,478.47"); }
+  35.5% { d: path("M448.737,652.023C404.318,631.889,359.8,609.434,317.171,581.279C274.542,553.124,233.764,518.94,200.605,478.505"); }
+  35.75% { d: path("M448.735,652.025C404.313,631.892,359.791,609.439,317.159,581.286C274.527,553.134,233.745,518.951,200.583,478.518"); }
+  36% { d: path("M448.735,652.025C404.312,631.892,359.79,609.44,317.157,581.287C274.525,553.135,233.742,518.952,200.58,478.52"); }
+  36.25% { d: path("M448.735,652.024C404.313,631.899,359.79,609.453,317.158,581.308C274.525,553.162,233.743,518.986,200.58,478.561"); }
+  36.5% { d: path("M448.739,652.021C404.316,631.937,359.793,609.532,317.16,581.427C274.526,553.323,233.743,519.188,200.58,478.804"); }
+  36.75% { d: path("M448.749,652.014C404.324,632.021,359.799,609.708,317.164,581.696C274.53,553.683,233.745,519.641,200.58,479.348"); }
+  37% { d: path("M448.763,652.002C404.336,632.153,359.809,609.984,317.172,582.115C274.534,554.247,233.747,520.348,200.58,480.199"); }
+  37.25% { d: path("M448.782,651.987C404.351,632.323,359.821,610.339,317.181,582.655C274.541,554.971,233.75,521.257,200.58,481.293"); }
+  37.5% { d: path("M448.803,651.97C404.369,632.513,359.835,610.736,317.191,583.26C274.548,555.783,233.754,522.277,200.58,482.52"); }
+  37.75% { d: path("M448.824,651.953C404.386,632.703,359.849,611.134,317.202,583.865C274.555,556.596,233.757,523.296,200.58,483.747"); }
+  38% { d: path("M448.842,651.938C404.402,632.873,359.861,611.489,317.211,584.404C274.561,557.32,233.76,524.205,200.58,484.841"); }
+  38.25% { d: path("M448.857,651.926C404.414,633.005,359.871,611.764,317.218,584.824C274.566,557.883,233.763,524.913,200.58,485.692"); }
+  38.5% { d: path("M448.866,651.918C404.422,633.09,359.877,611.941,317.223,585.092C274.569,558.243,233.764,525.365,200.58,486.236"); }
+  38.75% { d: path("M448.87,651.915C404.425,633.127,359.88,612.02,317.225,585.212C274.57,558.405,233.765,525.567,200.58,486.479"); }
+  39% { d: path("M448.871,651.914C404.426,633.134,359.881,612.033,317.225,585.232C274.57,558.431,233.765,525.601,200.58,486.52"); }
+  39.25% { d: path("M448.871,651.915C404.425,633.131,359.88,612.027,317.225,585.223C274.57,558.42,233.765,525.586,200.58,486.502"); }
+  39.5% { d: path("M448.869,651.916C404.424,633.114,359.879,611.991,317.224,585.169C274.57,558.346,233.765,525.494,200.58,486.392"); }
+  39.75% { d: path("M448.864,651.92C404.42,633.073,359.876,611.906,317.222,585.04C274.568,558.173,233.764,525.276,200.58,486.13"); }
+  40% { d: path("M448.857,651.926C404.414,633.005,359.871,611.764,317.218,584.824C274.566,557.883,233.763,524.913,200.58,485.692"); }
+  40.25% { d: path("M448.846,651.934C404.405,632.91,359.864,611.566,317.213,584.522C274.562,557.478,233.761,524.404,200.58,485.08"); }
+  40.5% { d: path("M448.833,651.945C404.394,632.792,359.856,611.319,317.207,584.147C274.558,556.974,233.759,523.771,200.58,484.318"); }
+  40.75% { d: path("M448.818,651.957C404.382,632.657,359.846,611.037,317.199,583.717C274.553,556.397,233.756,523.048,200.58,483.448"); }
+  41% { d: path("M448.803,651.97C404.369,632.513,359.835,610.736,317.191,583.26C274.548,555.783,233.754,522.277,200.58,482.52"); }
+  41.25% { d: path("M448.787,651.982C404.356,632.369,359.825,610.436,317.183,582.802C274.542,555.169,233.751,521.506,200.58,481.592"); }
+  41.5% { d: path("M448.772,651.995C404.343,632.234,359.815,610.154,317.176,582.373C274.537,554.593,233.749,520.782,200.58,480.722"); }
+  41.75% { d: path("M448.759,652.005C404.333,632.116,359.806,609.907,317.17,581.998C274.533,554.088,233.747,520.149,200.58,479.96"); }
+  42% { d: path("M448.749,652.014C404.324,632.021,359.799,609.708,317.164,581.696C274.53,553.683,233.745,519.641,200.58,479.348"); }
+  42.25% { d: path("M448.741,652.02C404.318,631.953,359.794,609.566,317.161,581.48C274.527,553.393,233.744,519.277,200.58,478.91"); }
+  42.5% { d: path("M448.737,652.023C404.314,631.912,359.791,609.482,317.158,581.351C274.526,553.22,233.743,519.059,200.58,478.648"); }
+  42.75% { d: path("M448.735,652.025C404.312,631.895,359.79,609.446,317.157,581.296C274.525,553.147,233.742,518.967,200.58,478.538"); }
+  43% { d: path("M448.735,652.025C404.312,631.892,359.79,609.44,317.157,581.287C274.525,553.135,233.742,518.952,200.58,478.52"); }
+  43.25% { d: path("M448.735,652.024C404.314,631.893,359.792,609.441,317.161,581.289C274.529,553.138,233.748,518.956,200.586,478.524"); }
+  43.5% { d: path("M448.739,652.021C404.324,631.895,359.808,609.448,317.183,581.301C274.557,553.155,233.782,518.978,200.627,478.551"); }
+  43.75% { d: path("M448.75,652.012C404.351,631.899,359.851,609.466,317.242,581.333C274.632,553.2,233.873,519.037,200.733,478.623"); }
+  44% { d: path("M448.77,651.996C404.401,631.908,359.931,609.5,317.352,581.392C274.772,553.284,234.042,519.146,200.933,478.758"); }
+  44.25% { d: path("M448.803,651.97C404.48,631.922,360.058,609.554,317.526,581.486C274.994,553.418,234.312,519.32,201.249,478.972"); }
+  44.5% { d: path("M448.849,651.932C404.595,631.942,360.241,609.631,317.777,581.621C275.312,553.611,234.698,519.57,201.704,479.28"); }
+  44.75% { d: path("M448.911,651.882C404.748,631.968,360.485,609.735,318.112,581.802C275.739,553.868,235.217,519.905,202.314,479.692"); }
+  45% { d: path("M448.99,651.817C404.944,632.003,360.798,609.868,318.542,582.033C276.285,554.198,235.879,520.333,203.093,480.218"); }
+  45.25% { d: path("M449.088,651.738C405.186,632.045,361.183,610.031,319.07,582.317C276.957,554.604,236.695,520.86,204.052,480.867"); }
+  45.5% { d: path("M449.205,651.644C405.475,632.095,361.644,610.227,319.703,582.658C277.762,555.09,237.671,521.491,205.2,481.643"); }
+  45.75% { d: path("M449.342,651.533C405.813,632.154,362.183,610.455,320.443,583.057C278.703,555.658,238.813,522.229,206.543,482.551"); }
+  46% { d: path("M449.5,651.406C406.2,632.222,362.801,610.718,321.292,583.514C279.782,556.31,240.123,523.076,208.084,483.592"); }
+  46.25% { d: path("M449.677,651.263C406.638,632.299,363.499,611.014,322.25,584.03C281.001,557.046,241.602,524.032,209.823,484.768"); }
+  46.5% { d: path("M449.875,651.103C407.126,632.384,364.277,611.345,323.317,584.605C282.358,557.866,243.249,525.096,211.76,486.077"); }
+  46.75% { d: path("M450.093,650.929C407.662,632.478,365.132,611.708,324.491,585.237C283.851,558.767,245.06,526.267,213.89,487.516"); }
+  47% { d: path("M450.33,650.738C408.246,632.581,366.063,612.103,325.769,585.926C285.475,559.748,247.032,527.541,216.208,489.083"); }
+  47.25% { d: path("M450.586,650.534C408.876,632.692,367.066,612.53,327.146,586.668C287.226,560.806,249.156,528.914,218.706,490.772"); }
+  47.5% { d: path("M450.86,650.315C409.549,632.81,368.139,612.986,328.618,587.461C289.098,561.936,251.427,530.382,221.377,492.577"); }
+  47.75% { d: path("M451.15,650.084C410.263,632.936,369.276,613.469,330.179,588.302C291.082,563.135,253.835,531.938,224.207,494.49"); }
+  48% { d: path("M451.456,649.841C411.015,633.07,370.473,613.979,331.822,589.188C293.17,564.397,256.369,533.576,227.187,496.505"); }
+  48.25% { d: path("M451.776,649.587C411.801,633.209,371.725,614.511,333.539,590.113C295.354,565.716,259.018,535.288,230.302,498.61"); }
+  48.5% { d: path("M452.109,649.323C412.618,633.354,373.026,615.065,335.324,591.076C297.622,567.086,261.77,537.067,233.539,500.798"); }
+  48.75% { d: path("M452.454,649.052C413.461,633.504,374.369,615.637,337.167,592.069C299.965,568.502,264.613,538.904,236.88,503.056"); }
+  49% { d: path("M452.807,648.774C414.328,633.659,375.749,616.224,339.059,593.09C302.37,569.955,267.531,540.79,240.311,505.375"); }
+  49.25% { d: path("M453.169,648.491C415.213,633.818,377.158,616.825,340.992,594.132C304.826,571.439,270.51,542.716,243.815,507.743"); }
+  49.5% { d: path("M453.537,648.203C416.113,633.979,378.589,617.435,342.955,595.191C307.321,572.947,273.536,544.672,247.372,510.148"); }
+  49.75% { d: path("M453.909,647.913C417.022,634.143,380.035,618.052,344.938,596.261C309.841,574.47,276.594,546.649,250.967,512.578"); }
+  50% { d: path("M454.283,647.623C417.936,634.307,381.489,618.672,346.931,597.336C312.374,576.001,279.667,548.635,254.58,515.02"); }
+  50.25% { d: path("M454.658,647.333C418.85,634.473,382.943,619.292,348.925,598.412C314.908,577.532,282.74,550.622,258.193,517.462"); }
+  50.5% { d: path("M455.031,647.045C419.76,634.637,384.39,619.91,350.909,599.483C317.429,579.056,285.798,552.599,261.788,519.892"); }
+  50.75% { d: path("M455.401,646.76C420.661,634.801,385.822,620.522,352.873,600.543C319.924,580.564,288.825,554.556,265.345,522.297"); }
+  51% { d: path("M455.765,646.48C421.549,634.963,387.233,621.125,354.807,601.587C322.381,582.05,291.805,556.482,268.849,524.665"); }
+  51.25% { d: path("M456.123,646.207C422.419,635.121,388.615,621.716,356.701,602.61C324.787,583.505,294.723,558.369,272.28,526.984"); }
+  51.5% { d: path("M456.471,645.941C423.266,635.276,389.961,622.291,358.546,603.607C327.131,584.922,297.566,560.207,275.621,529.242"); }
+  51.75% { d: path("M456.809,645.684C424.087,635.427,391.265,622.849,360.333,604.572C329.401,586.295,300.319,561.987,278.858,531.43"); }
+  52% { d: path("M457.134,645.437C424.878,635.572,392.521,623.387,362.054,605.501C331.587,587.616,302.97,563.701,281.973,533.535"); }
+  52.25% { d: path("M457.446,645.201C425.634,635.711,393.722,623.901,363.699,606.39C333.677,588.88,305.505,565.34,284.953,535.55"); }
+  52.5% { d: path("M457.742,644.977C426.353,635.843,394.863,624.389,365.263,607.235C335.663,590.081,307.913,566.897,287.783,537.463"); }
+  52.75% { d: path("M458.022,644.767C427.031,635.969,395.939,624.851,366.738,608.032C337.536,591.214,310.185,568.366,290.454,539.268"); }
+  53% { d: path("M458.284,644.57C427.666,636.086,396.947,625.282,368.118,608.778C339.29,592.275,312.311,569.741,292.952,540.957"); }
+  53.25% { d: path("M458.528,644.388C428.255,636.195,397.882,625.683,369.399,609.471C340.916,593.258,314.283,571.016,295.27,542.524"); }
+  53.5% { d: path("M458.751,644.22C428.796,636.296,398.741,626.051,370.576,610.107C342.411,594.162,316.095,572.188,297.4,543.963"); }
+  53.75% { d: path("M458.955,644.068C429.288,636.387,399.522,626.386,371.646,610.685C343.769,594.984,317.743,573.253,299.337,545.272"); }
+  54% { d: path("M459.138,643.932C429.731,636.469,400.224,626.687,372.607,611.205C344.99,595.723,319.223,574.21,301.076,546.448"); }
+  54.25% { d: path("M459.3,643.811C430.123,636.542,400.845,626.954,373.458,611.665C346.071,596.377,320.534,575.058,302.617,547.489"); }
+  54.5% { d: path("M459.441,643.706C430.464,636.606,401.387,627.186,374.2,612.066C347.014,596.947,321.677,575.797,303.96,548.397"); }
+  54.75% { d: path("M459.562,643.616C430.756,636.661,401.851,627.385,374.835,612.41C347.819,597.434,322.654,576.429,305.108,549.173"); }
+  55% { d: path("M459.663,643.541C431,636.706,402.238,627.551,375.365,612.696C348.493,597.841,323.47,576.957,306.067,549.822"); }
+  55.25% { d: path("M459.745,643.48C431.198,636.743,402.552,627.686,375.796,612.929C349.039,598.172,324.133,577.385,306.846,550.348"); }
+  55.5% { d: path("M459.809,643.433C431.354,636.772,402.798,627.792,376.133,613.111C349.467,598.431,324.652,577.721,307.456,550.76"); }
+  55.75% { d: path("M459.857,643.397C431.469,636.794,402.982,627.871,376.384,613.247C349.786,598.624,325.038,577.971,307.911,551.068"); }
+  56% { d: path("M459.89,643.372C431.55,636.809,403.109,627.925,376.559,613.342C350.008,598.759,325.308,578.145,308.227,551.282"); }
+  56.25% { d: path("M459.911,643.357C431.601,636.818,403.19,627.96,376.669,613.402C350.149,598.843,325.478,578.255,308.427,551.417"); }
+  56.5% { d: path("M459.923,643.348C431.628,636.823,403.233,627.978,376.728,613.433C350.223,598.888,325.568,578.313,308.533,551.489"); }
+  56.75% { d: path("M459.927,643.345C431.638,636.825,403.249,627.985,376.75,613.446C350.252,598.906,325.603,578.336,308.574,551.516"); }
+  57% { d: path("M459.928,643.345C431.64,636.826,403.252,627.987,376.754,613.447C350.256,598.908,325.608,578.339,308.58,551.52"); }
+  57.25% { d: path("M459.928,643.344C431.64,636.832,403.252,628,376.754,613.467C350.256,598.935,325.608,578.373,308.58,551.561"); }
+  57.5% { d: path("M459.933,643.341C431.644,636.87,403.255,628.079,376.756,613.588C350.258,599.096,325.609,578.575,308.58,551.804"); }
+  57.75% { d: path("M459.942,643.334C431.652,636.955,403.261,628.255,376.761,613.856C350.261,599.457,325.61,579.027,308.58,552.348"); }
+  58% { d: path("M459.957,643.323C431.664,637.087,403.271,628.532,376.769,614.276C350.266,600.02,325.613,579.735,308.58,553.199"); }
+  58.25% { d: path("M459.977,643.309C431.68,637.258,403.284,628.887,376.778,614.816C350.272,600.745,325.616,580.644,308.58,554.293"); }
+  58.5% { d: path("M459.998,643.293C431.698,637.449,403.299,629.285,376.789,615.421C350.279,601.558,325.62,581.664,308.58,555.52"); }
+  58.75% { d: path("M460.02,643.277C431.716,637.64,403.313,629.683,376.8,616.027C350.287,602.37,325.623,582.684,308.58,556.747"); }
+  59% { d: path("M460.039,643.262C431.733,637.81,403.326,630.038,376.81,616.567C350.293,603.095,325.627,583.593,308.58,557.841"); }
+  59.25% { d: path("M460.054,643.251C431.745,637.943,403.336,630.315,376.817,616.987C350.298,603.658,325.629,584.3,308.58,558.692"); }
+  59.5% { d: path("M460.064,643.244C431.753,638.028,403.342,630.491,376.822,617.255C350.301,604.019,325.631,584.752,308.58,559.236"); }
+  59.75% { d: path("M460.068,643.241C431.757,638.066,403.345,630.57,376.824,617.375C350.303,604.18,325.631,584.955,308.58,559.479"); }
+  60% { d: path("M460.069,643.24C431.757,638.072,403.346,630.584,376.824,617.395C350.303,604.207,325.631,584.988,308.58,559.52"); }
+  60.25% { d: path("M460.068,643.241C431.757,638.069,403.346,630.578,376.824,617.386C350.303,604.195,325.631,584.974,308.58,559.502"); }
+  60.5% { d: path("M460.066,643.242C431.755,638.052,403.344,630.542,376.823,617.332C350.302,604.122,325.631,584.882,308.58,559.392"); }
+  60.75% { d: path("M460.062,643.245C431.752,638.011,403.341,630.457,376.821,617.203C350.301,603.948,325.63,584.664,308.58,559.13"); }
+  61% { d: path("M460.054,643.251C431.745,637.943,403.336,630.315,376.817,616.987C350.298,603.658,325.629,584.3,308.58,558.692"); }
+  61.25% { d: path("M460.043,643.259C431.736,637.848,403.329,630.116,376.812,616.685C350.294,603.253,325.627,583.791,308.58,558.08"); }
+  61.5% { d: path("M460.03,643.269C431.725,637.729,403.32,629.869,376.805,616.309C350.29,602.749,325.625,583.158,308.58,557.318"); }
+  61.75% { d: path("M460.015,643.28C431.712,637.593,403.31,629.586,376.797,615.879C350.285,602.172,325.622,582.435,308.58,556.448"); }
+  62% { d: path("M459.998,643.293C431.698,637.449,403.299,629.285,376.789,615.421C350.279,601.558,325.62,581.664,308.58,555.52"); }
+  62.25% { d: path("M459.982,643.305C431.685,637.304,403.288,628.984,376.781,614.963C350.274,600.943,325.617,580.893,308.58,554.592"); }
+  62.5% { d: path("M459.966,643.316C431.672,637.169,403.278,628.701,376.773,614.534C350.269,600.366,325.614,580.169,308.58,553.722"); }
+  62.75% { d: path("M459.953,643.326C431.661,637.05,403.269,628.454,376.766,614.158C350.264,599.862,325.612,579.536,308.58,552.96"); }
+  63% { d: path("M459.942,643.334C431.652,636.955,403.261,628.255,376.761,613.856C350.261,599.457,325.61,579.027,308.58,552.348"); }
+  63.25% { d: path("M459.934,643.34C431.645,636.886,403.256,628.113,376.757,613.64C350.258,599.167,325.609,578.663,308.58,551.91"); }
+  63.5% { d: path("M459.93,643.343C431.642,636.846,403.253,628.028,376.755,613.511C350.257,598.993,325.608,578.446,308.58,551.648"); }
+  63.75% { d: path("M459.928,643.345C431.64,636.828,403.252,627.992,376.754,613.456C350.256,598.92,325.608,578.354,308.58,551.538"); }
+  64% { d: path("M459.928,643.345C431.64,636.826,403.252,627.987,376.754,613.447C350.256,598.908,325.608,578.339,308.58,551.52"); }
+  64.25% { d: path("M459.928,643.345C431.64,636.826,403.252,627.987,376.754,613.448C350.256,598.909,325.608,578.34,308.58,551.521"); }
+  64.5% { d: path("M459.928,643.345C431.64,636.826,403.252,627.988,376.755,613.45C350.257,598.912,325.609,578.344,308.581,551.526"); }
+  64.75% { d: path("M459.928,643.344C431.641,636.828,403.254,627.992,376.757,613.456C350.259,598.92,325.612,578.354,308.585,551.538"); }
+  65% { d: path("M459.929,643.343C431.643,636.832,403.257,628,376.76,613.468C350.264,598.936,325.617,578.374,308.591,551.563"); }
+  65.25% { d: path("M459.931,643.342C431.646,636.837,403.261,628.012,376.766,613.487C350.271,598.962,325.626,578.406,308.601,551.601"); }
+  65.5% { d: path("M459.933,643.341C431.65,636.845,403.267,628.029,376.774,613.514C350.282,598.998,325.639,578.453,308.616,551.657"); }
+  65.75% { d: path("M459.937,643.338C431.656,636.856,403.276,628.053,376.786,613.551C350.296,599.048,325.656,578.516,308.635,551.733"); }
+  66% { d: path("M459.941,643.335C431.664,636.869,403.287,628.084,376.801,613.598C350.314,599.113,325.677,578.597,308.661,551.831"); }
+  66.25% { d: path("M459.946,643.331C431.674,636.887,403.301,628.122,376.819,613.657C350.337,599.193,325.705,578.698,308.692,551.953"); }
+  66.5% { d: path("M459.952,643.327C431.685,636.907,403.318,628.168,376.841,613.729C350.364,599.29,325.738,578.82,308.731,552.101"); }
+  66.75% { d: path("M459.959,643.321C431.699,636.932,403.338,628.223,376.868,613.813C350.397,599.404,325.776,578.965,308.776,552.276"); }
+  67% { d: path("M459.968,643.315C431.715,636.961,403.361,628.286,376.898,613.912C350.435,599.537,325.822,579.133,308.828,552.478"); }
+  67.25% { d: path("M459.977,643.308C431.733,636.993,403.388,628.359,376.933,614.024C350.478,599.689,325.873,579.325,308.888,552.71"); }
+  67.5% { d: path("M459.988,643.3C431.753,637.03,403.418,628.44,376.972,614.15C350.527,599.861,325.932,579.541,308.956,552.971"); }
+  67.75% { d: path("M460.001,643.291C431.776,637.071,403.451,628.531,377.016,614.291C350.581,600.052,325.996,579.782,309.032,553.262"); }
+  68% { d: path("M460.014,643.281C431.801,637.116,403.488,628.632,377.064,614.447C350.641,600.262,326.068,580.048,309.115,553.583"); }
+  68.25% { d: path("M460.029,643.27C431.828,637.166,403.528,628.741,377.117,614.617C350.707,600.493,326.146,580.338,309.206,553.934"); }
+  68.5% { d: path("M460.045,643.258C431.858,637.219,403.571,628.86,377.175,614.802C350.778,600.743,326.231,580.654,309.305,554.315"); }
+  68.75% { d: path("M460.062,643.245C431.89,637.277,403.618,628.989,377.236,615C350.855,601.012,326.323,580.993,309.411,554.725"); }
+  69% { d: path("M460.08,643.232C431.924,637.339,403.668,629.126,377.302,615.213C350.937,601.3,326.421,581.357,309.525,555.164"); }
+  69.25% { d: path("M460.1,643.217C431.961,637.405,403.722,629.272,377.373,615.439C351.024,601.606,326.525,581.743,309.646,555.63"); }
+  69.5% { d: path("M460.12,643.202C431.999,637.474,403.778,629.426,377.447,615.678C351.116,601.93,326.635,582.152,309.774,556.124"); }
+  69.75% { d: path("M460.142,643.186C432.04,637.547,403.838,629.588,377.525,615.929C351.213,602.271,326.751,582.582,309.908,556.643"); }
+  70% { d: path("M460.165,643.169C432.082,637.624,403.9,629.758,377.607,616.193C351.314,602.627,326.872,583.032,310.049,557.187"); }
+  70.25% { d: path("M460.189,643.152C432.127,637.704,403.965,629.936,377.692,616.468C351.42,603,326.998,583.502,310.196,557.754"); }
+  70.5% { d: path("M460.213,643.133C432.173,637.786,404.032,630.12,377.781,616.753C351.53,603.386,327.129,583.989,310.349,558.342"); }
+  70.75% { d: path("M460.239,643.115C432.22,637.872,404.101,630.31,377.873,617.048C351.644,603.785,327.265,584.493,310.506,558.951"); }
+  71% { d: path("M460.265,643.095C432.269,637.961,404.173,630.506,377.967,617.351C351.761,604.197,327.405,585.012,310.669,559.577"); }
+  71.25% { d: path("M460.292,643.075C432.319,638.051,404.247,630.707,378.064,617.663C351.881,604.619,327.548,585.545,310.836,560.221"); }
+  71.5% { d: path("M460.32,643.055C432.371,638.144,404.322,630.913,378.163,617.982C352.004,605.051,327.695,586.09,311.006,560.879"); }
+  71.75% { d: path("M460.348,643.034C432.423,638.238,404.399,631.123,378.264,618.307C352.129,605.491,327.845,586.645,311.18,561.549"); }
+  72% { d: path("M460.376,643.013C432.476,638.334,404.477,631.336,378.367,618.637C352.257,605.938,327.997,587.209,311.357,562.231"); }
+  72.25% { d: path("M460.405,642.992C432.53,638.431,404.555,631.551,378.47,618.971C352.386,606.391,328.151,587.781,311.536,562.92"); }
+  72.5% { d: path("M460.434,642.97C432.585,638.53,404.635,631.769,378.575,619.308C352.516,606.848,328.306,588.357,311.716,563.617"); }
+  72.75% { d: path("M460.464,642.948C432.64,638.628,404.715,631.988,378.681,619.648C352.646,607.308,328.462,588.937,311.898,564.317"); }
+  73% { d: path("M460.493,642.927C432.694,638.727,404.796,632.208,378.787,619.988C352.778,607.769,328.619,589.519,312.08,565.02"); }
+  73.25% { d: path("M460.523,642.905C432.749,638.826,404.876,632.428,378.893,620.329C352.909,608.23,328.776,590.101,312.262,565.723"); }
+  73.5% { d: path("M460.552,642.883C432.804,638.925,404.956,632.647,378.998,620.668C353.04,608.69,328.932,590.682,312.444,566.423"); }
+  73.75% { d: path("M460.581,642.862C432.859,639.023,405.036,632.864,379.103,621.006C353.17,609.147,329.087,591.258,312.624,567.12"); }
+  74% { d: path("M460.61,642.841C432.912,639.12,405.115,633.08,379.207,621.34C353.299,609.6,329.241,591.83,312.803,567.809"); }
+  74.25% { d: path("M460.639,642.819C432.966,639.216,405.193,633.293,379.309,621.67C353.426,610.047,329.393,592.394,312.98,568.491"); }
+  74.5% { d: path("M460.667,642.799C433.018,639.311,405.269,633.503,379.41,621.995C353.551,610.487,329.543,592.949,313.154,569.161"); }
+  74.75% { d: path("M460.695,642.778C433.07,639.404,405.345,633.709,379.509,622.314C353.674,610.919,329.689,593.494,313.324,569.819"); }
+  75% { d: path("M460.722,642.759C433.12,639.494,405.418,633.91,379.606,622.626C353.795,611.341,329.833,594.027,313.491,570.463"); }
+  75.25% { d: path("M460.748,642.739C433.169,639.583,405.49,634.106,379.701,622.929C353.912,611.753,329.973,594.546,313.654,571.089"); }
+  75.5% { d: path("M460.774,642.72C433.216,639.668,405.559,634.296,379.792,623.224C354.025,612.152,330.108,595.05,313.811,571.698"); }
+  75.75% { d: path("M460.798,642.702C433.263,639.751,405.627,634.48,379.881,623.509C354.135,612.538,330.24,595.537,313.964,572.286"); }
+  76% { d: path("M460.822,642.685C433.307,639.831,405.692,634.658,379.966,623.784C354.241,612.91,330.366,596.007,314.111,572.853"); }
+  76.25% { d: path("M460.845,642.668C433.349,639.908,405.754,634.828,380.048,624.048C354.343,613.267,330.487,596.457,314.252,573.397"); }
+  76.5% { d: path("M460.867,642.652C433.39,639.981,405.813,634.99,380.127,624.299C354.44,613.608,330.603,596.887,314.386,573.916"); }
+  76.75% { d: path("M460.887,642.637C433.429,640.051,405.87,635.144,380.201,624.538C354.532,613.932,330.713,597.296,314.514,574.41"); }
+  77% { d: path("M460.907,642.622C433.465,640.116,405.923,635.29,380.271,624.764C354.619,614.238,330.817,597.682,314.635,574.876"); }
+  77.25% { d: path("M460.925,642.609C433.499,640.178,405.973,635.428,380.337,624.977C354.701,614.526,330.915,598.046,314.749,575.315"); }
+  77.5% { d: path("M460.943,642.596C433.531,640.236,406.02,635.556,380.399,625.176C354.778,614.795,331.007,598.385,314.855,575.725"); }
+  77.75% { d: path("M460.959,642.584C433.561,640.29,406.064,635.675,380.456,625.36C354.849,615.045,331.092,598.701,314.954,576.106"); }
+  78% { d: path("M460.973,642.574C433.589,640.339,406.104,635.785,380.509,625.53C354.915,615.276,331.17,598.991,315.045,576.457"); }
+  78.25% { d: path("M460.987,642.564C433.614,640.384,406.141,635.885,380.558,625.686C354.975,615.487,331.241,599.257,315.128,576.778"); }
+  78.5% { d: path("M460.999,642.555C433.637,640.425,406.174,635.976,380.601,625.827C355.029,615.678,331.306,599.498,315.204,577.069"); }
+  78.75% { d: path("M461.01,642.547C433.657,640.462,406.204,636.058,380.641,625.953C355.078,615.849,331.365,599.715,315.272,577.33"); }
+  79% { d: path("M461.02,642.54C433.675,640.495,406.23,636.13,380.676,626.066C355.121,616.001,331.416,599.906,315.332,577.562"); }
+  79.25% { d: path("M461.028,642.533C433.691,640.523,406.254,636.194,380.706,626.164C355.159,616.134,331.461,600.074,315.384,577.764"); }
+  79.5% { d: path("M461.036,642.528C433.705,640.548,406.274,636.248,380.732,626.248C355.191,616.249,331.5,600.219,315.429,577.939"); }
+  79.75% { d: path("M461.042,642.523C433.716,640.569,406.29,636.294,380.755,626.32C355.219,616.346,331.533,600.341,315.468,578.087"); }
+  80% { d: path("M461.047,642.52C433.726,640.586,406.304,636.333,380.773,626.379C355.242,616.426,331.561,600.442,315.499,578.209"); }
+  80.25% { d: path("M461.051,642.517C433.733,640.6,406.316,636.363,380.788,626.427C355.26,616.49,331.582,600.523,315.525,578.307"); }
+  80.5% { d: path("M461.054,642.514C433.739,640.611,406.324,636.387,380.799,626.463C355.274,616.54,331.599,600.586,315.544,578.383"); }
+  80.75% { d: path("M461.057,642.513C433.744,640.619,406.331,636.405,380.808,626.491C355.285,616.577,331.612,600.633,315.559,578.439"); }
+  81% { d: path("M461.058,642.511C433.747,640.624,406.335,636.417,380.814,626.509C355.292,616.602,331.621,600.665,315.569,578.477"); }
+  81.25% { d: path("M461.059,642.511C433.749,640.627,406.338,636.424,380.817,626.521C355.297,616.618,331.626,600.685,315.575,578.502"); }
+  81.5% { d: path("M461.06,642.51C433.75,640.629,406.339,636.428,380.819,626.527C355.299,616.626,331.629,600.695,315.579,578.514"); }
+  81.75% { d: path("M461.06,642.51C433.75,640.63,406.34,636.43,380.82,626.53C355.3,616.63,331.63,600.699,315.58,578.519"); }
+  82%, 100% { d: path("M461.06,642.51C433.75,640.63,406.34,636.43,380.82,626.53C355.3,616.63,331.63,600.7,315.58,578.52"); }
+}
+.coding-pill-1 { animation: coding-pill-1-flash 3s ease-out infinite; }
+@keyframes coding-pill-1-flash {
+  0%, 17.5%, 32%, 100% { fill: #1565c0; filter: none; }
+  18%, 28% { fill: #e3f2fd; filter: drop-shadow(0 0 6px #90caf9); }
+}
+.coding-pill-2 { animation: coding-pill-2-flash 3s ease-out infinite; }
+@keyframes coding-pill-2-flash {
+  0%, 38.5%, 53%, 100% { fill: #1565c0; filter: none; }
+  39%, 49% { fill: #e3f2fd; filter: drop-shadow(0 0 6px #90caf9); }
+}
+.coding-pill-3 { animation: coding-pill-3-flash 3s ease-out infinite; }
+@keyframes coding-pill-3-flash {
+  0%, 59.5%, 74%, 100% { fill: #1e88e5; filter: none; }
+  60%, 70% { fill: #e3f2fd; filter: drop-shadow(0 0 6px #90caf9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coding-body, .coding-hand, .coding-arm, .coding-pill { animation: none; transform: none; filter: none; }
+}
+/* Extend the legs toward the leaning torso; their lower ends and feet stay planted. */
+.mascot-leg-stretch {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: mascot-leg-extension 3s linear infinite;
+}
+@keyframes mascot-leg-extension {
+  0% { transform: scaleY(1); }
+  0.25% { transform: scaleY(1); }
+  0.5% { transform: scaleY(1.00002); }
+  0.75% { transform: scaleY(1.00004); }
+  1% { transform: scaleY(1.0001); }
+  1.25% { transform: scaleY(1.00018); }
+  1.5% { transform: scaleY(1.0003); }
+  1.75% { transform: scaleY(1.00044); }
+  2% { transform: scaleY(1.00066); }
+  2.25% { transform: scaleY(1.0009); }
+  2.5% { transform: scaleY(1.0012); }
+  2.75% { transform: scaleY(1.00156); }
+  3% { transform: scaleY(1.00196); }
+  3.25% { transform: scaleY(1.00244); }
+  3.5% { transform: scaleY(1.00294); }
+  3.75% { transform: scaleY(1.00352); }
+  4% { transform: scaleY(1.00414); }
+  4.25% { transform: scaleY(1.00482); }
+  4.5% { transform: scaleY(1.00554); }
+  4.75% { transform: scaleY(1.00632); }
+  5% { transform: scaleY(1.00714); }
+  5.25% { transform: scaleY(1.008); }
+  5.5% { transform: scaleY(1.0089); }
+  5.75% { transform: scaleY(1.00982); }
+  6% { transform: scaleY(1.0108); }
+  6.25% { transform: scaleY(1.01178); }
+  6.5% { transform: scaleY(1.0128); }
+  6.75% { transform: scaleY(1.01384); }
+  7% { transform: scaleY(1.01488); }
+  7.25% { transform: scaleY(1.01594); }
+  7.5% { transform: scaleY(1.017); }
+  7.75% { transform: scaleY(1.01806); }
+  8% { transform: scaleY(1.01912); }
+  8.25% { transform: scaleY(1.02016); }
+  8.5% { transform: scaleY(1.0212); }
+  8.75% { transform: scaleY(1.02222); }
+  9% { transform: scaleY(1.0232); }
+  9.25% { transform: scaleY(1.02418); }
+  9.5% { transform: scaleY(1.0251); }
+  9.75% { transform: scaleY(1.026); }
+  10% { transform: scaleY(1.02686); }
+  10.25% { transform: scaleY(1.02768); }
+  10.5% { transform: scaleY(1.02846); }
+  10.75% { transform: scaleY(1.02918); }
+  11% { transform: scaleY(1.02986); }
+  11.25% { transform: scaleY(1.03048); }
+  11.5% { transform: scaleY(1.03106); }
+  11.75% { transform: scaleY(1.03158); }
+  12% { transform: scaleY(1.03204); }
+  12.25% { transform: scaleY(1.03244); }
+  12.5% { transform: scaleY(1.0328); }
+  12.75% { transform: scaleY(1.0331); }
+  13% { transform: scaleY(1.03336); }
+  13.25% { transform: scaleY(1.03356); }
+  13.5% { transform: scaleY(1.03372); }
+  13.75% { transform: scaleY(1.03384); }
+  14% { transform: scaleY(1.03392); }
+  14.25% { transform: scaleY(1.03396); }
+  14.5% { transform: scaleY(1.034); }
+  14.75% { transform: scaleY(1.034); }
+  15% { transform: scaleY(1.034); }
+  15.25% { transform: scaleY(1.034); }
+  15.5% { transform: scaleY(1.03398); }
+  15.75% { transform: scaleY(1.03394); }
+  16% { transform: scaleY(1.03388); }
+  16.25% { transform: scaleY(1.03378); }
+  16.5% { transform: scaleY(1.03368); }
+  16.75% { transform: scaleY(1.0336); }
+  17% { transform: scaleY(1.0335); }
+  17.25% { transform: scaleY(1.03344); }
+  17.5% { transform: scaleY(1.0334); }
+  17.75% { transform: scaleY(1.03338); }
+  18% { transform: scaleY(1.03338); }
+  18.25% { transform: scaleY(1.03338); }
+  18.5% { transform: scaleY(1.03338); }
+  18.75% { transform: scaleY(1.0334); }
+  19% { transform: scaleY(1.03344); }
+  19.25% { transform: scaleY(1.03348); }
+  19.5% { transform: scaleY(1.03354); }
+  19.75% { transform: scaleY(1.03362); }
+  20% { transform: scaleY(1.03368); }
+  20.25% { transform: scaleY(1.03376); }
+  20.5% { transform: scaleY(1.03384); }
+  20.75% { transform: scaleY(1.0339); }
+  21% { transform: scaleY(1.03394); }
+  21.25% { transform: scaleY(1.03398); }
+  21.5% { transform: scaleY(1.034); }
+  21.75% { transform: scaleY(1.034); }
+  22% { transform: scaleY(1.034); }
+  22.25% { transform: scaleY(1.034); }
+  22.5% { transform: scaleY(1.03402); }
+  22.75% { transform: scaleY(1.03404); }
+  23% { transform: scaleY(1.03408); }
+  23.25% { transform: scaleY(1.03414); }
+  23.5% { transform: scaleY(1.03424); }
+  23.75% { transform: scaleY(1.03436); }
+  24% { transform: scaleY(1.03452); }
+  24.25% { transform: scaleY(1.0347); }
+  24.5% { transform: scaleY(1.03494); }
+  24.75% { transform: scaleY(1.03522); }
+  25% { transform: scaleY(1.03552); }
+  25.25% { transform: scaleY(1.03588); }
+  25.5% { transform: scaleY(1.03626); }
+  25.75% { transform: scaleY(1.0367); }
+  26% { transform: scaleY(1.03716); }
+  26.25% { transform: scaleY(1.03768); }
+  26.5% { transform: scaleY(1.03822); }
+  26.75% { transform: scaleY(1.03878); }
+  27% { transform: scaleY(1.0394); }
+  27.25% { transform: scaleY(1.04002); }
+  27.5% { transform: scaleY(1.04068); }
+  27.75% { transform: scaleY(1.04136); }
+  28% { transform: scaleY(1.04204); }
+  28.25% { transform: scaleY(1.04276); }
+  28.5% { transform: scaleY(1.04348); }
+  28.75% { transform: scaleY(1.0442); }
+  29% { transform: scaleY(1.04494); }
+  29.25% { transform: scaleY(1.04568); }
+  29.5% { transform: scaleY(1.0464); }
+  29.75% { transform: scaleY(1.04712); }
+  30% { transform: scaleY(1.04782); }
+  30.25% { transform: scaleY(1.04852); }
+  30.5% { transform: scaleY(1.0492); }
+  30.75% { transform: scaleY(1.04986); }
+  31% { transform: scaleY(1.05048); }
+  31.25% { transform: scaleY(1.05108); }
+  31.5% { transform: scaleY(1.05166); }
+  31.75% { transform: scaleY(1.0522); }
+  32% { transform: scaleY(1.0527); }
+  32.25% { transform: scaleY(1.05318); }
+  32.5% { transform: scaleY(1.05362); }
+  32.75% { transform: scaleY(1.054); }
+  33% { transform: scaleY(1.05436); }
+  33.25% { transform: scaleY(1.05466); }
+  33.5% { transform: scaleY(1.05494); }
+  33.75% { transform: scaleY(1.05518); }
+  34% { transform: scaleY(1.05536); }
+  34.25% { transform: scaleY(1.05552); }
+  34.5% { transform: scaleY(1.05564); }
+  34.75% { transform: scaleY(1.05574); }
+  35% { transform: scaleY(1.0558); }
+  35.25% { transform: scaleY(1.05584); }
+  35.5% { transform: scaleY(1.05586); }
+  35.75% { transform: scaleY(1.05588); }
+  36% { transform: scaleY(1.05588); }
+  36.25% { transform: scaleY(1.05588); }
+  36.5% { transform: scaleY(1.05586); }
+  36.75% { transform: scaleY(1.0558); }
+  37% { transform: scaleY(1.05574); }
+  37.25% { transform: scaleY(1.05566); }
+  37.5% { transform: scaleY(1.05556); }
+  37.75% { transform: scaleY(1.05546); }
+  38% { transform: scaleY(1.05538); }
+  38.25% { transform: scaleY(1.0553); }
+  38.5% { transform: scaleY(1.05526); }
+  38.75% { transform: scaleY(1.05524); }
+  39% { transform: scaleY(1.05524); }
+  39.25% { transform: scaleY(1.05524); }
+  39.5% { transform: scaleY(1.05526); }
+  39.75% { transform: scaleY(1.05528); }
+  40% { transform: scaleY(1.0553); }
+  40.25% { transform: scaleY(1.05536); }
+  40.5% { transform: scaleY(1.05542); }
+  40.75% { transform: scaleY(1.05548); }
+  41% { transform: scaleY(1.05556); }
+  41.25% { transform: scaleY(1.05564); }
+  41.5% { transform: scaleY(1.0557); }
+  41.75% { transform: scaleY(1.05576); }
+  42% { transform: scaleY(1.0558); }
+  42.25% { transform: scaleY(1.05584); }
+  42.5% { transform: scaleY(1.05586); }
+  42.75% { transform: scaleY(1.05588); }
+  43% { transform: scaleY(1.05588); }
+  43.25% { transform: scaleY(1.05588); }
+  43.5% { transform: scaleY(1.05586); }
+  43.75% { transform: scaleY(1.0558); }
+  44% { transform: scaleY(1.0557); }
+  44.25% { transform: scaleY(1.05556); }
+  44.5% { transform: scaleY(1.05534); }
+  44.75% { transform: scaleY(1.05506); }
+  45% { transform: scaleY(1.0547); }
+  45.25% { transform: scaleY(1.05424); }
+  45.5% { transform: scaleY(1.0537); }
+  45.75% { transform: scaleY(1.05306); }
+  46% { transform: scaleY(1.05234); }
+  46.25% { transform: scaleY(1.05152); }
+  46.5% { transform: scaleY(1.05062); }
+  46.75% { transform: scaleY(1.04962); }
+  47% { transform: scaleY(1.04852); }
+  47.25% { transform: scaleY(1.04734); }
+  47.5% { transform: scaleY(1.04608); }
+  47.75% { transform: scaleY(1.04476); }
+  48% { transform: scaleY(1.04336); }
+  48.25% { transform: scaleY(1.04188); }
+  48.5% { transform: scaleY(1.04036); }
+  48.75% { transform: scaleY(1.0388); }
+  49% { transform: scaleY(1.03718); }
+  49.25% { transform: scaleY(1.03552); }
+  49.5% { transform: scaleY(1.03386); }
+  49.75% { transform: scaleY(1.03216); }
+  50% { transform: scaleY(1.03046); }
+  50.25% { transform: scaleY(1.02876); }
+  50.5% { transform: scaleY(1.02706); }
+  50.75% { transform: scaleY(1.0254); }
+  51% { transform: scaleY(1.02374); }
+  51.25% { transform: scaleY(1.02214); }
+  51.5% { transform: scaleY(1.02056); }
+  51.75% { transform: scaleY(1.01904); }
+  52% { transform: scaleY(1.01756); }
+  52.25% { transform: scaleY(1.01616); }
+  52.5% { transform: scaleY(1.01484); }
+  52.75% { transform: scaleY(1.01358); }
+  53% { transform: scaleY(1.0124); }
+  53.25% { transform: scaleY(1.01132); }
+  53.5% { transform: scaleY(1.0103); }
+  53.75% { transform: scaleY(1.0094); }
+  54% { transform: scaleY(1.00858); }
+  54.25% { transform: scaleY(1.00786); }
+  54.5% { transform: scaleY(1.00722); }
+  54.75% { transform: scaleY(1.00668); }
+  55% { transform: scaleY(1.00624); }
+  55.25% { transform: scaleY(1.00586); }
+  55.5% { transform: scaleY(1.00558); }
+  55.75% { transform: scaleY(1.00536); }
+  56% { transform: scaleY(1.00522); }
+  56.25% { transform: scaleY(1.00512); }
+  56.5% { transform: scaleY(1.00506); }
+  56.75% { transform: scaleY(1.00506); }
+  57% { transform: scaleY(1.00504); }
+  57.25% { transform: scaleY(1.00504); }
+  57.5% { transform: scaleY(1.00502); }
+  57.75% { transform: scaleY(1.00498); }
+  58% { transform: scaleY(1.00492); }
+  58.25% { transform: scaleY(1.00482); }
+  58.5% { transform: scaleY(1.00474); }
+  58.75% { transform: scaleY(1.00464); }
+  59% { transform: scaleY(1.00456); }
+  59.25% { transform: scaleY(1.00448); }
+  59.5% { transform: scaleY(1.00444); }
+  59.75% { transform: scaleY(1.00442); }
+  60% { transform: scaleY(1.00442); }
+  60.25% { transform: scaleY(1.00442); }
+  60.5% { transform: scaleY(1.00442); }
+  60.75% { transform: scaleY(1.00444); }
+  61% { transform: scaleY(1.00448); }
+  61.25% { transform: scaleY(1.00454); }
+  61.5% { transform: scaleY(1.0046); }
+  61.75% { transform: scaleY(1.00466); }
+  62% { transform: scaleY(1.00474); }
+  62.25% { transform: scaleY(1.0048); }
+  62.5% { transform: scaleY(1.00488); }
+  62.75% { transform: scaleY(1.00494); }
+  63% { transform: scaleY(1.00498); }
+  63.25% { transform: scaleY(1.00502); }
+  63.5% { transform: scaleY(1.00504); }
+  63.75% { transform: scaleY(1.00504); }
+  64% { transform: scaleY(1.00504); }
+  64.25% { transform: scaleY(1.00504); }
+  64.5% { transform: scaleY(1.00504); }
+  64.75% { transform: scaleY(1.00504); }
+  65% { transform: scaleY(1.00504); }
+  65.25% { transform: scaleY(1.00504); }
+  65.5% { transform: scaleY(1.00502); }
+  65.75% { transform: scaleY(1.005); }
+  66% { transform: scaleY(1.00498); }
+  66.25% { transform: scaleY(1.00496); }
+  66.5% { transform: scaleY(1.00494); }
+  66.75% { transform: scaleY(1.0049); }
+  67% { transform: scaleY(1.00486); }
+  67.25% { transform: scaleY(1.00482); }
+  67.5% { transform: scaleY(1.00478); }
+  67.75% { transform: scaleY(1.00472); }
+  68% { transform: scaleY(1.00466); }
+  68.25% { transform: scaleY(1.0046); }
+  68.5% { transform: scaleY(1.00452); }
+  68.75% { transform: scaleY(1.00444); }
+  69% { transform: scaleY(1.00436); }
+  69.25% { transform: scaleY(1.00428); }
+  69.5% { transform: scaleY(1.00418); }
+  69.75% { transform: scaleY(1.00408); }
+  70% { transform: scaleY(1.00398); }
+  70.25% { transform: scaleY(1.00388); }
+  70.5% { transform: scaleY(1.00378); }
+  70.75% { transform: scaleY(1.00366); }
+  71% { transform: scaleY(1.00354); }
+  71.25% { transform: scaleY(1.00342); }
+  71.5% { transform: scaleY(1.0033); }
+  71.75% { transform: scaleY(1.00318); }
+  72% { transform: scaleY(1.00304); }
+  72.25% { transform: scaleY(1.00292); }
+  72.5% { transform: scaleY(1.00278); }
+  72.75% { transform: scaleY(1.00266); }
+  73% { transform: scaleY(1.00252); }
+  73.25% { transform: scaleY(1.0024); }
+  73.5% { transform: scaleY(1.00226); }
+  73.75% { transform: scaleY(1.00214); }
+  74% { transform: scaleY(1.002); }
+  74.25% { transform: scaleY(1.00188); }
+  74.5% { transform: scaleY(1.00174); }
+  74.75% { transform: scaleY(1.00162); }
+  75% { transform: scaleY(1.0015); }
+  75.25% { transform: scaleY(1.00138); }
+  75.5% { transform: scaleY(1.00128); }
+  75.75% { transform: scaleY(1.00116); }
+  76% { transform: scaleY(1.00106); }
+  76.25% { transform: scaleY(1.00096); }
+  76.5% { transform: scaleY(1.00086); }
+  76.75% { transform: scaleY(1.00076); }
+  77% { transform: scaleY(1.00068); }
+  77.25% { transform: scaleY(1.0006); }
+  77.5% { transform: scaleY(1.00052); }
+  77.75% { transform: scaleY(1.00046); }
+  78% { transform: scaleY(1.00038); }
+  78.25% { transform: scaleY(1.00032); }
+  78.5% { transform: scaleY(1.00028); }
+  78.75% { transform: scaleY(1.00022); }
+  79% { transform: scaleY(1.00018); }
+  79.25% { transform: scaleY(1.00014); }
+  79.5% { transform: scaleY(1.0001); }
+  79.75% { transform: scaleY(1.00008); }
+  80% { transform: scaleY(1.00006); }
+  80.25% { transform: scaleY(1.00004); }
+  80.5% { transform: scaleY(1.00002); }
+  80.75% { transform: scaleY(1.00002); }
+  81% { transform: scaleY(1); }
+  81.25% { transform: scaleY(1); }
+  81.5% { transform: scaleY(1); }
+  81.75% { transform: scaleY(1); }
+  82%, 100% { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-leg-stretch { animation: none; transform: none; }
+}
+</style><linearGradient id="linear-gradient" x1="828.28" y1="174.8" x2="828.28" y2="419.24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1e88e5"/><stop offset=".17" stop-color="#1c82dd"/><stop offset=".58" stop-color="#1976d2"/><stop offset="1" stop-color="#1976d2"/></linearGradient><linearGradient id="linear-gradient-2" x1="785.85" y1="906.61" x2="785.85" y2="766.75" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".36" stop-color="#deeffd"/><stop offset=".49" stop-color="#d5ebfc"/><stop offset=".58" stop-color="#c5e3fb"/><stop offset=".61" stop-color="#bbdefb"/></linearGradient><linearGradient id="linear-gradient-3" x1="573.07" y1="906.61" x2="573.07" y2="737.63" xlink:href="#linear-gradient-2"/><linearGradient id="linear-gradient-4" x1="454.99" y1="285.73" x2="740.56" y2="780.35" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#64b5f6"/><stop offset="0" stop-color="#62b3f5"/><stop offset=".08" stop-color="#55aaf1"/><stop offset=".15" stop-color="#47a0ee"/><stop offset=".23" stop-color="#3897eb"/><stop offset=".33" stop-color="#2c90e8"/><stop offset=".45" stop-color="#228be6"/><stop offset=".6" stop-color="#1e88e5"/><stop offset=".99" stop-color="#1e88e5"/></linearGradient><linearGradient id="linear-gradient-5" x1="802.87" y1="174.8" x2="802.87" y2="830.86" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1e88e5"/><stop offset=".29" stop-color="#1c82dd"/><stop offset=".75" stop-color="#1770cb"/><stop offset="1" stop-color="#1565c0"/></linearGradient><radialGradient id="radial-gradient" cx="653.06" cy="612.86" fx="653.06" fy="612.86" r="212.17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".52" stop-color="#dfeffd"/><stop offset=".76" stop-color="#d3eafb"/><stop offset=".96" stop-color="#c1e1fb"/><stop offset="1" stop-color="#bbdefb"/></radialGradient><linearGradient id="linear-gradient-6" x1="195.45" y1="658.46" x2="190.81" y2="458.71" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#06244f"/><stop offset="1" stop-color="#0d47a1"/></linearGradient></defs><g class="cls-14"><g id="art"><path class="cls-5 coding-arm" d="M461.06,642.51C433.75,640.63,406.34,636.43,380.82,626.53C355.3,616.63,331.63,600.7,315.58,578.52"/><g class="mascot-legs"><g class="mascot-leg-stretch"><path class="cls-3" d="M741.21,811.52c13.7,90.52,38.22,95.09,38.22,95.09h38.81c6.89,0,12.47-5.59,12.47-12.47v-118.11c0-2.52-1.69-4.72-4.12-5.38l-5.53-1.49c-24.81-6.66-51.28.72-69.07,19.25l-5.16,5.37c-4.53,4.72-6.6,11.27-5.62,17.73Z"/></g><path class="cls-8" d="M744.45,852.2h61.79c7.75,0,14.03,6.29,14.03,14.03v1.56c0,21.99-17.86,39.85-39.85,39.85h-2.69c-21.99,0-39.85-17.86-39.85-39.85v-9.04c0-3.62,2.94-6.56,6.56-6.56Z" transform="translate(1558.16 1759.85) rotate(-180)"/><g class="mascot-leg-stretch"><path class="cls-11" d="M618.56,894.13c0,6.89-5.59,12.47-12.47,12.47h-38.81s-26.36-45.29-39.69-145.81h0c20.12-27.55,59.9-31.09,84.58-7.53h0c4.09,3.9,6.4,9.31,6.4,14.96v125.92Z"/></g><path class="cls-8" d="M532.28,852.2h61.79c7.75,0,14.03,6.29,14.03,14.03v1.56c0,21.99-17.86,39.85-39.85,39.85h-2.69c-21.99,0-39.85-17.86-39.85-39.85v-9.04c0-3.62,2.94-6.56,6.56-6.56Z" transform="translate(1133.83 1759.85) rotate(-180)"/></g><g class="coding-body"><path class="cls-19" d="M1005.17,389.49l-278.56-209.81c-4.29-3.25-9.33-4.87-14.37-4.87h-59.18l-12.61,30.07-5.3,22.04v192.33h386.24c-1.05-11.66-6.79-22.6-16.23-29.75Z"/><path class="cls-15" d="M872.86,701.43l-211.67,126.48v2.96h51.05c6.76,0,13.51-1.61,19.73-4.84l183.75-99.45c6.65-3.52,12.42-8.47,17.01-14.42l-59.86-10.72Z"/><path class="cls-2" d="M1021.39,419.24h0c-.16-1.75-.43-3.48-.8-5.19h-385.44v-187.14l-215.85,162.57c-13.6,10.31-19.53,28.48-14.8,45.36l78.05,259.23c4.16,14.11,13.62,25.84,26.21,32.5l152.43,82.5v18.83l223.05-124.44,48.48,8.68c4.09-5.31,7.24-11.42,9.2-18.07l78.05-259.23c1.45-5.17,1.89-10.46,1.43-15.6Z"/><path class="cls-9" d="M653.06,174.8c-4.88,0-9.76,1.62-13.91,4.87l-269.8,209.81c-13.17,10.31-18.91,28.48-14.33,45.36l75.59,259.23c4.03,14.11,13.19,25.84,25.38,32.5l177.97,99.45c6.02,3.23,12.56,4.84,19.11,4.84V174.8Z"/><path class="cls-12" d="M653.06,830.86c6.54,0,13.09-1.61,19.11-4.84l177.97-99.45c12.19-6.65,21.35-18.38,25.38-32.5l75.59-259.23c4.58-16.88-1.16-35.05-14.33-45.36l-269.8-209.81c-4.15-3.25-9.03-4.87-13.91-4.87v656.06Z"/><path class="cls-13" d="M490.4,690.74c5.39-2.87,13.69-7.24,22.02-11.6-4.91-2.87-8.61-7.75-10.23-13.63l-40.97-148.7c-5.69-20.64,12.26-39.5,30.8-32.99l-18.16-7.29c-21.15-8.49-42.11,13.01-35.62,36.54l45.88,166.51c1.19,4.3,3.39,8.11,6.29,11.15Z"/><path class="cls-22" d="M512.42,679.14c-8.32,4.36-16.63,8.73-22.02,11.6,2.08,2.17,4.51,3.96,7.23,5.2l155.43,70.68v-23.39l-138.8-63.12c-.63-.29-1.24-.62-1.84-.97Z"/><path class="cls-10" d="M813.1,484.18l-160.04,64.21-160.04-64.21c-18.89-7.58-37.6,11.62-31.81,32.63l40.97,148.7c1.82,6.59,6.25,11.95,12.08,14.6l138.8,63.12,138.8-63.12c5.83-2.65,10.26-8.01,12.08-14.6l40.97-148.7c5.79-21.01-12.92-40.21-31.81-32.63Z"/><path class="cls-13" d="M815.73,690.74c-5.39-2.87-13.69-7.24-22.02-11.6,4.91-2.87,8.61-7.75,10.23-13.63l40.97-148.7c5.69-20.64-12.26-39.5-30.8-32.99l18.16-7.29c21.15-8.49,42.11,13.01,35.62,36.54l-45.88,166.51c-1.19,4.3-3.39,8.11-6.29,11.15Z"/><path class="cls-22" d="M793.71,679.14c8.32,4.36,16.63,8.73,22.02,11.6-2.08,2.17-4.51,3.96-7.23,5.2l-155.43,70.68v-23.39s138.8-63.12,138.8-63.12c.63-.29,1.24-.62,1.84-.97Z"/><ellipse class="cls-1" cx="724.13" cy="621.56" rx="16.53" ry="29.11"/><path class="cls-16" d="M731.6,575.38l-14.17-4.41c-6.4-1.99-10.11-9.26-8.28-16.24h0c1.83-6.98,8.5-11.02,14.9-9.03l14.17,4.41c6.4,1.99,10.11,9.26,8.28,16.24h0c-1.83,6.98-8.5,11.02-14.9,9.03Z"/><path class="cls-4" d="M653.06,670.59s18.06.26,25.21-8.84"/><ellipse class="cls-1" cx="582" cy="621.56" rx="16.53" ry="29.11"/><path class="cls-16" d="M574.52,575.38l14.17-4.41c6.4-1.99,10.11-9.26,8.28-16.24h0c-1.83-6.98-8.5-11.02-14.9-9.03l-14.17,4.41c-6.4,1.99-10.11,9.26-8.28,16.24h0c1.83,6.98,8.5,11.02,14.9,9.03Z"/><path class="cls-4" d="M653.06,670.59s-18.06.26-25.21-8.84"/><path class="cls-5" d="M958.72,697.77s91.34-36.44,3.59-107.68"/><path class="cls-8" d="M981.94,726.85s6.6-4.04,16.45-10.61c.05-.04,23.68-16.79,20.92-41.88-.82-7.48-4.83-14.32-10.96-18.69-20.56-14.66-46.71-2.21-46.77-2.18,0,0,0,0,0,0-8.68-2.18-30.29-6.21-37.26,5.6-2.48,4.2-.95,8.6,2.53,12.74-1.19.7-2.36,1.4-3.49,2.1-41.83,25.91-4.49,89.57,38.54,65.7,6.24-3.46,12.91-7.68,20.04-12.78Z"/></g><g class="coding-hand"><path class="cls-8" d="M301.46,621.55s6.26,4.56,16.08,11.16c.06.04,24.55,15.48,46.7,3.36,6.6-3.62,11.39-9.93,13.09-17.27,5.7-24.6-15.78-44.01-15.83-44.06,0,0,0,0,0,0-1.29-8.86-5.82-30.37-19.39-32.3-4.83-.69-8.31,2.41-10.81,7.2-1.1-.83-2.19-1.65-3.27-2.42-39.91-28.78-84.51,30.03-46.03,60.69,5.58,4.45,12.02,9.01,19.46,13.65Z"/><path class="cls-6" d="M331.3,549.62s-6.11,12.65,1.5,25.24"/></g><g class="coding-console"><g class="cls-7"><path class="cls-17" d="M79.75,619.86h256.98c10.18,0,17.81-9.33,15.79-19.31l-31.76-156.99c-1.52-7.51-8.12-12.92-15.79-12.92H47.99c-10.18,0-17.81,9.33-15.79,19.31l31.76,156.99c1.52,7.51,8.12,12.92,15.79,12.92Z"/></g><rect class="cls-20" x="64.78" y="444.55" width="38.77" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-18" x="115.1" y="444.55" width="59.17" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-21 coding-pill coding-pill-1" x="185.09" y="444.55" width="80.72" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-21 coding-pill coding-pill-2" x="131.7" y="479.3" width="68.27" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-20" x="211.26" y="479.3" width="41.54" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-18" x="264.29" y="479.3" width="54.91" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-20" x="109.88" y="515.16" width="52.14" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-18" x="173.93" y="515.16" width="78.87" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-18 coding-pill coding-pill-3" x="252.97" y="552.26" width="38.77" height="17.98" rx="8.99" ry="8.99" transform="translate(544.71 1122.5) rotate(-180)"/><rect class="cls-20" x="182.25" y="552.26" width="59.17" height="17.98" rx="8.99" ry="8.99" transform="translate(423.67 1122.5) rotate(-180)"/><rect class="cls-21" x="90.72" y="552.26" width="80.72" height="17.98" rx="8.99" ry="8.99" transform="translate(262.16 1122.5) rotate(180)"/><rect class="cls-20" x="135.95" y="587.99" width="53.98" height="17.98" rx="8.99" ry="8.99" transform="translate(325.89 1193.96) rotate(-180)"/><rect class="cls-21" x="201.31" y="587.99" width="41.54" height="17.98" rx="8.99" ry="8.99"/><rect class="cls-18" x="252.97" y="587.99" width="70.72" height="17.98" rx="8.99" ry="8.99"/></g></g></g></svg>

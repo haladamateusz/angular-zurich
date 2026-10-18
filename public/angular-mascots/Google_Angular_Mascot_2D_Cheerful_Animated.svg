@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?><svg id="art" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080"><defs><style>.cls-1{stroke:#06244f;stroke-width:10px;}.cls-1,.cls-2{fill:none;stroke-linecap:round;stroke-linejoin:round;}.cls-3{fill:#1565c0;}.cls-4{fill:url(#linear-gradient-2);}.cls-5{fill:#1565c0;}.cls-6{fill:#1e88e5;}.cls-7{fill:url(#linear-gradient-4);}.cls-8{fill:url(#radial-gradient);}.cls-9{fill:#e3f2fd;}.cls-10{fill:url(#linear-gradient-3);}.cls-11{fill:url(#linear-gradient-5);}.cls-12{fill:#0d47a1;}.cls-2{stroke:#0d47a1;stroke-width:4.05px;}.cls-13{fill:url(#linear-gradient-7);}.cls-14{fill:#0d47a1;}.cls-15{fill:#1e88e5;}.cls-16{fill:#1565c0;}.cls-17{fill:url(#linear-gradient-6);}.cls-18{fill:#1e88e5;}.cls-19{fill:url(#linear-gradient);}.cls-20{fill:#64b5f6;}.cls-21{fill:#1565c0;}.cls-22{fill:#1565c0;}
+/* Faster celebration with one shared prop animation and a fixed mixed-shape
+   reveal order. Each prop pops to 150% before settling at its original size.
+   This jumping gesture intentionally lifts the feet before landing again. */
+.cheerful-jump { transform-box: view-box; transform-origin: 540px 1015px; animation: cheerful-jump 2.4s linear infinite; }
+.cheerful-hand-left { transform-box: view-box; transform-origin: 274px 652px; animation: cheerful-wave-left 2.4s linear infinite; }
+.cheerful-hand-right { transform-box: view-box; transform-origin: 776px 715px; animation: cheerful-wave-right 2.4s linear infinite; }
+@keyframes cheerful-jump {
+  0% { transform: translateY(35px); }
+  0.5% { transform: translateY(35.048px); }
+  1% { transform: translateY(35.1903px); }
+  1.5% { transform: translateY(35.4213px); }
+  2% { transform: translateY(35.7322px); }
+  2.5% { transform: translateY(36.1111px); }
+  3% { transform: translateY(36.5433px); }
+  3.5% { transform: translateY(37.0123px); }
+  4% { transform: translateY(37.5px); }
+  4.5% { transform: translateY(37.9877px); }
+  5% { transform: translateY(38.4567px); }
+  5.5% { transform: translateY(38.8889px); }
+  6% { transform: translateY(39.2678px); }
+  6.5% { transform: translateY(39.5787px); }
+  7% { transform: translateY(39.8097px); }
+  7.5% { transform: translateY(39.952px); }
+  8% { transform: translateY(40px); }
+  8.5% { transform: translateY(39.8742px); }
+  9% { transform: translateY(39.4986px); }
+  9.5% { transform: translateY(38.8777px); }
+  10% { transform: translateY(38.0194px); }
+  10.5% { transform: translateY(36.9345px); }
+  11% { transform: translateY(35.6366px); }
+  11.5% { transform: translateY(34.1421px); }
+  12% { transform: translateY(32.4698px); }
+  12.5% { transform: translateY(30.6406px); }
+  13% { transform: translateY(28.6777px); }
+  13.5% { transform: translateY(26.6056px); }
+  14% { transform: translateY(24.4504px); }
+  14.5% { transform: translateY(22.2393px); }
+  15% { transform: translateY(20px); }
+  15.5% { transform: translateY(17.7607px); }
+  16% { transform: translateY(15.5496px); }
+  16.5% { transform: translateY(13.3944px); }
+  17% { transform: translateY(11.3223px); }
+  17.5% { transform: translateY(9.3594px); }
+  18% { transform: translateY(7.5302px); }
+  18.5% { transform: translateY(5.8579px); }
+  19% { transform: translateY(4.3634px); }
+  19.5% { transform: translateY(3.0655px); }
+  20% { transform: translateY(1.9806px); }
+  20.5% { transform: translateY(1.1223px); }
+  21% { transform: translateY(0.5014px); }
+  21.5% { transform: translateY(0.1258px); }
+  22% { transform: translateY(0px); }
+  22.5% { transform: translateY(-0.0961px); }
+  23% { transform: translateY(-0.3806px); }
+  23.5% { transform: translateY(-0.8427px); }
+  24% { transform: translateY(-1.4645px); }
+  24.5% { transform: translateY(-2.2221px); }
+  25% { transform: translateY(-3.0866px); }
+  25.5% { transform: translateY(-4.0245px); }
+  26% { transform: translateY(-5px); }
+  26.5% { transform: translateY(-5.9755px); }
+  27% { transform: translateY(-6.9134px); }
+  27.5% { transform: translateY(-7.7779px); }
+  28% { transform: translateY(-8.5355px); }
+  28.5% { transform: translateY(-9.1573px); }
+  29% { transform: translateY(-9.6194px); }
+  29.5% { transform: translateY(-9.9039px); }
+  30% { transform: translateY(-10px); }
+  30.5% { transform: translateY(-9.9039px); }
+  31% { transform: translateY(-9.6194px); }
+  31.5% { transform: translateY(-9.1573px); }
+  32% { transform: translateY(-8.5355px); }
+  32.5% { transform: translateY(-7.7779px); }
+  33% { transform: translateY(-6.9134px); }
+  33.5% { transform: translateY(-5.9755px); }
+  34% { transform: translateY(-5px); }
+  34.5% { transform: translateY(-4.0245px); }
+  35% { transform: translateY(-3.0866px); }
+  35.5% { transform: translateY(-2.2221px); }
+  36% { transform: translateY(-1.4645px); }
+  36.5% { transform: translateY(-0.8427px); }
+  37% { transform: translateY(-0.3806px); }
+  37.5% { transform: translateY(-0.0961px); }
+  38% { transform: translateY(0px); }
+  38.5% { transform: translateY(0px); }
+  39% { transform: translateY(0px); }
+  39.5% { transform: translateY(0px); }
+  40% { transform: translateY(0px); }
+  40.5% { transform: translateY(0px); }
+  41% { transform: translateY(0px); }
+  41.5% { transform: translateY(0px); }
+  42% { transform: translateY(0px); }
+  42.5% { transform: translateY(0px); }
+  43% { transform: translateY(0px); }
+  43.5% { transform: translateY(0px); }
+  44% { transform: translateY(0px); }
+  44.5% { transform: translateY(0px); }
+  45% { transform: translateY(0px); }
+  45.5% { transform: translateY(0px); }
+  46% { transform: translateY(0px); }
+  46.5% { transform: translateY(0px); }
+  47% { transform: translateY(0px); }
+  47.5% { transform: translateY(0px); }
+  48% { transform: translateY(0px); }
+  48.5% { transform: translateY(0px); }
+  49% { transform: translateY(0px); }
+  49.5% { transform: translateY(0px); }
+  50% { transform: translateY(0px); }
+  50.5% { transform: translateY(0px); }
+  51% { transform: translateY(0px); }
+  51.5% { transform: translateY(0px); }
+  52% { transform: translateY(0px); }
+  52.5% { transform: translateY(0px); }
+  53% { transform: translateY(0px); }
+  53.5% { transform: translateY(0px); }
+  54% { transform: translateY(0px); }
+  54.5% { transform: translateY(0px); }
+  55% { transform: translateY(0px); }
+  55.5% { transform: translateY(0px); }
+  56% { transform: translateY(0px); }
+  56.5% { transform: translateY(0px); }
+  57% { transform: translateY(0px); }
+  57.5% { transform: translateY(0px); }
+  58% { transform: translateY(0px); }
+  58.5% { transform: translateY(0.11px); }
+  59% { transform: translateY(0.4388px); }
+  59.5% { transform: translateY(0.982px); }
+  60% { transform: translateY(1.733px); }
+  60.5% { transform: translateY(2.6823px); }
+  61% { transform: translateY(3.8179px); }
+  61.5% { transform: translateY(5.1256px); }
+  62% { transform: translateY(6.5889px); }
+  62.5% { transform: translateY(8.1894px); }
+  63% { transform: translateY(9.907px); }
+  63.5% { transform: translateY(11.7201px); }
+  64% { transform: translateY(13.6059px); }
+  64.5% { transform: translateY(15.5406px); }
+  65% { transform: translateY(17.5px); }
+  65.5% { transform: translateY(19.4594px); }
+  66% { transform: translateY(21.3941px); }
+  66.5% { transform: translateY(23.2799px); }
+  67% { transform: translateY(25.093px); }
+  67.5% { transform: translateY(26.8106px); }
+  68% { transform: translateY(28.4111px); }
+  68.5% { transform: translateY(29.8744px); }
+  69% { transform: translateY(31.1821px); }
+  69.5% { transform: translateY(32.3177px); }
+  70% { transform: translateY(33.267px); }
+  70.5% { transform: translateY(34.018px); }
+  71% { transform: translateY(34.5612px); }
+  71.5% { transform: translateY(34.89px); }
+  72% { transform: translateY(35px); }
+  72.5% { transform: translateY(34.9148px); }
+  73% { transform: translateY(34.6651px); }
+  73.5% { transform: translateY(34.2678px); }
+  74% { transform: translateY(33.75px); }
+  74.5% { transform: translateY(33.147px); }
+  75% { transform: translateY(32.5px); }
+  75.5% { transform: translateY(31.853px); }
+  76% { transform: translateY(31.25px); }
+  76.5% { transform: translateY(30.7322px); }
+  77% { transform: translateY(30.3349px); }
+  77.5% { transform: translateY(30.0852px); }
+  78% { transform: translateY(30px); }
+  78.5% { transform: translateY(30.048px); }
+  79% { transform: translateY(30.1903px); }
+  79.5% { transform: translateY(30.4213px); }
+  80% { transform: translateY(30.7322px); }
+  80.5% { transform: translateY(31.1111px); }
+  81% { transform: translateY(31.5433px); }
+  81.5% { transform: translateY(32.0123px); }
+  82% { transform: translateY(32.5px); }
+  82.5% { transform: translateY(32.9877px); }
+  83% { transform: translateY(33.4567px); }
+  83.5% { transform: translateY(33.8889px); }
+  84% { transform: translateY(34.2678px); }
+  84.5% { transform: translateY(34.5787px); }
+  85% { transform: translateY(34.8097px); }
+  85.5% { transform: translateY(34.952px); }
+  86% { transform: translateY(35px); }
+  86.5% { transform: translateY(35px); }
+  87% { transform: translateY(35px); }
+  87.5% { transform: translateY(35px); }
+  88% { transform: translateY(35px); }
+  88.5% { transform: translateY(35px); }
+  89% { transform: translateY(35px); }
+  89.5% { transform: translateY(35px); }
+  90% { transform: translateY(35px); }
+  90.5% { transform: translateY(35px); }
+  91% { transform: translateY(35px); }
+  91.5% { transform: translateY(35px); }
+  92% { transform: translateY(35px); }
+  92.5% { transform: translateY(35px); }
+  93% { transform: translateY(35px); }
+  93.5% { transform: translateY(35px); }
+  94% { transform: translateY(35px); }
+  94.5% { transform: translateY(35px); }
+  95% { transform: translateY(35px); }
+  95.5% { transform: translateY(35px); }
+  96% { transform: translateY(35px); }
+  96.5% { transform: translateY(35px); }
+  97% { transform: translateY(35px); }
+  97.5% { transform: translateY(35px); }
+  98% { transform: translateY(35px); }
+  98.5% { transform: translateY(35px); }
+  99% { transform: translateY(35px); }
+  99.5% { transform: translateY(35px); }
+  100% { transform: translateY(35px); }
+}
+@keyframes cheerful-wave-left {
+  0% { transform: rotate(0deg); }
+  0.5% { transform: rotate(0deg); }
+  1% { transform: rotate(0deg); }
+  1.5% { transform: rotate(0deg); }
+  2% { transform: rotate(0deg); }
+  2.5% { transform: rotate(0deg); }
+  3% { transform: rotate(0deg); }
+  3.5% { transform: rotate(0deg); }
+  4% { transform: rotate(0deg); }
+  4.5% { transform: rotate(0deg); }
+  5% { transform: rotate(0deg); }
+  5.5% { transform: rotate(0deg); }
+  6% { transform: rotate(0deg); }
+  6.5% { transform: rotate(0deg); }
+  7% { transform: rotate(0deg); }
+  7.5% { transform: rotate(0deg); }
+  8% { transform: rotate(0deg); }
+  8.5% { transform: rotate(0deg); }
+  9% { transform: rotate(0deg); }
+  9.5% { transform: rotate(0deg); }
+  10% { transform: rotate(0deg); }
+  10.5% { transform: rotate(0deg); }
+  11% { transform: rotate(0deg); }
+  11.5% { transform: rotate(0deg); }
+  12% { transform: rotate(0deg); }
+  12.5% { transform: rotate(0.1108deg); }
+  13% { transform: rotate(0.4405deg); }
+  13.5% { transform: rotate(0.9809deg); }
+  14% { transform: rotate(1.7188deg); }
+  14.5% { transform: rotate(2.636deg); }
+  15% { transform: rotate(3.7099deg); }
+  15.5% { transform: rotate(4.9141deg); }
+  16% { transform: rotate(6.2188deg); }
+  16.5% { transform: rotate(7.5921deg); }
+  17% { transform: rotate(9deg); }
+  17.5% { transform: rotate(10.4079deg); }
+  18% { transform: rotate(11.7812deg); }
+  18.5% { transform: rotate(13.0859deg); }
+  19% { transform: rotate(14.2901deg); }
+  19.5% { transform: rotate(15.364deg); }
+  20% { transform: rotate(16.2812deg); }
+  20.5% { transform: rotate(17.0191deg); }
+  21% { transform: rotate(17.5595deg); }
+  21.5% { transform: rotate(17.8892deg); }
+  22% { transform: rotate(18deg); }
+  22.5% { transform: rotate(17.7118deg); }
+  23% { transform: rotate(16.8582deg); }
+  23.5% { transform: rotate(15.472deg); }
+  24% { transform: rotate(13.6066deg); }
+  24.5% { transform: rotate(11.3336deg); }
+  25% { transform: rotate(8.7403deg); }
+  25.5% { transform: rotate(5.9264deg); }
+  26% { transform: rotate(3deg); }
+  26.5% { transform: rotate(0.0736deg); }
+  27% { transform: rotate(-2.7403deg); }
+  27.5% { transform: rotate(-5.3336deg); }
+  28% { transform: rotate(-7.6066deg); }
+  28.5% { transform: rotate(-9.472deg); }
+  29% { transform: rotate(-10.8582deg); }
+  29.5% { transform: rotate(-11.7118deg); }
+  30% { transform: rotate(-12deg); }
+  30.5% { transform: rotate(-11.7118deg); }
+  31% { transform: rotate(-10.8582deg); }
+  31.5% { transform: rotate(-9.472deg); }
+  32% { transform: rotate(-7.6066deg); }
+  32.5% { transform: rotate(-5.3336deg); }
+  33% { transform: rotate(-2.7403deg); }
+  33.5% { transform: rotate(0.0736deg); }
+  34% { transform: rotate(3deg); }
+  34.5% { transform: rotate(5.9264deg); }
+  35% { transform: rotate(8.7403deg); }
+  35.5% { transform: rotate(11.3336deg); }
+  36% { transform: rotate(13.6066deg); }
+  36.5% { transform: rotate(15.472deg); }
+  37% { transform: rotate(16.8582deg); }
+  37.5% { transform: rotate(17.7118deg); }
+  38% { transform: rotate(18deg); }
+  38.5% { transform: rotate(17.7118deg); }
+  39% { transform: rotate(16.8582deg); }
+  39.5% { transform: rotate(15.472deg); }
+  40% { transform: rotate(13.6066deg); }
+  40.5% { transform: rotate(11.3336deg); }
+  41% { transform: rotate(8.7403deg); }
+  41.5% { transform: rotate(5.9264deg); }
+  42% { transform: rotate(3deg); }
+  42.5% { transform: rotate(0.0736deg); }
+  43% { transform: rotate(-2.7403deg); }
+  43.5% { transform: rotate(-5.3336deg); }
+  44% { transform: rotate(-7.6066deg); }
+  44.5% { transform: rotate(-9.472deg); }
+  45% { transform: rotate(-10.8582deg); }
+  45.5% { transform: rotate(-11.7118deg); }
+  46% { transform: rotate(-12deg); }
+  46.5% { transform: rotate(-11.7502deg); }
+  47% { transform: rotate(-11.0104deg); }
+  47.5% { transform: rotate(-9.8091deg); }
+  48% { transform: rotate(-8.1924deg); }
+  48.5% { transform: rotate(-6.2224deg); }
+  49% { transform: rotate(-3.9749deg); }
+  49.5% { transform: rotate(-1.5362deg); }
+  50% { transform: rotate(1deg); }
+  50.5% { transform: rotate(3.5362deg); }
+  51% { transform: rotate(5.9749deg); }
+  51.5% { transform: rotate(8.2224deg); }
+  52% { transform: rotate(10.1924deg); }
+  52.5% { transform: rotate(11.8091deg); }
+  53% { transform: rotate(13.0104deg); }
+  53.5% { transform: rotate(13.7502deg); }
+  54% { transform: rotate(14deg); }
+  54.5% { transform: rotate(13.9138deg); }
+  55% { transform: rotate(13.6574deg); }
+  55.5% { transform: rotate(13.237deg); }
+  56% { transform: rotate(12.6631deg); }
+  56.5% { transform: rotate(11.9497deg); }
+  57% { transform: rotate(11.1145deg); }
+  57.5% { transform: rotate(10.1779deg); }
+  58% { transform: rotate(9.1631deg); }
+  58.5% { transform: rotate(8.095deg); }
+  59% { transform: rotate(7deg); }
+  59.5% { transform: rotate(5.905deg); }
+  60% { transform: rotate(4.8369deg); }
+  60.5% { transform: rotate(3.8221deg); }
+  61% { transform: rotate(2.8855deg); }
+  61.5% { transform: rotate(2.0503deg); }
+  62% { transform: rotate(1.3369deg); }
+  62.5% { transform: rotate(0.763deg); }
+  63% { transform: rotate(0.3426deg); }
+  63.5% { transform: rotate(0.0862deg); }
+  64% { transform: rotate(0deg); }
+  64.5% { transform: rotate(0deg); }
+  65% { transform: rotate(0deg); }
+  65.5% { transform: rotate(0deg); }
+  66% { transform: rotate(0deg); }
+  66.5% { transform: rotate(0deg); }
+  67% { transform: rotate(0deg); }
+  67.5% { transform: rotate(0deg); }
+  68% { transform: rotate(0deg); }
+  68.5% { transform: rotate(0deg); }
+  69% { transform: rotate(0deg); }
+  69.5% { transform: rotate(0deg); }
+  70% { transform: rotate(0deg); }
+  70.5% { transform: rotate(0deg); }
+  71% { transform: rotate(0deg); }
+  71.5% { transform: rotate(0deg); }
+  72% { transform: rotate(0deg); }
+  72.5% { transform: rotate(0deg); }
+  73% { transform: rotate(0deg); }
+  73.5% { transform: rotate(0deg); }
+  74% { transform: rotate(0deg); }
+  74.5% { transform: rotate(0deg); }
+  75% { transform: rotate(0deg); }
+  75.5% { transform: rotate(0deg); }
+  76% { transform: rotate(0deg); }
+  76.5% { transform: rotate(0deg); }
+  77% { transform: rotate(0deg); }
+  77.5% { transform: rotate(0deg); }
+  78% { transform: rotate(0deg); }
+  78.5% { transform: rotate(0deg); }
+  79% { transform: rotate(0deg); }
+  79.5% { transform: rotate(0deg); }
+  80% { transform: rotate(0deg); }
+  80.5% { transform: rotate(0deg); }
+  81% { transform: rotate(0deg); }
+  81.5% { transform: rotate(0deg); }
+  82% { transform: rotate(0deg); }
+  82.5% { transform: rotate(0deg); }
+  83% { transform: rotate(0deg); }
+  83.5% { transform: rotate(0deg); }
+  84% { transform: rotate(0deg); }
+  84.5% { transform: rotate(0deg); }
+  85% { transform: rotate(0deg); }
+  85.5% { transform: rotate(0deg); }
+  86% { transform: rotate(0deg); }
+  86.5% { transform: rotate(0deg); }
+  87% { transform: rotate(0deg); }
+  87.5% { transform: rotate(0deg); }
+  88% { transform: rotate(0deg); }
+  88.5% { transform: rotate(0deg); }
+  89% { transform: rotate(0deg); }
+  89.5% { transform: rotate(0deg); }
+  90% { transform: rotate(0deg); }
+  90.5% { transform: rotate(0deg); }
+  91% { transform: rotate(0deg); }
+  91.5% { transform: rotate(0deg); }
+  92% { transform: rotate(0deg); }
+  92.5% { transform: rotate(0deg); }
+  93% { transform: rotate(0deg); }
+  93.5% { transform: rotate(0deg); }
+  94% { transform: rotate(0deg); }
+  94.5% { transform: rotate(0deg); }
+  95% { transform: rotate(0deg); }
+  95.5% { transform: rotate(0deg); }
+  96% { transform: rotate(0deg); }
+  96.5% { transform: rotate(0deg); }
+  97% { transform: rotate(0deg); }
+  97.5% { transform: rotate(0deg); }
+  98% { transform: rotate(0deg); }
+  98.5% { transform: rotate(0deg); }
+  99% { transform: rotate(0deg); }
+  99.5% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes cheerful-wave-right {
+  0% { transform: rotate(0deg); }
+  0.5% { transform: rotate(0deg); }
+  1% { transform: rotate(0deg); }
+  1.5% { transform: rotate(0deg); }
+  2% { transform: rotate(0deg); }
+  2.5% { transform: rotate(0deg); }
+  3% { transform: rotate(0deg); }
+  3.5% { transform: rotate(0deg); }
+  4% { transform: rotate(0deg); }
+  4.5% { transform: rotate(0deg); }
+  5% { transform: rotate(0deg); }
+  5.5% { transform: rotate(0deg); }
+  6% { transform: rotate(0deg); }
+  6.5% { transform: rotate(0deg); }
+  7% { transform: rotate(0deg); }
+  7.5% { transform: rotate(0deg); }
+  8% { transform: rotate(0deg); }
+  8.5% { transform: rotate(0deg); }
+  9% { transform: rotate(0deg); }
+  9.5% { transform: rotate(0deg); }
+  10% { transform: rotate(0deg); }
+  10.5% { transform: rotate(0deg); }
+  11% { transform: rotate(0deg); }
+  11.5% { transform: rotate(0deg); }
+  12% { transform: rotate(0deg); }
+  12.5% { transform: rotate(-0.1108deg); }
+  13% { transform: rotate(-0.4405deg); }
+  13.5% { transform: rotate(-0.9809deg); }
+  14% { transform: rotate(-1.7188deg); }
+  14.5% { transform: rotate(-2.636deg); }
+  15% { transform: rotate(-3.7099deg); }
+  15.5% { transform: rotate(-4.9141deg); }
+  16% { transform: rotate(-6.2188deg); }
+  16.5% { transform: rotate(-7.5921deg); }
+  17% { transform: rotate(-9deg); }
+  17.5% { transform: rotate(-10.4079deg); }
+  18% { transform: rotate(-11.7812deg); }
+  18.5% { transform: rotate(-13.0859deg); }
+  19% { transform: rotate(-14.2901deg); }
+  19.5% { transform: rotate(-15.364deg); }
+  20% { transform: rotate(-16.2812deg); }
+  20.5% { transform: rotate(-17.0191deg); }
+  21% { transform: rotate(-17.5595deg); }
+  21.5% { transform: rotate(-17.8892deg); }
+  22% { transform: rotate(-18deg); }
+  22.5% { transform: rotate(-17.7118deg); }
+  23% { transform: rotate(-16.8582deg); }
+  23.5% { transform: rotate(-15.472deg); }
+  24% { transform: rotate(-13.6066deg); }
+  24.5% { transform: rotate(-11.3336deg); }
+  25% { transform: rotate(-8.7403deg); }
+  25.5% { transform: rotate(-5.9264deg); }
+  26% { transform: rotate(-3deg); }
+  26.5% { transform: rotate(-0.0736deg); }
+  27% { transform: rotate(2.7403deg); }
+  27.5% { transform: rotate(5.3336deg); }
+  28% { transform: rotate(7.6066deg); }
+  28.5% { transform: rotate(9.472deg); }
+  29% { transform: rotate(10.8582deg); }
+  29.5% { transform: rotate(11.7118deg); }
+  30% { transform: rotate(12deg); }
+  30.5% { transform: rotate(11.7118deg); }
+  31% { transform: rotate(10.8582deg); }
+  31.5% { transform: rotate(9.472deg); }
+  32% { transform: rotate(7.6066deg); }
+  32.5% { transform: rotate(5.3336deg); }
+  33% { transform: rotate(2.7403deg); }
+  33.5% { transform: rotate(-0.0736deg); }
+  34% { transform: rotate(-3deg); }
+  34.5% { transform: rotate(-5.9264deg); }
+  35% { transform: rotate(-8.7403deg); }
+  35.5% { transform: rotate(-11.3336deg); }
+  36% { transform: rotate(-13.6066deg); }
+  36.5% { transform: rotate(-15.472deg); }
+  37% { transform: rotate(-16.8582deg); }
+  37.5% { transform: rotate(-17.7118deg); }
+  38% { transform: rotate(-18deg); }
+  38.5% { transform: rotate(-17.7118deg); }
+  39% { transform: rotate(-16.8582deg); }
+  39.5% { transform: rotate(-15.472deg); }
+  40% { transform: rotate(-13.6066deg); }
+  40.5% { transform: rotate(-11.3336deg); }
+  41% { transform: rotate(-8.7403deg); }
+  41.5% { transform: rotate(-5.9264deg); }
+  42% { transform: rotate(-3deg); }
+  42.5% { transform: rotate(-0.0736deg); }
+  43% { transform: rotate(2.7403deg); }
+  43.5% { transform: rotate(5.3336deg); }
+  44% { transform: rotate(7.6066deg); }
+  44.5% { transform: rotate(9.472deg); }
+  45% { transform: rotate(10.8582deg); }
+  45.5% { transform: rotate(11.7118deg); }
+  46% { transform: rotate(12deg); }
+  46.5% { transform: rotate(11.7502deg); }
+  47% { transform: rotate(11.0104deg); }
+  47.5% { transform: rotate(9.8091deg); }
+  48% { transform: rotate(8.1924deg); }
+  48.5% { transform: rotate(6.2224deg); }
+  49% { transform: rotate(3.9749deg); }
+  49.5% { transform: rotate(1.5362deg); }
+  50% { transform: rotate(-1deg); }
+  50.5% { transform: rotate(-3.5362deg); }
+  51% { transform: rotate(-5.9749deg); }
+  51.5% { transform: rotate(-8.2224deg); }
+  52% { transform: rotate(-10.1924deg); }
+  52.5% { transform: rotate(-11.8091deg); }
+  53% { transform: rotate(-13.0104deg); }
+  53.5% { transform: rotate(-13.7502deg); }
+  54% { transform: rotate(-14deg); }
+  54.5% { transform: rotate(-13.9138deg); }
+  55% { transform: rotate(-13.6574deg); }
+  55.5% { transform: rotate(-13.237deg); }
+  56% { transform: rotate(-12.6631deg); }
+  56.5% { transform: rotate(-11.9497deg); }
+  57% { transform: rotate(-11.1145deg); }
+  57.5% { transform: rotate(-10.1779deg); }
+  58% { transform: rotate(-9.1631deg); }
+  58.5% { transform: rotate(-8.095deg); }
+  59% { transform: rotate(-7deg); }
+  59.5% { transform: rotate(-5.905deg); }
+  60% { transform: rotate(-4.8369deg); }
+  60.5% { transform: rotate(-3.8221deg); }
+  61% { transform: rotate(-2.8855deg); }
+  61.5% { transform: rotate(-2.0503deg); }
+  62% { transform: rotate(-1.3369deg); }
+  62.5% { transform: rotate(-0.763deg); }
+  63% { transform: rotate(-0.3426deg); }
+  63.5% { transform: rotate(-0.0862deg); }
+  64% { transform: rotate(0deg); }
+  64.5% { transform: rotate(0deg); }
+  65% { transform: rotate(0deg); }
+  65.5% { transform: rotate(0deg); }
+  66% { transform: rotate(0deg); }
+  66.5% { transform: rotate(0deg); }
+  67% { transform: rotate(0deg); }
+  67.5% { transform: rotate(0deg); }
+  68% { transform: rotate(0deg); }
+  68.5% { transform: rotate(0deg); }
+  69% { transform: rotate(0deg); }
+  69.5% { transform: rotate(0deg); }
+  70% { transform: rotate(0deg); }
+  70.5% { transform: rotate(0deg); }
+  71% { transform: rotate(0deg); }
+  71.5% { transform: rotate(0deg); }
+  72% { transform: rotate(0deg); }
+  72.5% { transform: rotate(0deg); }
+  73% { transform: rotate(0deg); }
+  73.5% { transform: rotate(0deg); }
+  74% { transform: rotate(0deg); }
+  74.5% { transform: rotate(0deg); }
+  75% { transform: rotate(0deg); }
+  75.5% { transform: rotate(0deg); }
+  76% { transform: rotate(0deg); }
+  76.5% { transform: rotate(0deg); }
+  77% { transform: rotate(0deg); }
+  77.5% { transform: rotate(0deg); }
+  78% { transform: rotate(0deg); }
+  78.5% { transform: rotate(0deg); }
+  79% { transform: rotate(0deg); }
+  79.5% { transform: rotate(0deg); }
+  80% { transform: rotate(0deg); }
+  80.5% { transform: rotate(0deg); }
+  81% { transform: rotate(0deg); }
+  81.5% { transform: rotate(0deg); }
+  82% { transform: rotate(0deg); }
+  82.5% { transform: rotate(0deg); }
+  83% { transform: rotate(0deg); }
+  83.5% { transform: rotate(0deg); }
+  84% { transform: rotate(0deg); }
+  84.5% { transform: rotate(0deg); }
+  85% { transform: rotate(0deg); }
+  85.5% { transform: rotate(0deg); }
+  86% { transform: rotate(0deg); }
+  86.5% { transform: rotate(0deg); }
+  87% { transform: rotate(0deg); }
+  87.5% { transform: rotate(0deg); }
+  88% { transform: rotate(0deg); }
+  88.5% { transform: rotate(0deg); }
+  89% { transform: rotate(0deg); }
+  89.5% { transform: rotate(0deg); }
+  90% { transform: rotate(0deg); }
+  90.5% { transform: rotate(0deg); }
+  91% { transform: rotate(0deg); }
+  91.5% { transform: rotate(0deg); }
+  92% { transform: rotate(0deg); }
+  92.5% { transform: rotate(0deg); }
+  93% { transform: rotate(0deg); }
+  93.5% { transform: rotate(0deg); }
+  94% { transform: rotate(0deg); }
+  94.5% { transform: rotate(0deg); }
+  95% { transform: rotate(0deg); }
+  95.5% { transform: rotate(0deg); }
+  96% { transform: rotate(0deg); }
+  96.5% { transform: rotate(0deg); }
+  97% { transform: rotate(0deg); }
+  97.5% { transform: rotate(0deg); }
+  98% { transform: rotate(0deg); }
+  98.5% { transform: rotate(0deg); }
+  99% { transform: rotate(0deg); }
+  99.5% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+.cheerful-prop {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cheerful-prop-burst 2.4s ease-out var(--prop-delay, 0ms) infinite;
+}
+/* Begin 600ms into the jump, stagger by 30ms, and fade before landing. */
+.cheerful-prop-11 { --prop-delay: 600ms; --prop-turn: 80deg; --prop-drift: 6px; }
+.cheerful-prop-9 { --prop-delay: 630ms; --prop-turn: -80deg; --prop-drift: -6px; }
+.cheerful-prop-7 { --prop-delay: 660ms; --prop-turn: 80deg; --prop-drift: 6px; }
+.cheerful-prop-5 { --prop-delay: 690ms; --prop-turn: -80deg; --prop-drift: -6px; }
+.cheerful-prop-3 { --prop-delay: 720ms; --prop-turn: 80deg; --prop-drift: 6px; }
+.cheerful-prop-10 { --prop-delay: 750ms; --prop-turn: -80deg; --prop-drift: -6px; }
+.cheerful-prop-2 { --prop-delay: 780ms; --prop-turn: 80deg; --prop-drift: 6px; }
+.cheerful-prop-1 { --prop-delay: 810ms; --prop-turn: -80deg; --prop-drift: -6px; }
+.cheerful-prop-6 { --prop-delay: 840ms; --prop-turn: 80deg; --prop-drift: 6px; }
+.cheerful-prop-4 { --prop-delay: 870ms; --prop-turn: -80deg; --prop-drift: -6px; }
+.cheerful-prop-8 { --prop-delay: 900ms; --prop-turn: 80deg; --prop-drift: 6px; }
+@keyframes cheerful-prop-burst {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+  4% { opacity: 1; transform: translate(0, -1px) rotate(calc(var(--prop-turn) * .05)) scale(1.5); }
+  10% { opacity: 1; transform: translate(0, -2px) rotate(calc(var(--prop-turn) * .125)) scale(1); }
+  20% { opacity: 1; transform: translate(0, -4px) rotate(calc(var(--prop-turn) * .45)) scale(1); }
+  28% { opacity: 1; transform: translate(0, -8px) rotate(var(--prop-turn)) scale(1); }
+  32%, 100% { opacity: 0; transform: translate(var(--prop-drift), -14px) rotate(calc(var(--prop-turn) * 1.3)) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cheerful-jump, .cheerful-hand-left, .cheerful-hand-right, .cheerful-prop { animation: none; transform: none; opacity: 1; }
+}
+/* Orthos-style upright legs centered over level feet on the ground; restore the original kick in the air. */
+
+.cheerful-foot-path-left, .cheerful-foot-path-right { transform-box: fill-box; transform-origin: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cheerful-leg-path-left, .cheerful-leg-path-right, .cheerful-foot-path-left, .cheerful-foot-path-right { animation: none; }
+  .cheerful-foot-path-left, .cheerful-foot-path-right { transform-box: view-box; transform-origin: 0 0; }
+}
+/* Rigid Orthos-style legs and shoes swing together in 2D without changing shape. */
+.cheerful-leg-left, .cheerful-foot-left { transform-box: view-box; transform-origin: 370px 820px; animation: cheerful-leg-shift-left 2.4s ease-out infinite; }
+@keyframes cheerful-leg-shift-left {
+  0%, 8%, 72%, 100% { transform: rotate(0deg); }
+  22%, 58% { transform: rotate(22deg); }
+}
+.cheerful-leg-right, .cheerful-foot-right { transform-box: view-box; transform-origin: 620px 820px; animation: cheerful-leg-shift-right 2.4s ease-out infinite; }
+@keyframes cheerful-leg-shift-right {
+  0%, 8%, 72%, 100% { transform: rotate(0deg); }
+  22%, 58% { transform: rotate(-22deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cheerful-leg-left, .cheerful-leg-right, .cheerful-foot-left, .cheerful-foot-right { animation: none; transform: none; }
+}
+</style><linearGradient id="linear-gradient" x1="697.21" y1="255.58" x2="697.21" y2="541.17" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1e88e5"/><stop offset=".17" stop-color="#1c82dd"/><stop offset=".58" stop-color="#1976d2"/><stop offset="1" stop-color="#1976d2"/></linearGradient><linearGradient id="linear-gradient-2" x1="362.67" y1="970.44" x2="362.67" y2="815.58" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".36" stop-color="#deeffd"/><stop offset=".49" stop-color="#d5ebfc"/><stop offset=".58" stop-color="#c5e3fb"/><stop offset=".61" stop-color="#bbdefb"/></linearGradient><linearGradient id="linear-gradient-3" x1="643.21" y1="1011.18" x2="643.21" y2="859.78" xlink:href="#linear-gradient-2"/><linearGradient id="linear-gradient-4" x1="334" y1="375.13" x2="601.34" y2="838.18" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#64b5f6"/><stop offset="0" stop-color="#62b3f5"/><stop offset=".08" stop-color="#55aaf1"/><stop offset=".15" stop-color="#47a0ee"/><stop offset=".23" stop-color="#3897eb"/><stop offset=".33" stop-color="#2c90e8"/><stop offset=".45" stop-color="#228be6"/><stop offset=".6" stop-color="#1e88e5"/><stop offset=".99" stop-color="#1e88e5"/></linearGradient><linearGradient id="linear-gradient-5" x1="648.54" y1="255.58" x2="648.54" y2="910.89" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1e88e5"/><stop offset=".29" stop-color="#1c82dd"/><stop offset=".75" stop-color="#1770cb"/><stop offset="1" stop-color="#1565c0"/></linearGradient><radialGradient id="radial-gradient" cx="512.13" cy="683.39" fx="512.13" fy="683.39" r="237.67" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e3f2fd"/><stop offset=".52" stop-color="#dfeffd"/><stop offset=".76" stop-color="#d3eafb"/><stop offset=".96" stop-color="#c1e1fb"/><stop offset="1" stop-color="#bbdefb"/></radialGradient><linearGradient id="linear-gradient-6" x1="463.66" y1="123.14" x2="463.66" y2="178.34" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#64b5f6"/><stop offset="1" stop-color="#1e88e5"/></linearGradient><linearGradient id="linear-gradient-7" x1="276.17" y1="275.15" x2="276.17" y2="330.87" xlink:href="#linear-gradient-6"/></defs><g class="cheerful-jump"><g class="cheerful-upper"><g class="cheerful-hand-left"><path class="cls-9" d="M218.53,610.36c-2.08,8.48-7.78,15.73-15.53,19.75-20.91,10.84-40.61-1.64-40.66-1.68,31.49,21.96,100.2,66.08,116.51,45.34,16.31-20.74-42.78-77.11-71.54-102.53.05.04,16.82,16.25,11.22,39.12Z"/><path class="cls-6" d="M146.45,616.99s6.17,4.66,15.89,11.44c.06.04,24.28,15.91,46.63,4.18,6.67-3.5,11.57-9.73,13.4-17.04,6.13-24.49-15.01-44.28-15.06-44.33,0,0,0,0,0,0-1.14-8.88-5.28-30.47-18.82-32.64-4.82-.77-8.35,2.26-10.94,7.01-1.09-.85-2.16-1.69-3.23-2.48-39.4-29.48-85.02,28.54-47.08,59.87,5.5,4.54,11.86,9.22,19.21,13.99Z"/><path class="cls-2" d="M177.55,545.6s-6.33,12.54,1.05,25.26"/></g><path class="cls-19" d="M877.18,509.63l-254.48-240.9c-3.91-3.73-8.76-5.92-13.79-6.49l-59.09-6.67-15.98,28.6-7.78,21.41-21.69,192.03,385.65,43.55c.26-11.77-4.23-23.33-12.85-31.54Z"/><path class="cls-14" d="M709.9,806.18l-225.61,102.42-.33,2.96,50.97,5.76h0c6.75.76,13.68-.09,20.25-2.61l194.68-78.58c7.04-2.76,13.36-7.05,18.61-12.48l-58.56-17.45Z"/><path class="cls-3" d="M890.02,541.17h0c.04-1.77-.04-3.53-.21-5.27l-384.85-43.46,21.1-186.85-233.85,137.98c-14.74,8.76-22.71,26.23-19.89,43.62l48.7,267.64c2.57,14.56,10.69,27.34,22.5,35.4l142.89,99.56-2.12,18.81,236.75-99.1,47.42,14.13c4.68-4.84,8.51-10.59,11.22-17.01l107.16-250.03c2.03-5,3.07-10.23,3.18-15.42Z"/><g class="cheerful-leg-left"><path class="cls-4 cheerful-leg-path-left" d="M409.024,969.192C409.024,975.76,404.229,981.088,398.318,981.088C392.768,981.088,387.218,981.088,381.668,981.088C376.118,981.088,370.568,981.088,365.018,981.088C365.018,981.088,363.604,978.389,361.304,972.844C360.154,970.072,358.783,966.588,357.257,962.373C355.73,958.159,354.048,953.214,352.277,947.521C350.506,941.828,348.645,935.386,346.762,928.177C345.82,924.572,344.872,920.776,343.927,916.785C342.981,912.795,342.039,908.61,341.106,904.229C340.174,899.848,339.253,895.271,338.35,890.494C337.448,885.718,336.564,880.743,335.708,875.567C334.851,870.391,334.022,865.014,333.228,859.434C332.435,853.853,331.676,848.07,330.962,842.08C330.962,842.08,330.962,842.08,330.962,842.08C333.12,838.797,335.541,835.872,338.168,833.31C340.795,830.748,343.627,828.549,346.607,826.72C349.586,824.89,352.712,823.43,355.927,822.345C359.142,821.259,362.446,820.549,365.78,820.219C372.448,819.56,379.239,820.423,385.686,822.855C388.91,824.071,392.047,825.679,395.041,827.685C398.034,829.692,400.883,832.096,403.53,834.904C403.53,834.904,403.53,834.904,403.53,834.904C407.037,838.624,409.017,843.776,409.017,849.16C409.017,854.162,409.017,859.163,409.017,864.165C409.017,869.167,409.017,874.168,409.017,879.17C409.017,884.172,409.017,889.173,409.017,894.175C409.017,899.177,409.017,904.178,409.017,909.18C409.017,914.182,409.017,919.183,409.017,924.185C409.017,929.187,409.017,934.188,409.017,939.19C409.017,944.192,409.017,949.193,409.017,954.195C409.017,959.197,409.017,964.198,409.017,969.2C409.019,969.197,409.022,969.195,409.024,969.192Z"/></g><g class="cheerful-foot-left"><path class="cls-6 cheerful-foot-path-left" d="M354.4,945C356.988,945,359.576,945,362.164,945C364.752,945,367.34,945,369.928,945C372.516,945,375.104,945,377.692,945C380.28,945,382.868,945,385.456,945C388.732,945,391.854,945.665,394.694,946.867C397.534,948.069,400.093,949.809,402.242,951.958C404.391,954.107,406.13,956.665,407.333,959.506C408.535,962.346,409.2,965.468,409.2,968.744C409.2,970.473,409.2,972.203,409.2,973.932C409.2,975.661,409.2,977.391,409.2,979.12C409.2,980.849,409.2,982.579,409.2,984.308C409.2,986.037,409.2,987.767,409.2,989.496C409.2,991.804,408.264,993.894,406.751,995.407C405.238,996.92,403.148,997.856,400.84,997.856C398.079,997.856,395.317,997.856,392.556,997.856C389.795,997.856,387.033,997.856,384.272,997.856C381.511,997.856,378.749,997.856,375.988,997.856C373.227,997.856,370.465,997.856,367.704,997.856C364.943,997.856,362.181,997.856,359.42,997.856C356.659,997.856,353.897,997.856,351.136,997.856C348.375,997.856,345.613,997.856,342.852,997.856C340.091,997.856,337.329,997.856,334.568,997.856C332.408,997.856,330.664,996.104,330.664,993.952C330.664,991.851,330.664,989.751,330.664,987.65C330.664,985.549,330.664,983.449,330.664,981.348C330.664,979.247,330.664,977.147,330.664,975.046C330.664,972.945,330.664,970.845,330.664,968.744C330.664,965.468,331.329,962.346,332.531,959.506C333.733,956.666,335.473,954.107,337.622,951.958C339.771,949.809,342.329,948.07,345.17,946.867C348.01,945.665,351.132,945,354.408,945C354.405,945,354.403,945,354.4,945Z"/></g><g class="cheerful-leg-right"><path class="cls-10 cheerful-leg-path-right" d="M580.969,969.192C580.969,975.76,585.764,981.088,591.675,981.088C597.225,981.088,602.775,981.088,608.325,981.088C613.875,981.088,619.425,981.088,624.975,981.088C624.975,981.088,626.389,978.389,628.689,972.844C629.838,970.072,631.209,966.588,632.736,962.373C634.263,958.159,635.944,953.214,637.716,947.521C639.487,941.828,641.347,935.386,643.231,928.177C644.173,924.572,645.121,920.776,646.066,916.785C647.011,912.795,647.954,908.61,648.886,904.229C649.819,899.848,650.74,895.271,651.643,890.494C652.545,885.718,653.429,880.743,654.285,875.567C655.142,870.391,655.971,865.014,656.765,859.434C657.558,853.853,658.317,848.07,659.031,842.08C659.031,842.08,659.031,842.08,659.031,842.08C656.873,838.797,654.451,835.872,651.824,833.31C649.197,830.748,646.365,828.549,643.386,826.72C640.407,824.89,637.281,823.43,634.066,822.345C630.851,821.259,627.547,820.549,624.213,820.219C617.544,819.56,610.754,820.423,604.307,822.855C601.083,824.071,597.945,825.679,594.952,827.685C591.959,829.692,589.109,832.096,586.462,834.904C586.462,834.904,586.462,834.904,586.462,834.904C582.956,838.624,580.976,843.776,580.976,849.16C580.976,854.162,580.976,859.163,580.976,864.165C580.976,869.167,580.976,874.168,580.976,879.17C580.976,884.172,580.976,889.173,580.976,894.175C580.976,899.177,580.976,904.178,580.976,909.18C580.976,914.182,580.976,919.183,580.976,924.185C580.976,929.187,580.976,934.188,580.976,939.19C580.976,944.192,580.976,949.193,580.976,954.195C580.976,959.197,580.976,964.198,580.976,969.2C580.974,969.197,580.971,969.195,580.969,969.192Z"/></g><g class="cheerful-foot-right"><path class="cls-6 cheerful-foot-path-right" d="M604.4,945C606.988,945,609.576,945,612.164,945C614.752,945,617.34,945,619.928,945C622.516,945,625.104,945,627.692,945C630.28,945,632.868,945,635.456,945C638.732,945,641.854,945.665,644.694,946.867C647.535,948.069,650.093,949.809,652.242,951.958C654.391,954.107,656.131,956.665,657.333,959.506C658.535,962.346,659.2,965.468,659.2,968.744C659.2,970.473,659.2,972.203,659.2,973.932C659.2,975.661,659.2,977.391,659.2,979.12C659.2,980.849,659.2,982.579,659.2,984.308C659.2,986.037,659.2,987.767,659.2,989.496C659.2,991.804,658.264,993.894,656.751,995.407C655.238,996.92,653.148,997.856,650.84,997.856C648.079,997.856,645.317,997.856,642.556,997.856C639.795,997.856,637.033,997.856,634.272,997.856C631.511,997.856,628.749,997.856,625.988,997.856C623.227,997.856,620.465,997.856,617.704,997.856C614.943,997.856,612.181,997.856,609.42,997.856C606.659,997.856,603.897,997.856,601.136,997.856C598.375,997.856,595.613,997.856,592.852,997.856C590.091,997.856,587.329,997.856,584.568,997.856C582.408,997.856,580.664,996.104,580.664,993.952C580.664,991.851,580.664,989.751,580.664,987.65C580.664,985.549,580.664,983.449,580.664,981.348C580.664,979.247,580.664,977.147,580.664,975.046C580.664,972.945,580.664,970.845,580.664,968.744C580.664,965.468,581.329,962.346,582.531,959.506C583.733,956.666,585.473,954.107,587.622,951.958C589.771,949.809,592.329,948.07,595.17,946.867C598.01,945.665,601.132,945,604.408,945C604.405,945,604.403,945,604.4,945Z"/></g><path class="cls-7" d="M549.82,255.58c-4.87-.55-9.93.52-14.44,3.3l-293.05,179.06c-14.31,8.81-22.1,26.3-19.43,43.67l46.25,267.36c2.43,14.55,10.26,27.29,21.68,35.31l166.48,119.37c5.65,3.9,12,6.25,18.53,6.99l73.98-655.06Z"/><path class="cls-11" d="M475.84,910.64c6.53.74,13.25-.14,19.63-2.68l188.91-79.24c12.92-5.27,23.39-15.95,29.01-29.58l104.71-250.31c6.48-16.34,2.79-35.13-9.2-46.9l-245.73-239.91c-3.78-3.71-8.47-5.88-13.34-6.44l-73.98,655.06Z"/><path class="cls-12" d="M329.22,752.38c5.7-2.26,14.49-5.68,23.29-9.1-4.58-3.42-7.73-8.71-8.68-14.76l-24.14-153.09c-3.35-21.25,16.7-38.06,34.47-29.47l-17.31-9.32c-20.16-10.86-43.51,8.24-39.69,32.47l27.04,171.43c.7,4.43,2.47,8.48,5.03,11.84Z"/><path class="cls-22" d="M352.52,743.28c-8.8,3.42-17.59,6.84-23.29,9.1,1.83,2.4,4.05,4.46,6.63,6.01l147.23,88.1,2.64-23.35-131.47-78.67c-.6-.36-1.17-.76-1.73-1.18Z"/><path class="cls-8" d="M674.72,582.53l-167.04,46.07-152.55-82.16c-18.01-9.7-38.86,7.36-35.44,28.99l24.14,153.09c1.07,6.79,4.89,12.64,10.41,15.94l131.47,78.67,145.71-47.37c6.12-1.99,11.15-6.84,13.7-13.22l57.68-143.85c8.15-20.33-8.37-41.61-28.08-36.17Z"/><path class="cls-12" d="M654.05,789.07c-5.05-3.47-12.86-8.77-20.68-14.06,5.23-2.31,9.48-6.77,11.75-12.45l57.68-143.85c8-19.96-7.79-40.82-27.03-36.42l18.95-5.23c22.08-6.09,40.58,17.74,31.45,40.5l-64.59,161.09c-1.67,4.16-4.3,7.72-7.54,10.42Z"/><path class="cls-22" d="M633.38,775c7.82,5.29,15.62,10.59,20.68,14.06-2.32,1.94-4.95,3.45-7.8,4.38l-163.17,53.05,2.64-23.35,145.71-47.37c.67-.22,1.31-.48,1.95-.76Z"/><path class="cls-16" d="M583.16,663.57l-13.65-6c-6.17-2.71-9.05-10.39-6.44-17.15h0c2.61-6.76,9.73-10.04,15.89-7.33l13.65,6c6.17,2.71,9.05,10.39,6.44,17.15h0c-2.61,6.76-9.73,10.04-15.89,7.33Z"/><path class="cls-1" d="M551.3,709.45c1.18-10.43,10.58-17.93,21.01-16.75s17.93,10.58,16.75,21.01"/><path class="cls-16" d="M426.32,645.86l14.64-2.8c6.62-1.27,11.14-8.11,10.1-15.28h0c-1.04-7.17-7.24-11.96-13.86-10.69l-14.64,2.8c-6.62,1.27-11.14,8.11-10.1,15.28h0c1.04,7.17,7.24,11.96,13.86,10.69Z"/><path class="cls-1" d="M447.15,697.69c1.18-10.43-6.32-19.83-16.75-21.01-10.43-1.18-19.83,6.32-21.01,16.75"/><path class="cls-6" d="M472.35,756.79c5.61,5.74,13.05,9.57,21.48,10.41,8.42.84,16.47-1.46,23.1-5.99.06-10.71-8.71-19.99-20.41-21.16-11.7-1.16-22.12,6.22-24.16,16.73Z"/><path class="cls-12" d="M461.69,725.74c-1.19,12.04,3.06,23.29,10.65,31.05,2.04-10.52,12.46-17.89,24.16-16.73,11.7,1.16,20.47,10.44,20.41,21.16,8.97-6.12,15.34-16.32,16.53-28.35l-71.76-7.12Z"/><g class="cheerful-hand-right"><path class="cls-9" d="M844.74,680.67c.12,8.73,4.04,17.08,10.69,22.74,17.93,15.26,39.94,7.53,40,7.51-35.62,14.31-112.5,41.86-123.72,17.98-11.23-23.88,59.02-65.51,92.77-83.82-.06.03-20.04,12.05-19.73,35.59Z"/><path class="cls-6" d="M913.48,703.34s-7.07,3.16-18.05,7.57c-.06.02-27.23,10.05-46.38-6.42-5.71-4.91-9.08-12.08-9.22-19.61-.47-25.24,24.58-39.78,24.64-39.81,0,0,0,0,0,0,3.11-8.4,12-28.5,25.68-27.57,4.87.33,7.63,4.08,9.08,9.29,1.25-.59,2.49-1.16,3.7-1.69,45.02-19.86,76.43,46.93,32.41,68.93-6.38,3.19-13.63,6.31-21.87,9.31Z"/><path class="cls-2" d="M899.24,626.79s3.35,13.64-6.71,24.38"/></g></g></g><g class="cheerful-prop cheerful-prop-1"><path class="cls-15" d="M801.86,234.64l.21,6.8c.06,1.96,1.38,3.66,3.27,4.21l6.53,1.9c5.57,1.62,5.81,9.41.36,11.38l-6.4,2.3c-1.85.67-3.06,2.44-3,4.41l.21,6.8c.18,5.79-7.16,8.44-10.71,3.85l-4.17-5.38c-1.2-1.55-3.27-2.15-5.12-1.49l-6.4,2.3c-5.45,1.96-10.23-4.2-6.98-9l3.83-5.63c1.1-1.62,1.04-3.77-.17-5.33l-4.17-5.38c-3.55-4.58.83-11.03,6.4-9.41l6.53,1.9c1.89.55,3.91-.18,5.01-1.8l3.83-5.63c3.26-4.79,10.75-2.62,10.93,3.18Z"/></g><g class="cheerful-prop cheerful-prop-2"><path class="cls-21" d="M778.98,122.91h22.71c3.02,0,5.46,2.45,5.46,5.46v22.74c0,3.02-2.45,5.46-5.46,5.46h-22.71c-3.02,0-5.46-2.45-5.46-5.46v-22.74c0-3.02,2.45-5.46,5.46-5.46Z" transform="translate(226.15 -431.09) rotate(35.31)"/></g><g class="cheerful-prop cheerful-prop-3"><path class="cls-21" d="M809.31,336.78h22.71c3.02,0,5.46,2.45,5.46,5.46v22.74c0,3.02-2.45,5.46-5.46,5.46h-22.71c-3.02,0-5.46-2.45-5.46-5.46v-22.74c0-3.02,2.45-5.46,5.46-5.46Z" transform="translate(-53.87 169.96) rotate(-11.45)"/></g><g class="cheerful-prop cheerful-prop-4"><circle class="cls-18" cx="919.81" cy="278.07" r="13.93"/></g><g class="cheerful-prop cheerful-prop-5"><circle class="cls-20" cx="670.49" cy="201.67" r="13.93"/></g><g class="cheerful-prop cheerful-prop-6"><path class="cls-5" d="M580.08,69.8h22.71c3.02,0,5.46,2.45,5.46,5.46v22.74c0,3.02-2.45,5.46-5.46,5.46h-22.71c-3.02,0-5.46-2.45-5.46-5.46v-22.74c0-3.02,2.45-5.46,5.46-5.46Z" transform="translate(-5.43 119.14) rotate(-11.45)"/></g><g class="cheerful-prop cheerful-prop-7"><path class="cls-17" d="M486.08,134.01l-5.03,10.08c-.88,1.76-.52,3.88.88,5.26l8.03,7.91c3.13,3.08.49,8.37-3.85,7.72l-11.14-1.67c-1.94-.29-3.85.7-4.73,2.46l-5.03,10.08c-1.96,3.93-7.81,3.05-8.53-1.28l-1.86-11.12c-.32-1.94-1.86-3.45-3.8-3.74l-11.15-1.68c-4.34-.65-5.31-6.48-1.42-8.51l10-5.19c1.74-.91,2.71-2.83,2.38-4.77l-1.85-11.11c-.72-4.33,4.52-7.06,7.65-3.98l8.03,7.91c1.4,1.38,3.53,1.7,5.27.79l10-5.2c3.9-2.03,8.11,2.12,6.15,6.05Z"/></g><g class="cheerful-prop cheerful-prop-8"><path class="cls-18" d="M391.9,239.61l-22.16-5.02c-2.94-.67-4.79-3.59-4.13-6.54l4.99-22.2c.66-2.95,3.59-4.8,6.54-4.13l22.16,5.02c2.94.67,4.79,3.59,4.13,6.54l-4.99,22.2c-.66,2.95-3.59,4.8-6.54,4.13Z"/></g><g class="cheerful-prop cheerful-prop-9"><circle class="cls-20" cx="334.58" cy="106.68" r="13.93"/></g><g class="cheerful-prop cheerful-prop-10"><path class="cls-13" d="M280.09,329.24l-7.25-8.63c-1.26-1.5-3.35-2.02-5.17-1.29l-10.45,4.22c-4.07,1.65-7.87-2.88-5.54-6.6l5.97-9.56c1.04-1.67.89-3.81-.37-5.32l-7.25-8.63c-2.82-3.36.31-8.38,4.57-7.31l10.93,2.72c1.91.48,3.9-.33,4.94-2l5.97-9.56c2.33-3.73,8.06-2.3,8.37,2.08l.79,11.25c.14,1.96,1.52,3.61,3.43,4.08l10.94,2.73c4.26,1.06,4.67,6.96.6,8.6l-10.45,4.22c-1.82.74-2.96,2.56-2.82,4.52l.79,11.24c.31,4.38-5.17,6.6-7.99,3.23Z"/></g><g class="cheerful-prop cheerful-prop-11"><path class="cls-21" d="M196.82,247.65l-6.13-21.86c-.81-2.9.88-5.92,3.78-6.74l21.88-6.17c2.91-.82,5.92.87,6.74,3.78l6.13,21.86c.81,2.9-.88,5.92-3.78,6.74l-21.88,6.17c-2.91.82-5.92-.87-6.74-3.78Z"/></g></svg>

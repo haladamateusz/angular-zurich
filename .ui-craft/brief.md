@@ -32,6 +32,20 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-10-17** — Match the chat header mascot's shield height and position across Wave, Thinking, and Coding; size against the character body rather than question marks or the floating console. _Why:_ transitions between poses should not make the character visibly grow, shrink, or shift sideways.
+
+- **2026-10-17** — Keep Cheerful at full size on the ground with level, correctly oriented soles. Reveal props individually with short travel and rotation; each prop pops to 150% on entry, then settles at 100%. _Why:_ the user requested a brief individual size pop while keeping the body full size and avoiding the props behaving like one scaling background. This supersedes the earlier ban on prop scaling.
+
+- **2026-10-16** — Use Orthos Front's upright leg and flat shoe contours throughout Cheerful's jump, centering each ankle over its shoe. Swing each leg and shoe together with rigid 2D rotation around the hip; do not morph or twist the shapes. _Why:_ the user wants consistent leg shapes and continuous ankle-to-shoe alignment while preserving the flat 2D leg swing. This supersedes translating the legs without rotation.
+
+- **2026-10-16** — In mascot animations, lean the upper body and extend the legs slightly with the movement, keeping their lower anchors and both feet fixed on the ground. _Why:_ the user wants the legs to enlarge with the lean while maintaining a planted stance.
+
+- **2026-10-16** — Keep the Coding mascot's moving hand behind the console, matching the static artwork. _Why:_ the user wants the animation to preserve the original overlap and depth.
+
+- **2026-10-16** — For the Question mascot, scratch the side of the head with a short bent arm; fade out the original question mark as the extra marks appear, then restore it at rest. _Why:_ the user rejected the long reach over the head and wants the marks to form a sequence rather than remain visible together.
+
+- **2026-10-16** — For the Orthos wave, mirror the original rounded thumb contour from the lower edge to the upper edge early in the hand raise; keep the palm orientation stable. _Why:_ the user rejected the wrist flip and wants the same thumb shape on the opposite side, appearing earlier in the gesture.
+
 - **2026-10-05** — Show the written answer below result cards/tables and stream actual provider text as it arrives. Fold search activity once results are ready, keep Stop available through generation, and preserve interrupted text. _Why:_ readers should see both the evidence and a direct answer, with visible progress throughout.
 
 - **2026-09-18** — Chat sends on Enter (Shift+Enter inserts a line), with a text-only send button. Show actual tool activity as it happens, including inspectable parameters and outcomes. Keep it inside each response above the answer, open while running and automatically folded when finished; users can expand previous searches. _Why:_ users need keyboard fluency and visible evidence of progress instead of a static searching label.
