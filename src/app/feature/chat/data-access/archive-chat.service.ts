@@ -1,4 +1,5 @@
 import { ChatResult } from '../../../core/models/chat-result.model';
+import { ChatFeedbackContext } from '../../../core/models/chat-feedback.model';
 import { DestroyRef, Service, inject, signal } from '@angular/core';
 import { HttpAgent, Message } from '@ag-ui/client';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -19,6 +20,7 @@ interface ChatMessage {
   result?: ChatResult;
   activity?: SearchActivity;
   interrupted?: 'stopped' | 'failed';
+  feedback?: ChatFeedbackContext;
 }
 
 @Service()
@@ -29,6 +31,7 @@ export class ArchiveChatService {
   private readonly nextQuestions = new Map<string, string>();
   private readonly interruptedAnswers = new Map<string, 'stopped' | 'failed'>();
   private readonly searches = new Map<string, SearchActivity>();
+  private readonly completedAnswers = new Set<string>();
   private questionId = '';
   private contextToken: string | undefined;
   private readonly results = new Map<string, ChatResult>();
@@ -56,6 +59,7 @@ export class ArchiveChatService {
     this.nextQuestions.clear();
     this.searches.clear();
     this.interruptedAnswers.clear();
+    this.completedAnswers.clear();
     this.questionId = '';
     this.activity.set([]);
     this.messages.set([]);
@@ -120,6 +124,7 @@ export class ArchiveChatService {
 
   private updateMessages(messages: readonly Readonly<Message>[]) {
     let questionId = '';
+    let question = '';
     const rendered = messages.flatMap<ChatMessage>((message) => {
       if (
         (message.role !== 'user' && message.role !== 'assistant') ||
@@ -127,7 +132,10 @@ export class ArchiveChatService {
       )
         return [];
       const sources = this.sources.get(message.id) ?? [];
-      if (message.role === 'user') questionId = message.id;
+      if (message.role === 'user') {
+        questionId = message.id;
+        question = message.content;
+      }
       return [
         {
           id: message.role === 'assistant' ? `${questionId}-response` : message.id,
@@ -139,6 +147,20 @@ export class ArchiveChatService {
           activity: message.role === 'assistant' ? this.searches.get(questionId) : undefined,
           interrupted:
             message.role === 'assistant' ? this.interruptedAnswers.get(questionId) : undefined,
+          feedback:
+            message.role === 'assistant' &&
+            message.content.trim() &&
+            this.completedAnswers.has(questionId) &&
+            this.answerIds.get(questionId) === message.id
+              ? {
+                  threadId: this.agent.threadId,
+                  messageId: message.id,
+                  question,
+                  answer: message.content,
+                  sourceIds: sources.map((source) => source.id),
+                  result: this.results.get(message.id),
+                }
+              : undefined,
         },
       ];
     });
@@ -199,8 +221,8 @@ export class ArchiveChatService {
         });
         const response = await fetch(url, { ...init, headers, body });
         if (!response.ok) {
-          const data: unknown = await response.json();
           if (response.status === 401 || response.status === 403) this.accessRevoked.set(true);
+          const data: unknown = await response.json().catch(() => null);
           throw new Error(
             typeof data === 'object' &&
               data !== null &&
@@ -209,6 +231,9 @@ export class ArchiveChatService {
               ? data.error
               : 'The search couldn’t finish. Please try again.',
           );
+        }
+        if (!response.headers.get('content-type')?.includes('text/event-stream')) {
+          throw new Error('The chat server returned an unexpected response. Please try again.');
         }
         return response;
       },
@@ -266,6 +291,11 @@ export class ArchiveChatService {
       },
       onTextMessageEndEvent: () => {
         if (agent === this.agent) this.writingAnswer.set(false);
+      },
+      onRunFinishedEvent: () => {
+        if (agent !== this.agent || !this.running() || this.error()) return;
+        this.completedAnswers.add(this.questionId);
+        this.updateMessages(agent.messages);
       },
       onRunErrorEvent: ({ event }) => {
         if (agent === this.agent) {

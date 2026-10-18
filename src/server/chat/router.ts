@@ -3,13 +3,25 @@ import { createClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { ArchiveContext, openContext, sealContext } from './context';
 import { parseChatRequest } from './policy';
+import { chatFeedbackSchema } from '../../app/core/models/chat-feedback.model';
+import { z } from 'zod';
+import { eventDraftSchema } from '../../app/core/models/event-draft.model';
+import {
+  createEventDraftTools,
+  approvalToken,
+  verifyApproval,
+  DraftError,
+  updateDraftSchema,
+  attachDraftTalkSchema,
+  draftTalkSchema,
+} from './event-drafts';
 
 const authOptions = { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false };
 const quotaMessages: Record<string, string> = {
   busy: 'A question is already running. Wait a moment before trying again.',
   duplicate: 'This request has already been processed. Send a new question.',
   minute_limit: 'You’ve reached the limit of five questions per minute. Try again shortly.',
-  daily_limit: 'You’ve reached today’s limit of 30 questions. It resets at midnight UTC.',
+  daily_limit: 'You’ve reached today’s limit of 100 questions. It resets at midnight UTC.',
   budget_limit: 'The community’s chat allowance is used up for today. It resets at midnight UTC.',
 };
 
@@ -85,6 +97,153 @@ chatRouter.get('/access', async (req, res) => {
       config.enabled && config.serviceKey && config.openRouterKey && config.dailyBudget,
     ),
   });
+});
+
+chatRouter.all(
+  ['/draft-options', '/drafts/:draftId', '/drafts/:draftId/:action'],
+  async (req, res) => {
+    const auth = await authenticate(req, res);
+    if (!auth) return;
+    const tools = createEventDraftTools(
+      auth.client,
+      AbortSignal.timeout(20_000),
+      crypto.randomUUID(),
+    );
+    try {
+      if (req.method === 'GET' && req.path === '/draft-options') {
+        res.json(await tools.options(String(req.query['query'] ?? '').slice(0, 160)));
+        return;
+      }
+      const draftId = z.string().uuid().parse(req.params['draftId']);
+      if (req.method === 'GET') {
+        res.json({ draft: await tools.get({ draftId }), audit: await tools.audit(draftId) });
+        return;
+      }
+      if (req.method !== 'POST') {
+        res.sendStatus(405);
+        return;
+      }
+      const input = z
+        .object({ expectedVersion: z.number().int().positive() })
+        .passthrough()
+        .parse(req.body);
+      const args = { ...input, draftId };
+      switch (req.params['action']) {
+        case 'update':
+          res.json(await tools.update(updateDraftSchema.parse(args)));
+          return;
+        case 'attach':
+          res.json(await tools.attach(attachDraftTalkSchema.parse(args)));
+          return;
+        case 'create-talk':
+          res.json(await tools.createTalk(draftTalkSchema.parse(args)));
+          return;
+        case 'remove-talk':
+          res.json(await tools.remove(attachDraftTalkSchema.parse(args)));
+          return;
+        case 'discard':
+          res.json(await tools.discard({ draftId, expectedVersion: input.expectedVersion }));
+          return;
+        case 'review': {
+          const draft = await tools.get({ draftId });
+          if (draft.state !== 'draft' || draft.version !== input.expectedVersion)
+            throw new DraftError('This draft changed. Reload it before reviewing.', 409);
+          const c = draft.content;
+          if (!c.startsAt || !c.venueId || !c.meetupUrl || c.talks.length < 2)
+            throw new DraftError(
+              'Add a date, venue, Meetup link and two or three talks before publishing.',
+            );
+          if (!auth.config.serviceKey) throw new DraftError('Publishing is not configured.', 503);
+          res.json({ draft, token: approvalToken(draft, auth.user.id, auth.config.serviceKey) });
+          return;
+        }
+        case 'publish': {
+          if (!auth.config.serviceKey) throw new DraftError('Publishing is not configured.', 503);
+          const approval = z
+            .object({ token: z.string().max(2000), confirmed: z.literal(true) })
+            .parse(input);
+          verifyApproval(
+            approval.token,
+            draftId,
+            input.expectedVersion,
+            auth.user.id,
+            auth.config.serviceKey,
+          );
+          // Recheck active organizer access immediately before the privileged RPC.
+          await tools.get({ draftId });
+          const admin = createClient(auth.config.url, auth.config.serviceKey, {
+            auth: authOptions,
+          });
+          const { data, error } = await admin
+            .rpc('publish_chat_event_draft', {
+              p_id: draftId,
+              p_version: input.expectedVersion,
+              p_actor: auth.user.id,
+            })
+            .abortSignal(AbortSignal.timeout(20_000));
+          if (error)
+            throw new DraftError(
+              error.code === '40001'
+                ? 'The draft or a selected talk changed. Reload and review it again.'
+                : 'Publishing failed. Check the future date, venue, Meetup link and selected talks.',
+              error.code === '40001' ? 409 : 400,
+            );
+          res.json(eventDraftSchema.parse(data));
+          return;
+        }
+        default:
+          res.sendStatus(404);
+      }
+    } catch (error) {
+      res
+        .status(error instanceof DraftError ? error.status : 400)
+        .json({ error: error instanceof DraftError ? error.message : 'Invalid draft request.' });
+    }
+  },
+);
+
+chatRouter.post('/feedback', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  const parsed = chatFeedbackSchema.safeParse(req.body as unknown);
+  if (!parsed.success) {
+    res.status(400).json({ error: 'Feedback must refer to a completed answer.' });
+    return;
+  }
+  const { threadId, messageId, question, answer, sourceIds, result, rating } = parsed.data;
+  // Use the caller's session so RLS enforces ownership and current approval.
+  // Context is a user-submitted snapshot, not a verified agent execution log.
+  const query =
+    rating === null
+      ? auth.client
+          .from('chat_feedback')
+          .delete()
+          .eq('user_id', auth.user.id)
+          .eq('message_id', messageId)
+      : auth.client.from('chat_feedback').upsert(
+          {
+            user_id: auth.user.id,
+            thread_id: threadId,
+            message_id: messageId,
+            question,
+            answer,
+            source_ids: sourceIds,
+            result: result ?? null,
+            rating,
+          },
+          { onConflict: 'user_id,message_id' },
+        );
+  const { error } = await query;
+  if (error) {
+    res.status(error.code === '42501' ? 403 : 503).json({
+      error:
+        error.code === '42501'
+          ? 'Your chat access has changed. Sign in with an approved account.'
+          : 'We couldn’t save your feedback. Please try again.',
+    });
+    return;
+  }
+  res.json({ rating });
 });
 
 chatRouter.post('/run', async (req, res) => {

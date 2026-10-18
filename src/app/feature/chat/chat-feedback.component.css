@@ -1,0 +1,71 @@
+:host {
+  display: block;
+  margin-block-start: var(--space-4);
+  font-size: var(--type-sm);
+}
+
+.feedback-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.feedback-label,
+.feedback-status {
+  color: var(--foreground-secondary);
+}
+
+button {
+  min-height: 2.75rem;
+}
+
+button.app-button.feedback-vote {
+  --app-button-background: transparent;
+  --app-button-background-hover: var(--background-sunken);
+  --app-button-background-active: var(--background-sunken);
+  --app-button-foreground: var(--foreground-primary);
+
+  border: 1px solid var(--foreground-secondary);
+}
+
+button.app-button.feedback-vote[aria-pressed='true'] {
+  --app-button-foreground: var(--foreground-link);
+  --app-button-background: var(--background-sunken);
+
+  border-color: var(--foreground-link);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.feedback-remove {
+  color: var(--foreground-secondary);
+  padding-inline: var(--space-2);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.feedback-remove:hover {
+  color: var(--foreground-primary);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--foreground-link);
+  outline-offset: 3px;
+}
+
+.feedback-status {
+  margin-block-start: var(--space-2);
+  min-height: 1.5em;
+}
+
+.feedback-error {
+  color: var(--foreground-primary);
+  margin-block-start: var(--space-2);
+}

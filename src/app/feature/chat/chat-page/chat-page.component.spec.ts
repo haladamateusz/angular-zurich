@@ -33,6 +33,7 @@ describe('ChatPageComponent', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -49,6 +50,16 @@ describe('ChatPageComponent', () => {
     expect(fixture.nativeElement.querySelector('.archive-chat-empty h2')?.textContent).toContain(
       'Which talk are you looking for, Ada?',
     );
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front_Wave.svg');
+    expect(fixture.nativeElement.querySelector('#chat-title')?.textContent.trim()).toBe(
+      'Chräungie',
+    );
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot')?.closest('[role=log]'),
+    ).toBeNull();
+    expect(fixture.nativeElement.querySelector('.archive-chat-empty img')).toBeNull();
     expect(fixture.nativeElement.querySelector('#chat-title')?.className).toContain(
       'tracking-[-0.04em]',
     );
@@ -107,6 +118,16 @@ describe('ChatPageComponent', () => {
     expect(disclosure.open).toBe(true);
     expect(disclosure.textContent).toContain('Search talks');
     expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Question_Thinking.svg');
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('width'),
+    ).toBe('128');
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot source')?.getAttribute('srcset'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Question.svg');
+    expect(fixture.nativeElement.querySelector('.archive-chat-mascot-status')).toBeNull();
+    expect(
       fixture.nativeElement.querySelector('.archive-chat-composer .archive-activity'),
     ).toBeNull();
     emit({
@@ -117,11 +138,27 @@ describe('ChatPageComponent', () => {
     });
     emit({ type: 'TEXT_MESSAGE_START', messageId: 'answer', role: 'assistant' });
     emit({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'answer', delta: 'Here are the talks.' });
+    await vi.waitFor(() => expect(chat.messages()[1].text).toBe('Here are the talks.'));
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Coding_Animated.svg');
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot source')?.getAttribute('srcset'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Coding.svg');
+    expect(fixture.nativeElement.querySelector('.archive-chat-mascot-status')).toBeNull();
     emit({ type: 'TEXT_MESSAGE_END', messageId: 'answer' });
     emit({ type: 'RUN_FINISHED', threadId: 'thread', runId: 'run' });
     stream.close();
     await pending;
     fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front_Wave.svg');
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('width'),
+    ).toBe('128');
+    expect(fixture.nativeElement.querySelector('.archive-chat-mascot-status')).toBeNull();
     expect(disclosure.open).toBe(false);
     expect(disclosure.nextElementSibling?.textContent?.trim()).toBe('Here are the talks.');
     disclosure.open = true;
@@ -131,6 +168,18 @@ describe('ChatPageComponent', () => {
     fixture.detectChanges();
     const disclosures = fixture.nativeElement.querySelectorAll('.archive-activity');
     expect(disclosures).toHaveLength(2);
+    expect(fixture.nativeElement.querySelector('.archive-message-mascot')).toBeNull();
+    const assistantMessages = fixture.nativeElement.querySelectorAll(
+      '.archive-message:not(.archive-message-user)',
+    ) as NodeListOf<HTMLElement>;
+    expect(assistantMessages).toHaveLength(2);
+    for (const message of assistantMessages) {
+      expect(message.querySelector('.archive-message-label')).toBeNull();
+    }
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src'),
+    ).toBe('/angular-mascots/Google_Angular_Mascot_2D_Question_Thinking.svg');
+    expect(fixture.nativeElement.querySelectorAll('.archive-chat-mascot-status')).toHaveLength(0);
     expect(disclosures[0]).toBe(disclosure);
     expect(disclosure.open).toBe(true);
     expect(disclosures[1].open).toBe(true);
@@ -138,12 +187,151 @@ describe('ChatPageComponent', () => {
     stream.close();
     await nextRun;
     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.archive-chat-mascot-status')).toBeNull();
     expect(disclosures[1].open).toBe(false);
     expect(disclosures[1].textContent).toContain('stopped');
     expect(disclosure.textContent).toContain('Search talks');
     chat.reset();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.archive-activity')).toBeNull();
+  });
+
+  it.each(['text', 'sources', 'result', 'writing'] as const)(
+    'starts coding immediately when %s arrives before the thinking loop ends',
+    async (output) => {
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const chat = fixture.debugElement.injector.get(ArchiveChatService);
+      const mascotSrc = () =>
+        fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src');
+      chat.running.set(true);
+      chat.messages.set([
+        { id: 'answer', role: 'assistant', text: '', sources: [], nextQuestion: '' },
+      ]);
+      await fixture.whenStable();
+      expect(mascotSrc()).toContain('Question_Thinking.svg');
+
+      if (output === 'writing') chat.writingAnswer.set(true);
+      else {
+        chat.messages.update((messages) =>
+          messages.map((message) => ({
+            ...message,
+            text: output === 'text' ? 'Here are the talks' : '',
+            sources:
+              output === 'sources'
+                ? [
+                    {
+                      id: 'talk',
+                      title: 'Signals',
+                      description: '',
+                      eventTitle: 'Angular Zürich',
+                      speakers: ['Ada'],
+                      date: '2026-06-17',
+                      url: '/events/signals',
+                    },
+                  ]
+                : [],
+            result: output === 'result' ? { kind: 'ranking', rows: [] } : undefined,
+          })),
+        );
+      }
+      await fixture.whenStable();
+      expect(mascotSrc()).toContain('Coding_Animated.svg');
+      expect(
+        fixture.nativeElement.querySelector('.archive-chat-mascot source')?.getAttribute('srcset'),
+      ).toContain('Coding.svg');
+
+      chat.running.set(false);
+      await fixture.whenStable();
+      expect(mascotSrc()).toContain('Orthos_Front_Wave.svg');
+      fixture.destroy();
+    },
+  );
+
+  it('falls back to coding after one thinking loop without reviving stopped runs', async () => {
+    let stream!: ReadableStreamDefaultController<Uint8Array>;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            new ReadableStream({
+              start(controller) {
+                stream = controller;
+              },
+            }),
+            { headers: { 'Content-Type': 'text/event-stream' } },
+          ),
+      ),
+    );
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const chat = fixture.debugElement.injector.get(ArchiveChatService);
+    const mascotSrc = () =>
+      fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src');
+    vi.useFakeTimers();
+    const pending = chat.send('Find talks about signals');
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
+
+    await vi.advanceTimersByTimeAsync(4_999);
+    fixture.detectChanges();
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Question_Thinking.svg');
+    expect(
+      fixture.nativeElement
+        .querySelector('.archive-chat-mascot img')
+        ?.style.getPropertyValue('--mascot-scale'),
+    ).toBe('1.19');
+    await vi.advanceTimersByTimeAsync(1);
+    fixture.detectChanges();
+    expect(chat.messages()[1].text).toBe('');
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-mascot')?.classList.contains('is-active'),
+    ).toBe(true);
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Coding_Animated.svg');
+    expect(
+      fixture.nativeElement
+        .querySelector('.archive-chat-mascot img')
+        ?.style.getPropertyValue('--mascot-scale'),
+    ).toBe('1.19');
+    expect(fixture.nativeElement.querySelector('.archive-chat-mascot-status')).toBeNull();
+
+    stream.enqueue(
+      new TextEncoder().encode(
+        `data: ${JSON.stringify({ type: 'RUN_STARTED', threadId: 'thread', runId: 'run' })}\n\n` +
+          `data: ${JSON.stringify({ type: 'TEXT_MESSAGE_START', messageId: 'answer', role: 'assistant' })}\n\n` +
+          `data: ${JSON.stringify({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'answer', delta: 'Found a talk.' })}\n\n`,
+      ),
+    );
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Coding_Animated.svg');
+
+    chat.stop();
+    stream.close();
+    await pending;
+    fixture.detectChanges();
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front_Wave.svg');
+    expect(
+      fixture.nativeElement
+        .querySelector('.archive-chat-mascot img')
+        ?.style.getPropertyValue('--mascot-scale'),
+    ).toBe('1');
+
+    chat.reset();
+    fixture.detectChanges();
+    const nextRun = chat.send('And forms?');
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Question_Thinking.svg');
+    chat.stop();
+    stream.close();
+    await nextRun;
+    fixture.detectChanges();
+    await vi.advanceTimersByTimeAsync(5_000);
+    fixture.detectChanges();
+    expect(mascotSrc()).toBe('/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front_Wave.svg');
+    fixture.destroy();
   });
 
   it.each(['complete', 'stop', 'error'] as const)(
@@ -204,9 +392,11 @@ describe('ChatPageComponent', () => {
       await vi.waitFor(() => expect(chat.messages()[1].text).toBe('Ada discussed '));
       fixture.detectChanges();
       const answer = fixture.nativeElement.querySelector('.archive-answer') as HTMLElement;
+      expect(answer.textContent?.startsWith('Ada discussed ')).toBe(true);
       expect(card.compareDocumentPosition(answer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       expect(answer.textContent).toContain('Ada discussed');
       expect(chat.running()).toBe(true);
+      expect(fixture.nativeElement.querySelector('app-chat-feedback')).toBeNull();
       emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta: '<script>signals</script>.' });
       await vi.waitFor(() =>
         expect(chat.messages()[1].text).toContain('<script>signals</script>.'),
@@ -222,8 +412,12 @@ describe('ChatPageComponent', () => {
       expect(chat.running()).toBe(false);
       expect(fixture.nativeElement.querySelector('.archive-answer-cursor')).toBeNull();
       expect(answer.textContent).toContain('Ada discussed <script>signals</script>.');
+      expect(answer.textContent?.startsWith('Ada discussed ')).toBe(true);
       expect(answer.querySelector('script')).toBeNull();
       expect(fixture.nativeElement.querySelector('.archive-source')).toBe(card);
+      expect(fixture.nativeElement.querySelectorAll('app-chat-feedback')).toHaveLength(
+        outcome === 'complete' ? 1 : 0,
+      );
       if (outcome !== 'complete')
         expect(fixture.nativeElement.textContent).toContain('may be incomplete');
     },

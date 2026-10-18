@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.draft-workspace {
+  margin-block: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-surface);
+  background: var(--background-raised);
+  overflow-wrap: anywhere;
+}
+
+header,
+section,
+form,
+details {
+  margin-block: var(--space-4);
+}
+
+h2 {
+  font-size: var(--type-xl);
+  font-weight: var(--weight-bold);
+}
+
+h3,
+h4 {
+  font-weight: var(--weight-bold);
+  margin-block: var(--space-3);
+}
+
+.draft-state {
+  color: var(--muted-foreground-1);
+  font-size: var(--type-sm);
+}
+
+fieldset {
+  border: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+legend {
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+label {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--type-sm);
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  background: var(--background-sunken);
+  color: var(--foreground-primary);
+  font: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.draft-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.draft-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block: var(--space-4);
+}
+
+button:not(.app-button),
+summary,
+a {
+  min-height: 44px;
+  padding-block: var(--space-2);
+  color: var(--primary-text);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+:is(input, textarea, select, button, a, summary):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+article {
+  border-left: 2px solid var(--primary);
+  padding-left: var(--space-4);
+  margin-block: var(--space-4);
+}
+
+.preserve-lines {
+  white-space: pre-wrap;
+}
+
+.draft-confirm {
+  border: 1px solid var(--primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+}
+
+dt {
+  font-weight: var(--weight-bold);
+  margin-top: var(--space-3);
+}
+
+dd {
+  margin: 0;
+}
+
+ol {
+  padding-left: var(--space-5);
+  font-size: var(--type-sm);
+}
+
+@media (max-width: 640px) {
+  .draft-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .draft-workspace {
+    padding: var(--space-3);
+  }
+}

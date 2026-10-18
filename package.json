@@ -22,7 +22,9 @@
     "test:chat": "vitest run --config vitest.chat.config.ts",
     "start:chat": "node --env-file-if-exists=.env.local node_modules/@angular/cli/bin/ng.js serve",
     "test:chat:browser": "playwright test --config playwright.chat.config.ts",
-    "eval:chat": "node --env-file-if-exists=.env.local node_modules/vitest/vitest.mjs run --config vitest.chat-eval.config.ts"
+    "eval:chat": "node --env-file-if-exists=.env.local node_modules/vitest/vitest.mjs run --config vitest.chat-eval.config.ts",
+    "feedback:export": "node --env-file-if-exists=.env.local scripts/chat/export-feedback.mjs",
+    "eval:feedback": "node --env-file-if-exists=.env.local node_modules/vitest/vitest.mjs run --config vitest.feedback-eval.config.ts"
   },
   "private": true,
   "packageManager": "npm@11.10.1",

@@ -5,12 +5,36 @@
 .archive-chat {
   max-width: 64rem;
   margin-inline: auto;
-  padding: clamp(1.25rem, 4vw, 3rem) 1.25rem;
+  padding: clamp(var(--space-3), 2vw, var(--space-6)) 1.25rem;
   color: var(--foreground-primary);
 }
 
 .archive-chat-header {
-  margin-bottom: var(--space-8);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.archive-chat-mascot {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  width: clamp(5rem, 15vw, 8rem);
+}
+
+.archive-chat-mascot picture,
+.archive-chat-mascot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.archive-chat-mascot.is-active img {
+  /* Match shield height and position across poses, excluding floating props. */
+  transform: translate(var(--mascot-offset-x, 0%), var(--mascot-offset-y, 0%))
+    scale(var(--mascot-scale, 1));
 }
 
 h2 {
@@ -28,6 +52,7 @@ h2 {
 }
 
 .archive-chat-surface {
+  position: relative;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-surface);
   background: var(--background-raised);
@@ -51,6 +76,10 @@ h2 {
   margin-block: 1rem;
 }
 
+.archive-chat-retry {
+  margin-bottom: var(--space-4);
+}
+
 @media (width <= 40rem) {
   .archive-chat-notice {
     padding: 1.25rem;
@@ -58,6 +87,7 @@ h2 {
 }
 
 .archive-chat-transcript {
+  position: relative;
   min-height: 18rem;
   max-height: 55dvh;
   overflow-y: auto;
@@ -101,6 +131,28 @@ h2 {
   color: var(--foreground-secondary);
 }
 
+.archive-question-flight {
+  position: absolute;
+  z-index: var(--z-raised);
+  margin: 0;
+  max-width: none;
+  pointer-events: none;
+  transform-origin: top left;
+  will-change: transform;
+  animation: question-send var(--duration-medium) var(--ease-emphasized) both;
+}
+
+@keyframes question-send {
+  from {
+    transform: translate(var(--flight-x), var(--flight-y))
+      scale(var(--flight-scale-x), var(--flight-scale-y));
+  }
+
+  to {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
 .archive-message-text {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -137,24 +189,22 @@ h2 {
 }
 
 .archive-source-link {
-  color: var(--foreground-link);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  min-height: 2.75rem;
+  gap: var(--space-1);
+  font-size: var(--type-sm);
+  line-height: 1;
+}
+
+.archive-source-link-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: none;
 }
 
 .archive-chat-composer {
   border-top: 1px solid var(--border-default);
   padding: 1rem 1.25rem;
-}
-
-.archive-chat-composer label {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
 }
 
 .archive-chat-composer textarea {
@@ -193,13 +243,6 @@ h2 {
   flex-wrap: wrap;
 }
 
-.archive-chat-status {
-  min-height: 1.5rem;
-  color: var(--foreground-secondary);
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
 :where(a, button, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--foreground-link);
   outline-offset: 3px;
@@ -207,14 +250,63 @@ h2 {
 
 .archive-activity {
   margin-bottom: var(--space-4);
-  font-size: var(--type-xs);
+  font-size: var(--type-sm);
 }
 
 .archive-activity-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
   font-weight: var(--weight-semibold);
+  line-height: 1;
   cursor: pointer;
   min-height: 2.75rem;
   padding-block: var(--space-3);
+}
+
+.archive-activity-heading::-webkit-details-marker {
+  display: none;
+}
+
+.archive-activity-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.archive-activity-label.is-running::after {
+  content: '';
+  width: var(--space-1);
+  height: var(--space-1);
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--foreground-secondary);
+  animation: activity-breathe 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes activity-breathe {
+  from {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+.archive-activity-chevron {
+  width: var(--space-5);
+  height: var(--space-5);
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.archive-activity[open] > .archive-activity-heading .archive-activity-chevron,
+.archive-activity-step[open] > summary .archive-activity-step-chevron {
+  transform: rotate(90deg);
 }
 
 .archive-activity-steps {
@@ -227,8 +319,13 @@ h2 {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
+  list-style: none;
   cursor: pointer;
   min-height: 2.75rem;
+}
+
+.archive-activity-step summary::-webkit-details-marker {
+  display: none;
 }
 
 .archive-activity-step p {
@@ -242,16 +339,10 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
-.archive-activity-marker {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: var(--radius-pill);
-  background: var(--foreground-secondary);
-}
-
-.archive-activity-marker.is-running {
-  background: var(--foreground-link);
-  animation: activity-pulse 1s ease-in-out infinite alternate;
+.archive-activity-step-chevron {
+  width: var(--space-4);
+  height: var(--space-4);
+  color: var(--foreground-secondary);
 }
 
 @keyframes activity-pulse {
@@ -261,8 +352,23 @@ h2 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .archive-activity-marker.is-running {
+  .archive-question-flight {
+    animation-duration: 1ms;
+  }
+
+  .archive-activity-chevron {
+    transition: none;
+  }
+
+  .archive-activity-label.is-running::after {
     animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .archive-activity-label.is-running::after {
+    animation: none;
+    background: CanvasText;
   }
 }
 

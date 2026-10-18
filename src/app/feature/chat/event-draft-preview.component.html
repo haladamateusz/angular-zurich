@@ -1,0 +1,217 @@
+<section class="draft-workspace" aria-label="Event drafts" [attr.aria-busy]="busy()">
+  @if (error()) {
+    <p role="alert">{{ error() }}</p>
+  }
+  @if (notice()) {
+    <p role="status">{{ notice() }}</p>
+  }
+  @if (draft(); as draft) {
+    <header>
+      <p class="draft-state">
+        {{ draft.state === 'draft' ? 'Private event draft' : draft.state }} · Version
+        {{ draft.version }}
+      </p>
+      <h2>{{ draft.content.title }}</h2>
+      <button type="button" (click)="load(draft.id)" [disabled]="busy()">
+        Reload latest version
+      </button>
+    </header>
+    @if (draft.state === 'published') {
+      <p>The event is now public.</p>
+      <a [routerLink]="['/events', draft.event_slug]">View published event</a>
+    } @else if (draft.state === 'discarded') {
+      <p>This draft was discarded. Existing talks were not changed.</p>
+    } @else if (review(); as review) {
+      <section class="draft-confirm" aria-labelledby="publish-heading">
+        <h3 #reviewHeading id="publish-heading" tabindex="-1">Publish this event?</h3>
+        <p>This will make this event and its selected talks publicly visible.</p>
+        <dl>
+          <dt>Title</dt>
+          <dd>{{ review.draft.content.title }}</dd>
+          <dt>Starts</dt>
+          <dd>{{ review.draft.content.startsAt.replace('T', ' ') }} · Europe/Zurich</dd>
+          <dt>Venue</dt>
+          <dd>{{ venueName(review.draft.content.venueId) }}</dd>
+          <dt>Meetup link</dt>
+          <dd>{{ review.draft.content.meetupUrl }}</dd>
+          <dt>Image URL</dt>
+          <dd>{{ review.draft.content.imageUrl || 'No image' }}</dd>
+        </dl>
+        <p class="preserve-lines">{{ review.draft.content.description }}</p>
+        @for (talk of review.draft.content.talks; track talk.id) {
+          <article>
+            <h4>{{ talk.title }}</h4>
+            <p>{{ speakerNames(talk.speakerIds) }}</p>
+            <p class="preserve-lines">{{ talk.description }}</p>
+          </article>
+        }
+        <div class="draft-actions">
+          <button
+            class="app-button app-button--primary"
+            type="button"
+            (click)="publish()"
+            [disabled]="busy()"
+          >
+            Publish event publicly
+          </button>
+          <button
+            class="app-button app-button--secondary"
+            type="button"
+            (click)="cancelReview()"
+            [disabled]="busy()"
+          >
+            Back to editing
+          </button>
+        </div>
+      </section>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <fieldset [disabled]="busy()">
+          <legend>Event details</legend>
+          <label>Title<input formControlName="title" maxlength="160" required /></label>
+          <label
+            >Description<textarea
+              formControlName="description"
+              rows="4"
+              maxlength="4000"
+            ></textarea>
+          </label>
+          <div class="draft-grid">
+            <label
+              >Date and time (Europe/Zurich)<input type="datetime-local" formControlName="startsAt"
+            /></label>
+            <label
+              >Venue<select formControlName="venueId">
+                <option value="">Choose a venue</option>
+                @for (venue of options().venues; track venue.id) {
+                  <option [value]="venue.id">
+                    {{ venue.title }} — {{ venue.street }}, {{ venue.city }}
+                  </option>
+                }
+              </select></label
+            >
+          </div>
+          <label
+            >Meetup event URL<input
+              type="url"
+              formControlName="meetupUrl"
+              placeholder="https://www.meetup.com/…"
+          /></label>
+          <label
+            >Image URL (optional)<input
+              type="url"
+              formControlName="imageUrl"
+              placeholder="https://…"
+          /></label>
+          <button class="app-button app-button--secondary" type="submit" [disabled]="!form.dirty">
+            Save event details
+          </button>
+        </fieldset>
+      </form>
+      <section aria-label="Selected talks">
+        <h3>Talks · {{ draft.content.talks.length }} / 3</h3>
+        @for (talk of draft.content.talks; track talk.id) {
+          <article>
+            <h4>{{ talk.title }}</h4>
+            <p>{{ speakerNames(talk.speakerIds) }}</p>
+            <p class="preserve-lines">{{ talk.description }}</p>
+            <button type="button" (click)="remove(talk.id)" [disabled]="busy() || form.dirty">
+              Remove {{ talk.title }}
+            </button>
+          </article>
+        } @empty {
+          <p>Add two or three talks before publishing.</p>
+        }
+        @if (draft.content.talks.length < 3) {
+          <label
+            >Approved talk<select [formControl]="existingTalk">
+              <option value="">Choose an approved talk</option>
+              @for (talk of availableTalks(); track talk.id) {
+                <option [value]="talk.id">{{ talk.title }}</option>
+              }
+            </select></label
+          >
+          <button
+            type="button"
+            (click)="attach()"
+            [disabled]="busy() || form.dirty || !existingTalk.value"
+          >
+            Add approved talk
+          </button>
+          <details>
+            <summary>Draft a new talk</summary>
+            <form [formGroup]="talkForm" (ngSubmit)="addTalk()">
+              <fieldset [disabled]="busy() || form.dirty">
+                <legend>New talk</legend>
+                <label>Talk title<input formControlName="title" required maxlength="160" /></label>
+                <label
+                  >Description<textarea
+                    formControlName="description"
+                    rows="3"
+                    required
+                    maxlength="5000"
+                  ></textarea>
+                </label>
+                <label
+                  >Speakers<select formControlName="speakerIds" multiple size="5">
+                    @for (speaker of options().speakers; track speaker.id) {
+                      <option [value]="speaker.id">
+                        {{ speaker.first_name }} {{ speaker.last_name }}
+                      </option>
+                    }
+                  </select></label
+                >
+                <p>
+                  Select one or more existing speakers. New talks stay private until the event is
+                  published.
+                </p>
+                <button type="submit" class="app-button app-button--secondary">
+                  Add talk draft
+                </button>
+              </fieldset>
+            </form>
+          </details>
+        }
+      </section>
+      <div class="draft-actions">
+        <button
+          class="app-button app-button--primary"
+          type="button"
+          (click)="prepare()"
+          [disabled]="busy() || form.dirty"
+        >
+          Review for publication
+        </button>
+        <button
+          class="app-button app-button--secondary"
+          type="button"
+          (click)="discardConfirm.set(true)"
+          [disabled]="busy()"
+        >
+          Discard draft
+        </button>
+      </div>
+      @if (form.dirty) {
+        <p>Save your edits before reviewing for publication.</p>
+      }
+      @if (discardConfirm()) {
+        <p>Discard this private draft? Existing approved talks will remain available.</p>
+        <button type="button" (click)="discard()" [disabled]="busy()">Confirm discard</button>
+        <button type="button" (click)="discardConfirm.set(false)">Keep draft</button>
+      }
+    }
+    <details>
+      <summary>Change history</summary>
+      <ol>
+        @for (entry of audit(); track entry.id) {
+          <li>
+            {{ entry.action.replaceAll('_', ' ') }} · version {{ entry.version }} ·
+            {{ entry.created_at | date: 'short' }} · organizer {{ entry.actor_id }}
+          </li>
+        }
+      </ol>
+    </details>
+  } @else if (busy()) {
+    <p role="status">Loading event drafts…</p>
+  }
+</section>

@@ -1,10 +1,15 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { ArchiveContext, archiveQuerySchema } from './context';
+import { ArchiveContext, archiveQuerySchema, eventSearchSchema } from './context';
 import { ChatResult } from '../../app/core/models/chat-result.model';
 import { escapeMarkdown } from './policy';
 import { ChatActivity } from '../../app/core/models/chat-activity.model';
 import { ChatSource } from '../../app/core/models/chat-source.model';
+import {
+  createSubmissionTools,
+  submissionListSchema,
+  submissionDetailSchema,
+} from './submission-tools';
 
 const query = z.string().max(160).default('');
 const offset = z.number().int().min(0).max(200).default(0);
@@ -52,6 +57,7 @@ export function createArchiveTools(
   initialContext: ArchiveContext = { speakers: [], events: [] },
 ) {
   let context: ArchiveContext = structuredClone(initialContext);
+  const submissions = createSubmissionTools(client, signal);
   let result: ChatResult = { kind: 'no_results' };
   const records = new Map<string, string>();
   const sources = new Map<string, ChatSource>();
@@ -128,9 +134,9 @@ export function createArchiveTools(
     return data;
   }
 
-  async function entities(kind: 'speakers' | 'events', args: z.infer<typeof searchSchema>) {
+  async function findSpeakers(args: z.infer<typeof searchSchema>) {
     const data = await rpc('find_chat_entities', {
-      p_kind: kind,
+      p_kind: 'speakers',
       p_query: args.query,
       p_offset: args.offset,
     });
@@ -143,29 +149,66 @@ export function createArchiveTools(
       .parse(data);
     context = {
       ...context,
-      [kind]: candidates.items
+      speakers: candidates.items
         .slice(0, 10)
         .map((p) => ({ id: p.id, name: p.name ?? p.title ?? '' })),
     };
-    if (kind === 'events') {
-      const parsed = z.object({ items: z.array(eventRecord) }).parse(data);
-      for (const event of parsed.items) {
-        sources.set(event.id, {
-          id: event.id,
-          title: event.title,
-          speakers: [],
-          description: '',
-          eventTitle: '',
-          date: event.starts_at.slice(0, 10),
-          url: `/events/${encodeURIComponent(event.slug)}`,
-        });
-        records.set(
-          event.id,
-          `- **${escapeMarkdown(event.title)}** · ${event.starts_at.slice(0, 10)} · [Event source](/events/${encodeURIComponent(event.slug)})`,
-        );
-      }
-    }
     return data;
+  }
+
+  async function listEvents(input: z.infer<typeof eventSearchSchema>) {
+    const args = eventSearchSchema.parse(input);
+    if (args.fromYear !== undefined && args.toYear !== undefined && args.fromYear > args.toYear)
+      throw new Error('invalid_year_range');
+    signal.throwIfAborted();
+    if (++calls > 8) throw new Error('tool_limit');
+    const approval = await client.rpc('can_current_user_chat').abortSignal(signal);
+    if (approval.error || approval.data !== true) throw new Error('access_revoked');
+    let request = client.from('Events').select('id,title,slug,starts_at').eq('public', true);
+    const title = args.query
+      .trim()
+      .replace(/[\\%_]/g, '\\$&')
+      .replaceAll('*', '\\*');
+    if (title) request = request.ilike('title', `%${title}%`);
+    // January boundaries use Zurich's winter offset, matching archive year semantics.
+    if (args.fromYear !== undefined)
+      request = request.gte('starts_at', `${args.fromYear}-01-01T00:00:00+01:00`);
+    if (args.toYear !== undefined)
+      request = request.lt('starts_at', `${args.toYear + 1}-01-01T00:00:00+01:00`);
+    const response = await request
+      .order('starts_at', { ascending: false })
+      .order('id')
+      .range(args.offset, args.offset + 10)
+      .abortSignal(signal);
+    if (response.error) throw new Error('archive_unavailable');
+    const rows = z.array(eventRecord).parse(response.data);
+    const more = rows.length > 10;
+    const items = rows.slice(0, 10);
+    sawLookup = true;
+    sawMatches ||= items.length > 0;
+    hasMore ||= more;
+    context = {
+      speakers: [],
+      events: items.map((event) => ({ id: event.id, name: event.title })),
+      lastEventQuery: args,
+      nextOffset: more && args.offset + 10 <= 200 ? args.offset + 10 : undefined,
+    };
+    for (const event of items) {
+      sources.set(event.id, {
+        id: event.id,
+        title: event.title,
+        speakers: [],
+        description: '',
+        eventTitle: '',
+        date: event.starts_at.slice(0, 10),
+        url: `/events/${encodeURIComponent(event.slug)}`,
+      });
+      records.set(
+        event.id,
+        `- **${escapeMarkdown(event.title)}** · ${event.starts_at.slice(0, 10)} · [Event source](/events/${encodeURIComponent(event.slug)})`,
+      );
+    }
+    return { items, hasMore: more, nextOffset: context.nextOffset ?? null };
   }
 
   async function speakerArchive(args: z.infer<typeof speakerNameSchema>) {
@@ -470,12 +513,89 @@ export function createArchiveTools(
     ready: () => presented && !lookupFailed,
     context: () => context,
     result: () => result,
+    listSubmissions: traced(
+      'list_talk_submissions',
+      'Read talk submissions',
+      async (args: z.infer<typeof submissionListSchema>) => {
+        if (++calls > 8) throw new Error('tool_limit');
+        const filters = { ...args, limit: Math.min(args.limit, 10) };
+        const data = await submissions.list(filters);
+        result = {
+          kind: 'submissions',
+          hasMore: data.hasMore,
+          items: data.items.map((item) => ({
+            id: item.id,
+            title: item.talk_title,
+            speaker: item.speaker_name,
+            status: item.status,
+          })),
+        };
+        context = {
+          speakers: [],
+          events: [],
+          lastSubmissionQuery: filters,
+          submissions: data.items.map((item) => ({
+            id: item.id,
+            name: item.talk_title.slice(0, 80),
+          })),
+        };
+        selectedSources = [];
+        summary = data.items.length
+          ? `Showing ${data.items.length} matching submissions${args.status === 'awaiting_review' ? ' awaiting organizer review' : ''}.`
+          : 'No matching talk submissions were found.';
+        answer = summary + (data.hasMore ? ' More results are available.' : '');
+        if (args.status === 'awaiting_review')
+          answer +=
+            ' Awaiting review includes new submissions, adjusted proposals, and resubmitted changes.';
+        nextQuestion =
+          data.nextOffset === null ? '' : 'Show the next page of these talk submissions.';
+        presented = true;
+        return data;
+      },
+    ),
+    getSubmission: traced(
+      'get_talk_submission',
+      'Read submission details',
+      async (args: z.infer<typeof submissionDetailSchema>) => {
+        if (++calls > 8) throw new Error('tool_limit');
+        const { item } = await submissions.get(args);
+        result = {
+          kind: 'submissions',
+          hasMore: false,
+          items: item
+            ? [
+                {
+                  id: item.id,
+                  title: item.talk_title,
+                  speaker: item.speaker_name,
+                  status: item.status,
+                  description: item.talk_description.slice(0, 5000),
+                },
+              ]
+            : [],
+        };
+        context = {
+          speakers: [],
+          events: [],
+          submissions: item ? [{ id: item.id, name: item.talk_title.slice(0, 80) }] : [],
+        };
+        selectedSources = [];
+        summary = item
+          ? 'Submission details are shown above. Open the submission to review it or view its slides.'
+          : 'That talk submission was not found.';
+        answer = summary;
+        nextQuestion = '';
+        presented = true;
+        return { item };
+      },
+    ),
     queryArchive: traced('query_archive', 'Filter and summarize the archive', queryArchive),
     clarify: traced(
       'clarify',
       'Clarify the search',
-      async (args: { reason: 'speaker' | 'event' | 'reference' | 'filters' }) => {
+      async (args: { reason: 'speaker' | 'event' | 'reference' | 'filters' | 'schedule' }) => {
         answer = {
+          schedule: 'When should the meetup start? Please give the date and time in Europe/Zurich.',
           speaker: 'Which Angular Zürich speaker do you mean? Please give their full name.',
           event: 'Which Angular Zürich event do you mean? Please give its name or date.',
           reference: 'Which Angular Zürich speaker, talk or event are you referring to?',
@@ -495,13 +615,9 @@ export function createArchiveTools(
         search({ p_query: args.query, p_offset: args.offset }),
     ),
     findSpeakers: traced('find_speakers', 'Find speakers', (args: z.infer<typeof searchSchema>) =>
-      entities('speakers', args),
+      findSpeakers(args),
     ),
-    listEvents: traced(
-      'list_events',
-      'Find published events',
-      (args: z.infer<typeof searchSchema>) => entities('events', args),
-    ),
+    listEvents: traced('list_events', 'Find published events', listEvents),
     talksBySpeaker: traced(
       'get_talks_by_speaker',
       'Read speaker talks',

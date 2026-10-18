@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "projectUrl": "https://example.invalid",
+  "exportedAt": "2026-10-15T00:00:00.000Z",
+  "cases": [
+    {
+      "id": "example-unrelated-request",
+      "status": "ready",
+      "question": "Write a pizza recipe.",
+      "standalone": true,
+      "expectedBehavior": "Decline the unrelated request and explain that this assistant searches the Angular Zürich archive.",
+      "expectations": {
+        "kind": "off_topic",
+        "answerIncludes": ["Angular Zürich"],
+        "answerExcludes": ["preheat", "ingredients"]
+      },
+      "observed": {
+        "question": "Write a pizza recipe.",
+        "answer": "Example of an unwanted response: preheat the oven.",
+        "sourceIds": [],
+        "result": { "kind": "off_topic" },
+        "feedbackUpdatedAt": "2026-10-15T00:00:00.000Z"
+      }
+    }
+  ]
+}

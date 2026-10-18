@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   afterRenderEffect,
   computed,
@@ -10,13 +11,22 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { EventDraftPreviewComponent } from '../event-draft-preview.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ChatAccessService } from '../../../core/auth/chat-access.service';
 import { ArchiveChatService } from '../data-access/archive-chat.service';
+import { ChatFeedbackComponent } from '../chat-feedback.component';
 
 @Component({
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ChatFeedbackComponent,
+    NgOptimizedImage,
+    EventDraftPreviewComponent,
+  ],
   providers: [ArchiveChatService],
   selector: 'app-chat-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,11 +36,60 @@ import { ArchiveChatService } from '../data-access/archive-chat.service';
 export class ChatPageComponent {
   private userId: string | undefined;
   private followTranscript = true;
+  private scrollOnSend = false;
+  private pendingQuestionOrigin: DOMRect | undefined;
+  private questionFlight:
+    | { origin: DOMRect; message: HTMLElement; overlay: HTMLElement; finish: () => void }
+    | undefined;
   private readonly auth = inject(AuthService);
   private readonly access = inject(ChatAccessService);
   private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>('questionInput');
   protected readonly transcript = viewChild<ElementRef<HTMLElement>>('transcript');
   protected readonly chat = inject(ArchiveChatService);
+  protected readonly latestResponseId = computed(() => {
+    const message = this.chat.messages().at(-1);
+    return message?.role === 'assistant' ? message.id : null;
+  });
+  private readonly mascotThinkingComplete = signal(false);
+  protected readonly respondingMascot = computed(() => {
+    const message = this.chat.messages().at(-1);
+    if (!this.chat.running() || message?.role !== 'assistant') return null;
+
+    const hasResponse =
+      this.chat.writingAnswer() || !!message.text || message.sources.length > 0 || !!message.result;
+    const thinking = !this.mascotThinkingComplete() && !hasResponse;
+    return {
+      messageId: message.id,
+      scale: 1.19,
+      offsetX: thinking ? '0%' : '-12.5%',
+      offsetY: thinking ? '-3%' : '0%',
+      src: thinking
+        ? '/angular-mascots/Google_Angular_Mascot_2D_Question_Thinking.svg'
+        : '/angular-mascots/Google_Angular_Mascot_2D_Coding_Animated.svg',
+      stillSrc: thinking
+        ? '/angular-mascots/Google_Angular_Mascot_2D_Question.svg'
+        : '/angular-mascots/Google_Angular_Mascot_2D_Coding.svg',
+    };
+  });
+  private readonly route = inject(ActivatedRoute);
+  protected readonly latestDraft = computed(() =>
+    this.chat
+      .messages()
+      .slice()
+      .reverse()
+      .map((message) => message.result)
+      .find((result) => result?.kind === 'event_draft'),
+  );
+  protected readonly draftId = computed(() => {
+    const result = this.latestDraft();
+    return result?.kind === 'event_draft'
+      ? result.draftId
+      : this.route.snapshot.queryParamMap.get('draft');
+  });
+  protected readonly draftVersion = computed(() => {
+    const result = this.latestDraft();
+    return result?.kind === 'event_draft' ? result.version : 0;
+  });
   protected readonly question = new FormControl('', {
     nonNullable: true,
     validators: [Validators.required, Validators.maxLength(2_000)],
@@ -54,11 +113,25 @@ export class ChatPageComponent {
   });
 
   constructor() {
+    effect((onCleanup) => {
+      // Depend on the response identity, so incoming tokens do not restart the loop.
+      const responseId = this.chat.running() ? this.latestResponseId() : null;
+      this.mascotThinkingComplete.set(false);
+      if (!responseId) return;
+
+      const timer = setTimeout(() => this.mascotThinkingComplete.set(true), 5_000);
+      onCleanup(() => clearTimeout(timer));
+    });
     afterRenderEffect(() => {
       this.chat.messages();
       const transcript = this.transcript()?.nativeElement;
+      if (this.scrollOnSend) this.followTranscript = true;
       if (transcript && this.followTranscript) transcript.scrollTop = transcript.scrollHeight;
+      this.scrollOnSend = false;
+      if (transcript) this.animateSentQuestion(transcript);
+      else this.clearQuestionFlight();
     });
+    inject(DestroyRef).onDestroy(() => this.clearQuestionFlight());
     effect((onCleanup) => {
       const session = this.auth.session();
       if (this.userId !== session?.user.id) {
@@ -87,6 +160,7 @@ export class ChatPageComponent {
   }
 
   protected newChat() {
+    this.clearQuestionFlight();
     this.chat.reset();
     this.question.reset();
     this.textarea()?.nativeElement.focus();
@@ -100,17 +174,77 @@ export class ChatPageComponent {
   protected async submit() {
     if (this.question.invalid || this.chat.running() || !this.question.value.trim()) return;
     const question = this.question.value;
+    this.clearQuestionFlight();
+    const input = this.textarea()?.nativeElement;
+    if (!input?.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches)
+      this.pendingQuestionOrigin = input?.getBoundingClientRect();
     this.followTranscript = true;
+    this.scrollOnSend = true;
     this.question.reset();
     await this.chat.send(question);
     this.textarea()?.nativeElement.focus();
   }
 
   protected onTranscriptScroll() {
+    if (this.scrollOnSend) return;
     const transcript = this.transcript()?.nativeElement;
     if (transcript)
       this.followTranscript =
         transcript.scrollHeight - transcript.scrollTop - transcript.clientHeight < 48;
+    if (!this.followTranscript) this.clearQuestionFlight();
+  }
+
+  private animateSentQuestion(transcript: HTMLElement) {
+    const surface = transcript.parentElement;
+    if (!surface) return;
+    if (this.pendingQuestionOrigin) {
+      const origin = this.pendingQuestionOrigin;
+      this.pendingQuestionOrigin = undefined;
+      const messages = transcript.querySelectorAll<HTMLElement>('.archive-message-user');
+      const message = messages.item(messages.length - 1);
+      if (!message) return;
+      const overlay = message.cloneNode(true) as HTMLElement;
+      overlay.classList.add('archive-question-flight');
+      overlay.setAttribute('aria-hidden', 'true');
+      const finish = () => {
+        overlay.removeEventListener('animationend', finish);
+        overlay.removeEventListener('animationcancel', finish);
+        overlay.remove();
+        message.style.removeProperty('opacity');
+        this.questionFlight = undefined;
+      };
+      this.questionFlight = { origin, message, overlay, finish };
+      overlay.addEventListener('animationend', finish);
+      overlay.addEventListener('animationcancel', finish);
+      message.style.opacity = '0';
+      surface.append(overlay);
+    }
+    const flight = this.questionFlight;
+    if (!flight) return;
+    if (!transcript.contains(flight.message)) {
+      this.clearQuestionFlight();
+      return;
+    }
+    // Measure after scrolling; keep the landing point aligned as streamed content grows.
+    const destination = flight.message.getBoundingClientRect();
+    const bounds = surface.getBoundingClientRect();
+    if (!destination.width || !destination.height) {
+      this.clearQuestionFlight();
+      return;
+    }
+    const style = flight.overlay.style;
+    style.left = `${destination.left - bounds.left - surface.clientLeft}px`;
+    style.top = `${destination.top - bounds.top - surface.clientTop}px`;
+    style.width = `${destination.width}px`;
+    style.setProperty('--flight-x', `${flight.origin.left - destination.left}px`);
+    style.setProperty('--flight-y', `${flight.origin.top - destination.top}px`);
+    style.setProperty('--flight-scale-x', `${flight.origin.width / destination.width}`);
+    style.setProperty('--flight-scale-y', `${flight.origin.height / destination.height}`);
+  }
+
+  private clearQuestionFlight() {
+    this.pendingQuestionOrigin = undefined;
+    this.questionFlight?.finish();
   }
 
   protected onQuestionKeydown(event: KeyboardEvent) {

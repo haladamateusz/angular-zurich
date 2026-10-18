@@ -1,11 +1,35 @@
 <section class="archive-chat" aria-labelledby="chat-title">
-  <header class="archive-chat-header space-y-3">
-    <h1 id="chat-title" class="text-3xl font-bold tracking-[-0.04em] text-foreground">
-      Ask the archive.
-    </h1>
-    <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
-      Find the talk, the speaker, or the idea you remember.
-    </p>
+  @let activeMascot = respondingMascot();
+  <header class="archive-chat-header">
+    <div class="space-y-3">
+      <h1 id="chat-title" class="text-3xl font-bold tracking-[-0.04em] text-foreground">
+        Chräungie
+      </h1>
+      <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
+        Find the talk, the speaker, or the idea you remember.
+      </p>
+    </div>
+    <div class="archive-chat-mascot" [class.is-active]="!!activeMascot">
+      <picture>
+        <source
+          media="(prefers-reduced-motion: reduce)"
+          [srcset]="
+            activeMascot?.stillSrc ?? '/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front.svg'
+          "
+        />
+        <img
+          [ngSrc]="
+            activeMascot?.src ?? '/angular-mascots/Google_Angular_Mascot_2D_Orthos_Front_Wave.svg'
+          "
+          width="128"
+          height="128"
+          [style.--mascot-scale]="activeMascot?.scale ?? 1"
+          [style.--mascot-offset-x]="activeMascot?.offsetX ?? '0%'"
+          [style.--mascot-offset-y]="activeMascot?.offsetY ?? '0%'"
+          alt=""
+        />
+      </picture>
+    </div>
   </header>
 
   @switch (state()) {
@@ -40,7 +64,7 @@
         <p class="archive-chat-error" role="alert">{{ chat.error() }}</p>
         <button
           type="button"
-          class="app-button app-button--secondary"
+          class="app-button app-button--secondary archive-chat-retry"
           [disabled]="chat.running()"
           (click)="useExample(chat.lastQuestion())"
         >
@@ -65,16 +89,34 @@
           }
           @for (message of chat.messages(); track message.id) {
             <article class="archive-message" [class.archive-message-user]="message.role === 'user'">
-              <h2 class="archive-message-label">
-                {{ message.role === 'user' ? 'You' : 'Angular Zürich' }}
-              </h2>
+              @if (message.role === 'user') {
+                <h2 class="archive-message-label">You</h2>
+              }
               @if (message.activity; as search) {
                 <details class="archive-activity" [open]="search.state === 'running'">
                   <summary class="archive-activity-heading">
-                    Search activity
-                    <span class="archive-activity-state"
-                      >· {{ search.state === 'cancelled' ? 'stopped' : search.state }}</span
+                    <svg
+                      class="archive-activity-chevron"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
                     >
+                      <path
+                        d="m9 6 6 6-6 6"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                      />
+                    </svg>
+                    <span
+                      class="archive-activity-label"
+                      [class.is-running]="search.state === 'running'"
+                      >Search activity</span
+                    >
+                    <span class="archive-activity-state">{{
+                      search.state === 'cancelled' ? 'stopped' : search.state
+                    }}</span>
                   </summary>
                   <div class="archive-activity-steps">
                     @if (!search.steps.length) {
@@ -89,11 +131,20 @@
                     @for (activity of search.steps; track activity.id) {
                       <details class="archive-activity-step">
                         <summary>
-                          <span
-                            class="archive-activity-marker"
-                            [class.is-running]="activity.state === 'running'"
+                          <svg
+                            class="archive-activity-chevron archive-activity-step-chevron"
+                            viewBox="0 0 24 24"
+                            fill="none"
                             aria-hidden="true"
-                          ></span>
+                          >
+                            <path
+                              d="m9 6 6 6-6 6"
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                            />
+                          </svg>
                           <span>{{ activity.label }}</span>
                           <span class="archive-activity-state"
                             >{{ activity.state }}
@@ -114,7 +165,26 @@
                 <p class="archive-message-text">{{ message.text }}</p>
               }
               @if (message.result; as result) {
-                @if (result.kind === 'ranking') {
+                @if (result.kind === 'submissions') {
+                  @for (submission of result.items; track submission.id) {
+                    <article class="archive-source">
+                      <p class="archive-source-date">
+                        Talk submission · {{ submission.status.replaceAll('_', ' ') }}
+                      </p>
+                      <h3>{{ submission.title }}</h3>
+                      <p class="archive-source-speakers">{{ submission.speaker }}</p>
+                      @if (submission.description) {
+                        <p class="archive-source-description">{{ submission.description }}</p>
+                      }
+                      <a
+                        class="archive-source-link"
+                        [routerLink]="['/dashboard/talk-submissions', submission.id]"
+                      >
+                        Open submission<span class="sr-only">: {{ submission.title }}</span>
+                      </a>
+                    </article>
+                  }
+                } @else if (result.kind === 'ranking') {
                   <table class="archive-results-table">
                     <caption>
                       Speaker ranking by matching past talks
@@ -174,13 +244,22 @@
                   @if (source.speakers.length) {
                     <p class="archive-source-speakers">{{ source.speakers.join(', ') }}</p>
                   }
-                  @if (source.description) {
-                    <p class="archive-source-description">{{ source.description }}</p>
-                  }
-                  <a class="archive-source-link" [routerLink]="source.url"
-                    >View event source <span aria-hidden="true">↗</span
-                    ><span class="sr-only"> for {{ source.title }}</span></a
-                  >
+                  <a class="archive-source-link event-meta__link" [routerLink]="source.url">
+                    <span class="event-meta__link-label">To event page</span>
+                    <span class="sr-only"> for {{ source.title }}</span>
+                    <svg
+                      class="archive-source-link-icon"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </a>
                 </article>
               }
               @if (
@@ -190,7 +269,7 @@
                   class="archive-message-text archive-answer"
                   [attr.aria-busy]="$last && chat.writingAnswer()"
                 >
-                  {{ message.text }}
+                  <span [textContent]="message.text"></span>
                   @if ($last && chat.writingAnswer()) {
                     <span class="archive-answer-cursor" aria-hidden="true"></span>
                   }
@@ -206,6 +285,9 @@
                   This answer may be incomplete.
                 </p>
               }
+              @if (message.feedback; as context) {
+                <app-chat-feedback [context]="context" />
+              }
               @if (message.nextQuestion && $last) {
                 <button
                   class="app-button app-button--secondary"
@@ -220,8 +302,8 @@
           }
         </div>
         <form class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
-          <p class="archive-chat-status" role="status">{{ chat.status() }}</p>
-          <label for="archive-question">Your question</label>
+          <p class="sr-only" role="status">{{ chat.status() }}</p>
+          <label class="sr-only" for="archive-question">Your question</label>
           <textarea
             #questionInput
             id="archive-question"
@@ -234,7 +316,7 @@
           ></textarea>
           <div class="archive-chat-composer-actions">
             <p id="archive-question-hint">
-              Enter to send · Shift+Enter for a new line<br />Up to 2,000 characters · 30 questions
+              Enter to send · Shift+Enter for a new line<br />Up to 2,000 characters · 100 questions
               per day
             </p>
             <div class="archive-chat-composer-controls">
@@ -280,10 +362,15 @@
           </div>
         </form>
       </div>
+      @if (draftId(); as draftId) {
+        <app-event-draft-preview [draftId]="draftId" [refreshVersion]="draftVersion()" />
+      }
       <p class="archive-chat-footnote">
         Results show up to 10 matches at a time, including older published talks. Some historical
-        records are incomplete. Your questions are sent to our AI provider; don’t include sensitive
-        information. Conversations aren’t saved after you leave.
+        records are incomplete. Organizers can also read talk submissions. Your questions are sent
+        to our AI provider; don’t include sensitive information. Conversations aren’t saved after
+        you leave, except for answers you rate: feedback saves your question, answer, and results
+        for review.
       </p>
     }
   }

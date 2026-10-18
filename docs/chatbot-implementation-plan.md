@@ -94,7 +94,7 @@ Suggested **configurable starting limits**, to tune during the pilot:
 | --------------- | ----------------------------------------------------------------------------------------------------- |
 | Concurrent runs | 1 per user                                                                                            |
 | Burst           | 5 messages per minute per user                                                                        |
-| Daily allowance | 30 messages per user                                                                                  |
+| Daily allowance | 100 messages per user                                                                                  |
 | Input           | 2,000 characters per message; bounded total request/history                                           |
 | Execution       | 3 model calls, at most 8 archive calls, 90-second run deadline                                        |
 | Model context   | 40,000 serialized request bytes per model call                                                        |

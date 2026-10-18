@@ -10,7 +10,27 @@ const years = z
   )
   .max(111);
 export const chatResultSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('event_draft'),
+    draftId: z.string().uuid(),
+    version: z.number().int().positive(),
+  }),
   z.object({ kind: z.literal('talks'), total: z.number().int().nonnegative().optional() }),
+  z.object({
+    kind: z.literal('submissions'),
+    items: z
+      .array(
+        z.object({
+          id: z.string().uuid(),
+          title: z.string().max(500),
+          speaker: z.string().max(500),
+          status: z.string().max(80),
+          description: z.string().max(5000).optional(),
+        }),
+      )
+      .max(10),
+    hasMore: z.boolean(),
+  }),
   z.object({
     kind: z.literal('stats'),
     total: z.number().int().nonnegative(),

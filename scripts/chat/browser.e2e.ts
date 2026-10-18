@@ -9,7 +9,10 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   const errors: string[] = [];
   await page.emulateMedia({ reducedMotion: 'reduce' });
   let runs = 0;
-  let mode: 'answer' | 'quota' | 'revoked' = 'answer';
+  const feedbackRatings: (string | null)[] = [];
+  let feedbackFails = false;
+  let mode: 'answer' | 'quota' | 'revoked' | 'html-error' | 'html-success' | 'submissions' =
+    'answer';
   page.on('pageerror', (error) => errors.push(error.message));
   const environment = await readFile('src/environments/environment.development.ts', 'utf8');
   const supabaseUrl = environment.match(/supabaseUrl:\s*['"]([^'"]+)['"]/)?.[1];
@@ -60,8 +63,26 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await page.route('**/api/chat/access', (route) =>
     route.fulfill({ json: { approved: true, available: true } }),
   );
+  await page.route('**/api/chat/feedback', (route) => {
+    const body = route.request().postDataJSON();
+    expect(route.request().headers()['authorization']).toMatch(/^Bearer /);
+    expect(body.messageId).toBe(id);
+    expect(body.question).toBe('Who gave a talk about signals?');
+    expect(body.sourceIds).toEqual([id]);
+    expect(body.answer).toContain('Test Speaker discussed Angular signals');
+    if (feedbackFails) return route.fulfill({ status: 503, json: {} });
+    feedbackRatings.push(body.rating);
+    return route.fulfill({ json: { rating: body.rating } });
+  });
   await page.route('**/api/chat/run', async (route) => {
     runs++;
+    if (mode === 'html-error' || mode === 'html-success') {
+      return route.fulfill({
+        status: mode === 'html-error' ? 502 : 200,
+        contentType: 'text/html',
+        body: '<html><body>Temporary upstream failure</body></html>',
+      });
+    }
     if (mode === 'quota') {
       await route.fulfill({ status: 429, json: { error: 'Today’s chat allowance is used up.' } });
       return;
@@ -71,6 +92,44 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
       return;
     }
     const body = route.request().postDataJSON();
+    if (mode === 'submissions') {
+      const messageId = crypto.randomUUID();
+      const events = [
+        { type: 'RUN_STARTED', threadId: body.threadId, runId: body.runId },
+        {
+          type: 'CUSTOM',
+          name: 'archive_sources',
+          value: {
+            messageId,
+            sources: [],
+            result: {
+              kind: 'submissions',
+              hasMore: false,
+              items: [
+                {
+                  id,
+                  title: 'A submitted talk',
+                  speaker: 'Test Speaker',
+                  status: 'initially_submitted',
+                },
+              ],
+            },
+          },
+        },
+        { type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' },
+        {
+          type: 'TEXT_MESSAGE_CONTENT',
+          messageId,
+          delta: 'Showing 1 matching submission awaiting organizer review.',
+        },
+        { type: 'TEXT_MESSAGE_END', messageId },
+        { type: 'RUN_FINISHED', threadId: body.threadId, runId: body.runId },
+      ];
+      return route.fulfill({
+        contentType: 'text/event-stream',
+        body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(''),
+      });
+    }
     expect(body.messages.every((message: { role: string }) => message.role === 'user')).toBe(true);
     expect(route.request().headers()['authorization']).toMatch(/^Bearer /);
     const events = [
@@ -164,7 +223,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   );
   await expect(page.getByRole('heading', { name: 'Signals in practice' })).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'View event source for Signals in practice' }),
+    page.getByRole('link', { name: 'To event page for Signals in practice' }),
   ).toHaveAttribute('href', '/events/2019-meetup');
   await expect(page.getByRole('log')).toContainText('Test Speaker');
   await expect(page.locator('.archive-answer')).toContainText(
@@ -180,7 +239,23 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
         ),
       ),
   ).toBe(true);
-  await page.locator('.archive-answer').scrollIntoViewIfNeeded();
+  const useful = page.getByRole('button', { name: 'Useful', exact: true });
+  const notQuite = page.getByRole('button', { name: 'Not quite', exact: true });
+  await useful.focus();
+  await useful.press('Enter');
+  await expect(useful).toHaveAttribute('aria-pressed', 'true');
+  await notQuite.click();
+  await expect(notQuite).toHaveAttribute('aria-pressed', 'true');
+  feedbackFails = true;
+  await useful.click();
+  await expect(page.getByRole('alert')).toContainText('couldn’t save your feedback');
+  await expect(notQuite).toHaveAttribute('aria-pressed', 'true');
+  feedbackFails = false;
+  await useful.click();
+  await expect(useful).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  expect(runs).toBe(1);
+  await useful.scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'tmp/chat-desktop.png', fullPage: true });
   await page.addScriptTag({ content: axe.source });
   const violations = await page.evaluate(async () => {
@@ -197,7 +272,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => document.documentElement.classList.add('dark'));
   await expect(page.locator('.archive-source-link')).toHaveCSS('color', 'rgb(66, 165, 245)');
-  await page.locator('.archive-answer').scrollIntoViewIfNeeded();
+  await useful.scrollIntoViewIfNeeded();
   await page.screenshot({ path: 'tmp/chat-mobile-dark.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
@@ -213,6 +288,39 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
       ).violations,
   );
   expect(darkViolations).toEqual([]);
+  await page.getByRole('button', { name: 'Remove feedback' }).click();
+  await expect(useful).toHaveAttribute('aria-pressed', 'false');
+  await expect(notQuite).toHaveAttribute('aria-pressed', 'false');
+  expect(feedbackRatings).toEqual(['useful', 'not_quite', 'useful', null]);
+  for (const htmlMode of ['html-error', 'html-success'] as const) {
+    mode = htmlMode;
+    await question.fill('Do we have any talk submissions awaiting review?');
+    await page.getByRole('button', { name: 'Send question' }).click();
+    await expect(page.getByRole('alert')).toContainText('try again');
+    await expect(page.getByRole('alert')).not.toContainText('JSON');
+    await expect(page.getByRole('alert')).not.toContainText('<html>');
+    await expect(page.getByRole('button', { name: 'Edit and retry question' })).toBeEnabled();
+  }
+  mode = 'submissions';
+  await question.fill('Do we have any talk submissions awaiting review?');
+  await page.getByRole('button', { name: 'Send question' }).click();
+  await expect(
+    page.getByRole('link', { name: /Open submission\s*: A submitted talk/ }),
+  ).toHaveAttribute('href', `/dashboard/talk-submissions/${id}`);
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await page.screenshot({ path: 'tmp/chat-submissions-mobile.png', fullPage: true });
+  expect(
+    await page.evaluate(
+      async () =>
+        (
+          await (
+            window as unknown as {
+              axe: { run: (context: string) => Promise<{ violations: unknown[] }> };
+            }
+          ).axe.run('app-chat-page')
+        ).violations,
+    ),
+  ).toEqual([]);
   mode = 'quota';
   await page.getByLabel('Your question', { exact: true }).fill('What about testing?');
   await page.getByRole('button', { name: 'Send question' }).click();

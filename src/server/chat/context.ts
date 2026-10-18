@@ -1,5 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
+import { submissionListSchema } from './submission-tools';
 
 const archiveFiltersSchema = z.object({
   query: z.string().max(160).default(''),
@@ -39,13 +40,23 @@ export const archiveQuerySchema = archiveFiltersSchema.extend({
   mode: z.enum(['talks', 'stats', 'ranking']).default('talks'),
   offset: z.number().int().min(0).max(200).default(0),
 });
+export const eventSearchSchema = z.object({
+  query: z.string().max(160).default(''),
+  offset: z.number().int().min(0).max(200).default(0),
+  fromYear: archiveFiltersSchema.shape.fromYear,
+  toYear: archiveFiltersSchema.shape.toYear,
+});
 const entity = z.object({ id: z.string().uuid(), name: z.string().max(500) });
 const archiveContextSchema = z.object({
   speakers: z.array(entity).max(10).default([]),
   events: z.array(entity).max(10).default([]),
   focusSpeakerId: z.string().uuid().optional(),
   lastQuery: archiveQuerySchema.optional(),
+  lastEventQuery: eventSearchSchema.optional(),
   nextOffset: z.number().int().min(0).max(200).optional(),
+  lastSubmissionQuery: submissionListSchema.optional(),
+  submissions: z.array(entity).max(10).optional(),
+  eventDraftId: z.string().uuid().optional(),
 });
 export type ArchiveContext = z.infer<typeof archiveContextSchema>;
 const envelopeSchema = z.object({

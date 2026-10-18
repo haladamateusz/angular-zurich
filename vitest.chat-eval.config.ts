@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'node',
-    include: ['scripts/chat/*.eval.ts'],
+    include: ['scripts/chat/archive.eval.ts'],
     fileParallelism: false,
     retry: 0,
   },

@@ -27,7 +27,11 @@ app.use('/api/chat', async (req, res, next) => {
     const { chatRouter } = await import('./server/chat/router');
     chatRouter(req, res, next);
   } catch (error) {
-    next(error);
+    if (!res.headersSent) {
+      res
+        .status(503)
+        .json({ error: 'The chat service is temporarily unavailable. Please try again.' });
+    } else next(error);
   }
 });
 

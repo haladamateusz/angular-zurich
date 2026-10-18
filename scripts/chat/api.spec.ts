@@ -2,6 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import express from 'express';
 import type { Server } from 'node:http';
 import { chatRouter } from '../../src/server/chat/router';
+import { draftFixture } from './draft-fixture';
 
 const USER_ID = '9b0b6d9e-527f-44a0-a128-a3565783ca2a';
 const TALK_ID = '51e66cbe-f72a-457a-b7bd-ef2d42f50c3d';
@@ -18,6 +19,7 @@ let offTopic: boolean;
 let speakerQuestion: boolean;
 let rankingQuestion: boolean;
 let combinedQuestion: boolean;
+let eventYearQuestion: boolean;
 let rpcBodies: Record<string, unknown>[];
 let rankingTie: boolean;
 let rankingEmpty: boolean;
@@ -31,6 +33,19 @@ let failAnswer: boolean;
 let truncateAnswer: boolean;
 let lastTurnPresentation: boolean;
 let finishAnswer: (() => void) | undefined;
+let feedbackRequests: {
+  url: string;
+  method: string;
+  body?: Record<string, unknown>;
+  authorization: string | null;
+}[];
+let feedbackFailure: string | undefined;
+let submissionAccess: boolean;
+let submissionReads: number;
+let submissionQuestion: boolean;
+let draftQuestion: boolean;
+let draftPublishes: number;
+let currentDraft: typeof draftFixture;
 const record = {
   id: TALK_ID,
   title: 'Signals in practice',
@@ -158,6 +173,7 @@ beforeEach(() => {
   speakerQuestion = false;
   rankingQuestion = false;
   combinedQuestion = false;
+  eventYearQuestion = false;
   rpcBodies = [];
   rankingTie = false;
   rankingEmpty = false;
@@ -171,6 +187,14 @@ beforeEach(() => {
   truncateAnswer = false;
   lastTurnPresentation = false;
   finishAnswer = undefined;
+  feedbackRequests = [];
+  feedbackFailure = undefined;
+  submissionAccess = true;
+  submissionReads = 0;
+  submissionQuestion = false;
+  draftQuestion = false;
+  draftPublishes = 0;
+  currentDraft = structuredClone(draftFixture);
   vi.stubEnv('SUPABASE_URL', 'https://supabase.test.invalid');
   vi.stubEnv('SUPABASE_KEY', 'test-public');
   vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service');
@@ -191,6 +215,72 @@ beforeEach(() => {
             created_at: '2026-01-01',
           });
         if (target.includes('/can_current_user_chat')) return Response.json(approved);
+        if (target.includes('/rest/v1/Events')) {
+          const params = new URL(target).searchParams;
+          expect(params.get('public')).toBe('eq.true');
+          expect(params.get('title')).toBeNull();
+          expect(params.getAll('starts_at')).toEqual([
+            'gte.2021-01-01T00:00:00+01:00',
+            'lt.2022-01-01T00:00:00+01:00',
+          ]);
+          return Response.json([
+            {
+              id: USER_ID,
+              title: 'Angular meetup 2021',
+              slug: 'meetup-2021',
+              starts_at: '2021-06-10T17:00:00Z',
+            },
+          ]);
+        }
+        if (target.includes('/rest/v1/chat_event_drafts')) return Response.json([currentDraft]);
+        if (target.includes('/rest/v1/chat_event_draft_audit')) return Response.json([]);
+        if (target.includes('/mutate_chat_event_draft')) return Response.json(currentDraft);
+        if (target.includes('/publish_chat_event_draft')) {
+          expect(new Headers(init?.headers).get('authorization')).toBe('Bearer test-service');
+          const args = JSON.parse(String(init?.body));
+          expect(args.p_actor).toBe(USER_ID);
+          if (args.p_version !== currentDraft.version)
+            return Response.json({ code: '40001' }, { status: 409 });
+          draftPublishes++;
+          currentDraft = {
+            ...currentDraft,
+            state: 'published',
+            version: currentDraft.version + 1,
+            event_id: TALK_ID,
+            event_slug: 'agentic-angular',
+          };
+          return Response.json(currentDraft);
+        }
+        if (target.includes('/can_current_user_manage_events'))
+          return Response.json(submissionAccess);
+        if (target.includes('/rest/v1/organizer_talk_submissions')) {
+          submissionReads++;
+          expect(new Headers(init?.headers).get('authorization')).toBe('Bearer test-token');
+          return Response.json([
+            {
+              id: TALK_ID,
+              created_at: '2026-10-15T00:00:00Z',
+              status: 'initially_submitted',
+              talk_title: 'Proposal about signals',
+              speaker_name: 'Test Speaker',
+              speaker_label: null,
+            },
+          ]);
+        }
+        if (target.includes('/rest/v1/chat_feedback')) {
+          feedbackRequests.push({
+            url: target,
+            method: init?.method ?? 'GET',
+            body: init?.body ? JSON.parse(String(init.body)) : undefined,
+            authorization: new Headers(init?.headers).get('Authorization'),
+          });
+          return feedbackFailure
+            ? Response.json(
+                { code: feedbackFailure, message: 'Private database error' },
+                { status: 403 },
+              )
+            : new Response(null, { status: 204 });
+        }
         if (target.includes('/reserve_chat_run')) {
           quotaCalls++;
           return Response.json(reservation);
@@ -266,6 +356,10 @@ beforeEach(() => {
               { once: true },
             );
           });
+        if (eventYearQuestion)
+          return modelCalls === 1
+            ? toolStream('list_events', { query: '', fromYear: 2021, toYear: 2021, offset: 0 })
+            : toolStream('present_results', { status: 'results', ids: [USER_ID] });
         if (combinedQuestion)
           return toolStream('query_archive', {
             query: 'signals',
@@ -275,6 +369,18 @@ beforeEach(() => {
             mode: 'stats',
             period: 'past',
             offset: 0,
+          });
+        if (draftQuestion)
+          return modelCalls === 1
+            ? toolStream('create_event_draft', draftFixture.content)
+            : toolStream('publish_event', { draftId: draftFixture.id });
+        if (submissionQuestion)
+          return toolStream('list_talk_submissions', {
+            title: '',
+            speaker: '',
+            status: 'awaiting_review',
+            offset: 0,
+            limit: 10,
           });
         if (lastTurnPresentation && modelCalls < 3)
           return toolStream('search_talks', { query: 'signals', offset: 0 });
@@ -318,6 +424,163 @@ function post(
 }
 
 describe('protected chat API', () => {
+  it('streams sources for events from 2021 using date filters and accepts their IDs', async () => {
+    eventYearQuestion = true;
+    const response = await post('/run', {
+      runId: crypto.randomUUID(),
+      threadId: crypto.randomUUID(),
+      messages: [{ role: 'user', content: 'give me events from 2021' }],
+    });
+    const events = await response.text();
+    expect(events).toContain('Angular meetup 2021');
+    expect(events).toContain('/events/meetup-2021');
+    expect(events).toContain('RUN_FINISHED');
+    expect(events).not.toContain('RUN_ERROR');
+  });
+  it('prepares a draft in chat without publishing even when the model requests publication', async () => {
+    draftQuestion = true;
+    const events = await (await post('/run')).text();
+    expect(events).toContain('"kind":"event_draft"');
+    expect(events).toContain('confirmation');
+    expect(events).toContain('RUN_FINISHED');
+    expect(draftPublishes).toBe(0);
+    expect(modelCalls).toBe(2);
+  });
+  it('requires an explicit, valid UI approval and rejects stale or denied publication', async () => {
+    const path = `/drafts/${draftFixture.id}`;
+    expect(
+      (await post(`${path}/publish`, { expectedVersion: 3, confirmed: true, token: 'yes' })).status,
+    ).toBe(409);
+    const review = await (await post(`${path}/review`, { expectedVersion: 3 })).json();
+    expect(review.token).toBeTruthy();
+    expect(
+      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token })).status,
+    ).toBe(400);
+    submissionAccess = false;
+    expect(
+      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token, confirmed: true }))
+        .status,
+    ).toBe(403);
+    submissionAccess = true;
+    currentDraft.version = 4;
+    expect(
+      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token, confirmed: true }))
+        .status,
+    ).toBe(409);
+    expect(draftPublishes).toBe(0);
+    const fresh = await (await post(`${path}/review`, { expectedVersion: 4 })).json();
+    expect(
+      (await post(`${path}/publish`, { expectedVersion: 4, token: fresh.token, confirmed: true }))
+        .status,
+    ).toBe(200);
+    expect(draftPublishes).toBe(1);
+  });
+  it('answers a pending-submissions question using organizer data and emits review cards', async () => {
+    submissionQuestion = true;
+    const response = await post('/run', {
+      runId: crypto.randomUUID(),
+      threadId: crypto.randomUUID(),
+      messages: [{ role: 'user', content: 'Do we have any talk submissions awaiting review?' }],
+    });
+    const events = await response.text();
+    expect(response.status).toBe(200);
+    expect(events).toContain('"kind":"submissions"');
+    expect(events).toContain('Proposal about signals');
+    expect(events).toContain('awaiting organizer review');
+    expect(events).toContain('list_talk_submissions');
+    expect(events).toContain('RUN_FINISHED');
+    expect(events).not.toContain('RUN_ERROR');
+    expect(submissionReads).toBe(1);
+    expect(modelCalls).toBe(1);
+  });
+  it('does not misreport denied submission access as an empty review queue', async () => {
+    submissionQuestion = true;
+    submissionAccess = false;
+    const events = await (await post('/run')).text();
+    expect(events).toContain('RUN_ERROR');
+    expect(events).not.toContain('No matching talk submissions');
+    expect(events).not.toContain('archive_sources');
+    expect(submissionReads).toBe(0);
+  });
+  const feedback = {
+    threadId: 'd3034c48-a641-4e69-aa28-a3e73f2b74fd',
+    messageId: '8b67d7df-d8e8-40ed-b0ab-051fb92d1559',
+    question: 'Which talks cover signals?',
+    answer: 'Signals in practice covers this topic.',
+    sourceIds: [TALK_ID],
+    result: { kind: 'talks', total: 1 },
+    rating: 'useful',
+  };
+
+  it('saves and changes feedback with the caller identity without spending model quota', async () => {
+    vi.stubEnv('CHAT_ENABLED', 'false');
+    vi.stubEnv('OPENROUTER_API_KEY', '');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');
+    for (const rating of ['useful', 'not_quite']) {
+      const response = await post('/feedback', { ...feedback, rating });
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({ rating });
+    }
+    expect(feedbackRequests).toHaveLength(2);
+    expect(feedbackRequests[1].body).toMatchObject({
+      user_id: USER_ID,
+      message_id: feedback.messageId,
+      thread_id: feedback.threadId,
+      rating: 'not_quite',
+      question: feedback.question,
+      answer: feedback.answer,
+      source_ids: [TALK_ID],
+      result: feedback.result,
+    });
+    expect(new URL(feedbackRequests[1].url).searchParams.get('on_conflict')).toBe(
+      'user_id,message_id',
+    );
+    expect(feedbackRequests[1].authorization).toBe('Bearer test-token');
+    expect(modelCalls).toBe(0);
+    expect(quotaCalls).toBe(0);
+  });
+
+  it('removes only the caller’s vote for the specified answer', async () => {
+    expect((await post('/feedback', { ...feedback, rating: null })).status).toBe(200);
+    const request = feedbackRequests[0];
+    expect(request.method).toBe('DELETE');
+    const params = new URL(request.url).searchParams;
+    expect(params.get('user_id')).toBe(`eq.${USER_ID}`);
+    expect(params.get('message_id')).toBe(`eq.${feedback.messageId}`);
+  });
+
+  it('rejects anonymous and unapproved feedback before database writes', async () => {
+    expect((await post('/feedback', feedback, false)).status).toBe(401);
+    approved = false;
+    expect((await post('/feedback', feedback)).status).toBe(403);
+    expect(feedbackRequests).toHaveLength(0);
+  });
+
+  it.each([
+    { rating: 'invalid' },
+    { messageId: 'not-an-id' },
+    { user_id: USER_ID },
+    { question: 'x'.repeat(2001) },
+    { answer: '' },
+    { sourceIds: ['invalid'] },
+  ])('rejects malformed feedback: %j', async (change) => {
+    expect((await post('/feedback', { ...feedback, ...change })).status).toBe(400);
+    expect(feedbackRequests).toHaveLength(0);
+  });
+
+  it.each([
+    ['42501', 403],
+    ['42P01', 503],
+  ] as const)(
+    'reports feedback database failure %s without leaking details',
+    async (code, status) => {
+      feedbackFailure = code;
+      const response = await post('/feedback', feedback);
+      expect(response.status).toBe(status);
+      expect(await response.text()).not.toContain('Private database error');
+    },
+  );
+
   it('streams tool activity before waiting for the next model response', async () => {
     holdAfterLookup = true;
     const response = await post();
@@ -625,7 +888,7 @@ describe('protected chat API', () => {
     expect((await post('/transcribe')).status).toBe(404);
     expect(modelCalls).toBe(0);
   });
-  it('exposes read-only MCP tools behind the same approval check', async () => {
+  it('exposes archive and private-draft MCP tools behind the same approval check', async () => {
     const response = await nativeFetch(`${origin}/api/chat/mcp`, {
       method: 'POST',
       headers: {
@@ -648,7 +911,82 @@ describe('protected chat API', () => {
       'get_speaker_stats',
       'rank_speakers',
       'query_archive',
+      'list_talk_submissions',
+      'get_talk_submission',
+      'get_event_options',
+      'create_event_draft',
+      'get_event_draft',
+      'update_event',
+      'create_talk_draft',
+      'attach_talk_to_event',
+      'publish_event',
+      'discard_event_draft',
     ]);
     expect(modelCalls).toBe(0);
   });
+  it('only returns a review link when an MCP client calls publish_event', async () => {
+    const response = await nativeFetch(`${origin}/api/chat/mcp`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer test-token',
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/event-stream',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: { name: 'publish_event', arguments: { draftId: draftFixture.id } },
+      }),
+    });
+    const body = await response.json();
+    expect(body.result.isError).not.toBe(true);
+    const result = JSON.parse(body.result.content[0].text);
+    expect(result.requiresApproval).toBe(true);
+    expect(result.reviewUrl).toBe(`/chat?draft=${draftFixture.id}`);
+    expect(result).not.toHaveProperty('token');
+    expect(draftPublishes).toBe(0);
+    expect(modelCalls).toBe(0);
+  });
+  it('reads submissions over MCP using the organizer session without model calls', async () => {
+    const response = await callSubmissionMcp({});
+    const body = await response.json();
+    expect(body.result.isError).not.toBe(true);
+    expect(JSON.parse(body.result.content[0].text).items[0].talk_title).toBe(
+      'Proposal about signals',
+    );
+    expect(submissionReads).toBe(1);
+    expect(modelCalls).toBe(0);
+    expect(quotaCalls).toBe(0);
+  });
+  it('denies submission reads to chat users without organizer permission', async () => {
+    submissionAccess = false;
+    const body = await (await callSubmissionMcp({})).json();
+    expect(body.result.isError).toBe(true);
+    expect(submissionReads).toBe(0);
+    approved = false;
+    expect((await callSubmissionMcp({})).status).toBe(403);
+  });
+  it('rejects invalid MCP submission arguments before database access', async () => {
+    const body = await (await callSubmissionMcp({ limit: 1000 })).json();
+    expect(Boolean(body.error || body.result?.isError)).toBe(true);
+    expect(submissionReads).toBe(0);
+  });
 });
+
+function callSubmissionMcp(args: Record<string, unknown>) {
+  return nativeFetch(`${origin}/api/chat/mcp`, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer test-token',
+      'Content-Type': 'application/json',
+      Accept: 'application/json, text/event-stream',
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: { name: 'list_talk_submissions', arguments: args },
+    }),
+  });
+}

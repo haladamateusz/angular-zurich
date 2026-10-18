@@ -19,7 +19,8 @@ Copilot Cloud, new Supabase project, or separate backend host is required.
    for the JWT to expire.
 
 The browser uses its existing Supabase configuration. The service-role key is used
-only by the backend's quota client. Archive tools use the caller's verified session.
+only by backend quota operations and explicitly confirmed event publication.
+Archive reads and private draft edits use the caller's verified session.
 
 ## Local development
 
@@ -68,7 +69,7 @@ not prove remote provider availability, configured prices, or deployed streaming
 ## Cost controls and behavior
 
 - Opening the page, examples, and access checks do not call a model.
-- 1 active run per user, 5 accepted runs per minute, 30 per UTC day.
+- 1 active run per user, 5 accepted runs per minute, 100 per UTC day.
 - Each accepted run permanently reserves 10 US cents for that UTC day. With
   `CHAT_DAILY_BUDGET_CENTS=200`, the community gets at most 20 accepted runs/day.
   This is a conservative allocation, **not a claim that each question costs 10 cents**.
@@ -104,11 +105,58 @@ refresh; a public OAuth/discovery flow is not included in this initial version.
 
 Available tools: `search_talks`, `find_speakers`, `list_events`,
 `get_talks_by_speaker`, `get_talks_by_event`, `get_talk`, `get_speaker_talks`,
-`get_speaker_stats`, and `rank_speakers`.
-The agent invokes the same typed handlers directly. It does not make an HTTP loopback
-call to MCP, and it cannot add external servers, execute SQL, or access write tools.
+`get_speaker_stats`, `rank_speakers`, `query_archive`, `list_talk_submissions`,
+and `get_talk_submission`.
+The archive agent invokes the archive handlers directly. It does not make an HTTP loopback
+call to MCP, and it cannot add external servers or execute arbitrary SQL.
+The event tools below can write private drafts; publication requires UI confirmation.
 Search pages have ten entries and offsets are capped at 200. Narrow larger searches.
 MCP lookups do not invoke a model or consume the model allowance.
+
+`list_events` accepts optional title keywords (`query`) and inclusive `fromYear` /
+`toYear` bounds on event dates in Europe/Zurich. For “give me events from 2021”, use
+`query: "", fromYear: 2021, toYear: 2021`. Results include only public events,
+ordered newest first, with ten per page. Follow-up pages retain the year filters.
+This uses the existing Events API and requires no additional migration.
+
+The two submission tools are available to MCP clients and the website's chat
+agent. They require both active chat approval and organizer
+submission access, checked on every call. Reads use the caller's JWT and the existing
+`organizer_talk_submissions` security-invoker view/RLS. No migration is required.
+
+- `list_talk_submissions`: optional `title`, `speaker`, `status`, `offset` (0–10,000),
+  and `limit` (1–20, default 10). Title/speaker filters match literal substrings;
+  `*` is rejected. Returns `items`, `hasMore`, and `nextOffset`; narrow the filters
+  if `hasMore` is true but the offset cap makes `nextOffset` null. Ordering is newest
+  first with ID as a stable tie breaker. Items contain ID, creation date, status,
+  talk title, speaker name and label.
+- `get_talk_submission`: requires `submissionId` from the list. Returns `item` with
+  the same fields plus the full description and slides URL, or `item: null` when
+  absent. Contact emails, edit tokens, storage paths and review history are excluded.
+
+Example MCP `tools/call` parameters:
+
+```json
+{ "name": "list_talk_submissions", "arguments": { "status": "approved", "limit": 10 } }
+```
+
+Status values are `initially_submitted`, `adjusted`, `changes_requested`,
+`changes_submitted`, `approved`, `rejected`, and `assigned_to_event`. Submission text
+and links are untrusted content, not instructions. These tools only read proposals;
+they do not approve, publish or assign talks, or fetch submitted links.
+
+The additional filter `awaiting_review` groups `initially_submitted`, `adjusted`
+and `changes_submitted`; `changes_requested` waits on the speaker. A null status
+means all statuses. Ask “Do we have any talk submissions awaiting review?” in chat
+to see up to ten proposals with dashboard links. Displayed page lengths are not
+reported as queue totals. Submission answers are rendered from retrieved records
+without another model call. Follow-up pages and IDs use encrypted verified context.
+Feedback can store these results, but the current feedback evaluation runner is
+limited to published-archive cases; keep submission cases as drafts for manual review.
+
+Chat rejects non-stream success responses and handles non-JSON HTTP failures with
+a retry message. Server-side chat-router load errors also return JSON, preventing
+HTML error pages from surfacing as raw JSON parser messages in the conversation.
 
 `rank_speakers` answers “Who gave the most talks?” with database totals computed
 before pagination. It counts distinct talks at past public events across all stored
@@ -128,7 +176,116 @@ counts, duration, and failure state as tools execute. These are observable actio
 not private model reasoning. Expand an activity row for details. No raw model
 reasoning or arbitrary tool-output payload is exposed.
 
+## Private event drafts and publication
+
+Apply `20261015222331_add_chat_event_drafts.sql` before running this workflow.
+Applied locally and to the linked Supabase project on 16 October 2026 after the
+database, API and browser checks. Application deployment remains a separate step.
+It adds private draft/audit tables and a public event description column. Drafts
+are shared between currently approved organizers and survive closing the chat.
+Drafts open in the editor when returned by chat or through a direct draft link.
+
+The website agent and MCP endpoint expose these additional tools:
+
+- `get_event_options`: known venues, speakers and unassigned approved talks.
+- `create_event_draft`: persist a private draft; MCP clients supply a stable conversation `threadId`.
+- `get_event_draft`: load current content and version.
+- `update_event`: edit private draft fields using the expected version.
+- `create_talk_draft`: add a new private talk using existing speaker IDs.
+- `attach_talk_to_event`: select an approved, unassigned talk.
+- `publish_event`: **prepare review only**; return the preview (or an MCP review link).
+- `discard_event_draft`: discard a private draft without deleting existing talks or events.
+
+Example prompt:
+
+> Create a private Angular Zürich meetup for 12 November 2026 at 18:00. Draft a
+> talk about agentic Angular UIs for Mateusz Halada and a talk about Angular
+> architecture for Tomas Trajan. Use Constructor Nexademy if it is available.
+> Prepare everything for review.
+
+The assistant resolves real IDs and asks for a date when it is missing. Dates are
+interpreted in Europe/Zurich. The preview lets organizers edit the event title,
+description, date/time, venue, Meetup URL and optional image URL, add/remove talks,
+and inspect the audit history. New talk descriptions can be revised by removing
+and re-adding the talk. New talks default to 40 minutes. This workflow uses known
+speaker profiles; it does not create people or send notifications.
+
+Publication requires a future date, a valid venue, an HTTPS Meetup URL, and two or
+three talks with valid speakers. Save edits, select **Review publication**, inspect
+the exact event and talks, then select **Publish event publicly**. Publication
+creates the event and any new talks atomically, assigns approved existing talks,
+and makes the event visible. The reviewed description appears on the public event
+page. Drafting creates no public event or new public talk records.
+
+The review endpoint issues a five-minute signature bound to the organizer, draft
+ID and version. The publish endpoint requires both that signature and explicit
+confirmation, rechecks organizer access, and calls a service-role-only database
+function. The model and MCP tools never receive a signature or access that
+function. Typing “publish” in chat cannot replace the UI confirmation.
+
+Every successful change records the actor, version, action and private snapshot.
+Concurrent edits invalidate stale versions and approvals; reload and review again.
+Publication also rechecks that existing talks are unchanged, approved and unassigned.
+Retries reuse the same event; repeating creation with the same organizer,
+conversation, title and date reuses the draft. **Discard** only affects private
+drafts; public events continue to use the existing organizer management screens.
+
+Event preparation permits up to eight model calls and twelve draft operations per
+request, with the same timeout, provider price ceilings, byte/token caps and quota
+reservation. After entering event preparation, the agent receives only event tools
+on subsequent steps. Preview, editing, review and publication do not invoke a model.
+Feedback may capture draft results, but automated feedback evaluation remains
+read-only and limited to archive questions; review event-workflow cases manually.
+
+Run `npm run test:chat`, the SQL check documented in `supabase/tests/README.md`, and
+`npm run test:chat:browser -- scripts/chat/event-draft.e2e.ts`. The browser check
+mocks the backend and model; it verifies editing, review, stale approvals and
+publication with desktop/mobile accessibility checks. It does not publish a real
+event or prove live OpenRouter behavior.
+
 ## Verification
+
+### Answer feedback
+
+Completed answers offer **Useful** and **Not quite** buttons. A user can change
+their vote or choose **Remove feedback**. Feedback saves do not call a model or
+consume the chat allowance. Interrupted answers do not offer feedback.
+
+Apply `20261015162745_add_chat_feedback.sql` before deploying this feature.
+Applied to the linked project on 15 October 2026 after local policy tests and
+a dry run confirmed it was the only pending migration.
+`POST /api/chat/feedback` checks the existing session and current chat approval,
+then writes with that user's Supabase client. Row-level security permits approved
+users to read, insert, update, and delete only their own feedback. There is one
+row per user and answer; retrying or changing a vote updates that row. Removing
+feedback deletes the row and its saved context.
+
+Review feedback in the Supabase Dashboard table editor under
+`public.chat_feedback`, or run this in the Dashboard SQL editor:
+
+```sql
+select created_at, updated_at, user_id, rating, question, answer, source_ids, result
+from public.chat_feedback
+order by updated_at desc;
+```
+
+The table stores the rated question/answer pair, source IDs, structured results
+(including rankings/statistics), thread/message IDs, the authenticated user ID,
+and timestamps. It does not automatically persist unrated conversations.
+Context is a client-reported snapshot for manual review, not a trusted agent
+audit log or an automatic training dataset. The chat footnote discloses this
+storage. Starting a new chat clears the displayed conversation; submitted
+feedback remains in Supabase. Chat history is still not restored on reload.
+
+Local access-policy checks (synthetic fixtures are rolled back):
+
+```sh
+docker exec -i supabase_db_angular-zurich \
+  psql --username postgres --dbname postgres --set ON_ERROR_STOP=1 \
+  < supabase/tests/chat_feedback.sql
+```
+
+### Application checks
 
 ```sh
 npm run test:chat
@@ -200,6 +357,87 @@ using isolated database fixtures selected `rank_speakers` for “Who gave the mo
 talks?” and produced the expected server-rendered ranking.
 
 ### Conversation context, diagnostics and evaluations
+
+#### Turn feedback into regression cases
+
+Feedback does not automatically change prompts, train a model, or affect the next
+answer. Use the following manual workflow to turn a reported problem into a
+repeatable check. These commands are separate from the synthetic `eval:chat` suite.
+
+1. Export the latest “Not quite” votes using the server credentials in `.env.local`:
+
+   ```sh
+   npm run feedback:export
+   # Subsequent exports must use a new filename to preserve reviewed cases:
+   npm run feedback:export -- --out tmp/chat-feedback/new-cases.json --limit 100
+   ```
+
+   The export reads Supabase without changing feedback. It defaults to 100 rows,
+   supports at most 500, and refuses to overwrite an existing file. Every case
+   starts as `draft`. Raw user IDs and credentials are omitted; questions and
+   answers remain private data. Files use owner-only permissions under ignored
+   `tmp/chat-feedback/`. Exported snapshots are not updated when a vote changes.
+
+2. Review `tmp/chat-feedback/cases.json`. Check the published archive to establish
+   the correct outcome, describe it in `expectedBehavior`, and fill `expectations`.
+   Rewrite follow-up questions so they make sense on their own: feedback does not
+   store the encrypted conversation context. Set `standalone` to `true` and
+   `status` to `ready` only after review. Leave unresolved cases as `draft`, or use
+   `ignored` for cases you do not want to run. A disliked answer is not an oracle.
+
+   Example expectations for a verified speaker total:
+
+   ```json
+   { "kind": "stats", "total": 7 }
+   ```
+
+   Replace the example number with a verified value. Other checks include
+   `sourceIdsInclude`, `sourceIdsExclude`, `past`, `upcoming`, ranking rows with
+   `id`/`rank`/`talkCount`, and case-insensitive `answerIncludes`/`answerExcludes`
+   snippets. `kind` is required; talks, stats and ranking cases also need at least
+   one explicit content check. `observed` preserves the original answer for review.
+   See `scripts/chat/feedback-cases.example.json` for a complete synthetic example.
+
+3. Validate the file without making database or model calls:
+
+   ```sh
+   npm run eval:feedback
+   # Validate a different export or the supplied example:
+   CHAT_FEEDBACK_CASES=scripts/chat/feedback-cases.example.json npm run eval:feedback
+   ```
+
+4. For a live run, set `CHAT_EVAL_ACCESS_TOKEN` in the ignored `.env.local` to your
+   own short-lived Supabase access token from an approved organizer session.
+   Do not use the service-role key as this token or share it in chat. The runner
+   validates the session and approval before model calls; refresh it when expired.
+   It also requires the existing `SUPABASE_URL`, `SUPABASE_KEY`, and
+   `OPENROUTER_API_KEY`, and checks that the export belongs to that project.
+
+   ```sh
+   CHAT_FEEDBACK_LIVE=true CHAT_EVAL_LIMIT=6 CHAT_EVAL_BUDGET_CENTS=60 npm run eval:feedback
+   ```
+
+   Live execution is explicitly opt-in and spends OpenRouter credits. It runs at
+   most 20 reviewed cases, requiring a conservative allowance of 10 cents per
+   selected case (maximum $2). Existing agent request/token/provider-price caps
+   apply. This allowance is a preflight guard, not a provider billing meter; this
+   script does not use the HTTP chat route's daily quota ledger. It runs with the
+   approved user's permissions against live published records. Its database
+   client permits only the current archive read RPCs and user validation; table
+   access and event mutations are blocked. Do not add paid evaluations to CI.
+
+5. Inspect the private JSON report in `tmp/chat-feedback/reports/`, then change the
+   prompt or tools and rerun the same cases. Reports preserve the original answer,
+   new answer, explicit check failures, model, code fingerprint and token usage.
+   Only the reviewed question goes to the agent, not the old answer or expected
+   result. A pass means the specified checks passed, not that every sentence is
+   correct; review prose yourself. Published data can change between runs, so
+   revisit counts and source expectations when the archive changes.
+
+On 15 October 2026 the first hosted export returned no “Not quite” votes. No
+feedback-derived prompt correction or paid live feedback evaluation was made.
+
+#### Existing archive evaluations
 
 No additional account or secret is required for short-lived search context. The existing server-only service credential derives the context encryption key. A new chat/account resets context; Stop preserves it. Context expires after 30 minutes and no transcript is persisted. Never remove server approval checks based on possession of a context token.
 
