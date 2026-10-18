@@ -1,5 +1,39 @@
 # Database access regression checks
 
+## Chat event drafts
+
+After applying `20261015222331_add_chat_event_drafts.sql`, run:
+
+```sh
+docker exec -i supabase_db_angular-zurich \
+  psql --username postgres --dbname postgres --set ON_ERROR_STOP=1 \
+  < supabase/tests/chat_event_drafts.sql
+```
+
+This rollback-only transaction checks private staging, organizer revocation,
+version conflicts, creation/publication retries, duplicate talk rejection,
+server-only publication, atomic event/talk creation, speaker roles, approved-talk
+assignment, rollback when a source talk changes, and audit attribution. It uses
+synthetic identities and sends no messages. The HTTP and
+browser tests additionally verify signed confirmation and the review UI.
+
+## Chat feedback
+
+After applying `20261015162745_add_chat_feedback.sql`, run:
+
+```sh
+docker exec -i supabase_db_angular-zurich \
+  psql --username postgres --dbname postgres --set ON_ERROR_STOP=1 \
+  < supabase/tests/chat_feedback.sql
+```
+
+This transaction creates synthetic Auth users and allowlist entries and rolls
+them back. It checks anonymous denial, owner-only reads/writes, repeat-vote
+upserts, invalid ratings and oversized questions, identity spoofing, removal,
+and immediate denial after approval is revoked. It sends no messages.
+
+## Public data
+
 After applying migrations, run the SQL assertions as the database owner:
 
 ```sh
