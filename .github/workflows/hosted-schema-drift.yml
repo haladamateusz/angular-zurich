@@ -38,12 +38,25 @@ jobs:
 
       - name: Detect public schema drift
         run: |
-          supabase db diff --linked --schema public --use-migra --output-format json > schema-drift.json
+          if supabase db diff --linked --schema public --use-migra --output-format json > schema-drift.json; then
+            :
+          else
+            status=$?
+            echo "::error::Supabase schema comparison failed with exit code $status. Diagnostic output follows."
+            cat schema-drift.json
+            exit "$status"
+          fi
 
           node --input-type=module <<'EOF'
           import { readFileSync } from 'node:fs';
 
           const { diff } = JSON.parse(readFileSync('schema-drift.json', 'utf8'));
+
+          if (typeof diff !== 'string') {
+            console.error('Supabase returned an unexpected schema-diff response:');
+            console.error(readFileSync('schema-drift.json', 'utf8'));
+            process.exit(1);
+          }
 
           if (diff.trim()) {
             console.error('Production public schema differs from the repository migrations:');
@@ -53,3 +66,12 @@ jobs:
 
           console.log('Production public schema matches the repository migrations.');
           EOF
+
+      - name: Retain schema comparison diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-drift
+          path: schema-drift.json
+          if-no-files-found: ignore
+          retention-days: 7
