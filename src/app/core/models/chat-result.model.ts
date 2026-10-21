@@ -11,6 +11,13 @@ const years = z
   .max(111);
 export const chatResultSchema = z.discriminatedUnion('kind', [
   z.object({
+    kind: z.literal('meetup_capacity'),
+    asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    totalSlots: z.number().int().min(1).max(12),
+    slotsAfterCurrentMonth: z.number().int().min(0).max(11),
+    additionalSlots: z.number().int().min(0).max(12),
+  }),
+  z.object({
     kind: z.literal('event_draft'),
     draftId: z.string().uuid(),
     version: z.number().int().positive(),

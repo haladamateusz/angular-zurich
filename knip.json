@@ -7,6 +7,7 @@
     "scripts/**/*.e2e.ts",
     "scripts/**/*.eval.ts",
     "vitest.chat-eval.config.ts",
+    "vitest.event-planning-eval.config.ts",
     "vitest.feedback-eval.config.ts"
   ],
   "project": ["src/**/*.{ts,css}", "api/**/*.js", "scripts/**/*.{mjs,ts}", "*.{js,mjs,ts}"],

@@ -12,6 +12,16 @@ describe('server-issued conversation context', () => {
     expect(token).not.toContain('Tomas');
     expect(openContext(token, user, thread, secret)).toEqual(context);
   });
+  it('retains the pending event schedule in the same user-bound context', () => {
+    const pending = {
+      ...context,
+      pendingEvent: { date: '2026-11-25', time: '18:00', title: 'November meetup' },
+    };
+    const token = sealContext(pending, user, thread, secret);
+    expect(token).not.toContain('November');
+    expect(openContext(token, user, thread, secret)).toEqual(pending);
+    expect(() => openContext(token, user, crypto.randomUUID(), secret)).toThrow('invalid_context');
+  });
   it('rejects tampering, another user, another thread, and a different server key', () => {
     const token = sealContext(context, user, thread, secret);
     const bytes = Buffer.from(token, 'base64url');

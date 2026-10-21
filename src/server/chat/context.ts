@@ -57,6 +57,19 @@ const archiveContextSchema = z.object({
   lastSubmissionQuery: submissionListSchema.optional(),
   submissions: z.array(entity).max(10).optional(),
   eventDraftId: z.string().uuid().optional(),
+  pendingEvent: z
+    .object({
+      date: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+      time: z
+        .string()
+        .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/)
+        .optional(),
+      title: z.string().min(3).max(160).optional(),
+    })
+    .optional(),
 });
 export type ArchiveContext = z.infer<typeof archiveContextSchema>;
 const envelopeSchema = z.object({

@@ -5,6 +5,7 @@ import { ChatResult } from '../../app/core/models/chat-result.model';
 import { escapeMarkdown } from './policy';
 import { ChatActivity } from '../../app/core/models/chat-activity.model';
 import { ChatSource } from '../../app/core/models/chat-source.model';
+import { monthlyMeetupCapacity } from './meetup-planning';
 import {
   createSubmissionTools,
   submissionListSchema,
@@ -31,6 +32,18 @@ export const speakerNameSchema = z.object({
 export const presentSchema = z.object({
   status: z.enum(['results', 'no_results', 'off_topic']),
   ids: z.array(uuid).max(10),
+});
+export const clarificationSchema = z.object({
+  reason: z.enum(['speaker', 'event', 'reference', 'filters', 'schedule']),
+  eventDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullish(),
+  eventTime: z
+    .string()
+    .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/)
+    .nullish(),
+  eventTitle: z.string().trim().min(3).max(160).nullish(),
 });
 
 const talkRecord = z.object({
@@ -68,7 +81,6 @@ export function createArchiveTools(
   let toolQueue: Promise<void> = Promise.resolve();
   let hasMore = false;
   let summary = '';
-  let nextQuestion = '';
   let presented = false;
   let lookupFailed = false;
   let rankingReady = false;
@@ -272,9 +284,6 @@ export function createArchiveTools(
         .map((y) => `${y.year}: ${y.past} past${y.upcoming ? `, ${y.upcoming} upcoming` : ''}`)
         .join(' · ');
     summary += `\n\nShowing ${page.items.length ? args.offset + 1 : 0}–${args.offset + page.items.length} of ${stats.total} published talks. Counts reflect stored records; older records may be incomplete.`;
-    nextQuestion = page.hasMore
-      ? `Show talks by ${name}, starting at offset ${page.nextOffset}.`
-      : '';
     selectedSources = page.items.flatMap((t) => {
       const source = sources.get(t.id);
       return source ? [source] : [];
@@ -331,9 +340,6 @@ export function createArchiveTools(
     if (data.hasMore)
       summary += ` Showing ${args.offset + 1}–${args.offset + data.items.length} of ${data.totalSpeakers} speakers.`;
     selectedSources = [];
-    nextQuestion = data.hasMore
-      ? `Show the speaker ranking, starting at offset ${data.nextOffset}.`
-      : '';
     answer = summary;
     rankingReady = true;
     presented = true;
@@ -444,7 +450,6 @@ export function createArchiveTools(
     const totalRows = filters.mode === 'ranking' ? data.totalSpeakers : data.total;
     summary += `\nShowing ${data.items.length ? filters.offset + 1 : 0}–${filters.offset + data.items.length} of ${totalRows}. Older records may be incomplete.`;
     answer += `\nShowing ${data.items.length ? filters.offset + 1 : 0}–${filters.offset + data.items.length} of ${totalRows}. Older records may be incomplete.`;
-    nextQuestion = data.hasMore ? 'Show the next page of these results.' : '';
     presented = true;
     return data;
   }
@@ -510,6 +515,36 @@ export function createArchiveTools(
   }
 
   return {
+    planMonthlyMeetups: traced(
+      'plan_monthly_meetups',
+      'Calculate remaining monthly meetup slots',
+      async () => {
+        const plan = await monthlyMeetupCapacity(client, signal);
+        const covered = plan.months
+          .filter((month) => month.publishedEvents > 0)
+          .map((month) => month.name);
+        const empty = plan.months
+          .filter((month) => month.publishedEvents === 0)
+          .map((month) => month.name);
+        summary = `At one meetup per month, ${plan.totalSlots} calendar slot${plan.totalSlots === 1 ? '' : 's'} remain through the end of ${plan.year}, including the current month: ${plan.months.map((month) => month.name).join(', ')}. Starting next month gives ${plan.slotsAfterCurrentMonth}.`;
+        answer =
+          `As of ${plan.asOf} (Europe/Zurich), ${summary}\n\n` +
+          (covered.length
+            ? `The published schedule already covers ${covered.join(', ')}. `
+            : 'No published events are recorded in those months. ') +
+          `${plan.additionalSlots} month${plan.additionalSlots === 1 ? '' : 's'} ${plan.additionalSlots === 1 ? 'has' : 'have'} no published event${empty.length ? ': ' + empty.join(', ') : ''}. Under a maximum of one meetup per calendar month, that is ${plan.additionalSlots} additional meetup${plan.additionalSlots === 1 ? '' : 's'}. Private drafts, venue availability and speaker availability are not included.`;
+        result = {
+          kind: 'meetup_capacity',
+          asOf: plan.asOf,
+          totalSlots: plan.totalSlots,
+          slotsAfterCurrentMonth: plan.slotsAfterCurrentMonth,
+          additionalSlots: plan.additionalSlots,
+        };
+        selectedSources = [];
+        presented = true;
+        return plan;
+      },
+    ),
     ready: () => presented && !lookupFailed,
     context: () => context,
     result: () => result,
@@ -547,8 +582,6 @@ export function createArchiveTools(
         if (args.status === 'awaiting_review')
           answer +=
             ' Awaiting review includes new submissions, adjusted proposals, and resubmitted changes.';
-        nextQuestion =
-          data.nextOffset === null ? '' : 'Show the next page of these talk submissions.';
         presented = true;
         return data;
       },
@@ -584,7 +617,6 @@ export function createArchiveTools(
           ? 'Submission details are shown above. Open the submission to review it or view its slides.'
           : 'That talk submission was not found.';
         answer = summary;
-        nextQuestion = '';
         presented = true;
         return { item };
       },
@@ -593,9 +625,28 @@ export function createArchiveTools(
     clarify: traced(
       'clarify',
       'Clarify the search',
-      async (args: { reason: 'speaker' | 'event' | 'reference' | 'filters' | 'schedule' }) => {
+      async (args: z.infer<typeof clarificationSchema>) => {
+        if (args.reason === 'schedule') {
+          context.pendingEvent = {
+            ...context.pendingEvent,
+            ...(args.eventDate ? { date: args.eventDate } : {}),
+            ...(args.eventTime ? { time: args.eventTime } : {}),
+            ...(args.eventTitle ? { title: args.eventTitle } : {}),
+          };
+          if (context.pendingEvent.date && context.pendingEvent.time)
+            return {
+              accepted: false,
+              instruction: 'The date and time are known. Create the private event draft now.',
+              pendingEvent: context.pendingEvent,
+            };
+        }
+        const plan = context.pendingEvent;
         answer = {
-          schedule: 'When should the meetup start? Please give the date and time in Europe/Zurich.',
+          schedule: plan?.date
+            ? `What time should the meetup on ${plan.date} start (Europe/Zurich)? You can also say “as usual” to use the recent event schedule.`
+            : plan?.time
+              ? `What date should the meetup at ${plan.time} take place (Europe/Zurich)?`
+              : 'When should the meetup start? Please give the date and time in Europe/Zurich.',
           speaker: 'Which Angular Zürich speaker do you mean? Please give their full name.',
           event: 'Which Angular Zürich event do you mean? Please give its name or date.',
           reference: 'Which Angular Zürich speaker, talk or event are you referring to?',
@@ -605,7 +656,7 @@ export function createArchiveTools(
         summary = answer;
         result = { kind: 'clarification' };
         presented = true;
-        return { accepted: true };
+        return { accepted: true, ...(args.reason === 'schedule' ? { pendingEvent: plan } : {}) };
       },
     ),
     searchTalks: traced(
@@ -650,7 +701,6 @@ export function createArchiveTools(
           rankingReady = false;
           selectedSources = [];
           summary = '';
-          nextQuestion = '';
           answer =
             'I can help with Angular Zürich talks, speakers, and events. Try “Who gave a talk about signals?”';
         } else if (args.status === 'results') {
@@ -688,6 +738,5 @@ export function createArchiveTools(
     },
     sources: () => selectedSources,
     summary: () => summary,
-    nextQuestion: () => nextQuestion,
   };
 }

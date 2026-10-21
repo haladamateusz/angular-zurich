@@ -104,6 +104,7 @@ Supabase bearer token and active approval as chat. An MCP client must manage tok
 refresh; a public OAuth/discovery flow is not included in this initial version.
 
 Available tools: `search_talks`, `find_speakers`, `list_events`,
+`plan_monthly_meetups`,
 `get_talks_by_speaker`, `get_talks_by_event`, `get_talk`, `get_speaker_talks`,
 `get_speaker_stats`, `rank_speakers`, `query_archive`, `list_talk_submissions`,
 and `get_talk_submission`.
@@ -209,6 +210,41 @@ description, date/time, venue, Meetup URL and optional image URL, add/remove tal
 and inspect the audit history. New talk descriptions can be revised by removing
 and re-adding the talk. New talks default to 40 minutes. This workflow uses known
 speaker profiles; it does not create people or send notifications.
+
+Schedule clarifications retain the known date, time and proposed title in the
+encrypted conversation context. The next question asks only for missing fields;
+time-only replies continue the pending plan. Without an explicit year, planning
+uses the next occurrence of the requested date. “As usual” looks for a start time
+shared by at least two and 60% of the five latest past published events, converted
+to Europe/Zurich; otherwise the assistant asks for the time. Once a draft exists,
+follow-ups edit that draft. The creation tool is unavailable unless the latest
+message explicitly asks to create/plan another event.
+
+Run `npm run eval:event-planning` to replay the four-turn November conversation
+against the real OpenRouter model and synthetic database data, including a
+100-person options response, plus the monthly-capacity question. These five runs
+reserve at most $0.50 under the
+normal per-run caps. This evaluation cannot publish an event and is not part of
+automatic CI.
+
+Verified on 19 October 2026: the four-turn real-model planning replay passed,
+retaining 25 November 2026 at 18:00 and creating only one private draft. Six
+existing read-only archive model evaluations also passed. These checks used
+synthetic database data; no production event was created or published.
+
+`plan_monthly_meetups` handles hypothetical monthly scheduling through the end of
+the current year without creating drafts. It reports calendar capacity both
+including the current month and starting next month, then separately counts
+remaining months with no published event. Counts are exact and grouped by
+calendar month in Europe/Zurich, including events earlier in the current month;
+multiple events in one month occupy one monthly slot. The tool performs at most
+twelve bounded count requests and does not infer venue/speaker availability or
+include private drafts. Database errors are not reported as empty months. Its
+answer is deterministic and needs no extra model call or source-ID selection.
+Verified on 19 October 2026 with the exact monthly-capacity question against the
+real model, both in a fresh conversation and with an existing draft in context.
+Both runs selected the capacity tool and completed in one model call, using
+synthetic published-event counts and making no draft writes.
 
 Publication requires a future date, a valid venue, an HTTPS Meetup URL, and two or
 three talks with valid speakers. Save edits, select **Review publication**, inspect

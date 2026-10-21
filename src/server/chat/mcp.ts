@@ -71,6 +71,16 @@ export async function handleArchiveMcp(req: Request, res: Response, client: Supa
     async (args) => content(await archive.listEvents(args)),
   );
   server.registerTool(
+    'plan_monthly_meetups',
+    {
+      description:
+        'Calculate remaining monthly meetup slots through the end of the current year in Europe/Zurich, separating calendar capacity from months already covered by published events. Read-only.',
+      inputSchema: {},
+      annotations,
+    },
+    async () => content(await archive.planMonthlyMeetups({})),
+  );
+  server.registerTool(
     'get_talks_by_speaker',
     {
       description: 'List published talks by speaker ID.',

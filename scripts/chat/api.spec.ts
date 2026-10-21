@@ -44,6 +44,10 @@ let submissionAccess: boolean;
 let submissionReads: number;
 let submissionQuestion: boolean;
 let draftQuestion: boolean;
+let planningConversation: boolean;
+let monthlyCapacityQuestion: boolean;
+let recentStartTimes: string[];
+let draftMutations: Record<string, unknown>[];
 let draftPublishes: number;
 let currentDraft: typeof draftFixture;
 const record = {
@@ -193,6 +197,10 @@ beforeEach(() => {
   submissionReads = 0;
   submissionQuestion = false;
   draftQuestion = false;
+  planningConversation = false;
+  monthlyCapacityQuestion = false;
+  recentStartTimes = [];
+  draftMutations = [];
   draftPublishes = 0;
   currentDraft = structuredClone(draftFixture);
   vi.stubEnv('SUPABASE_URL', 'https://supabase.test.invalid');
@@ -218,6 +226,10 @@ beforeEach(() => {
         if (target.includes('/rest/v1/Events')) {
           const params = new URL(target).searchParams;
           expect(params.get('public')).toBe('eq.true');
+          if (params.get('select') === 'id' && init?.method === 'HEAD')
+            return new Response(null, { headers: { 'content-range': '*/0' } });
+          if (params.get('select') === 'starts_at')
+            return Response.json(recentStartTimes.map((starts_at) => ({ starts_at })));
           expect(params.get('title')).toBeNull();
           expect(params.getAll('starts_at')).toEqual([
             'gte.2021-01-01T00:00:00+01:00',
@@ -234,7 +246,37 @@ beforeEach(() => {
         }
         if (target.includes('/rest/v1/chat_event_drafts')) return Response.json([currentDraft]);
         if (target.includes('/rest/v1/chat_event_draft_audit')) return Response.json([]);
-        if (target.includes('/mutate_chat_event_draft')) return Response.json(currentDraft);
+        if (target.includes('/mutate_chat_event_draft')) {
+          const args = JSON.parse(String(init?.body));
+          draftMutations.push(args);
+          if (planningConversation) {
+            const fields = args.p_data;
+            currentDraft = {
+              ...currentDraft,
+              version: args.p_action === 'create' ? 1 : currentDraft.version + 1,
+              content: {
+                ...currentDraft.content,
+                ...Object.fromEntries(
+                  Object.entries(fields).filter(([key]) =>
+                    [
+                      'title',
+                      'description',
+                      'startsAt',
+                      'venueId',
+                      'meetupUrl',
+                      'imageUrl',
+                    ].includes(key),
+                  ),
+                ),
+                talks: [],
+              },
+            };
+          }
+          return Response.json(currentDraft);
+        }
+        if (target.includes('/rest/v1/Venues')) return Response.json([]);
+        if (target.includes('/rest/v1/People')) return Response.json([]);
+        if (target.includes('/rest/v1/Talks')) return Response.json([]);
         if (target.includes('/publish_chat_event_draft')) {
           expect(new Headers(init?.headers).get('authorization')).toBe('Bearer test-service');
           const args = JSON.parse(String(init?.body));
@@ -343,7 +385,8 @@ beforeEach(() => {
       }
       if (target.startsWith('https://openrouter.ai/api/v1/')) {
         modelCalls++;
-        providerBodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+        const body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+        providerBodies.push(body);
         if (!providerBodies.at(-1)?.['tools']) return answerStream(init?.signal);
         if (holdProvider || (holdAfterLookup && modelCalls === 2))
           return new Promise<Response>((_resolve, reject) => {
@@ -356,6 +399,7 @@ beforeEach(() => {
               { once: true },
             );
           });
+        if (monthlyCapacityQuestion) return toolStream('plan_monthly_meetups', {});
         if (eventYearQuestion)
           return modelCalls === 1
             ? toolStream('list_events', { query: '', fromYear: 2021, toYear: 2021, offset: 0 })
@@ -370,6 +414,53 @@ beforeEach(() => {
             period: 'past',
             offset: 0,
           });
+        if (planningConversation) {
+          const messages = body['messages'] as { role: string; content: string }[];
+          const latest = messages.filter((message) => message.role === 'user').at(-1)!.content;
+          const contextMatch = String(
+            messages.find((message) => message.role === 'system')?.content,
+          ).match(/"date":"(\d{4}-\d{2}-\d{2})"/);
+          if (latest.includes('25th'))
+            return toolStream('clarify', {
+              reason: 'schedule',
+              eventDate: '2026-11-25',
+              eventTime: null,
+              eventTitle: null,
+            });
+          if (latest === 'As usual') {
+            if (messages.some((message) => message.role === 'tool'))
+              return toolStream('clarify', {
+                reason: 'schedule',
+                eventDate: contextMatch?.[1],
+                eventTime: null,
+                eventTitle: null,
+              });
+            return toolStream('get_event_options', { query: '' });
+          }
+          if (latest === '18:00') {
+            if (messages.some((message) => message.role === 'tool'))
+              return toolStream('publish_event', { draftId: currentDraft.id });
+            return toolStream('create_event_draft', {
+              title: 'Angular Zürich November 2026',
+              startsAt: contextMatch?.[1] + 'T18:00',
+              description: null,
+              venueId: null,
+              meetupUrl: null,
+              imageUrl: null,
+            });
+          }
+          if (latest === 'Angular Zurich November 2026') {
+            const completed = messages.filter((message) => message.role === 'tool').length;
+            if (completed === 0) return toolStream('get_event_draft', { draftId: currentDraft.id });
+            if (completed === 1)
+              return toolStream('update_event', {
+                draftId: currentDraft.id,
+                expectedVersion: currentDraft.version,
+                fields: { title: latest },
+              });
+            return toolStream('publish_event', { draftId: currentDraft.id });
+          }
+        }
         if (draftQuestion)
           return modelCalls === 1
             ? toolStream('create_event_draft', draftFixture.content)
@@ -424,6 +515,84 @@ function post(
 }
 
 describe('protected chat API', () => {
+  it('answers remaining monthly meetup capacity without selecting archive IDs or writing drafts', async () => {
+    monthlyCapacityQuestion = true;
+    const response = await post('/run', {
+      runId: crypto.randomUUID(),
+      threadId: crypto.randomUUID(),
+      messages: [
+        {
+          role: 'user',
+          content:
+            'If we want to organize meetups once every month until the end of the year, how many could we still possibly organize?',
+        },
+      ],
+    });
+    const events = await response.text();
+    expect(events).toContain('RUN_FINISHED');
+    expect(events).not.toContain('RUN_ERROR');
+    expect(events).toContain('"kind":"meetup_capacity"');
+    expect(events).toContain('Starting next month');
+    expect(events).toContain('No published events are recorded');
+    expect(modelCalls).toBe(1);
+    expect(draftMutations).toHaveLength(0);
+    expect(draftPublishes).toBe(0);
+  });
+  it('keeps the requested event date across clarification, usual-time lookup and a time-only reply', async () => {
+    planningConversation = true;
+    const threadId = crypto.randomUUID();
+    let contextToken: string | undefined;
+    async function turn(content: string) {
+      const response = await post('/run', {
+        runId: crypto.randomUUID(),
+        threadId,
+        contextToken,
+        messages: [{ role: 'user', content }],
+      });
+      const raw = await response.text();
+      expect(raw).not.toContain('RUN_ERROR');
+      const events = raw
+        .split('\n')
+        .filter((line) => line.startsWith('data: '))
+        .map((line) => JSON.parse(line.slice(6)));
+      contextToken = events.find((event) => event.type === 'STATE_SNAPSHOT').snapshot.contextToken;
+      return raw;
+    }
+    expect(await turn('Can you create new event for 25th of November?')).toContain(
+      'What time should the meetup on 2026-11-25 start',
+    );
+    expect(await turn('As usual')).toContain('What time should the meetup on 2026-11-25 start');
+    expect(await turn('18:00')).toContain('"kind":"event_draft"');
+    expect(draftMutations).toHaveLength(1);
+    expect(draftMutations[0]['p_data']).toMatchObject({
+      startsAt: '2026-11-25T18:00',
+      venueId: '',
+      meetupUrl: '',
+      imageUrl: '',
+    });
+    expect(draftPublishes).toBe(0);
+    expect(await turn('Angular Zurich November 2026')).toContain('"kind":"event_draft"');
+    expect(draftMutations).toHaveLength(2);
+    expect(draftMutations[1]).toMatchObject({
+      p_action: 'update',
+      p_version: 1,
+      p_data: { title: 'Angular Zurich November 2026' },
+    });
+    expect(currentDraft.content.startsAt).toBe('2026-11-25T18:00');
+    expect(
+      (providerBodies.at(-1)?.['tools'] as { function: { name: string } }[]).map(
+        (tool) => tool.function.name,
+      ),
+    ).not.toContain('create_event_draft');
+    const optionsFollowup = providerBodies.find((body) =>
+      (body['messages'] as { role: string }[]).some((message) => message.role === 'tool'),
+    );
+    expect(
+      (optionsFollowup?.['tools'] as { function: { name: string } }[]).map(
+        (tool) => tool.function.name,
+      ),
+    ).toContain('clarify');
+  });
   it('streams sources for events from 2021 using date filters and accepts their IDs', async () => {
     eventYearQuestion = true;
     const response = await post('/run', {
@@ -698,14 +867,14 @@ describe('protected chat API', () => {
     expect(events).not.toContain('I couldn’t find a matching');
   });
 
-  it('returns exact speaker totals and year counts with source records and a next-page prompt', async () => {
+  it('returns exact speaker totals and year counts with source records', async () => {
     speakerQuestion = true;
     const response = await post();
     const events = await response.text();
     expect(events).toContain('Tomas Trajan has 13 talks');
     expect(events).toContain('2019: 13 past');
     expect(events).toContain('of 14 published talks');
-    expect(events).toContain('starting at offset 10');
+    expect(events).not.toContain('nextQuestion');
     expect(events).toContain('get_speaker_stats');
     expect(modelCalls).toBe(2);
     expect(events).toContain('RUN_FINISHED');
@@ -803,7 +972,7 @@ describe('protected chat API', () => {
     expect(events).toContain('archive: 14');
     expect(events).toContain('rank_speakers');
     expect(events).toContain('exclude upcoming events');
-    expect(events).toContain('offset 10');
+    expect(events).not.toContain('nextQuestion');
     expect(modelCalls).toBeLessThanOrEqual(3);
   }, 15000);
 
@@ -904,6 +1073,7 @@ describe('protected chat API', () => {
       'search_talks',
       'find_speakers',
       'list_events',
+      'plan_monthly_meetups',
       'get_talks_by_speaker',
       'get_talks_by_event',
       'get_talk',

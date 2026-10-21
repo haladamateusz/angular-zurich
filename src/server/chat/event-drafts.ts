@@ -12,11 +12,15 @@ export const draftRefSchema = z.object({
   expectedVersion: z.number().int().positive(),
 });
 export const createDraftSchema = eventDraftFieldsSchema.extend({
-  description: z.string().max(4000).default(''),
-  startsAt: eventDraftFieldsSchema.shape.startsAt.default(''),
-  venueId: eventDraftFieldsSchema.shape.venueId.default(''),
-  meetupUrl: eventDraftFieldsSchema.shape.meetupUrl.default(''),
-  imageUrl: eventDraftFieldsSchema.shape.imageUrl.default(''),
+  description: z
+    .string()
+    .max(4000)
+    .nullish()
+    .transform((value) => value ?? ''),
+  startsAt: eventDraftFieldsSchema.shape.startsAt.nullish().transform((value) => value ?? ''),
+  venueId: eventDraftFieldsSchema.shape.venueId.nullish().transform((value) => value ?? ''),
+  meetupUrl: eventDraftFieldsSchema.shape.meetupUrl.nullish().transform((value) => value ?? ''),
+  imageUrl: eventDraftFieldsSchema.shape.imageUrl.nullish().transform((value) => value ?? ''),
 });
 export const updateDraftSchema = draftRefSchema.extend({
   fields: eventDraftFieldsSchema.partial(),
@@ -99,7 +103,7 @@ export function createEventDraftTools(
     async options(query: string) {
       await authorize();
       const escaped = query.replace(/[\\%_]/g, '\\$&').replaceAll('*', '');
-      const [venues, speakers, talks] = await Promise.all([
+      const [venues, speakers, talks, recentEvents] = await Promise.all([
         client
           .from('Venues')
           .select('id,title,street,city')
@@ -121,8 +125,16 @@ export function createEventDraftTools(
           .order('title')
           .limit(100)
           .abortSignal(signal),
+        client
+          .from('Events')
+          .select('starts_at')
+          .eq('public', true)
+          .lte('starts_at', new Date().toISOString())
+          .order('starts_at', { ascending: false })
+          .limit(5)
+          .abortSignal(signal),
       ]);
-      if (venues.error || speakers.error || talks.error)
+      if (venues.error || speakers.error || talks.error || recentEvents.error)
         throw new DraftError('Event options could not be loaded.', 503);
       const approved = talks.data.length
         ? await client
@@ -137,7 +149,25 @@ export function createEventDraftTools(
         : { data: [], error: null };
       if (approved.error) throw new DraftError('Approved talks could not be loaded.', 503);
       const ids = new Set(approved.data?.map((item) => item.id));
+      const times = new Map<string, number>();
+      const clock = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Zurich',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      });
+      for (const event of recentEvents.data) {
+        const date = new Date(event.starts_at);
+        if (!Number.isFinite(date.getTime())) continue;
+        const time = clock.format(date);
+        times.set(time, (times.get(time) ?? 0) + 1);
+      }
+      const common = [...times].sort((a, b) => b[1] - a[1])[0];
       return {
+        usualStartTime:
+          common && common[1] >= Math.max(2, Math.ceil(recentEvents.data.length * 0.6))
+            ? common[0]
+            : null,
         venues: venues.data,
         speakers: speakers.data,
         talks: talks.data
