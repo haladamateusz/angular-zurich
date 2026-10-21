@@ -163,6 +163,7 @@ afterAll(async () => {
   );
 });
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
 });
@@ -765,6 +766,24 @@ describe('protected chat API', () => {
     await vi.waitFor(() => expect(modelCalls).toBe(2));
     await reader.cancel();
     await vi.waitFor(() => expect(providerAborted).toBe(true));
+  });
+
+  it.each([
+    ['2026-10-21T13:31:00.000Z', '2026-10-21'],
+    ['2026-10-20T22:30:00.000Z', '2026-10-21'],
+    ['2026-12-31T23:30:00.000Z', '2027-01-01'],
+  ])('includes the current Zürich date in lookup and answer requests at %s', async (now, date) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(now));
+    const events = await (await post('/run')).text();
+    expect(events).toContain('RUN_FINISHED');
+    expect(providerBodies.some((body) => !body['tools'])).toBe(true);
+    for (const body of providerBodies) {
+      const messages = body['messages'] as { role: string; content: string }[];
+      const system = messages.find((message) => message.role === 'system')?.content;
+      expect(system).toContain(`Current date in Europe/Zurich: ${date}`);
+      expect(system).toContain(`Current instant (UTC): ${now}`);
+    }
   });
 
   it('publishes cards and genuine partial text before the provider finishes', async () => {
