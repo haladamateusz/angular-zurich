@@ -21,7 +21,7 @@ const quotaMessages: Record<string, string> = {
   busy: 'A question is already running. Wait a moment before trying again.',
   duplicate: 'This request has already been processed. Send a new question.',
   minute_limit: 'You’ve reached the limit of five questions per minute. Try again shortly.',
-  daily_limit: 'You’ve reached today’s limit of 100 questions. It resets at midnight UTC.',
+  daily_limit: 'You’ve reached today’s limit of 200 questions. It resets at midnight UTC.',
   budget_limit: 'The community’s chat allowance is used up for today. It resets at midnight UTC.',
 };
 

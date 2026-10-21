@@ -172,16 +172,16 @@ update private.chat_runs set started_at = now() - interval '3 minutes' where use
 -- Place all daily fixtures after UTC midnight, even when tests run just after midnight.
 update private.chat_runs set started_at = date_trunc('day', now() at time zone 'UTC') at time zone 'UTC' where user_id = (select speaker_id from stats_fixture);
 insert into private.chat_runs(run_id, user_id, started_at, finished_at)
-select gen_random_uuid(), speaker_id, date_trunc('day', now() at time zone 'UTC') at time zone 'UTC', now() from stats_fixture cross join generate_series(1,94);
+select gen_random_uuid(), speaker_id, date_trunc('day', now() at time zone 'UTC') at time zone 'UTC', now() from stats_fixture cross join generate_series(1,194);
 -- During the first UTC minute the five-per-minute guard takes precedence.
 do $$
 declare fixture record;
 begin
   select * into fixture from stats_fixture;
   if now() >= (date_trunc('day', now() at time zone 'UTC') at time zone 'UTC') + interval '1 minute' then
-    perform pg_temp.assert_true(public.reserve_chat_run(fixture.speaker_id, fixture.future_talk_id, 1000000) = 'ok', 'Hundredth daily reservation succeeds');
+    perform pg_temp.assert_true(public.reserve_chat_run(fixture.speaker_id, fixture.future_talk_id, 1000000) = 'ok', 'Two-hundredth daily reservation succeeds');
     perform public.finish_chat_run(fixture.speaker_id, fixture.future_talk_id);
-    perform pg_temp.assert_true(public.reserve_chat_run(fixture.speaker_id, gen_random_uuid(), 1000000) = 'daily_limit', 'Hundred-and-first daily reservation is rejected');
+    perform pg_temp.assert_true(public.reserve_chat_run(fixture.speaker_id, gen_random_uuid(), 1000000) = 'daily_limit', 'Two-hundred-and-first daily reservation is rejected');
   else
     raise notice 'Skipping daily boundary checks during first UTC minute: minute limit takes precedence';
   end if;

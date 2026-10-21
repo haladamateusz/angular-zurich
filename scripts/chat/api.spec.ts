@@ -1131,6 +1131,15 @@ describe('protected chat API', () => {
     expect((await post()).status).toBe(429);
     expect(modelCalls).toBe(0);
   });
+  it('reports the 200-question daily limit before starting the model', async () => {
+    reservation = 'daily_limit';
+    const response = await post();
+    expect(response.status).toBe(429);
+    expect(await response.json()).toMatchObject({
+      error: 'You’ve reached today’s limit of 200 questions. It resets at midnight UTC.',
+    });
+    expect(modelCalls).toBe(0);
+  });
   it('fails closed when disabled or the reservation cannot be obtained', async () => {
     vi.stubEnv('CHAT_ENABLED', 'false');
     expect((await post()).status).toBe(503);
