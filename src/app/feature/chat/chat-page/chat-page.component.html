@@ -242,10 +242,23 @@
                         <p class="archive-source-description">{{ submission.description }}</p>
                       }
                       <a
-                        class="archive-source-link"
+                        class="archive-source-link event-meta__link"
                         [routerLink]="['/dashboard/talk-submissions', submission.id]"
                       >
-                        Open submission<span class="sr-only">: {{ submission.title }}</span>
+                        <span class="event-meta__link-label">Open submission</span>
+                        <span class="sr-only">: {{ submission.title }}</span>
+                        <svg
+                          class="archive-source-link-icon"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
                       </a>
                     </article>
                   }
