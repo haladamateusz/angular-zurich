@@ -36,9 +36,46 @@ jobs:
       - name: Link the production project
         run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
+      - name: Resolve the IPv4 session pooler
+        run: |
+          node --input-type=module <<'EOF'
+          import { appendFileSync } from 'node:fs';
+
+          const { SUPABASE_ACCESS_TOKEN, SUPABASE_DB_PASSWORD, SUPABASE_PROJECT_REF, GITHUB_ENV } = process.env;
+          if (!SUPABASE_ACCESS_TOKEN || !SUPABASE_DB_PASSWORD) {
+            throw new Error('SUPABASE_ACCESS_TOKEN and SUPABASE_DB_PASSWORD must be configured in the production environment.');
+          }
+
+          // Linking saves pooler metadata on a best-effort basis. Resolve it explicitly
+          // so an API failure cannot silently fall back to an IPv6-only connection.
+          const response = await fetch(
+            `https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_REF}/config/database/pooler`,
+            { headers: { Authorization: `Bearer ${SUPABASE_ACCESS_TOKEN}` }, signal: AbortSignal.timeout(30_000) },
+          );
+          if (!response.ok) {
+            throw new Error(`Could not resolve the Supabase session pooler (HTTP ${response.status}).`);
+          }
+
+          const configs = await response.json();
+          const primary = configs.find((config) => config.database_type === 'PRIMARY');
+          if (!primary?.connection_string) {
+            throw new Error('Supabase did not return a primary database pooler connection.');
+          }
+
+          const url = new URL(primary.connection_string.replaceAll('[YOUR-PASSWORD]', ''));
+          if (!url.hostname.endsWith('.pooler.supabase.com')) {
+            throw new Error('Supabase did not return a shared IPv4 pooler hostname.');
+          }
+          url.port = '5432'; // Session mode is required for schema introspection.
+          url.password = encodeURIComponent(SUPABASE_DB_PASSWORD);
+          const connectionString = url.toString();
+          console.log(`::add-mask::${connectionString}`);
+          appendFileSync(GITHUB_ENV, `SUPABASE_SCHEMA_DB_URL=${connectionString}\n`);
+          EOF
+
       - name: Detect public schema drift
         run: |
-          if supabase db diff --linked --schema public --use-migra --output-format json > schema-drift.json; then
+          if supabase db diff --db-url "$SUPABASE_SCHEMA_DB_URL" --schema public --use-migra --output-format json > schema-drift.json; then
             :
           else
             status=$?
@@ -69,7 +106,7 @@ jobs:
 
       - name: Retain schema comparison diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: schema-drift
           path: schema-drift.json
