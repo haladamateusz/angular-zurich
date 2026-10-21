@@ -5,7 +5,7 @@ import { ArchiveContext, openContext, sealContext } from './context';
 import { parseChatRequest } from './policy';
 import { chatFeedbackSchema } from '../../app/core/models/chat-feedback.model';
 import { z } from 'zod';
-import { eventDraftSchema } from '../../app/core/models/event-draft.model';
+import { eventDraftSchema, eventDraftSaveIssues } from '../../app/core/models/event-draft.model';
 import {
   createEventDraftTools,
   approvalToken,
@@ -148,17 +148,22 @@ chatRouter.all(
           const draft = await tools.get({ draftId });
           if (draft.state !== 'draft' || draft.version !== input.expectedVersion)
             throw new DraftError('This draft changed. Reload it before reviewing.', 409);
-          const c = draft.content;
-          if (!c.startsAt || !c.venueId || !c.meetupUrl || c.talks.length < 2)
-            throw new DraftError(
-              'Add a date, venue, Meetup link and two or three talks before publishing.',
-            );
-          if (!auth.config.serviceKey) throw new DraftError('Publishing is not configured.', 503);
-          res.json({ draft, token: approvalToken(draft, auth.user.id, auth.config.serviceKey) });
+          const saveIssues = eventDraftSaveIssues(draft);
+          if (!auth.config.serviceKey)
+            throw new DraftError('Saving events is not configured.', 503);
+          res.json({
+            draft,
+            saveIssues,
+            token: saveIssues.length
+              ? null
+              : approvalToken(draft, auth.user.id, auth.config.serviceKey),
+          });
           return;
         }
+        case 'save-event':
         case 'publish': {
-          if (!auth.config.serviceKey) throw new DraftError('Publishing is not configured.', 503);
+          if (!auth.config.serviceKey)
+            throw new DraftError('Saving events is not configured.', 503);
           const approval = z
             .object({ token: z.string().max(2000), confirmed: z.literal(true) })
             .parse(input);
@@ -175,7 +180,7 @@ chatRouter.all(
             auth: authOptions,
           });
           const { data, error } = await admin
-            .rpc('publish_chat_event_draft', {
+            .rpc('save_chat_event_draft', {
               p_id: draftId,
               p_version: input.expectedVersion,
               p_actor: auth.user.id,
@@ -185,7 +190,7 @@ chatRouter.all(
             throw new DraftError(
               error.code === '40001'
                 ? 'The draft or a selected talk changed. Reload and review it again.'
-                : 'Publishing failed. Check the future date, venue, Meetup link and selected talks.',
+                : 'Saving the event failed. Check the future date, venue, Meetup link and selected talks.',
               error.code === '40001' ? 409 : 400,
             );
           res.json(eventDraftSchema.parse(data));

@@ -4,6 +4,7 @@
   class="create-event-date-picker__trigger app-field-trigger"
   aria-haspopup="dialog"
   [id]="controlId()"
+  [disabled]="disabled()"
   [attr.aria-expanded]="isOpen()"
   [attr.aria-controls]="panelId()"
   [attr.aria-describedby]="ariaDescribedBy()"

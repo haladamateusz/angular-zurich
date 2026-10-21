@@ -10,7 +10,7 @@ import {
   OrganizerTalkSubmission,
   TalkSubmissionStatus,
 } from '../../core/models/organizer-talk-submission.interface';
-import { CreateEventSelectOption } from './create-event-select.component';
+import { CreateEventSelectOption } from '../../ui/event-fields/create-event-select.component';
 import { DashboardTableFilterComponent } from './dashboard-table-filter.component';
 import { createPaginationItems } from './pagination';
 

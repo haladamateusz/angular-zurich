@@ -303,9 +303,11 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
     const text =
       draft.state === 'discarded'
         ? 'The private draft was discarded.'
-        : draft.state === 'published'
-          ? 'This draft has already been published.'
-          : 'Your event draft is saved privately. Review and edit it below. Publishing requires your confirmation in the preview.';
+        : draft.state === 'saved'
+          ? 'This event is saved with Draft visibility in the dashboard.'
+          : draft.state === 'published'
+            ? 'This draft has already been published.'
+            : 'Your event draft is saved privately. Review and edit it below. Confirm in the preview to save it as a Draft event in the dashboard.';
     const presentation = { sources: [], summary: text, result };
     onAnswerReady(presentation, nextContext);
     onText(text);

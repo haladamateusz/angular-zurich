@@ -48,7 +48,6 @@ function parseLocalDateValue(value: string): Date | null {
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
     '(document:wheel)': 'onDocumentScrollIntent($event)',
     '(document:touchmove)': 'onDocumentScrollIntent($event)',
-    '(window:scroll)': 'close()',
     '(focusout)': 'onFocusOut($event)',
   },
 })
@@ -67,6 +66,7 @@ export class CreateEventDatePickerComponent implements FormValueControl<string> 
   readonly ariaDescribedBy = input<string | null>(null);
   readonly ariaLabelledBy = input<string | null>(null);
   readonly invalid = input(false);
+  readonly disabled = input(false);
   readonly touched = input(false);
   readonly touch = output<void>();
 
@@ -161,6 +161,7 @@ export class CreateEventDatePickerComponent implements FormValueControl<string> 
   }
 
   private open(): void {
+    if (this.disabled()) return;
     this.isOpen.set(true);
     this.focusCalendar();
   }

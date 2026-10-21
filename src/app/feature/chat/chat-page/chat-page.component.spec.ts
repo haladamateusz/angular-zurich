@@ -310,7 +310,7 @@ describe('ChatPageComponent', () => {
       await fixture.whenStable();
       fixture.detectChanges();
       expect(preview.querySelector('h2')?.textContent).toContain('Angular Zürich November');
-      expect(preview.textContent).toContain('Review for publication');
+      expect(preview.textContent).toContain('Review event draft');
       expect(transcript.scrollTop).toBe(readingEarlierMessages ? 0 : 400);
       expect(fixture.nativeElement.querySelectorAll('app-event-draft-preview')).toHaveLength(1);
       const titleInput = preview.querySelector(

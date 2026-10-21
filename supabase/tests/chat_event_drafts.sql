@@ -14,7 +14,7 @@ insert into public."Venues"(id,title,street,city,zip,latitude,longitude,created_
   select venue,'Draft venue','Test street','Zürich','8005',0,0,'test' from draft_fixture;
 select pg_temp.check_true(not has_table_privilege('anon','public.chat_event_drafts','select'),'Anonymous draft reads denied');
 select pg_temp.check_true(not has_table_privilege('authenticated','public.chat_event_drafts','update'),'Direct state changes denied');
-select pg_temp.check_true(not has_function_privilege('authenticated','public.publish_chat_event_draft(uuid,integer,uuid)','execute'),'Caller token cannot bypass server approval');
+select pg_temp.check_true(not has_function_privilege('authenticated','public.save_chat_event_draft(uuid,integer,uuid)','execute'),'Caller token cannot bypass server approval');
 select set_config('request.jwt.claims',jsonb_build_object('sub',uid,'email',email,'role','authenticated')::text,true) from draft_fixture;
 set local role authenticated;
 update draft_fixture set draft=public.mutate_chat_event_draft('create',null,null,jsonb_build_object(
@@ -53,17 +53,21 @@ reset role;
 update private.allowed_google_accounts set active=true where email=(select email from draft_fixture);
 set local role service_role;
 do $$ begin
-  perform public.publish_chat_event_draft((draft->>'id')::uuid,2,uid) from draft_fixture;
+  perform public.save_chat_event_draft((draft->>'id')::uuid,2,uid) from draft_fixture;
   raise exception 'Stale approval published';
 exception when serialization_failure then null; end $$;
-update draft_fixture set draft=public.publish_chat_event_draft((draft->>'id')::uuid,3,uid);
-select pg_temp.check_true((select draft->>'state'='published' from draft_fixture),'Publication succeeds after review');
-select pg_temp.check_true((select public.publish_chat_event_draft((draft->>'id')::uuid,3,uid)->>'event_id'=draft->>'event_id' from draft_fixture),'Publish retry reuses event');
+update draft_fixture set draft=public.save_chat_event_draft((draft->>'id')::uuid,3,uid);
+select pg_temp.check_true((select draft->>'state'='saved' from draft_fixture),'Draft event saved after review');
+select pg_temp.check_true((select public.save_chat_event_draft((draft->>'id')::uuid,3,uid)->>'event_id'=draft->>'event_id' from draft_fixture),'Save retry reuses event');
 reset role;
-select pg_temp.check_true((select count(*)=1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture) and public=true and description='Reviewed description'),'Exactly one public event');
+select pg_temp.check_true((select count(*)=1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture) and public=false and description='Reviewed description'),'Exactly one private Draft event');
+grant select on draft_fixture to anon;
+set local role anon;
+select pg_temp.check_true(not exists(select 1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture)),'Saved draft event hidden from anonymous visitors');
+reset role;
 select pg_temp.check_true((select count(*)=2 from public."Talks" where event_id=(select (draft->>'event_id')::uuid from draft_fixture)),'Both talks assigned atomically');
 select pg_temp.check_true(exists(select 1 from public."PeopleOnRoles" where person_id=(select speaker from draft_fixture) and role='SPEAKER'),'New talk speakers receive the speaker role');
-select pg_temp.check_true((select count(*)=1 from public.chat_event_draft_audit where action='publish' and actor_id=(select uid from draft_fixture)),'Publication attributed once');
+select pg_temp.check_true((select count(*)=1 from public.chat_event_draft_audit where action='save_event' and actor_id=(select uid from draft_fixture)),'Draft save attributed once');
 set local role authenticated;
 do $$ begin
   perform public.mutate_chat_event_draft('discard',(draft->>'id')::uuid,4,'{}') from draft_fixture;
@@ -94,14 +98,14 @@ select pg_temp.check_true((select event_id is null from public."Talks" where id=
 update public."Talks" set title='Changed since review' where id=(select talk from existing_fixture);
 set local role service_role;
 do $$ begin
-  perform public.publish_chat_event_draft((e.draft->>'id')::uuid,3,f.uid) from existing_fixture e cross join draft_fixture f;
+  perform public.save_chat_event_draft((e.draft->>'id')::uuid,3,f.uid) from existing_fixture e cross join draft_fixture f;
   raise exception 'Changed source talk was published';
 exception when serialization_failure then null; end $$;
 reset role;
 select pg_temp.check_true(not exists(select 1 from public."Events" where title='Existing talk draft'),'Failed publication rolls back event insertion');
 update public."Talks" set title='Approved fixture talk' where id=(select talk from existing_fixture);
 set local role service_role;
-update existing_fixture set draft=public.publish_chat_event_draft((draft->>'id')::uuid,3,(select uid from draft_fixture));
+update existing_fixture set draft=public.save_chat_event_draft((draft->>'id')::uuid,3,(select uid from draft_fixture));
 reset role;
 select pg_temp.check_true((select t.event_id=(e.draft->>'event_id')::uuid from public."Talks" t join existing_fixture e on t.id=e.talk),'Approved talk assigned to published event');
 select pg_temp.check_true((select status='assigned_to_event' from submissions.talk_submissions where id=(select submission from existing_fixture)),'Submission assignment status updated');

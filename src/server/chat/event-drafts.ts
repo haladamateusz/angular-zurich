@@ -1,6 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { AssignableTalk } from '../../app/core/models/event-management.interface';
 import {
   eventDraftFieldsSchema,
   eventDraftSchema,
@@ -23,7 +24,20 @@ export const createDraftSchema = eventDraftFieldsSchema.extend({
   imageUrl: eventDraftFieldsSchema.shape.imageUrl.nullish().transform((value) => value ?? ''),
 });
 export const updateDraftSchema = draftRefSchema.extend({
-  fields: eventDraftFieldsSchema.partial(),
+  fields: z
+    .object({
+      title: eventDraftFieldsSchema.shape.title.nullish(),
+      description: eventDraftFieldsSchema.shape.description.nullish(),
+      startsAt: eventDraftFieldsSchema.shape.startsAt.nullish(),
+      venueId: eventDraftFieldsSchema.shape.venueId.nullish(),
+      meetupUrl: eventDraftFieldsSchema.shape.meetupUrl.nullish(),
+      imageUrl: eventDraftFieldsSchema.shape.imageUrl.nullish(),
+    })
+    .transform((fields) =>
+      Object.fromEntries(
+        Object.entries(fields).filter(([, value]) => value !== null && value !== undefined),
+      ),
+    ),
 });
 export const draftTalkSchema = draftRefSchema.extend({
   title: z.string().trim().min(3).max(160),
@@ -118,12 +132,16 @@ export function createEventDraftTools(
           .abortSignal(signal),
         client
           .from('Talks')
-          .select('id,title,source_talk_submission_id')
+          .select(
+            `id,title,source_talk_submission_id,
+            speaker_links:SpeakerOnTalk(speaker:People(first_name,last_name))`,
+          )
           .is('event_id', null)
           .not('source_talk_submission_id', 'is', null)
           .ilike('title', `%${escaped}%`)
           .order('title')
           .limit(100)
+          .returns<AssignableTalk[]>()
           .abortSignal(signal),
         client
           .from('Events')
@@ -173,7 +191,17 @@ export function createEventDraftTools(
         talks: talks.data
           .filter((talk) => ids.has(talk.source_talk_submission_id))
           .slice(0, 30)
-          .map(({ id, title }) => ({ id, title })),
+          .map(({ id, title, speaker_links }) => ({
+            id,
+            title,
+            speakerNames: speaker_links
+              .map(({ speaker }) =>
+                [speaker?.first_name, speaker?.last_name]
+                  .filter((name): name is string => Boolean(name?.trim()))
+                  .join(' '),
+              )
+              .filter((name) => name.length > 0),
+          })),
       };
     },
     create(args: z.infer<typeof createDraftSchema>) {

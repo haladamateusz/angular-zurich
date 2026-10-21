@@ -11,8 +11,8 @@ import {
 import {
   CreateEventSelectComponent,
   CreateEventSelectOption,
-} from './create-event-select.component';
-import { CreateEventDatePickerComponent } from './create-event-date-picker.component';
+} from '../../ui/event-fields/create-event-select.component';
+import { CreateEventDatePickerComponent } from '../../ui/event-fields/create-event-date-picker.component';
 
 export type DashboardTableFilterType = 'date-range' | 'select' | 'text';
 export type DashboardTableFilterAlignment = 'end' | 'start';

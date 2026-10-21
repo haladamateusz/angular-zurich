@@ -40,7 +40,18 @@ export function createEventWorkflow(
           detail: 'Preparing a private event draft',
         });
         try {
-          const result = await execute(args);
+          // Tool calls in one model step can carry the same version. The queue
+          // serializes writes, so carry forward the version actually returned.
+          const currentArgs =
+            draft &&
+            args &&
+            typeof args === 'object' &&
+            'draftId' in args &&
+            args.draftId === draft.id &&
+            'expectedVersion' in args
+              ? { ...args, expectedVersion: draft.version }
+              : args;
+          const result = await execute(currentArgs);
           if (result && typeof result === 'object' && 'content' in result && 'version' in result)
             draft = result as EventDraft;
           if (name === 'publish_event' || name === 'discard_event_draft') ready = true;

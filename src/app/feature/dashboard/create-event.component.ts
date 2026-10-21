@@ -1,3 +1,4 @@
+import { EVENT_TIME_OPTIONS } from '../../ui/event-fields/event-time-options';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
@@ -30,11 +31,11 @@ import {
   VenueOption,
 } from '../../core/models/event-management.interface';
 import { Event as ZurichEvent } from '../../core/models/event.interface';
-import { CreateEventDatePickerComponent } from './create-event-date-picker.component';
+import { CreateEventDatePickerComponent } from '../../ui/event-fields/create-event-date-picker.component';
 import {
   CreateEventSelectComponent,
   CreateEventSelectOption,
-} from './create-event-select.component';
+} from '../../ui/event-fields/create-event-select.component';
 
 type CreateEventState = 'idle' | 'submitting';
 type OptionsState = 'loading' | 'ready' | 'error';
@@ -52,16 +53,6 @@ interface CreateEventFormModel {
 const HTTP_URL_PATTERN = /^https?:\/\/\S+$/i;
 const EVENT_IMAGE_MAX_SIZE_BYTES = 5 * 1024 * 1024;
 const EVENT_IMAGE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
-const EVENT_TIME_OPTIONS = Array.from({ length: 25 }, (_, index) => {
-  const totalMinutes = 8 * 60 + index * 30;
-  const hours = Math.floor(totalMinutes / 60)
-    .toString()
-    .padStart(2, '0');
-  const minutes = (totalMinutes % 60).toString().padStart(2, '0');
-  const time = `${hours}:${minutes}`;
-
-  return { value: time, label: time };
-}) satisfies readonly CreateEventSelectOption[];
 const EVENT_TIME_VALUES = new Set(EVENT_TIME_OPTIONS.map((option) => option.value));
 
 function parseLocalEventDateTime(date: string, time: string): Date | null {
@@ -103,12 +94,7 @@ function formatTimeInputValue(value: string): string {
 
 @Component({
   selector: 'app-create-event',
-  imports: [
-    FormField,
-    RouterLink,
-    CreateEventDatePickerComponent,
-    CreateEventSelectComponent,
-  ],
+  imports: [FormField, RouterLink, CreateEventDatePickerComponent, CreateEventSelectComponent],
   templateUrl: './create-event.component.html',
   styleUrl: './create-event.component.css',
 })
@@ -120,9 +106,8 @@ export class CreateEventComponent {
   private readonly supabaseService = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
   private readonly eventId = this.route.snapshot.paramMap.get('eventId');
-  private readonly featureGraphicInput = viewChild<ElementRef<HTMLInputElement>>(
-    'featureGraphicInput',
-  );
+  private readonly featureGraphicInput =
+    viewChild<ElementRef<HTMLInputElement>>('featureGraphicInput');
 
   protected readonly isEditMode = this.eventId !== null;
   protected readonly optionsState = signal<OptionsState>('loading');
@@ -320,9 +305,7 @@ export class CreateEventComponent {
     this.featureGraphicError.set('');
 
     if (
-      !EVENT_IMAGE_ALLOWED_TYPES.includes(
-        file.type as (typeof EVENT_IMAGE_ALLOWED_TYPES)[number],
-      )
+      !EVENT_IMAGE_ALLOWED_TYPES.includes(file.type as (typeof EVENT_IMAGE_ALLOWED_TYPES)[number])
     ) {
       input.value = '';
       this.featureGraphicError.set('Upload a JPG, PNG, or WebP image.');

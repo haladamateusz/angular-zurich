@@ -269,7 +269,12 @@ beforeEach(() => {
                     ].includes(key),
                   ),
                 ),
-                talks: [],
+                talks:
+                  args.p_action === 'create'
+                    ? []
+                    : args.p_action === 'attach'
+                      ? [...currentDraft.content.talks, draftFixture.content.talks[0]]
+                      : currentDraft.content.talks,
               },
             };
           }
@@ -278,7 +283,7 @@ beforeEach(() => {
         if (target.includes('/rest/v1/Venues')) return Response.json([]);
         if (target.includes('/rest/v1/People')) return Response.json([]);
         if (target.includes('/rest/v1/Talks')) return Response.json([]);
-        if (target.includes('/publish_chat_event_draft')) {
+        if (target.includes('/save_chat_event_draft')) {
           expect(new Headers(init?.headers).get('authorization')).toBe('Bearer test-service');
           const args = JSON.parse(String(init?.body));
           expect(args.p_actor).toBe(USER_ID);
@@ -287,7 +292,7 @@ beforeEach(() => {
           draftPublishes++;
           currentDraft = {
             ...currentDraft,
-            state: 'published',
+            state: 'saved',
             version: currentDraft.version + 1,
             event_id: TALK_ID,
             event_slug: 'agentic-angular',
@@ -457,7 +462,39 @@ beforeEach(() => {
               return toolStream('update_event', {
                 draftId: currentDraft.id,
                 expectedVersion: currentDraft.version,
-                fields: { title: latest },
+                fields: {
+                  title: latest,
+                  startsAt: null,
+                  description: null,
+                  venueId: null,
+                  meetupUrl: null,
+                  imageUrl: null,
+                },
+              });
+            return toolStream('publish_event', { draftId: currentDraft.id });
+          }
+          if (latest === 'Add the approved talk and a placeholder Meetup link') {
+            const completed = messages.filter((message) => message.role === 'tool').length;
+            if (completed === 0) return toolStream('get_event_draft', { draftId: currentDraft.id });
+            if (completed === 1)
+              return toolStream('attach_talk_to_event', {
+                draftId: currentDraft.id,
+                expectedVersion: currentDraft.version,
+                talkId: draftFixture.content.talks[0].id,
+              });
+            if (completed === 2)
+              return toolStream('update_event', {
+                draftId: currentDraft.id,
+                // Exercise a provider carrying the pre-attachment version forward.
+                expectedVersion: currentDraft.version - 1,
+                fields: {
+                  title: null,
+                  startsAt: null,
+                  venueId: null,
+                  description: null,
+                  meetupUrl: 'https://www.meetup.com/angularzrh/events/placeholder/',
+                  imageUrl: null,
+                },
               });
             return toolStream('publish_event', { draftId: currentDraft.id });
           }
@@ -580,6 +617,21 @@ describe('protected chat API', () => {
       p_data: { title: 'Angular Zurich November 2026' },
     });
     expect(currentDraft.content.startsAt).toBe('2026-11-25T18:00');
+    expect(await turn('Add the approved talk and a placeholder Meetup link')).toContain(
+      '"version":4',
+    );
+    expect(draftMutations.slice(-2)).toMatchObject([
+      { p_action: 'attach', p_version: 2 },
+      {
+        p_action: 'update',
+        p_version: 3,
+        p_data: {
+          meetupUrl: 'https://www.meetup.com/angularzrh/events/placeholder/',
+        },
+      },
+    ]);
+    expect(currentDraft.content.talks).toHaveLength(1);
+    expect(currentDraft.content.startsAt).toBe('2026-11-25T18:00');
     expect(
       (providerBodies.at(-1)?.['tools'] as { function: { name: string } }[]).map(
         (tool) => tool.function.name,
@@ -611,7 +663,7 @@ describe('protected chat API', () => {
     draftQuestion = true;
     const events = await (await post('/run')).text();
     expect(events).toContain('"kind":"event_draft"');
-    expect(events).toContain('confirmation');
+    expect(events).toContain('Confirm in the preview to save it as a Draft event');
     expect(events).toContain('RUN_FINISHED');
     expect(draftPublishes).toBe(0);
     expect(modelCalls).toBe(2);
@@ -619,31 +671,66 @@ describe('protected chat API', () => {
   it('requires an explicit, valid UI approval and rejects stale or denied publication', async () => {
     const path = `/drafts/${draftFixture.id}`;
     expect(
-      (await post(`${path}/publish`, { expectedVersion: 3, confirmed: true, token: 'yes' })).status,
+      (await post(`${path}/save-event`, { expectedVersion: 3, confirmed: true, token: 'yes' }))
+        .status,
     ).toBe(409);
     const review = await (await post(`${path}/review`, { expectedVersion: 3 })).json();
     expect(review.token).toBeTruthy();
     expect(
-      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token })).status,
+      (await post(`${path}/save-event`, { expectedVersion: 3, token: review.token })).status,
     ).toBe(400);
     submissionAccess = false;
     expect(
-      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token, confirmed: true }))
-        .status,
+      (
+        await post(`${path}/save-event`, {
+          expectedVersion: 3,
+          token: review.token,
+          confirmed: true,
+        })
+      ).status,
     ).toBe(403);
     submissionAccess = true;
     currentDraft.version = 4;
     expect(
-      (await post(`${path}/publish`, { expectedVersion: 3, token: review.token, confirmed: true }))
-        .status,
+      (
+        await post(`${path}/save-event`, {
+          expectedVersion: 3,
+          token: review.token,
+          confirmed: true,
+        })
+      ).status,
     ).toBe(409);
     expect(draftPublishes).toBe(0);
     const fresh = await (await post(`${path}/review`, { expectedVersion: 4 })).json();
     expect(
-      (await post(`${path}/publish`, { expectedVersion: 4, token: fresh.token, confirmed: true }))
-        .status,
+      (
+        await post(`${path}/save-event`, {
+          expectedVersion: 4,
+          token: fresh.token,
+          confirmed: true,
+        })
+      ).status,
     ).toBe(200);
     expect(draftPublishes).toBe(1);
+  });
+  it('reviews incomplete drafts with specific issues and no publication approval', async () => {
+    currentDraft.content = {
+      ...currentDraft.content,
+      venueId: '',
+      talks: [],
+      meetupUrl: '',
+    };
+    const response = await post(`/drafts/${currentDraft.id}/review`, { expectedVersion: 3 });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      token: null,
+      saveIssues: [
+        'Choose a venue.',
+        'Add a Meetup URL or a placeholder link.',
+        'Select at least two talks.',
+      ],
+    });
+    expect(draftPublishes).toBe(0);
   });
   it('answers a pending-submissions question using organizer data and emits review cards', async () => {
     submissionQuestion = true;

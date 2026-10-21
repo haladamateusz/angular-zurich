@@ -21,7 +21,7 @@ export const eventDraftSchema = z.object({
   created_by: z.string().uuid(),
   thread_id: z.string().uuid(),
   version: z.number().int().positive(),
-  state: z.enum(['draft', 'published', 'discarded']),
+  state: z.enum(['draft', 'saved', 'published', 'discarded']),
   content: eventDraftFieldsSchema.extend({ talks: z.array(eventDraftTalkSchema).max(3) }),
   event_id: z.string().uuid().nullable(),
   event_slug: z.string().nullable(),
@@ -29,10 +29,25 @@ export const eventDraftSchema = z.object({
   updated_at: z.string(),
 });
 export type EventDraft = z.infer<typeof eventDraftSchema>;
+export const MEETUP_URL_PLACEHOLDER = 'https://www.meetup.com/angularzrh/events/placeholder/';
+export interface EventDraftReview {
+  draft: EventDraft;
+  token: string | null;
+  saveIssues: string[];
+}
+export function eventDraftSaveIssues(draft: EventDraft): string[] {
+  const c = draft.content;
+  const issues: string[] = [];
+  if (!c.startsAt) issues.push('Select the event date and time.');
+  if (!c.venueId) issues.push('Choose a venue.');
+  if (!c.meetupUrl) issues.push('Add a Meetup URL or a placeholder link.');
+  if (c.talks.length < 2) issues.push('Select at least two talks.');
+  return issues;
+}
 export interface EventDraftOptions {
   venues: { id: string; title: string; street: string; city: string }[];
   speakers: { id: string; first_name: string | null; last_name: string | null }[];
-  talks: { id: string; title: string }[];
+  talks: { id: string; title: string; speakerNames: string[] }[];
 }
 export interface EventDraftAudit {
   id: string;

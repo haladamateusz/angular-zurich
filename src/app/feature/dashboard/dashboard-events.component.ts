@@ -7,7 +7,7 @@ import {
   SupabaseService,
 } from '../../core/data-access/supabase/supabase.service';
 import { DashboardEvent } from '../../core/models/event.interface';
-import { CreateEventSelectOption } from './create-event-select.component';
+import { CreateEventSelectOption } from '../../ui/event-fields/create-event-select.component';
 import { createPaginationItems } from './pagination';
 import {
   DashboardTableDateRange,

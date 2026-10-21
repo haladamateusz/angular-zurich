@@ -25,7 +25,6 @@ export interface CreateEventSelectOption {
     '(document:pointerdown)': 'onDocumentPointerDown($event)',
     '(document:wheel)': 'onDocumentScrollIntent($event)',
     '(document:touchmove)': 'onDocumentScrollIntent($event)',
-    '(window:scroll)': 'close()',
     '(focusout)': 'onFocusOut($event)',
   },
 })
@@ -53,9 +52,7 @@ export class CreateEventSelectComponent implements FormValueControl<string> {
   protected readonly listboxId = computed(() => `${this.controlId()}-listbox`);
   protected readonly activeOptionId = computed(() => {
     const activeIndex = this.activeIndex();
-    return this.isOpen() && activeIndex >= 0
-      ? `${this.controlId()}-option-${activeIndex}`
-      : null;
+    return this.isOpen() && activeIndex >= 0 ? `${this.controlId()}-option-${activeIndex}` : null;
   });
 
   protected toggle(): void {
@@ -215,11 +212,7 @@ export class CreateEventSelectComponent implements FormValueControl<string> {
   }
 
   private findEnabledIndex(startIndex: number, direction: 1 | -1): number {
-    for (
-      let index = startIndex;
-      index >= 0 && index < this.options().length;
-      index += direction
-    ) {
+    for (let index = startIndex; index >= 0 && index < this.options().length; index += direction) {
       if (!this.options()[index]?.disabled) {
         return index;
       }

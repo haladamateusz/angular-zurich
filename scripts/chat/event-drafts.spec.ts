@@ -4,11 +4,74 @@ import {
   verifyApproval,
   createEventDraftTools,
   createDraftSchema,
+  updateDraftSchema,
 } from '../../src/server/chat/event-drafts';
 import { createClient } from '@supabase/supabase-js';
 import { draftFixture } from './draft-fixture';
 
 describe('event planning inputs and defaults', () => {
+  it('returns speaker names with approved talk options', async () => {
+    const submissionId = crypto.randomUUID();
+    const talkId = crypto.randomUUID();
+    const client = createClient('https://fixture.invalid', 'fixture', {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: async (input) => {
+          const url = new URL(String(input));
+          if (url.pathname.includes('/rpc/')) return Response.json(true);
+          if (url.pathname.endsWith('/Talks')) {
+            expect(url.searchParams.get('select')).toContain('speaker_links:SpeakerOnTalk');
+            return Response.json([
+              {
+                id: talkId,
+                title: 'Angular signals',
+                source_talk_submission_id: submissionId,
+                speaker_links: [
+                  { speaker: { first_name: 'Tomas', last_name: 'Trajan' } },
+                  { speaker: { first_name: 'Alex', last_name: 'Morgan' } },
+                  { speaker: null },
+                ],
+              },
+            ]);
+          }
+          if (url.pathname.endsWith('/organizer_talk_submissions'))
+            return Response.json([{ id: submissionId }]);
+          return Response.json([]);
+        },
+      },
+    });
+    const options = await createEventDraftTools(
+      client,
+      AbortSignal.timeout(1000),
+      crypto.randomUUID(),
+    ).options('');
+    expect(options.talks).toEqual([
+      { id: talkId, title: 'Angular signals', speakerNames: ['Tomas Trajan', 'Alex Morgan'] },
+    ]);
+  });
+  it('omits null update fields without clearing saved values', () => {
+    expect(
+      updateDraftSchema.parse({
+        draftId: draftFixture.id,
+        expectedVersion: 3,
+        fields: {
+          title: null,
+          startsAt: null,
+          description: null,
+          venueId: null,
+          meetupUrl: 'https://www.meetup.com/angularzrh/events/placeholder/',
+          imageUrl: null,
+        },
+      }).fields,
+    ).toEqual({ meetupUrl: 'https://www.meetup.com/angularzrh/events/placeholder/' });
+    expect(
+      updateDraftSchema.parse({
+        draftId: draftFixture.id,
+        expectedVersion: 3,
+        fields: { meetupUrl: '' },
+      }).fields,
+    ).toEqual({ meetupUrl: '' });
+  });
   it('accepts unspecified optional draft fields from tool-calling providers as null', () => {
     expect(
       createDraftSchema.parse({

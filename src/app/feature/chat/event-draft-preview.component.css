@@ -5,7 +5,6 @@
 .draft-workspace {
   margin-block: var(--space-6);
   padding: var(--space-5);
-  border: 1px solid var(--border-default);
   border-radius: var(--radius-surface);
   background: var(--background-raised);
   overflow-wrap: anywhere;
@@ -13,8 +12,7 @@
 
 header,
 section,
-form,
-details {
+form {
   margin-block: var(--space-4);
 }
 
@@ -76,6 +74,43 @@ textarea {
   gap: var(--space-4);
 }
 
+.draft-grid > div > label,
+.draft-select-field > label {
+  margin-bottom: var(--space-2);
+}
+
+.draft-select-field {
+  margin-bottom: var(--space-4);
+}
+
+.draft-venue-field {
+  grid-column: 1 / -1;
+  margin-bottom: var(--space-4);
+}
+
+.draft-talk-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  min-height: 7.85rem;
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.draft-talk-row--removable {
+  grid-template-columns: minmax(0, 1fr) 2.85rem;
+  border-bottom: 0;
+}
+
+.draft-talk-remove {
+  margin-top: var(--space-8);
+}
+
+.draft-talk-add {
+  min-height: 4.5rem;
+  margin-block: var(--space-6);
+}
+
 .draft-actions {
   display: flex;
   flex-wrap: wrap;
@@ -84,7 +119,6 @@ textarea {
 }
 
 button:not(.app-button),
-summary,
 a {
   min-height: 44px;
   padding-block: var(--space-2);
@@ -98,7 +132,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-:is(input, textarea, select, button, a, summary):focus-visible {
+:is(input, textarea, select, button, a):focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
 }
@@ -126,11 +160,6 @@ dt {
 
 dd {
   margin: 0;
-}
-
-ol {
-  padding-left: var(--space-5);
-  font-size: var(--type-sm);
 }
 
 @media (max-width: 640px) {

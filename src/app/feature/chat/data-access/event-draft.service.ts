@@ -4,6 +4,7 @@ import {
   EventDraft,
   EventDraftAudit,
   EventDraftOptions,
+  EventDraftReview,
   eventDraftSchema,
 } from '../../../core/models/event-draft.model';
 
@@ -46,13 +47,17 @@ export class EventDraftService {
       }),
     );
   }
-  async review(draft: EventDraft) {
+  async review(draft: EventDraft): Promise<EventDraftReview> {
     const result = (await this.request(`drafts/${draft.id}/review`, {
       expectedVersion: draft.version,
-    })) as { draft: unknown; token: string };
-    return { draft: eventDraftSchema.parse(result.draft), token: result.token };
+    })) as { draft: unknown; token: string | null; saveIssues?: string[] };
+    return {
+      draft: eventDraftSchema.parse(result.draft),
+      token: result.token,
+      saveIssues: result.saveIssues ?? [],
+    };
   }
-  async publish(draft: EventDraft, token: string) {
-    return this.change(draft, 'publish', { token, confirmed: true });
+  async saveEvent(draft: EventDraft, token: string) {
+    return this.change(draft, 'save-event', { token, confirmed: true });
   }
 }

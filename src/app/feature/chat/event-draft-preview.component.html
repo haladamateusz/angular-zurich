@@ -8,23 +8,45 @@
   @if (draft(); as draft) {
     <header>
       <p class="draft-state">
-        {{ draft.state === 'draft' ? 'Private event draft' : draft.state }} · Version
+        {{
+          draft.state === 'draft'
+            ? 'Private event draft'
+            : draft.state === 'saved'
+              ? 'Saved event draft'
+              : draft.state
+        }}
+        · Version
         {{ draft.version }}
       </p>
       <h2>{{ draft.content.title }}</h2>
-      <button type="button" (click)="load(draft.id)" [disabled]="busy()">
-        Reload latest version
-      </button>
     </header>
-    @if (draft.state === 'published') {
+    @if (draft.state === 'saved') {
+      <p>The event is saved with Draft visibility.</p>
+      <a [routerLink]="['/dashboard/events', draft.event_id]">Edit event draft</a>
+    } @else if (draft.state === 'published') {
       <p>The event is now public.</p>
       <a [routerLink]="['/events', draft.event_slug]">View published event</a>
     } @else if (draft.state === 'discarded') {
       <p>This draft was discarded. Existing talks were not changed.</p>
     } @else if (review(); as review) {
       <section class="draft-confirm" aria-labelledby="publish-heading">
-        <h3 #reviewHeading id="publish-heading" tabindex="-1">Publish this event?</h3>
-        <p>This will make this event and its selected talks publicly visible.</p>
+        <h3 #reviewHeading id="publish-heading" tabindex="-1">
+          {{
+            review.saveIssues.length ? 'Complete this draft before saving' : 'Save event as draft?'
+          }}
+        </h3>
+        @if (review.saveIssues.length) {
+          <ul aria-label="Required before saving">
+            @for (issue of review.saveIssues; track issue) {
+              <li>{{ issue }}</li>
+            }
+          </ul>
+        } @else {
+          <p>
+            This will save the event and its selected talks privately in the dashboard. You can
+            publish it later from the event editor.
+          </p>
+        }
         <dl>
           <dt>Title</dt>
           <dd>{{ review.draft.content.title }}</dd>
@@ -34,8 +56,6 @@
           <dd>{{ venueName(review.draft.content.venueId) }}</dd>
           <dt>Meetup link</dt>
           <dd>{{ review.draft.content.meetupUrl }}</dd>
-          <dt>Image URL</dt>
-          <dd>{{ review.draft.content.imageUrl || 'No image' }}</dd>
         </dl>
         <p class="preserve-lines">{{ review.draft.content.description }}</p>
         @for (talk of review.draft.content.talks; track talk.id) {
@@ -49,10 +69,10 @@
           <button
             class="app-button app-button--primary"
             type="button"
-            (click)="publish()"
-            [disabled]="busy()"
+            (click)="saveEvent()"
+            [disabled]="busy() || !review.token || review.saveIssues.length > 0"
           >
-            Publish event publicly
+            Save event as draft
           </button>
           <button
             class="app-button app-button--secondary"
@@ -77,19 +97,39 @@
             ></textarea>
           </label>
           <div class="draft-grid">
-            <label
-              >Date and time (Europe/Zurich)<input type="datetime-local" formControlName="startsAt"
-            /></label>
-            <label
-              >Venue<select formControlName="venueId">
-                <option value="">Choose a venue</option>
-                @for (venue of options().venues; track venue.id) {
-                  <option [value]="venue.id">
-                    {{ venue.title }} — {{ venue.street }}, {{ venue.city }}
-                  </option>
-                }
-              </select></label
-            >
+            <div>
+              <label [for]="'draft-date-' + draft.id">Date (Europe/Zurich)</label>
+              <app-create-event-date-picker
+                [controlId]="'draft-date-' + draft.id"
+                placeholder="Select date"
+                [value]="startsDate()"
+                [disabled]="busy()"
+                (valueChange)="updateDateTime($event, startsTime())"
+              />
+            </div>
+            <div>
+              <label [for]="'draft-time-' + draft.id">Time (Europe/Zurich)</label>
+              <app-create-event-select
+                [controlId]="'draft-time-' + draft.id"
+                placeholder="Select time"
+                icon="clock"
+                [options]="timeSelectOptions()"
+                [value]="startsTime()"
+                [disabled]="busy()"
+                (valueChange)="updateDateTime(startsDate(), $event)"
+              />
+            </div>
+            <div class="draft-venue-field">
+              <label [for]="'draft-venue-' + draft.id">Venue</label>
+              <app-create-event-select
+                [controlId]="'draft-venue-' + draft.id"
+                placeholder="Choose a venue"
+                [options]="venueSelectOptions()"
+                [value]="venueId()"
+                [disabled]="busy()"
+                (valueChange)="updateSelection(form.controls.venueId, $event)"
+              />
+            </div>
           </div>
           <label
             >Meetup event URL<input
@@ -97,80 +137,57 @@
               formControlName="meetupUrl"
               placeholder="https://www.meetup.com/…"
           /></label>
-          <label
-            >Image URL (optional)<input
-              type="url"
-              formControlName="imageUrl"
-              placeholder="https://…"
-          /></label>
           <button class="app-button app-button--secondary" type="submit" [disabled]="!form.dirty">
             Save event details
           </button>
         </fieldset>
       </form>
       <section aria-label="Selected talks">
-        <h3>Talks · {{ draft.content.talks.length }} / 3</h3>
-        @for (talk of draft.content.talks; track talk.id) {
-          <article>
-            <h4>{{ talk.title }}</h4>
-            <p>{{ speakerNames(talk.speakerIds) }}</p>
-            <p class="preserve-lines">{{ talk.description }}</p>
-            <button type="button" (click)="remove(talk.id)" [disabled]="busy() || form.dirty">
-              Remove {{ talk.title }}
-            </button>
-          </article>
-        } @empty {
-          <p>Add two or three talks before publishing.</p>
+        <h3>Talk lineup</h3>
+        @for (talkId of talkSlots(); track $index; let talkIndex = $index) {
+          <div class="draft-talk-row" [class.draft-talk-row--removable]="talkIndex === 2">
+            <div class="draft-select-field">
+              <label [for]="'draft-talk-' + draft.id + '-' + talkIndex"
+                >Talk {{ talkIndex + 1 }}</label
+              >
+              <app-create-event-select
+                [controlId]="'draft-talk-' + draft.id + '-' + talkIndex"
+                placeholder="Select an approved talk"
+                [options]="talkSelectOptions(talkIndex)"
+                [value]="talkId"
+                [disabled]="busy() || form.dirty"
+                (valueChange)="selectTalk(talkIndex, $event)"
+              />
+            </div>
+            @if (talkIndex === 2) {
+              <button
+                type="button"
+                class="draft-talk-remove app-button app-button--danger app-button--icon"
+                aria-label="Remove third talk"
+                [disabled]="busy() || form.dirty"
+                (click)="removeThirdTalk()"
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M5.25 9.25a.75.75 0 0 0 0 1.5h9.5a.75.75 0 0 0 0-1.5h-9.5Z" />
+                </svg>
+              </button>
+            }
+          </div>
         }
-        @if (draft.content.talks.length < 3) {
-          <label
-            >Approved talk<select [formControl]="existingTalk">
-              <option value="">Choose an approved talk</option>
-              @for (talk of availableTalks(); track talk.id) {
-                <option [value]="talk.id">{{ talk.title }}</option>
-              }
-            </select></label
-          >
+        @if (talkSlots().length === 2) {
           <button
             type="button"
-            (click)="attach()"
-            [disabled]="busy() || form.dirty || !existingTalk.value"
+            class="draft-talk-add app-button app-button--secondary app-button--block"
+            [disabled]="busy() || form.dirty"
+            (click)="addThirdTalk()"
           >
-            Add approved talk
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+              />
+            </svg>
+            <strong>Add a third talk</strong>
           </button>
-          <details>
-            <summary>Draft a new talk</summary>
-            <form [formGroup]="talkForm" (ngSubmit)="addTalk()">
-              <fieldset [disabled]="busy() || form.dirty">
-                <legend>New talk</legend>
-                <label>Talk title<input formControlName="title" required maxlength="160" /></label>
-                <label
-                  >Description<textarea
-                    formControlName="description"
-                    rows="3"
-                    required
-                    maxlength="5000"
-                  ></textarea>
-                </label>
-                <label
-                  >Speakers<select formControlName="speakerIds" multiple size="5">
-                    @for (speaker of options().speakers; track speaker.id) {
-                      <option [value]="speaker.id">
-                        {{ speaker.first_name }} {{ speaker.last_name }}
-                      </option>
-                    }
-                  </select></label
-                >
-                <p>
-                  Select one or more existing speakers. New talks stay private until the event is
-                  published.
-                </p>
-                <button type="submit" class="app-button app-button--secondary">
-                  Add talk draft
-                </button>
-              </fieldset>
-            </form>
-          </details>
         }
       </section>
       <div class="draft-actions">
@@ -180,7 +197,7 @@
           (click)="prepare()"
           [disabled]="busy() || form.dirty"
         >
-          Review for publication
+          Review event draft
         </button>
         <button
           class="app-button app-button--secondary"
@@ -200,17 +217,6 @@
         <button type="button" (click)="discardConfirm.set(false)">Keep draft</button>
       }
     }
-    <details>
-      <summary>Change history</summary>
-      <ol>
-        @for (entry of audit(); track entry.id) {
-          <li>
-            {{ entry.action.replaceAll('_', ' ') }} · version {{ entry.version }} ·
-            {{ entry.created_at | date: 'short' }} · organizer {{ entry.actor_id }}
-          </li>
-        }
-      </ol>
-    </details>
   } @else if (busy()) {
     <p role="status">Loading event drafts…</p>
   }
