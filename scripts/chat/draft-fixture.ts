@@ -11,7 +11,6 @@ export const draftFixture: EventDraft = {
   updated_at: '2026-10-16T00:00:00Z',
   content: {
     title: 'Agentic Angular meetup',
-    description: 'An evening of agentic Angular.',
     startsAt: '2099-11-12T18:00',
     venueId: '10000000-0000-4000-8000-000000000003',
     meetupUrl: 'https://www.meetup.com/example/events/123/',

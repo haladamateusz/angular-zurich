@@ -236,7 +236,6 @@ describe('ChatPageComponent', () => {
         state: 'draft',
         content: {
           title: 'Angular Zürich November',
-          description: 'An evening of Angular talks.',
           startsAt: '2026-11-18T18:00',
           venueId: '',
           meetupUrl: '',

@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { EventDraftPreviewComponent } from './event-draft-preview.component';
 import { EventDraftService } from './data-access/event-draft.service';
-import { EventDraft } from '../../core/models/event-draft.model';
+import { EventDraft, eventDraftFieldsSchema } from '../../core/models/event-draft.model';
 import { CreateEventDatePickerComponent } from '../../ui/event-fields/create-event-date-picker.component';
 
 function createDraft(): EventDraft {
@@ -19,7 +19,6 @@ function createDraft(): EventDraft {
     updated_at: '',
     content: {
       title: 'Angular Zürich',
-      description: '',
       startsAt: '2026-11-18T18:15',
       venueId: '',
       meetupUrl: '',
@@ -29,32 +28,75 @@ function createDraft(): EventDraft {
   };
 }
 
+async function mountAutosave(change: EventDraftService['change']) {
+  const draft = createDraft();
+  TestBed.configureTestingModule({
+    imports: [EventDraftPreviewComponent],
+    providers: [
+      provideRouter([]),
+      {
+        provide: EventDraftService,
+        useValue: {
+          change,
+          load: vi.fn(async () => ({ draft, audit: [] })),
+          options: vi.fn(async () => ({ venues: [], speakers: [], talks: [] })),
+        },
+      },
+    ],
+  });
+  const fixture = TestBed.createComponent(EventDraftPreviewComponent);
+  fixture.componentRef.setInput('draftId', draft.id);
+  const root: HTMLElement = fixture.nativeElement;
+  await expect
+    .poll(() => {
+      fixture.detectChanges();
+      return root.querySelector('fieldset')?.disabled;
+    })
+    .toBe(false);
+  const title = root.querySelector<HTMLInputElement>('input[formcontrolname="title"]')!;
+  const edit = (value: string) => {
+    title.value = value;
+    title.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+  };
+  return { fixture, root, title, edit };
+}
+
 describe('EventDraftPreviewComponent fields', () => {
+  afterEach(() => vi.useRealTimers());
   it('saves date, time and venue selections and attaches the selected talk', async () => {
     const venueId = crypto.randomUUID();
     const talkId = crypto.randomUUID();
     const draft = createDraft();
-    const change = vi.fn(async (current: EventDraft, action: string) => {
-      if (action === 'attach')
-        return {
-          ...current,
-          version: current.version + 1,
-          content: {
-            ...current.content,
-            talks: [
-              ...current.content.talks,
-              {
-                id: talkId,
-                title: 'Angular signals',
-                description: '',
-                speakerIds: [],
-                sourceTalkId: talkId,
-              },
-            ],
-          },
-        };
-      return current;
-    });
+    const change = vi.fn(
+      async (current: EventDraft, action: string, data: Record<string, unknown>) => {
+        if (action === 'update')
+          return {
+            ...current,
+            version: current.version + 1,
+            content: { ...current.content, ...eventDraftFieldsSchema.parse(data['fields']) },
+          };
+        if (action === 'attach')
+          return {
+            ...current,
+            version: current.version + 1,
+            content: {
+              ...current.content,
+              talks: [
+                ...current.content.talks,
+                {
+                  id: talkId,
+                  title: 'Angular signals',
+                  description: '',
+                  speakerIds: [],
+                  sourceTalkId: talkId,
+                },
+              ],
+            },
+          };
+        return current;
+      },
+    );
     TestBed.configureTestingModule({
       imports: [EventDraftPreviewComponent],
       providers: [
@@ -106,8 +148,7 @@ describe('EventDraftPreviewComponent fields', () => {
       })
       .toBe(false);
     expect(time.textContent).toContain('18:15');
-    const save = root.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-    expect(save.disabled).toBe(true);
+    expect(root.textContent).not.toContain('Save event details');
     venue.click();
     await fixture.whenStable();
     const venueOption = [...root.querySelectorAll<HTMLButtonElement>('[role="option"]')].find(
@@ -119,7 +160,7 @@ describe('EventDraftPreviewComponent fields', () => {
     expect(talk.disabled).toBe(true);
     date.value.set('2026-11-25');
     await fixture.whenStable();
-    expect(save.disabled).toBe(false);
+    expect(change).not.toHaveBeenCalled();
     time.click();
     await fixture.whenStable();
     const option = [...root.querySelectorAll<HTMLButtonElement>('[role="option"]')].find(
@@ -127,12 +168,10 @@ describe('EventDraftPreviewComponent fields', () => {
     )!;
     option.click();
     await fixture.whenStable();
-    save.click();
-    await fixture.whenStable();
+    await expect.poll(() => change.mock.calls.length).toBe(1);
     expect(change).toHaveBeenCalledWith(draft, 'update', {
       fields: {
         title: draft.content.title,
-        description: '',
         venueId,
         meetupUrl: '',
         imageUrl: '',
@@ -152,7 +191,11 @@ describe('EventDraftPreviewComponent fields', () => {
     )!;
     talkOption.click();
     await fixture.whenStable();
-    expect(change).toHaveBeenCalledWith(draft, 'attach', { talkId });
+    expect(change).toHaveBeenCalledWith(
+      expect.objectContaining({ id: draft.id, version: 2 }),
+      'attach',
+      { talkId },
+    );
     await expect
       .poll(() => {
         fixture.detectChanges();
@@ -269,6 +312,104 @@ describe('EventDraftPreviewComponent fields', () => {
     expect(root.querySelector<HTMLButtonElement>('[id^="draft-time-"]')?.textContent).toContain(
       '18:30',
     );
-    expect(root.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
+    const review = [...root.querySelectorAll<HTMLButtonElement>('button')].find(
+      (button) => button.textContent?.trim() === 'Review event draft',
+    );
+    expect(review?.disabled).toBe(true);
+  });
+  it('autosaves 1000ms after the latest edit and cancels pending saves on destroy', async () => {
+    const change = vi.fn(
+      async (draft: EventDraft, _action: string, data: Record<string, unknown> = {}) => ({
+        ...draft,
+        version: draft.version + 1,
+        content: { ...draft.content, ...eventDraftFieldsSchema.parse(data['fields']) },
+      }),
+    );
+    const { fixture, edit } = await mountAutosave(change);
+    vi.useFakeTimers();
+    await vi.advanceTimersByTimeAsync(1500);
+    expect(change).not.toHaveBeenCalled();
+    edit('First title');
+    await vi.advanceTimersByTimeAsync(999);
+    expect(change).not.toHaveBeenCalled();
+    edit('Latest title');
+    await vi.advanceTimersByTimeAsync(999);
+    expect(change).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(change).toHaveBeenCalledTimes(1);
+    expect(change.mock.calls[0][2]).toMatchObject({ fields: { title: 'Latest title' } });
+    edit('Do not save after destruction');
+    fixture.destroy();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(change).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps edits made during a request and saves them with the next draft version', async () => {
+    let resolveFirst!: (value: EventDraft) => void;
+    let firstSaved!: EventDraft;
+    const change = vi.fn(
+      (draft: EventDraft, _action: string, data: Record<string, unknown> = {}) => {
+        const saved = {
+          ...draft,
+          version: draft.version + 1,
+          content: { ...draft.content, ...eventDraftFieldsSchema.parse(data['fields']) },
+        };
+        if (!firstSaved) {
+          firstSaved = saved;
+          return new Promise<EventDraft>((resolve) => {
+            resolveFirst = resolve;
+          });
+        }
+        return Promise.resolve(saved);
+      },
+    );
+    const { fixture, root, title, edit } = await mountAutosave(change);
+    vi.useFakeTimers();
+    edit('First save');
+    await vi.advanceTimersByTimeAsync(1000);
+    fixture.detectChanges();
+    expect(change).toHaveBeenCalledTimes(1);
+    expect(root.querySelector('fieldset')?.disabled).toBe(false);
+    edit('Changed during save');
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(change).toHaveBeenCalledTimes(1);
+    resolveFirst(firstSaved);
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
+    expect(change).toHaveBeenCalledTimes(2);
+    expect(change.mock.calls[1][0].version).toBe(2);
+    expect(change.mock.calls[1][2]).toMatchObject({ fields: { title: 'Changed during save' } });
+    expect(title.value).toBe('Changed during save');
+  });
+
+  it('keeps failed edits and offers a retry without saving invalid fields', async () => {
+    const change = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Network unavailable'))
+      .mockImplementation(
+        async (draft: EventDraft, _action: string, data: Record<string, unknown> = {}) => ({
+          ...draft,
+          version: draft.version + 1,
+          content: { ...draft.content, ...eventDraftFieldsSchema.parse(data['fields']) },
+        }),
+      );
+    const { fixture, root, title, edit } = await mountAutosave(change);
+    vi.useFakeTimers();
+    edit('');
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(change).not.toHaveBeenCalled();
+    edit('Keep my title');
+    await vi.advanceTimersByTimeAsync(1000);
+    fixture.detectChanges();
+    expect(title.value).toBe('Keep my title');
+    expect(root.querySelector('[role="alert"]')?.textContent).toContain('Network unavailable');
+    const retry = [...root.querySelectorAll<HTMLButtonElement>('button')].find(
+      (button) => button.textContent?.trim() === 'Retry saving',
+    )!;
+    retry.click();
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
+    expect(change).toHaveBeenCalledTimes(2);
+    expect(root.textContent).toContain('Draft saved privately.');
   });
 });

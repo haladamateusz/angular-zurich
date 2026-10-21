@@ -183,6 +183,7 @@ for (const fromChat of [false, true]) {
     ).toBeVisible();
     await expect(editor.getByText('Change history', { exact: true })).toHaveCount(0);
     await expect(editor.getByLabel('Title', { exact: true })).toHaveValue(draft.content.title);
+    await expect(editor.getByRole('textbox', { name: 'Description', exact: true })).toHaveCount(0);
     await expect(editor.getByLabel('Date (Europe/Zurich)', { exact: true })).toContainText(
       '25 Nov 2026',
     );
@@ -213,16 +214,15 @@ for (const fromChat of [false, true]) {
       await venue.press('Enter');
       await expect(venue).toContainText('Constructor Nexademy');
     }
-    await editor
-      .getByLabel('Description', { exact: true })
-      .first()
-      .fill('A description edited by a human.');
+    await editor.getByLabel('Title', { exact: true }).first().fill('Edited meetup title');
     await expect(editor.getByRole('button', { name: 'Review event draft' })).toBeDisabled();
-    await editor.getByRole('button', { name: 'Save event details' }).click();
+    await expect(editor.getByRole('button', { name: 'Save event details' })).toHaveCount(0);
     await expect(editor.getByRole('status')).toContainText('saved privately');
     await editor.getByRole('button', { name: 'Review event draft' }).click();
     await expect(editor.getByRole('heading', { name: 'Save event as draft?' })).toBeFocused();
-    await expect(editor).toContainText('A description edited by a human.');
+    await expect(editor).toContainText('Edited meetup title');
+    await expect(editor.getByLabel('Description', { exact: true })).toHaveCount(0);
+    await expect(editor).toContainText('Description for talk 1');
     expect(publishes).toBe(0);
     await page.addScriptTag({ content: axe.source });
     const violations = () =>

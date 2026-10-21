@@ -13,11 +13,6 @@ export const draftRefSchema = z.object({
   expectedVersion: z.number().int().positive(),
 });
 export const createDraftSchema = eventDraftFieldsSchema.extend({
-  description: z
-    .string()
-    .max(4000)
-    .nullish()
-    .transform((value) => value ?? ''),
   startsAt: eventDraftFieldsSchema.shape.startsAt.nullish().transform((value) => value ?? ''),
   venueId: eventDraftFieldsSchema.shape.venueId.nullish().transform((value) => value ?? ''),
   meetupUrl: eventDraftFieldsSchema.shape.meetupUrl.nullish().transform((value) => value ?? ''),
@@ -27,7 +22,6 @@ export const updateDraftSchema = draftRefSchema.extend({
   fields: z
     .object({
       title: eventDraftFieldsSchema.shape.title.nullish(),
-      description: eventDraftFieldsSchema.shape.description.nullish(),
       startsAt: eventDraftFieldsSchema.shape.startsAt.nullish(),
       venueId: eventDraftFieldsSchema.shape.venueId.nullish(),
       meetupUrl: eventDraftFieldsSchema.shape.meetupUrl.nullish(),

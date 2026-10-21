@@ -2,7 +2,9 @@
   @if (error()) {
     <p role="alert">{{ error() }}</p>
   }
-  @if (notice()) {
+  @if (savingDetails()) {
+    <p role="status">Saving event details…</p>
+  } @else if (notice()) {
     <p role="status">{{ notice() }}</p>
   }
   @if (draft(); as draft) {
@@ -57,7 +59,6 @@
           <dt>Meetup link</dt>
           <dd>{{ review.draft.content.meetupUrl }}</dd>
         </dl>
-        <p class="preserve-lines">{{ review.draft.content.description }}</p>
         @for (talk of review.draft.content.talks; track talk.id) {
           <article>
             <h4>{{ talk.title }}</h4>
@@ -85,17 +86,10 @@
         </div>
       </section>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="save()">
-        <fieldset [disabled]="busy()">
+      <form [formGroup]="form">
+        <fieldset [disabled]="detailsDisabled()">
           <legend>Event details</legend>
           <label>Title<input formControlName="title" maxlength="160" required /></label>
-          <label
-            >Description<textarea
-              formControlName="description"
-              rows="4"
-              maxlength="4000"
-            ></textarea>
-          </label>
           <div class="draft-grid">
             <div>
               <label [for]="'draft-date-' + draft.id">Date (Europe/Zurich)</label>
@@ -103,7 +97,7 @@
                 [controlId]="'draft-date-' + draft.id"
                 placeholder="Select date"
                 [value]="startsDate()"
-                [disabled]="busy()"
+                [disabled]="detailsDisabled()"
                 (valueChange)="updateDateTime($event, startsTime())"
               />
             </div>
@@ -115,7 +109,7 @@
                 icon="clock"
                 [options]="timeSelectOptions()"
                 [value]="startsTime()"
-                [disabled]="busy()"
+                [disabled]="detailsDisabled()"
                 (valueChange)="updateDateTime(startsDate(), $event)"
               />
             </div>
@@ -126,7 +120,7 @@
                 placeholder="Choose a venue"
                 [options]="venueSelectOptions()"
                 [value]="venueId()"
-                [disabled]="busy()"
+                [disabled]="detailsDisabled()"
                 (valueChange)="updateSelection(form.controls.venueId, $event)"
               />
             </div>
@@ -137,11 +131,11 @@
               formControlName="meetupUrl"
               placeholder="https://www.meetup.com/…"
           /></label>
-          <button class="app-button app-button--secondary" type="submit" [disabled]="!form.dirty">
-            Save event details
-          </button>
         </fieldset>
       </form>
+      @if (error() && form.dirty && !busy()) {
+        <button type="button" (click)="retrySave()">Retry saving</button>
+      }
       <section aria-label="Selected talks">
         <h3>Talk lineup</h3>
         @for (talkId of talkSlots(); track $index; let talkIndex = $index) {
@@ -209,7 +203,7 @@
         </button>
       </div>
       @if (form.dirty) {
-        <p>Save your edits before reviewing for publication.</p>
+        <p>Changes must finish saving before review.</p>
       }
       @if (discardConfirm()) {
         <p>Discard this private draft? Existing approved talks will remain available.</p>

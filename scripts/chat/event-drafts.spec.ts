@@ -82,7 +82,7 @@ describe('event planning inputs and defaults', () => {
         meetupUrl: null,
         imageUrl: null,
       }),
-    ).toMatchObject({ description: '', venueId: '', meetupUrl: '', imageUrl: '' });
+    ).toMatchObject({ venueId: '', meetupUrl: '', imageUrl: '' });
   });
   it.each([
     {

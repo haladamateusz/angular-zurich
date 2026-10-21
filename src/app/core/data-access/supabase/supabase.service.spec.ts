@@ -20,19 +20,16 @@ describe('SupabaseService', () => {
 });
 
 describe('SupabaseService event details', () => {
-  it('loads the reviewed event description alongside the talk descriptions', async () => {
-    const fetch = vi
-      .fn()
-      .mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            id: 'event-1',
-            slug: 'september-2026',
-            description: 'Reviewed event description',
-            talks: [],
-          }),
-        ),
-      );
+  it('loads talk descriptions without querying a removed event description column', async () => {
+    const fetch = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          id: 'event-1',
+          slug: 'september-2026',
+          talks: [],
+        }),
+      ),
+    );
     const client = createClient('https://example.supabase.co', 'test-key', {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch },
@@ -47,10 +44,9 @@ describe('SupabaseService event details', () => {
     const response = await TestBed.inject(SupabaseService).getEventBySlug('september-2026');
     expect(response.error).toBeNull();
     expect(response.data?.slug).toBe('september-2026');
-    expect(response.data?.description).toBe('Reviewed event description');
     const url = new URL(fetch.mock.calls[0][0] as string);
     const select = url.searchParams.get('select') ?? '';
-    expect(select.split('venue:')[0]).toContain('description');
+    expect(select.split('venue:')[0]).not.toContain('description');
     expect(select).toContain('talks:Talks(id,title,description,');
     expect(url.searchParams.get('slug')).toBe('eq.september-2026');
   });

@@ -60,12 +60,13 @@ update draft_fixture set draft=public.save_chat_event_draft((draft->>'id')::uuid
 select pg_temp.check_true((select draft->>'state'='saved' from draft_fixture),'Draft event saved after review');
 select pg_temp.check_true((select public.save_chat_event_draft((draft->>'id')::uuid,3,uid)->>'event_id'=draft->>'event_id' from draft_fixture),'Save retry reuses event');
 reset role;
-select pg_temp.check_true((select count(*)=1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture) and public=false and description='Reviewed description'),'Exactly one private Draft event');
+select pg_temp.check_true((select count(*)=1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture) and public=false),'Exactly one private Draft event');
 grant select on draft_fixture to anon;
 set local role anon;
 select pg_temp.check_true(not exists(select 1 from public."Events" where id=(select (draft->>'event_id')::uuid from draft_fixture)),'Saved draft event hidden from anonymous visitors');
 reset role;
-select pg_temp.check_true((select count(*)=2 from public."Talks" where event_id=(select (draft->>'event_id')::uuid from draft_fixture)),'Both talks assigned atomically');
+select pg_temp.check_true((select count(*)=2 from public."Talks" where event_id=(select (draft->>'event_id')::uuid from draft_fixture) and description <> ''),'Both talk descriptions preserved');
+select pg_temp.check_true(not exists(select 1 from information_schema.columns where table_schema='public' and table_name='Events' and column_name='description'),'Event description column removed');
 select pg_temp.check_true(exists(select 1 from public."PeopleOnRoles" where person_id=(select speaker from draft_fixture) and role='SPEAKER'),'New talk speakers receive the speaker role');
 select pg_temp.check_true((select count(*)=1 from public.chat_event_draft_audit where action='save_event' and actor_id=(select uid from draft_fixture)),'Draft save attributed once');
 set local role authenticated;

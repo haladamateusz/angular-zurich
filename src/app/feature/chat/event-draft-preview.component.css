@@ -148,7 +148,6 @@ article {
 }
 
 .draft-confirm {
-  border: 1px solid var(--primary);
   padding: var(--space-4);
   border-radius: var(--radius-control);
 }

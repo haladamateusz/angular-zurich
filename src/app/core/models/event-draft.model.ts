@@ -3,7 +3,6 @@ import { z } from 'zod';
 const optionalUrl = z.union([z.literal(''), z.string().url().startsWith('https://').max(1000)]);
 export const eventDraftFieldsSchema = z.object({
   title: z.string().trim().min(3).max(160),
-  description: z.string().max(4000),
   startsAt: z.union([z.literal(''), z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)]),
   venueId: z.union([z.literal(''), z.string().uuid()]),
   meetupUrl: optionalUrl.refine((value) => value.length <= 500),

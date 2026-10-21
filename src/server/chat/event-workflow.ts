@@ -68,7 +68,6 @@ export function createEventWorkflow(
                 ...draft,
                 content: {
                   ...draft.content,
-                  description: draft.content.description.slice(0, 500),
                   talks: draft.content.talks.map((talk) => ({
                     ...talk,
                     description: talk.description.slice(0, 500),

@@ -554,10 +554,3 @@ button.event-details__remove-button {
     transparent 100%
   );
 }
-
-.event-details__description {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  margin-block: var(--space-4);
-  line-height: var(--leading-normal);
-}

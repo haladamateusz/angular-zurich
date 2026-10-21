@@ -227,7 +227,6 @@ export class SupabaseService {
         id,
         slug,
         title,
-        description,
         feature_graphic,
         meetup_url,
         starts_at,

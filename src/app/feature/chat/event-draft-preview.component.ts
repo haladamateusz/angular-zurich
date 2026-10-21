@@ -11,10 +11,11 @@ import {
   ElementRef,
   viewChild,
   afterRenderEffect,
+  DestroyRef,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CreateEventDatePickerComponent } from '../../ui/event-fields/create-event-date-picker.component';
 import { CreateEventSelectComponent } from '../../ui/event-fields/create-event-select.component';
 import { EVENT_TIME_OPTIONS } from '../../ui/event-fields/event-time-options';
@@ -44,17 +45,22 @@ export class EventDraftPreviewComponent {
   readonly refreshVersion = input(0);
   readonly previewReady = output<void>();
   private readonly api = inject(EventDraftService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly draft = signal<EventDraft | null>(null);
   protected readonly options = signal<EventDraftOptions>({ venues: [], speakers: [], talks: [] });
   protected readonly busy = signal(false);
+  protected readonly savingDetails = signal(false);
+  protected readonly detailsDisabled = computed(() => this.busy() && !this.savingDetails());
   protected readonly error = signal('');
   protected readonly notice = signal('');
   protected readonly discardConfirm = signal(false);
   protected readonly review = signal<EventDraftReview | null>(null);
   private pendingRefresh: string | null = null;
+  private autosaveTimer: ReturnType<typeof setTimeout> | undefined;
+  private pendingAutosave = false;
+  private applyingDraft = false;
   protected readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true }),
-    description: new FormControl('', { nonNullable: true }),
     startsAt: new FormControl('', { nonNullable: true }),
     venueId: new FormControl('', { nonNullable: true }),
     meetupUrl: new FormControl('', { nonNullable: true }),
@@ -74,7 +80,7 @@ export class EventDraftPreviewComponent {
       : EVENT_TIME_OPTIONS;
   });
   protected updateDateTime(date: string, time: string) {
-    if (this.busy()) return;
+    if (this.detailsDisabled()) return;
     this.form.controls.startsAt.setValue(`${date}T${time}`);
     this.form.controls.startsAt.markAsDirty();
     this.form.controls.startsAt.markAsTouched();
@@ -140,12 +146,16 @@ export class EventDraftPreviewComponent {
     });
   }
   protected updateSelection(control: FormControl<string>, value: string) {
-    if (this.busy()) return;
+    if (this.detailsDisabled()) return;
     control.setValue(value);
     control.markAsDirty();
     control.markAsTouched();
   }
   constructor() {
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      if (!this.applyingDraft) this.scheduleAutosave();
+    });
+    this.destroyRef.onDestroy(() => clearTimeout(this.autosaveTimer));
     afterRenderEffect(() => {
       if (this.draft()) this.previewReady.emit();
     });
@@ -158,6 +168,17 @@ export class EventDraftPreviewComponent {
       this.refreshVersion();
       if (id) untracked(() => void this.load(id));
     });
+  }
+  private scheduleAutosave() {
+    clearTimeout(this.autosaveTimer);
+    this.pendingAutosave = false;
+    this.notice.set('');
+    this.autosaveTimer = setTimeout(() => {
+      this.autosaveTimer = undefined;
+      if (!this.form.dirty || this.draft()?.state !== 'draft') return;
+      if (this.busy()) this.pendingAutosave = true;
+      else void this.save();
+    }, 1000);
   }
   private async work(task: () => Promise<void>) {
     if (this.busy()) return;
@@ -175,14 +196,23 @@ export class EventDraftPreviewComponent {
       this.busy.set(false);
       const pending = this.pendingRefresh;
       this.pendingRefresh = null;
-      if (pending) void this.load(pending);
+      if (!this.destroyRef.destroyed) {
+        if (pending) void this.load(pending);
+        else if (this.pendingAutosave) {
+          this.pendingAutosave = false;
+          void this.save();
+        }
+      }
     }
   }
-  private setDraft(draft: EventDraft, preserveEdits = false) {
+  private setDraft(draft: EventDraft, preserveEdits = false, submitted?: Record<string, string>) {
     const edits =
       preserveEdits && this.draft()?.id === draft.id
         ? Object.entries(this.form.controls)
-            .filter(([, control]) => control.dirty)
+            .filter(
+              ([name, control]) =>
+                control.dirty && (!submitted || control.value !== submitted[name]),
+            )
             .map(([, control]) => ({ control, value: control.value }))
         : [];
     const sameDraft = this.draft()?.id === draft.id;
@@ -200,12 +230,17 @@ export class EventDraftPreviewComponent {
     }
     this.talkSlots.set(slots);
     this.draft.set(draft);
-    this.form.reset(draft.content);
-    for (const { control, value } of edits) {
-      if (control.value !== value) {
-        control.setValue(value);
-        control.markAsDirty();
+    this.applyingDraft = true;
+    try {
+      this.form.reset(draft.content);
+      for (const { control, value } of edits) {
+        if (control.value !== value) {
+          control.setValue(value);
+          control.markAsDirty();
+        }
       }
+    } finally {
+      this.applyingDraft = false;
     }
     if (this.form.dirty) this.notice.set('Draft refreshed. Your unsaved edits are kept.');
     this.review.set(null);
@@ -220,6 +255,7 @@ export class EventDraftPreviewComponent {
       const [loaded, options] = await Promise.all([this.api.load(id), this.api.options()]);
       this.setDraft(loaded.draft, true);
       this.options.set(options);
+      if (this.form.dirty && !this.autosaveTimer) this.scheduleAutosave();
     });
   }
   private async change(action: string, data: Record<string, unknown> = {}) {
@@ -231,15 +267,37 @@ export class EventDraftPreviewComponent {
     });
   }
   protected async save() {
-    const parsed = eventDraftFieldsSchema.safeParse(this.form.getRawValue());
+    const draft = this.draft();
+    if (!draft || draft.state !== 'draft' || !this.form.dirty) return;
+    if (this.busy()) {
+      this.pendingAutosave = true;
+      return;
+    }
+    const submitted = this.form.getRawValue();
+    const parsed = eventDraftFieldsSchema.safeParse(submitted);
     if (!parsed.success) {
       this.error.set('Check the title, date, venue and HTTPS links.');
       return;
     }
-    await this.change('update', { fields: parsed.data });
+    await this.work(async () => {
+      this.savingDetails.set(true);
+      try {
+        const saved = await this.api.change(draft, 'update', { fields: parsed.data });
+        this.setDraft(saved, true, submitted);
+        this.notice.set(this.form.dirty ? 'Saving your latest changes…' : 'Draft saved privately.');
+      } finally {
+        this.savingDetails.set(false);
+      }
+    });
   }
   protected async discard() {
     await this.change('discard');
+  }
+  protected async retrySave() {
+    const draft = this.draft();
+    if (!draft || this.busy()) return;
+    await this.load(draft.id);
+    if (!this.error()) await this.save();
   }
   protected async prepare() {
     const draft = this.draft();
