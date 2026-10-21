@@ -5,6 +5,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ChatAccessService } from '../../../core/auth/chat-access.service';
 import { ArchiveChatService } from '../data-access/archive-chat.service';
 import { ChatPageComponent } from './chat-page.component';
+import { EventDraftService } from '../data-access/event-draft.service';
+import { EventDraft } from '../../../core/models/event-draft.model';
 
 describe('ChatPageComponent', () => {
   const session = signal<{
@@ -58,8 +60,8 @@ describe('ChatPageComponent', () => {
     );
     expect(
       fixture.nativeElement.querySelector('.archive-chat-mascot')?.closest('[role=log]'),
-    ).toBeNull();
-    expect(fixture.nativeElement.querySelector('.archive-chat-empty img')).toBeNull();
+    ).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('.archive-chat-empty img')).not.toBeNull();
     expect(fixture.nativeElement.querySelector('#chat-title')?.className).toContain(
       'tracking-[-0.04em]',
     );
@@ -67,11 +69,265 @@ describe('ChatPageComponent', () => {
       'leading-7',
     );
     const controls = fixture.nativeElement.querySelector('.archive-chat-composer-controls');
-    expect(controls?.textContent).toMatch(/New chat\s+Send question/);
-    expect(controls?.querySelectorAll('button > svg')).toHaveLength(2);
+    expect(controls?.textContent).toContain('Send question');
+    expect(controls?.textContent).not.toContain('New chat');
+    expect(controls?.querySelectorAll('button > svg')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('.archive-chat-footnote')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#archive-question-hint')).toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
     fetchSpy.mockRestore();
   });
+
+  it('allows retrying pronunciation when playback fails', async () => {
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const audio = fixture.nativeElement.querySelector('audio') as HTMLAudioElement;
+    const play = vi.spyOn(audio, 'play').mockRejectedValueOnce(new Error('Playback failed'));
+    const button = fixture.nativeElement.querySelector(
+      '.archive-pronunciation',
+    ) as HTMLButtonElement;
+    button.click();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
+      'Couldn’t play the pronunciation',
+    );
+    expect(button.disabled).toBe(false);
+
+    play.mockImplementation(async () => {
+      audio.dispatchEvent(new Event('playing'));
+    });
+    audio.currentTime = 0.5;
+    button.click();
+    await fixture.whenStable();
+    expect(audio.currentTime).toBe(0);
+    expect(button.classList.contains('is-playing')).toBe(true);
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+    audio.dispatchEvent(new Event('ended'));
+    fixture.detectChanges();
+    expect(button.classList.contains('is-playing')).toBe(false);
+  });
+
+  it.each(['forbidden', 'setup', 'error'])(
+    'keeps the header mascot hidden while access is %s',
+    async (state) => {
+      check.mockResolvedValue(state);
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      expect(
+        fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot'),
+      ).toBeNull();
+    },
+  );
+
+  it('shows an accessible chat skeleton while checking access', async () => {
+    let resolveAccess!: (state: string) => void;
+    check.mockImplementation(() => new Promise<string>((resolve) => (resolveAccess = resolve)));
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    fixture.detectChanges();
+    const loading = fixture.nativeElement.querySelector('[aria-busy="true"]');
+    expect(loading?.getAttribute('role')).toBe('status');
+    expect(loading?.querySelectorAll('.app-skeleton')).toHaveLength(5);
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot'),
+    ).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Checking your chat access');
+    expect(fixture.nativeElement.querySelector('textarea')).toBeNull();
+    resolveAccess('ready');
+    await Promise.resolve();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[aria-busy="true"]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('textarea')).not.toBeNull();
+  });
+
+  it('shows New chat during a conversation and restores the centered welcome on reset', async () => {
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const chat = fixture.debugElement.injector.get(ArchiveChatService);
+    chat.messages.set([{ id: 'question', role: 'user', text: 'Find signals', sources: [] }]);
+    fixture.detectChanges();
+    const button = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
+      (element as HTMLButtonElement).textContent?.includes('New chat'),
+    ) as HTMLButtonElement;
+    expect(button).toBeDefined();
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot'),
+    ).not.toBeNull();
+    button.click();
+    fixture.detectChanges();
+    expect(chat.messages()).toHaveLength(0);
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-empty .archive-chat-mascot'),
+    ).not.toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.archive-chat-composer-controls').textContent,
+    ).not.toContain('New chat');
+  });
+
+  it.each([false, true])(
+    'moves the mascot to the header on first send (reduced motion: %s)',
+    async (reducedMotion) => {
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const chat = fixture.debugElement.injector.get(ArchiveChatService);
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn(() => ({ matches: reducedMotion })),
+      );
+      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        return this.closest('.archive-chat-empty')
+          ? new DOMRect(400, 300, 128, 128)
+          : new DOMRect(900, 100, 128, 128);
+      });
+      vi.spyOn(chat, 'send').mockImplementation(async (text) => {
+        chat.messages.update((messages) => [
+          ...messages,
+          { id: crypto.randomUUID(), role: 'user', text, sources: [] },
+        ]);
+        return true;
+      });
+      const send = async () => {
+        const input = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+        input.value = 'Find signals';
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
+        await fixture.whenStable();
+        fixture.detectChanges();
+      };
+      await send();
+      const mascot = fixture.nativeElement.querySelector(
+        '.archive-chat-header .archive-chat-mascot',
+      ) as HTMLElement;
+      expect(mascot).not.toBeNull();
+      expect(mascot.classList.contains('archive-chat-mascot-moving')).toBe(!reducedMotion);
+      expect(mascot.style.getPropertyValue('--mascot-flight-x')).toBe(
+        reducedMotion ? '' : '-500px',
+      );
+      expect(mascot.style.getPropertyValue('--mascot-flight-y')).toBe(reducedMotion ? '' : '200px');
+      await send();
+      expect(fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot')).toBe(
+        mascot,
+      );
+      const reset = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
+        (element as HTMLButtonElement).textContent?.includes('New chat'),
+      ) as HTMLButtonElement;
+      reset.click();
+      await fixture.whenStable();
+      expect(fixture.nativeElement.querySelector('.archive-chat-mascot-moving')).toBeNull();
+      expect(
+        fixture.nativeElement.querySelector('.archive-chat-empty .archive-chat-mascot'),
+      ).not.toBeNull();
+    },
+  );
+
+  it.each([false, true])(
+    'renders the saved event preview in the conversation (reading earlier messages: %s)',
+    async (readingEarlierMessages) => {
+      const draftId = crypto.randomUUID();
+      const messageId = crypto.randomUUID();
+      const draft: EventDraft = {
+        id: draftId,
+        created_by: crypto.randomUUID(),
+        thread_id: crypto.randomUUID(),
+        version: 1,
+        state: 'draft',
+        content: {
+          title: 'Angular Zürich November',
+          description: 'An evening of Angular talks.',
+          startsAt: '2026-11-18T18:00',
+          venueId: '',
+          meetupUrl: '',
+          imageUrl: '',
+          talks: [],
+        },
+        event_id: null,
+        event_slug: null,
+        created_at: '2026-10-19T12:00:00Z',
+        updated_at: '2026-10-19T12:00:00Z',
+      };
+      let resolveDraft!: (value: { draft: EventDraft; audit: [] }) => void;
+      const load = vi.fn(
+        () =>
+          new Promise<{ draft: EventDraft; audit: [] }>((resolve) => {
+            resolveDraft = resolve;
+          }),
+      );
+      TestBed.overrideProvider(EventDraftService, {
+        useValue: { load, options: vi.fn(async () => ({ venues: [], speakers: [], talks: [] })) },
+      });
+      const events = [
+        { type: 'RUN_STARTED', threadId: 'thread', runId: 'run' },
+        {
+          type: 'CUSTOM',
+          name: 'archive_sources',
+          value: {
+            messageId,
+            sources: [],
+            result: { kind: 'event_draft', draftId, version: 1 },
+          },
+        },
+        { type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' },
+        { type: 'TEXT_MESSAGE_CONTENT', messageId, delta: 'Review and edit below.' },
+        { type: 'TEXT_MESSAGE_END', messageId },
+        { type: 'RUN_FINISHED', threadId: 'thread', runId: 'run' },
+      ];
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(
+          async () =>
+            new Response(events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(''), {
+              headers: { 'Content-Type': 'text/event-stream' },
+            }),
+        ),
+      );
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const chat = fixture.debugElement.injector.get(ArchiveChatService);
+      await chat.send('Prepare an event');
+      await fixture.whenStable();
+      const preview = fixture.nativeElement.querySelector('app-event-draft-preview') as HTMLElement;
+      const transcript = fixture.nativeElement.querySelector(
+        '.archive-chat-transcript',
+      ) as HTMLElement;
+      expect(preview?.closest('[role="log"]')).toBe(transcript);
+      expect(preview.textContent).toContain('Loading event drafts');
+      expect(load).toHaveBeenCalledWith(draftId);
+      vi.spyOn(transcript, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 100, 900, 500));
+      vi.spyOn(preview.parentElement!, 'getBoundingClientRect').mockReturnValue(
+        new DOMRect(0, 500, 900, 1000),
+      );
+      transcript.scrollTop = 0;
+      if (readingEarlierMessages) {
+        Object.defineProperty(transcript, 'scrollHeight', { value: 2000 });
+        Object.defineProperty(transcript, 'clientHeight', { value: 500 });
+        transcript.dispatchEvent(new Event('scroll'));
+      }
+      resolveDraft({ draft, audit: [] });
+      await Promise.resolve();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(preview.querySelector('h2')?.textContent).toContain('Angular Zürich November');
+      expect(preview.textContent).toContain('Review for publication');
+      expect(transcript.scrollTop).toBe(readingEarlierMessages ? 0 : 400);
+      expect(fixture.nativeElement.querySelectorAll('app-event-draft-preview')).toHaveLength(1);
+      const titleInput = preview.querySelector(
+        'input[formcontrolname="title"]',
+      ) as HTMLInputElement;
+      titleInput.value = 'My unsaved event title';
+      titleInput.dispatchEvent(new Event('input'));
+      chat.running.set(true);
+      await fixture.whenStable();
+      expect(preview.parentElement?.hidden).toBe(true);
+      chat.running.set(false);
+      await fixture.whenStable();
+      expect(preview.parentElement?.hidden).toBe(false);
+      expect(fixture.nativeElement.querySelector('app-event-draft-preview')).toBe(preview);
+      expect(titleInput.value).toBe('My unsaved event title');
+    },
+  );
 
   it('keeps activity above each answer, opens during a run and folds when it finishes', async () => {
     let stream!: ReadableStreamDefaultController<Uint8Array>;
@@ -205,9 +461,7 @@ describe('ChatPageComponent', () => {
       const mascotSrc = () =>
         fixture.nativeElement.querySelector('.archive-chat-mascot img')?.getAttribute('src');
       chat.running.set(true);
-      chat.messages.set([
-        { id: 'answer', role: 'assistant', text: '', sources: [], nextQuestion: '' },
-      ]);
+      chat.messages.set([{ id: 'answer', role: 'assistant', text: '', sources: [] }]);
       await fixture.whenStable();
       expect(mascotSrc()).toContain('Question_Thinking.svg');
 
@@ -420,6 +674,56 @@ describe('ChatPageComponent', () => {
       );
       if (outcome !== 'complete')
         expect(fixture.nativeElement.textContent).toContain('may be incomplete');
+    },
+  );
+
+  it.each(['stats', 'ranking', 'talks'] as const)(
+    'shows individual talk cards only when the %s result has no table',
+    async (kind) => {
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const chat = fixture.debugElement.injector.get(ArchiveChatService);
+      chat.messages.set([
+        {
+          id: 'answer',
+          role: 'assistant',
+          text: 'Here are the matching results.',
+          result:
+            kind === 'stats'
+              ? {
+                  kind,
+                  total: 1,
+                  past: 1,
+                  upcoming: 0,
+                  years: [{ year: 2026, past: 1, upcoming: 0 }],
+                }
+              : kind === 'ranking'
+                ? { kind, rows: [{ id: 'speaker', name: 'Ada', talkCount: 1, rank: 1 }] }
+                : { kind, total: 1 },
+          sources: [
+            {
+              id: 'talk',
+              title: 'Signals in practice',
+              speakers: ['Ada'],
+              description: '',
+              eventTitle: 'Angular Zürich',
+              date: '2026-06-17',
+              url: '/events/signals',
+            },
+          ],
+        },
+      ]);
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelectorAll('.archive-results-table')).toHaveLength(
+        kind === 'talks' ? 0 : 1,
+      );
+      expect(fixture.nativeElement.querySelectorAll('.archive-source')).toHaveLength(
+        kind === 'talks' ? 1 : 0,
+      );
+      expect(fixture.nativeElement.querySelector('.archive-answer')?.textContent).toContain(
+        'Here are the matching results.',
+      );
+      expect(chat.messages()[0].sources).toHaveLength(1);
     },
   );
 

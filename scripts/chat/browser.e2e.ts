@@ -199,6 +199,31 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
     });
   });
   await page.goto('/chat');
+  const pronunciation = page.locator('.archive-pronunciation');
+  const audio = page.locator('audio');
+  await expect(pronunciation).toHaveAccessibleName('Hear how to pronounce Chräungie');
+  await expect(audio).toHaveAttribute('preload', 'none');
+  await pronunciation.focus();
+  await pronunciation.press('Enter');
+  await expect(pronunciation).toHaveClass(/is-playing/);
+  await expect(pronunciation).toHaveAccessibleName('Stop pronunciation');
+  await expect(page.locator('.archive-pronunciation-wave').first()).toHaveCSS(
+    'animation-name',
+    'none',
+  );
+  await expect(pronunciation).not.toHaveClass(/is-playing/);
+  expect(await audio.evaluate((element: HTMLAudioElement) => element.duration)).toBeCloseTo(1.2, 1);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await pronunciation.click();
+  await expect(pronunciation).toHaveClass(/is-playing/);
+  await expect(page.locator('.archive-pronunciation-wave').first()).toHaveCSS(
+    'animation-name',
+    /pronunciation-wave$/,
+  );
+  await pronunciation.click();
+  await expect(pronunciation).not.toHaveClass(/is-playing/);
+  expect(await audio.evaluate((element: HTMLAudioElement) => element.paused)).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.getByLabel('Your question', { exact: true })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-auth-lock-contention-tested', 'true');
   expect(runs).toBe(0);

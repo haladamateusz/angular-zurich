@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
   untracked,
   ElementRef,
@@ -33,6 +34,7 @@ export class EventDraftPreviewComponent {
   private readonly reviewHeading = viewChild<ElementRef<HTMLElement>>('reviewHeading');
   readonly draftId = input<string | null>(null);
   readonly refreshVersion = input(0);
+  readonly previewReady = output<void>();
   private readonly api = inject(EventDraftService);
   protected readonly draft = signal<EventDraft | null>(null);
   protected readonly audit = signal<EventDraftAudit[]>([]);
@@ -62,6 +64,9 @@ export class EventDraftPreviewComponent {
     ),
   );
   constructor() {
+    afterRenderEffect(() => {
+      if (this.draft()) this.previewReady.emit();
+    });
     afterRenderEffect(() => {
       const heading = this.reviewHeading();
       if (this.review() && heading) heading.nativeElement.focus();

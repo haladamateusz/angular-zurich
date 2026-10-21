@@ -17,6 +17,93 @@
   margin-bottom: var(--space-4);
 }
 
+.archive-chat-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.archive-chat-title h1 {
+  margin: 0;
+  line-height: 1;
+}
+
+.archive-chat-header-mascot {
+  width: clamp(5rem, 15vw, 8rem);
+  aspect-ratio: 1;
+}
+
+.archive-pronunciation {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--foreground-secondary);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.archive-pronunciation:hover,
+.archive-pronunciation.is-playing {
+  color: var(--action-primary);
+  background: var(--background-sunken);
+}
+
+.archive-pronunciation:focus-visible {
+  outline: 2px solid var(--action-primary);
+  outline-offset: 2px;
+}
+
+.archive-pronunciation:disabled {
+  cursor: wait;
+}
+
+.archive-pronunciation svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: currentcolor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.archive-pronunciation.is-playing .archive-pronunciation-wave {
+  animation: pronunciation-wave calc(var(--duration-slow) * 2) var(--ease-standard) infinite;
+}
+
+.archive-pronunciation.is-playing .archive-pronunciation-wave:last-child {
+  animation-delay: var(--duration-normal);
+}
+
+.archive-pronunciation-error {
+  font-size: var(--type-sm);
+  color: var(--foreground-secondary);
+}
+
+@keyframes pronunciation-wave {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-pronunciation.is-playing .archive-pronunciation-wave {
+    animation: none;
+  }
+}
+
 .archive-chat-mascot {
   display: grid;
   justify-items: center;
@@ -37,18 +124,34 @@
     scale(var(--mascot-scale, 1));
 }
 
+.archive-chat-mascot-moving {
+  position: relative;
+  z-index: var(--z-raised);
+  transform-origin: top left;
+  animation: mascot-to-header var(--duration-slow) var(--ease-emphasized);
+}
+
+@keyframes mascot-to-header {
+  from {
+    transform: translate(var(--mascot-flight-x), var(--mascot-flight-y))
+      scale(var(--mascot-flight-scale));
+  }
+
+  to {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-chat-mascot-moving {
+    animation: none;
+  }
+}
+
 h2 {
   font-family: var(--font-display);
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
-}
-
-.archive-chat-footnote {
-  color: var(--foreground-secondary);
-  max-width: 52rem;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  margin-top: 1rem;
 }
 
 .archive-chat-surface {
@@ -226,15 +329,10 @@ h2 {
 .archive-chat-composer-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 0.75rem;
   margin-top: 0.75rem;
   flex-wrap: wrap;
-}
-
-.archive-chat-composer-actions p {
-  color: var(--foreground-secondary);
-  font-size: 0.75rem;
 }
 
 .archive-chat-composer-controls {
@@ -415,6 +513,40 @@ summary:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .archive-answer-cursor {
+    animation: none;
+  }
+}
+
+.archive-chat-loading .app-skeleton {
+  max-width: 100%;
+}
+
+.archive-chat-loading-mascot {
+  width: clamp(5rem, 15vw, 8rem);
+  aspect-ratio: 1;
+}
+
+.archive-chat-loading-title {
+  width: 28rem;
+  height: var(--space-8);
+}
+
+.archive-chat-loading-description {
+  width: 24rem;
+  height: var(--space-5);
+}
+
+.archive-chat-loading-input {
+  height: 5rem;
+}
+
+.archive-chat-loading-button {
+  width: 10rem;
+  height: 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-skeleton::after {
     animation: none;
   }
 }

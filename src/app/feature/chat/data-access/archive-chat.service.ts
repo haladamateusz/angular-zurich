@@ -16,7 +16,6 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   sources: ChatSource[];
-  nextQuestion: string;
   result?: ChatResult;
   activity?: SearchActivity;
   interrupted?: 'stopped' | 'failed';
@@ -28,7 +27,6 @@ export class ArchiveChatService {
   private readonly auth = inject(AuthService);
   private readonly sources = new Map<string, ChatSource[]>();
   private readonly answerIds = new Map<string, string>();
-  private readonly nextQuestions = new Map<string, string>();
   private readonly interruptedAnswers = new Map<string, 'stopped' | 'failed'>();
   private readonly searches = new Map<string, SearchActivity>();
   private readonly completedAnswers = new Set<string>();
@@ -56,7 +54,6 @@ export class ArchiveChatService {
     this.results.clear();
     this.sources.clear();
     this.answerIds.clear();
-    this.nextQuestions.clear();
     this.searches.clear();
     this.interruptedAnswers.clear();
     this.completedAnswers.clear();
@@ -143,7 +140,6 @@ export class ArchiveChatService {
           text: message.content,
           sources,
           result: this.results.get(message.id),
-          nextQuestion: this.nextQuestions.get(message.id) ?? '',
           activity: message.role === 'assistant' ? this.searches.get(questionId) : undefined,
           interrupted:
             message.role === 'assistant' ? this.interruptedAnswers.get(questionId) : undefined,
@@ -178,7 +174,6 @@ export class ArchiveChatService {
             text: '',
             sources: this.sources.get(this.answerIds.get(message.id) ?? '') ?? [],
             result: this.results.get(this.answerIds.get(message.id) ?? ''),
-            nextQuestion: this.nextQuestions.get(this.answerIds.get(message.id) ?? '') ?? '',
             activity,
             interrupted: this.interruptedAnswers.get(message.id),
           },
@@ -285,7 +280,6 @@ export class ArchiveChatService {
             this.finishActivity('complete');
             this.writingAnswer.set(true);
             this.status.set('Writing the answer…');
-            this.nextQuestions.set(parsed.data.messageId, parsed.data.nextQuestion ?? '');
           }
         }
       },

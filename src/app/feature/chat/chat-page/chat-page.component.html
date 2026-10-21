@@ -1,15 +1,7 @@
 <section class="archive-chat" aria-labelledby="chat-title">
   @let activeMascot = respondingMascot();
-  <header class="archive-chat-header">
-    <div class="space-y-3">
-      <h1 id="chat-title" class="text-3xl font-bold tracking-[-0.04em] text-foreground">
-        Chräungie
-      </h1>
-      <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
-        Find the talk, the speaker, or the idea you remember.
-      </p>
-    </div>
-    <div class="archive-chat-mascot" [class.is-active]="!!activeMascot">
+  <ng-template #mascot>
+    <div #mascotSprite class="archive-chat-mascot" [class.is-active]="!!activeMascot">
       <picture>
         <source
           media="(prefers-reduced-motion: reduce)"
@@ -23,6 +15,7 @@
           "
           width="128"
           height="128"
+          priority
           [style.--mascot-scale]="activeMascot?.scale ?? 1"
           [style.--mascot-offset-x]="activeMascot?.offsetX ?? '0%'"
           [style.--mascot-offset-y]="activeMascot?.offsetY ?? '0%'"
@@ -30,11 +23,83 @@
         />
       </picture>
     </div>
+  </ng-template>
+  <header class="archive-chat-header">
+    <div class="space-y-3">
+      <div class="archive-chat-title">
+        <h1 id="chat-title" class="text-3xl font-bold tracking-[-0.04em] text-foreground">
+          Chräungie
+        </h1>
+        <button
+          class="archive-pronunciation"
+          type="button"
+          [class.is-playing]="pronunciationState() === 'playing'"
+          [disabled]="pronunciationState() === 'loading'"
+          [attr.aria-label]="
+            pronunciationState() === 'playing'
+              ? 'Stop pronunciation'
+              : 'Hear how to pronounce Chräungie'
+          "
+          [attr.title]="
+            pronunciationState() === 'playing'
+              ? 'Stop pronunciation'
+              : 'Hear how to pronounce Chräungie'
+          "
+          (click)="togglePronunciation()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+            <path class="archive-pronunciation-wave" d="M15 8a6 6 0 0 1 0 8" />
+            <path class="archive-pronunciation-wave" d="M18 5a10 10 0 0 1 0 14" />
+          </svg>
+        </button>
+      </div>
+      <audio
+        #pronunciationAudio
+        src="/chraungie-pronunciation.mp3"
+        preload="none"
+        (playing)="pronunciationState.set('playing')"
+        (pause)="pronunciationState.set('idle')"
+        (ended)="pronunciationState.set('idle')"
+        (error)="pronunciationState.set('error')"
+      ></audio>
+      <span class="sr-only" role="status">
+        {{ pronunciationState() === 'playing' ? 'Playing Chräungie pronunciation.' : '' }}
+      </span>
+      @if (pronunciationState() === 'error') {
+        <p class="archive-pronunciation-error" role="alert">
+          Couldn’t play the pronunciation. Try the speaker again.
+        </p>
+      }
+      <p class="w-full text-sm leading-7 text-muted-foreground-1 sm:text-base">
+        Find the talk, the speaker, or the idea you remember.
+      </p>
+    </div>
+    <div class="archive-chat-header-mascot" aria-hidden="true">
+      @if (state() === 'ready' && chat.messages().length) {
+        <ng-container [ngTemplateOutlet]="mascot" />
+      }
+    </div>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <div class="archive-chat-notice" role="status">Checking your chat access…</div>
+      <div class="archive-chat-surface" role="status" aria-label="Loading chat" aria-busy="true">
+        <span class="sr-only">Loading chat…</span>
+        <div class="archive-chat-transcript" aria-hidden="true">
+          <div class="archive-chat-empty archive-chat-loading">
+            <div class="app-skeleton archive-chat-loading-mascot"></div>
+            <div class="app-skeleton archive-chat-loading-title"></div>
+            <div class="app-skeleton archive-chat-loading-description"></div>
+          </div>
+        </div>
+        <div class="archive-chat-composer" aria-hidden="true">
+          <div class="app-skeleton archive-chat-loading-input"></div>
+          <div class="archive-chat-composer-actions">
+            <div class="app-skeleton archive-chat-loading-button"></div>
+          </div>
+        </div>
+      </div>
     }
     @case ('forbidden') {
       <div class="archive-chat-notice">
@@ -83,8 +148,8 @@
         >
           @if (!chat.messages().length) {
             <div class="archive-chat-empty">
+              <ng-container [ngTemplateOutlet]="mascot" />
               <h2>{{ welcomeQuestion() }}</h2>
-              <p>Search topics, trace a speaker’s talks, or revisit an event.</p>
             </div>
           }
           @for (message of chat.messages(); track message.id) {
@@ -230,37 +295,39 @@
                   </table>
                 }
               }
-              @for (source of message.sources; track source.id) {
-                <article class="archive-source">
-                  <p class="archive-source-date">
-                    {{ source.date }}
-                    @if (source.eventTitle) {
-                      · {{ source.eventTitle }}
+              @if (message.result?.kind !== 'ranking' && message.result?.kind !== 'stats') {
+                @for (source of message.sources; track source.id) {
+                  <article class="archive-source">
+                    <p class="archive-source-date">
+                      {{ source.date }}
+                      @if (source.eventTitle) {
+                        · {{ source.eventTitle }}
+                      }
+                    </p>
+                    <h3>
+                      <a [routerLink]="source.url">{{ source.title }}</a>
+                    </h3>
+                    @if (source.speakers.length) {
+                      <p class="archive-source-speakers">{{ source.speakers.join(', ') }}</p>
                     }
-                  </p>
-                  <h3>
-                    <a [routerLink]="source.url">{{ source.title }}</a>
-                  </h3>
-                  @if (source.speakers.length) {
-                    <p class="archive-source-speakers">{{ source.speakers.join(', ') }}</p>
-                  }
-                  <a class="archive-source-link event-meta__link" [routerLink]="source.url">
-                    <span class="event-meta__link-label">To event page</span>
-                    <span class="sr-only"> for {{ source.title }}</span>
-                    <svg
-                      class="archive-source-link-icon"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </article>
+                    <a class="archive-source-link event-meta__link" [routerLink]="source.url">
+                      <span class="event-meta__link-label">To event page</span>
+                      <span class="sr-only"> for {{ source.title }}</span>
+                      <svg
+                        class="archive-source-link-icon"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </article>
+                }
               }
               @if (
                 message.role === 'assistant' && (message.text || ($last && chat.writingAnswer()))
@@ -288,17 +355,16 @@
               @if (message.feedback; as context) {
                 <app-chat-feedback [context]="context" />
               }
-              @if (message.nextQuestion && $last) {
-                <button
-                  class="app-button app-button--secondary"
-                  type="button"
-                  [disabled]="chat.running()"
-                  (click)="useExample(message.nextQuestion)"
-                >
-                  Prepare next page
-                </button>
-              }
             </article>
+          }
+          @if (draftId(); as draftId) {
+            <div #draftPreview [hidden]="chat.running()">
+              <app-event-draft-preview
+                [draftId]="draftId"
+                [refreshVersion]="draftVersion()"
+                (previewReady)="onDraftPreviewReady()"
+              />
+            </div>
           }
         </div>
         <form class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
@@ -311,27 +377,24 @@
             rows="2"
             maxlength="2000"
             placeholder="Ask about a talk, speaker, or event…"
-            aria-describedby="archive-question-hint"
             (keydown)="onQuestionKeydown($event)"
           ></textarea>
           <div class="archive-chat-composer-actions">
-            <p id="archive-question-hint">
-              Enter to send · Shift+Enter for a new line<br />Up to 2,000 characters · 100 questions
-              per day
-            </p>
             <div class="archive-chat-composer-controls">
-              <button class="app-button app-button--secondary" type="button" (click)="newChat()">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.072a4.5 4.5 0 0 1-1.897 1.13l-2.626.787.787-2.626a4.5 4.5 0 0 1 1.13-1.897l8.886-8.887ZM19.5 7.125 16.862 4.487M18 14.25v4.125a2.625 2.625 0 0 1-2.625 2.625H5.625A2.625 2.625 0 0 1 3 18.375V8.625A2.625 2.625 0 0 1 5.625 6H9.75"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
-                  />
-                </svg>
-                New chat
-              </button>
+              @if (chat.messages().length) {
+                <button class="app-button app-button--secondary" type="button" (click)="newChat()">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.072a4.5 4.5 0 0 1-1.897 1.13l-2.626.787.787-2.626a4.5 4.5 0 0 1 1.13-1.897l8.886-8.887ZM19.5 7.125 16.862 4.487M18 14.25v4.125a2.625 2.625 0 0 1-2.625 2.625H5.625A2.625 2.625 0 0 1 3 18.375V8.625A2.625 2.625 0 0 1 5.625 6H9.75"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                    />
+                  </svg>
+                  New chat
+                </button>
+              }
               @if (chat.running()) {
                 <button
                   type="button"
@@ -362,16 +425,6 @@
           </div>
         </form>
       </div>
-      @if (draftId(); as draftId) {
-        <app-event-draft-preview [draftId]="draftId" [refreshVersion]="draftVersion()" />
-      }
-      <p class="archive-chat-footnote">
-        Results show up to 10 matches at a time, including older published talks. Some historical
-        records are incomplete. Organizers can also read talk submissions. Your questions are sent
-        to our AI provider; don’t include sensitive information. Conversations aren’t saved after
-        you leave, except for answers you rate: feedback saves your question, answer, and results
-        for review.
-      </p>
     }
   }
 </section>

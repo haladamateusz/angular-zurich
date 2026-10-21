@@ -11,7 +11,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EventDraftPreviewComponent } from '../event-draft-preview.component';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -25,6 +25,7 @@ import { ChatFeedbackComponent } from '../chat-feedback.component';
     RouterLink,
     ChatFeedbackComponent,
     NgOptimizedImage,
+    NgTemplateOutlet,
     EventDraftPreviewComponent,
   ],
   providers: [ArchiveChatService],
@@ -38,12 +39,18 @@ export class ChatPageComponent {
   private followTranscript = true;
   private scrollOnSend = false;
   private pendingQuestionOrigin: DOMRect | undefined;
+  private pendingMascotOrigin: DOMRect | undefined;
   private questionFlight:
     | { origin: DOMRect; message: HTMLElement; overlay: HTMLElement; finish: () => void }
     | undefined;
   private readonly auth = inject(AuthService);
   private readonly access = inject(ChatAccessService);
   private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>('questionInput');
+  private readonly mascotSprite = viewChild<ElementRef<HTMLElement>>('mascotSprite');
+  private readonly pronunciationAudio =
+    viewChild<ElementRef<HTMLAudioElement>>('pronunciationAudio');
+  protected readonly pronunciationState = signal<'idle' | 'loading' | 'playing' | 'error'>('idle');
+  private readonly draftPreview = viewChild<ElementRef<HTMLElement>>('draftPreview');
   protected readonly transcript = viewChild<ElementRef<HTMLElement>>('transcript');
   protected readonly chat = inject(ArchiveChatService);
   protected readonly latestResponseId = computed(() => {
@@ -124,14 +131,20 @@ export class ChatPageComponent {
     });
     afterRenderEffect(() => {
       this.chat.messages();
+      this.animateMascotToHeader();
       const transcript = this.transcript()?.nativeElement;
       if (this.scrollOnSend) this.followTranscript = true;
       if (transcript && this.followTranscript) transcript.scrollTop = transcript.scrollHeight;
       this.scrollOnSend = false;
       if (transcript) this.animateSentQuestion(transcript);
       else this.clearQuestionFlight();
+      if (!this.chat.running()) this.onDraftPreviewReady();
     });
-    inject(DestroyRef).onDestroy(() => this.clearQuestionFlight());
+    inject(DestroyRef).onDestroy(() => {
+      this.clearQuestionFlight();
+      const audio = this.pronunciationAudio()?.nativeElement;
+      if (audio && !audio.paused) audio.pause();
+    });
     effect((onCleanup) => {
       const session = this.auth.session();
       if (this.userId !== session?.user.id) {
@@ -159,7 +172,28 @@ export class ChatPageComponent {
     await this.checkAccess();
   }
 
+  protected async togglePronunciation() {
+    const audio = this.pronunciationAudio()?.nativeElement;
+    if (!audio || this.pronunciationState() === 'loading') return;
+    if (this.pronunciationState() === 'playing') {
+      audio.pause();
+      this.pronunciationState.set('idle');
+      return;
+    }
+
+    this.pronunciationState.set('loading');
+    audio.currentTime = 0;
+    try {
+      await audio.play();
+    } catch (error: unknown) {
+      this.pronunciationState.set(
+        error instanceof DOMException && error.name === 'AbortError' ? 'idle' : 'error',
+      );
+    }
+  }
+
   protected newChat() {
+    this.pendingMascotOrigin = undefined;
     this.clearQuestionFlight();
     this.chat.reset();
     this.question.reset();
@@ -176,8 +210,11 @@ export class ChatPageComponent {
     const question = this.question.value;
     this.clearQuestionFlight();
     const input = this.textarea()?.nativeElement;
-    if (!input?.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    if (!input?.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.pendingQuestionOrigin = input?.getBoundingClientRect();
+      if (!this.chat.messages().length)
+        this.pendingMascotOrigin = this.mascotSprite()?.nativeElement.getBoundingClientRect();
+    }
     this.followTranscript = true;
     this.scrollOnSend = true;
     this.question.reset();
@@ -192,6 +229,38 @@ export class ChatPageComponent {
       this.followTranscript =
         transcript.scrollHeight - transcript.scrollTop - transcript.clientHeight < 48;
     if (!this.followTranscript) this.clearQuestionFlight();
+  }
+
+  protected onDraftPreviewReady() {
+    const transcript = this.transcript()?.nativeElement;
+    const preview = this.draftPreview()?.nativeElement;
+    if (
+      this.chat.running() ||
+      !this.followTranscript ||
+      !transcript ||
+      !preview?.querySelector('h2')
+    )
+      return;
+    // Keep the draft heading visible once the asynchronously loaded editor expands.
+    transcript.scrollTop +=
+      preview.getBoundingClientRect().top - transcript.getBoundingClientRect().top;
+    this.followTranscript = false;
+    this.clearQuestionFlight();
+  }
+
+  private animateMascotToHeader() {
+    const mascot = this.mascotSprite()?.nativeElement;
+    const origin = this.pendingMascotOrigin;
+    if (!origin) return;
+    this.pendingMascotOrigin = undefined;
+    if (!mascot || !this.chat.messages().length || this.state() !== 'ready') return;
+    const destination = mascot.getBoundingClientRect();
+    if (!origin.width || !destination.width) return;
+    // Animate the wrapper so pose alignment on the image remains independent.
+    mascot.style.setProperty('--mascot-flight-x', `${origin.left - destination.left}px`);
+    mascot.style.setProperty('--mascot-flight-y', `${origin.top - destination.top}px`);
+    mascot.style.setProperty('--mascot-flight-scale', `${origin.width / destination.width}`);
+    mascot.classList.add('archive-chat-mascot-moving');
   }
 
   private animateSentQuestion(transcript: HTMLElement) {

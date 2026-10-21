@@ -15,6 +15,5 @@ export const chatSourcesEventSchema = z.object({
   result: chatResultSchema.optional(),
   sources: z.array(chatSourceSchema).max(10),
   summary: z.string().max(4000).optional(),
-  nextQuestion: z.string().max(300).optional(),
 });
 export type ChatSource = z.infer<typeof chatSourceSchema>;
