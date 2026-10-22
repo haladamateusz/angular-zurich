@@ -12,7 +12,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { Event } from '../../../../core/models/event.interface';
 import { Sponsor } from '../../../../core/models/sponsor.interface';
-import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
+import { EventDateFormatPipe } from '../../../../ui/date-format/event-date-format.pipe';
 
 const EVENT_PREVIEW_ENTER_ANIMATION = 'event-preview-enter';
 const SOLO_HERO_ENTER_ANIMATION = 'hero-intro-reveal';

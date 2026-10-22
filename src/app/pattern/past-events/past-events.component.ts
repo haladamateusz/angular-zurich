@@ -1,9 +1,9 @@
 import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
-import { Event } from '../../../../core/models/event.interface';
-import { EventDateFormatPipe } from '../../../../core/pipes/date-format/event-date-format.pipe';
-import { ViewportRevealDirective } from '../../../../ui/viewport-reveal/viewport-reveal.directive';
+import { Event } from '../../core/models/event.interface';
+import { EventDateFormatPipe } from '../../ui/date-format/event-date-format.pipe';
+import { ViewportRevealDirective } from '../../ui/viewport-reveal/viewport-reveal.directive';
 
 const PAST_EVENTS_ARCHIVE_NAVIGATION_STATE = { fromPastEventsArchive: true } as const;
 

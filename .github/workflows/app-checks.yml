@@ -38,6 +38,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test architecture rules
+        run: npm run test:architecture
+
       - name: Check unused code and dependencies
         run: npm run knip
 

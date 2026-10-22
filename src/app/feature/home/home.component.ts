@@ -1,6 +1,6 @@
 import { Component, computed, inject, resource, signal } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
-import { PastEventsComponent } from './components/past-events/past-events.component';
+import { PastEventsComponent } from '../../pattern/past-events/past-events.component';
 import { PartnersComponent } from './components/partners/partners.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { TeamComponent } from './components/team/team.component';

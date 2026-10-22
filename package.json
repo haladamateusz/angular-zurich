@@ -11,6 +11,7 @@
     "serve:ssr:angular-zurich": "node dist/angular-zurich/server/server.mjs",
     "lint": "ng lint && npm run lint:styles",
     "lint:styles": "stylelint \"src/**/*.css\"",
+    "test:architecture": "node --test ./scripts/architecture.spec.mjs",
     "knip": "knip",
     "knip:mcp": "knip-mcp",
     "test:build-config": "node --test ./scripts/supabase-browser-key.spec.mjs",
@@ -49,13 +50,13 @@
     "@copilotkit/runtime": "1.70.2",
     "@modelcontextprotocol/sdk": "1.30.0",
     "@supabase/supabase-js": "^2.98.0",
+    "ai": "6.0.285",
     "cally": "^0.9.2",
     "express": "^5.1.0",
     "preline": "^4.0.1",
     "rxjs": "7.8.2",
     "tslib": "^2.3.0",
-    "zod": "3.25.76",
-    "ai": "6.0.285"
+    "zod": "3.25.76"
   },
   "devDependencies": {
     "@angular-eslint/builder": "22.0.0",
@@ -73,6 +74,8 @@
     "axe-core": "4.13.0",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-boundaries": "^7.2.1",
     "jsdom": "^27.1.0",
     "knip": "^6.36.0",
     "postcss": "^8.5.3",

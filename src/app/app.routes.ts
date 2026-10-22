@@ -13,15 +13,12 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./feature/auth/login/login.component').then((m) => m.LoginComponent),
+    loadChildren: () => import('./feature/auth/login.routes').then((m) => m.LOGIN_ROUTES),
   },
   {
     path: 'auth/callback',
-    loadComponent: () =>
-      import('./feature/auth/callback/auth-callback.component').then(
-        (m) => m.AuthCallbackComponent,
-      ),
+    loadChildren: () =>
+      import('./feature/auth/auth-callback.routes').then((m) => m.AUTH_CALLBACK_ROUTES),
   },
   {
     path: 'talk-submission',
@@ -41,17 +38,12 @@ export const routes: Routes = [
   },
   {
     path: 'events',
-    title: 'Past events | Angular Zürich',
-    loadComponent: () =>
-      import('./feature/past-events/past-events-page.component').then(
-        (m) => m.PastEventsPageComponent,
-      ),
+    loadChildren: () =>
+      import('./feature/past-events/past-events.routes').then((m) => m.PAST_EVENTS_ROUTES),
   },
   {
     path: 'events/:slug',
-    loadComponent: () =>
-      import('./feature/event-details/event-details.component').then(
-        (m) => m.EventDetailsComponent,
-      ),
+    loadChildren: () =>
+      import('./feature/event-details/event-details.routes').then((m) => m.EVENT_DETAILS_ROUTES),
   },
 ];

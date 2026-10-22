@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import type { Event } from '../../../../core/models/event.interface';
+import type { Event } from '../../core/models/event.interface';
 import { PastEventsComponent } from './past-events.component';
 
 const TEST_EVENT: Event = {

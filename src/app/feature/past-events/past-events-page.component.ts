@@ -1,7 +1,7 @@
 import { Component, inject, resource } from '@angular/core';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
-import { PastEventsComponent } from '../home/components/past-events/past-events.component';
+import { PastEventsComponent } from '../../pattern/past-events/past-events.component';
 
 const EMPTY_EVENTS: Event[] = [];
 

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { signal } from '@angular/core';
 import type { PostgrestResponse, PostgrestSingleResponse } from '@supabase/supabase-js';
 import { App } from './app.component';
@@ -155,11 +156,12 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
-        provideRouter(routes),
+        provideRouter(routes, withComponentInputBinding()),
         {
           provide: SupabaseService,
           useValue: {
             getUpcomingPublicEvent: vi.fn(async () => upcomingPublicEventResponse),
+            getEventBySlug: vi.fn().mockResolvedValue(createEventResponse(DEFAULT_EVENT)),
             getPastEvents: vi.fn().mockResolvedValue(EMPTY_EVENTS_RESPONSE),
             getSponsors: vi.fn().mockResolvedValue(EMPTY_SPONSORS_RESPONSE),
             getOrganizers: vi.fn().mockResolvedValue(EMPTY_PEOPLE_RESPONSE),
@@ -184,6 +186,7 @@ describe('App', () => {
             userProfile,
             waitUntilInitialized: vi.fn().mockResolvedValue(undefined),
             signOut: vi.fn().mockResolvedValue(undefined),
+            completeGoogleSignIn: vi.fn().mockResolvedValue('unauthorized'),
           },
         },
       ],
@@ -195,6 +198,42 @@ describe('App', () => {
     const app = fixture.componentInstance;
 
     expect(app).toBeTruthy();
+  });
+
+  it('inherits the event slug through the lazy route entry point', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl(`/events/${DEFAULT_EVENT.slug}`);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(SupabaseService).getEventBySlug).toHaveBeenCalledWith(DEFAULT_EVENT.slug);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(DEFAULT_EVENT.title);
+    expect(router.url).toBe(`/events/${DEFAULT_EVENT.slug}`);
+  });
+
+  it('preserves the archive route title and renders the archive', async () => {
+    const fixture = TestBed.createComponent(App);
+
+    await TestBed.inject(Router).navigateByUrl('/events');
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Past events | Angular Zürich');
+    expect((fixture.nativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Past events');
+  });
+
+  it('completes the lazy auth callback and preserves the login error query parameter', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/auth/callback');
+    await fixture.whenStable();
+
+    expect(TestBed.inject(AuthService).completeGoogleSignIn).toHaveBeenCalledOnce();
+    expect(router.url).toBe('/login?error=access-denied');
+    expect((fixture.nativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent).toContain(
+      'doesn’t have organizer access',
+    );
   });
 
   it('shows the hero event preview and details link for a future event', async () => {

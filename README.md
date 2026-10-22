@@ -2,6 +2,13 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
 
+## Architecture
+
+The application follows the core, layout, UI, pattern, and lazy feature boundaries from
+Tomas Trajan's Angular Enterprise Architecture. See [the architecture guide](docs/architecture.md)
+for placement rules, dependency directions, and adding features. ESLint enforces these
+boundaries; `npm run test:architecture` verifies the enforcement in CI.
+
 ## Development server
 
 To start a local development server, run:

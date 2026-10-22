@@ -2,7 +2,7 @@ import { Component, afterNextRender, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './layout/footer/footer.component';
 import { NavbarComponent } from './layout/navbar/navbar.component';
-import { ToastOutletComponent } from './ui/toast-outlet/toast-outlet.component';
+import { ToastOutletComponent } from './layout/toast-outlet/toast-outlet.component';
 
 @Component({
   selector: 'app-root',

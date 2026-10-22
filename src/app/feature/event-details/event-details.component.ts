@@ -17,7 +17,7 @@ import { Router, RouterLink } from '@angular/router';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { Event } from '../../core/models/event.interface';
-import { EventDateFormatPipe } from '../../core/pipes/date-format/event-date-format.pipe';
+import { EventDateFormatPipe } from '../../ui/date-format/event-date-format.pipe';
 import { splitTextIntoParagraphs } from '../../core/utils/split-text-into-paragraphs';
 
 const SLIDES_VISIBILITY_DELAY_MS = 2 * 60 * 60 * 1000;
