@@ -131,7 +131,7 @@ for (const viewport of [
     await input.press('Enter');
     const title = page.locator('app-event-draft-preview input[formcontrolname="title"]');
     await expect(title).toHaveValue(draftFixture.content.title);
-    await expect(page.getByRole('button', { name: 'Send question', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeVisible();
     expect((await composer.boundingBox())!.y).toBeCloseTo(initialComposer.y, 0);
     await input.fill('Keep this next question');
 
@@ -167,7 +167,7 @@ for (const viewport of [
       .poll(() => surface.evaluate((element) => element.getBoundingClientRect().bottom))
       .toBeCloseTo(loadingBottom + 120, 0);
     expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    await expect(page.getByRole('button', { name: 'Send question', exact: true })).toBeInViewport();
+    await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeInViewport();
     await page.evaluate(
       () =>
         new Promise<void>((resolve) =>

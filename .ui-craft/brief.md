@@ -32,7 +32,7 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
-- **2026-10-23** — Keep the scrollable chat history directly on the page, with only the bottom composer in a card. Put icon-only controls inside the input area on the right, with accessible names. _Why:_ the user wants a lighter conversation surface and compact input controls. This supersedes the earlier text-only send-button preference.
+- **2026-10-23** — Keep the scrollable chat history directly on the page, with only the bottom composer in a card. Keep icons and visible button labels inside the composer on the right, vertically centered beside the text on wider screens and below it on mobile. _Why:_ the user restored visible labels after trying icon-only controls.
 
 - **2026-10-23** — Fill the available viewport with the chat on entry and keep its composer anchored below an independently scrolling transcript. Preserve the transcript and draft editor when browser focus or same-user session credentials change. _Why:_ loading flashes, lost reading position, and an input that moves with content interrupt the conversation.
 

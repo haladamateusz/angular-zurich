@@ -76,7 +76,7 @@ for (const { viewport, previousCount, label, question } of scenarios) {
       await input.fill(`Previous question ${i}`);
       await input.press('Enter');
       await expect(page.locator('.archive-answer')).toHaveCount(i + 1);
-      await expect(page.getByRole('button', { name: 'Send question', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeVisible();
       await expect(flight).toHaveCount(0);
     }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -120,7 +120,7 @@ for (const { viewport, previousCount, label, question } of scenarios) {
       observer.observe(element.parentElement!, { childList: true });
     });
     if (viewport.width === 390)
-      await page.getByRole('button', { name: 'Send question', exact: true }).click();
+      await page.getByRole('button', { name: 'Send', exact: true }).click();
     else await input.press('Enter');
     await expect(flight).toHaveCount(1);
     await expect(flight).toHaveAttribute('aria-hidden', 'true');

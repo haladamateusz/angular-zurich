@@ -182,7 +182,7 @@ for (const fromChat of [false, true]) {
       await page
         .getByRole('textbox', { name: 'Your question' })
         .fill('Schedule November 25 at half past six in the afternoon');
-      await page.getByRole('button', { name: 'Send question' }).click();
+      await page.getByRole('button', { name: 'Send' }).click();
     }
     const editor = page.getByRole('region', { name: 'Event drafts', exact: true });
     await expect(
@@ -199,7 +199,7 @@ for (const fromChat of [false, true]) {
       await page
         .getByRole('textbox', { name: 'Your question' })
         .fill('Add a talk and a placeholder Meetup link');
-      await page.getByRole('button', { name: 'Send question' }).click();
+      await page.getByRole('button', { name: 'Send' }).click();
       await expect(editor.getByLabel('Meetup event URL')).toHaveValue(MEETUP_URL_PLACEHOLDER);
       await expect(editor.getByLabel('Talk 3', { exact: true })).toContainText(
         'Chat added third talk',

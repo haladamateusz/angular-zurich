@@ -69,7 +69,7 @@ describe('ChatPageComponent', () => {
       'leading-7',
     );
     const controls = fixture.nativeElement.querySelector('.archive-chat-composer-controls');
-    expect(controls?.querySelector('[aria-label="Send question"]')).not.toBeNull();
+    expect(controls?.querySelector('[aria-label="Send"]')).not.toBeNull();
     expect(controls?.textContent).not.toContain('New chat');
     expect(controls?.querySelectorAll('button > svg')).toHaveLength(1);
     expect(fixture.nativeElement.querySelector('.archive-chat-footnote')).toBeNull();

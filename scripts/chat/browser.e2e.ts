@@ -243,9 +243,9 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await expect(activity).toHaveAttribute('open');
   await page.locator('.archive-activity-step summary').click();
   await expect(activity).toContainText('1 matching record');
-  await expect(
-    page.getByRole('button', { name: 'Send question', exact: true }),
-  ).toHaveAccessibleName('Send question');
+  await expect(page.getByRole('button', { name: 'Send', exact: true })).toHaveAccessibleName(
+    'Send',
+  );
   await expect(page.getByRole('heading', { name: 'Signals in practice' })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'To event page for Signals in practice' }),
@@ -320,7 +320,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   for (const htmlMode of ['html-error', 'html-success'] as const) {
     mode = htmlMode;
     await question.fill('Do we have any talk submissions awaiting review?');
-    await page.getByRole('button', { name: 'Send question' }).click();
+    await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByRole('alert')).toContainText('try again');
     await expect(page.getByRole('alert')).not.toContainText('JSON');
     await expect(page.getByRole('alert')).not.toContainText('<html>');
@@ -328,7 +328,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   }
   mode = 'submissions';
   await question.fill('Do we have any talk submissions awaiting review?');
-  await page.getByRole('button', { name: 'Send question' }).click();
+  await page.getByRole('button', { name: 'Send' }).click();
   await expect(
     page.getByRole('link', { name: /Open submission\s*: A submitted talk/ }),
   ).toHaveAttribute('href', `/dashboard/talk-submissions/${id}`);
@@ -348,11 +348,11 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   ).toEqual([]);
   mode = 'quota';
   await page.getByLabel('Your question', { exact: true }).fill('What about testing?');
-  await page.getByRole('button', { name: 'Send question' }).click();
+  await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.getByRole('alert')).toContainText('allowance');
   mode = 'revoked';
   await page.getByLabel('Your question', { exact: true }).fill('Another question');
-  await page.getByRole('button', { name: 'Send question' }).click();
+  await page.getByRole('button', { name: 'Send' }).click();
   await expect(page.getByRole('heading', { name: 'Approved accounts only' })).toBeVisible();
   await expect(page.getByRole('log')).toHaveCount(0);
   expect(errors).toEqual([]);
