@@ -1,9 +1,12 @@
+import { ToastService } from '../../../core/toast/toast.service';
 import { DestroyRef, Service, inject, signal } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ChatFeedbackContext, ChatFeedbackRating } from '../../../core/models/chat-feedback.model';
 
 @Service()
 export class ChatFeedbackService {
+  private readonly toastService = inject(ToastService);
+  private errorToastId: number | undefined;
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly controller = new AbortController();
@@ -13,14 +16,23 @@ export class ChatFeedbackService {
   readonly status = signal('');
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.controller.abort());
+    this.destroyRef.onDestroy(() => {
+      this.controller.abort();
+      if (this.errorToastId !== undefined) this.toastService.dismiss(this.errorToastId);
+    });
+  }
+
+  private reportError(message: string) {
+    this.error.set(message);
+    this.errorToastId = this.toastService.error(message, { title: 'Feedback couldn’t be saved' });
   }
 
   async save(context: ChatFeedbackContext, rating: ChatFeedbackRating | null) {
     if (this.saving() || (rating === this.rating() && !this.error())) return;
+    if (this.errorToastId !== undefined) this.toastService.dismiss(this.errorToastId);
     const session = this.auth.session();
     if (!session) {
-      this.error.set('Sign in again to leave feedback.');
+      this.reportError('Sign in again to leave feedback.');
       return;
     }
     this.saving.set(true);
@@ -47,7 +59,7 @@ export class ChatFeedbackService {
       this.status.set(rating === null ? 'Feedback removed.' : 'Thanks for your feedback.');
     } catch (error) {
       if (this.destroyRef.destroyed || this.auth.session()?.user.id !== session.user.id) return;
-      this.error.set(
+      this.reportError(
         error instanceof Error && error.name === 'Error'
           ? error.message
           : 'We couldn’t save your feedback. Please try again.',

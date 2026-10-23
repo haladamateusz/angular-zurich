@@ -12,13 +12,7 @@
   </div>
 
   @if (errorMessage()) {
-    <div
-      class="mt-6 rounded-surface border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
-      role="alert"
-      aria-live="polite"
-    >
-      {{ errorMessage() }}
-    </div>
+    <app-error-notice class="mt-6" [message]="errorMessage()" />
   } @else if (isLoading()) {
     <div
       class="mt-6 overflow-hidden rounded-surface border border-navbar-line bg-background"

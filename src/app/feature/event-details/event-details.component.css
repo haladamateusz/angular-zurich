@@ -79,15 +79,6 @@ button.event-details__remove-button {
   line-height: 1.6;
 }
 
-.event-details__modal-error {
-  border: 1px solid color-mix(in srgb, var(--color-destructive) 36%, transparent);
-  border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--color-destructive) 10%, transparent);
-  padding: 0.75rem 0.9rem;
-  color: var(--color-foreground);
-  font-size: 0.9rem;
-}
-
 .event-details__modal-actions {
   display: flex;
   flex-wrap: wrap;

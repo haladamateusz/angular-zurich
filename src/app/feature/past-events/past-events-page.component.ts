@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { Component, inject, resource } from '@angular/core';
 import { SupabaseService } from '../../core/data-access/supabase/supabase.service';
 import { Event } from '../../core/models/event.interface';
@@ -7,7 +8,7 @@ const EMPTY_EVENTS: Event[] = [];
 
 @Component({
   selector: 'app-past-events-page',
-  imports: [PastEventsComponent],
+  imports: [ErrorNoticeComponent, PastEventsComponent],
   templateUrl: './past-events-page.component.html',
   styleUrl: './past-events-page.component.css',
 })

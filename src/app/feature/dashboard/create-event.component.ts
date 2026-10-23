@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { EVENT_TIME_OPTIONS } from '../../ui/event-fields/event-time-options';
 import { isPlatformBrowser } from '@angular/common';
 import {
@@ -94,7 +95,13 @@ function formatTimeInputValue(value: string): string {
 
 @Component({
   selector: 'app-create-event',
-  imports: [FormField, RouterLink, CreateEventDatePickerComponent, CreateEventSelectComponent],
+  imports: [
+    ErrorNoticeComponent,
+    FormField,
+    RouterLink,
+    CreateEventDatePickerComponent,
+    CreateEventSelectComponent,
+  ],
   templateUrl: './create-event.component.html',
   styleUrl: './create-event.component.css',
 })
@@ -105,6 +112,7 @@ export class CreateEventComponent {
   private readonly router = inject(Router);
   private readonly supabaseService = inject(SupabaseService);
   private readonly toastService = inject(ToastService);
+  private errorToastId: number | undefined;
   private readonly eventId = this.route.snapshot.paramMap.get('eventId');
   private readonly featureGraphicInput =
     viewChild<ElementRef<HTMLInputElement>>('featureGraphicInput');
@@ -227,6 +235,9 @@ export class CreateEventComponent {
   }
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      if (this.errorToastId !== undefined) this.toastService.dismiss(this.errorToastId);
+    });
     void this.loadOptions();
 
     this.destroyRef.onDestroy(() => {
@@ -356,6 +367,7 @@ export class CreateEventComponent {
 
       this.submissionState.set('submitting');
       this.errorMessage.set('');
+      if (this.errorToastId !== undefined) this.toastService.dismiss(this.errorToastId);
 
       const model = this.formModel();
       const startsAt = parseLocalEventDateTime(model.startsDate, model.startsTime);
@@ -387,8 +399,9 @@ export class CreateEventComponent {
 
         if (error || !data) {
           this.submissionState.set('idle');
-          this.errorMessage.set(
-            'We could not save the event changes. Check that the selected talks are still available and try again.',
+          this.errorToastId = this.toastService.error(
+            'Your edits are still here. Check that the selected talks are still available and try again.',
+            { title: 'Event changes couldn’t be saved' },
           );
           return;
         }
@@ -415,8 +428,9 @@ export class CreateEventComponent {
 
       if (error || !data) {
         this.submissionState.set('idle');
-        this.errorMessage.set(
-          'We could not create the event. Check that the selected talks are still available and try again.',
+        this.errorToastId = this.toastService.error(
+          'Your details are still here. Check that the selected talks are still available and try again.',
+          { title: 'Event couldn’t be created' },
         );
         return;
       }

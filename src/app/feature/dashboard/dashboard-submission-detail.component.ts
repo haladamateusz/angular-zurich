@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { DOCUMENT, DatePipe } from '@angular/common';
 import {
   Component,
@@ -31,7 +32,7 @@ type DialogFocusTarget = 'remove-cancel' | 'review-message' | HTMLElement;
 
 @Component({
   selector: 'app-dashboard-submission-detail',
-  imports: [DatePipe, RouterLink],
+  imports: [ErrorNoticeComponent, DatePipe, RouterLink],
   templateUrl: './dashboard-submission-detail.component.html',
   styleUrl: './dashboard-submission-detail.component.css',
   host: {

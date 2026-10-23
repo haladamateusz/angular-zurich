@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
@@ -90,7 +91,7 @@ let turnstileScriptPromise: Promise<TurnstileApi | null> | null = null;
 
 @Component({
   selector: 'app-submit-talk',
-  imports: [ReactiveFormsModule, RouterLink, ViewportRevealDirective],
+  imports: [ErrorNoticeComponent, ReactiveFormsModule, RouterLink, ViewportRevealDirective],
   templateUrl: './submit-talk.component.html',
   styleUrl: './submit-talk.component.css',
 })

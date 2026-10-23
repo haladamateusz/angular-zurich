@@ -64,8 +64,3 @@ button:focus-visible {
   margin-block-start: var(--space-2);
   min-height: 1.5em;
 }
-
-.feedback-error {
-  color: var(--foreground-primary);
-  margin-block-start: var(--space-2);
-}

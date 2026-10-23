@@ -1,18 +1,12 @@
 @if (upcomingPublicEvent.error()) {
-  <section
-    class="home-state home-state--event"
-    role="alert"
-    aria-labelledby="upcoming-event-error-title"
-  >
-    <div class="home-state__content">
-      <h1 id="upcoming-event-error-title" class="home-state__title">Next event unavailable</h1>
-      <p class="home-state__copy">
-        We couldn’t load the next event. Try again to see the date, talks, and venue.
-      </p>
-      <button type="button" class="app-button" (click)="retryUpcomingEvent()">
-        Try loading the next event
-      </button>
-    </div>
+  <section class="home-state home-state--event">
+    <app-error-notice
+      title="Next event unavailable"
+      [headingLevel]="1"
+      message="We couldn’t load the next event. Try again to see the date, talks, and venue."
+      actionLabel="Try loading the next event"
+      (action)="retryUpcomingEvent()"
+    />
   </section>
 } @else {
   <app-hero
@@ -27,20 +21,14 @@
 }
 
 @if (pastEvents.error()) {
-  <section
-    class="home-state home-state--section"
-    role="alert"
-    aria-labelledby="past-events-error-title"
-  >
-    <div class="home-state__content">
-      <h2 id="past-events-error-title" class="home-state__title">Past events unavailable</h2>
-      <p class="home-state__copy">
-        We couldn’t load past event details. Try again to view the talks and slides.
-      </p>
-      <button type="button" class="app-button app-button--secondary" (click)="retryPastEvents()">
-        Try loading past events
-      </button>
-    </div>
+  <section class="home-state home-state--section">
+    <app-error-notice
+      title="Past events unavailable"
+      [headingLevel]="2"
+      message="We couldn’t load past event details. Try again to view the talks and slides."
+      actionLabel="Try loading past events"
+      (action)="retryPastEvents()"
+    />
   </section>
 } @else if (pastEvents.isLoading() || pastEvents.value().length) {
   <app-past-events

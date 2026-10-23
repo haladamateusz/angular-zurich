@@ -157,7 +157,8 @@
             <span>156/1200</span>
           </div>
           <textarea id="showcase-talk-description" rows="5">
-Show how to trace signal updates, isolate expensive computed state, and keep production debugging humane.</textarea>
+Show how to trace signal updates, isolate expensive computed state, and keep production debugging humane.</textarea
+          >
         </div>
 
         <div class="showcase-field showcase-field--error">
@@ -310,6 +311,25 @@ Show how to trace signal updates, isolate expensive computed state, and keep pro
       <button type="button" class="app-button app-button--danger" (click)="showToast('error')">
         Error toast
       </button>
+    </div>
+  </section>
+  <section class="showcase-section" id="error-notices" aria-labelledby="error-notices-title">
+    <h2 id="error-notices-title">Error notices</h2>
+    <p>One consistent treatment for page, form, and chat errors.</p>
+    <div class="grid gap-4 mt-6">
+      <app-error-notice message="We could not complete sign-in. Please try again." />
+      <app-error-notice
+        title="Events unavailable"
+        message="We couldn’t load your events. Check your connection and try again."
+        actionLabel="Try again"
+        (action)="showErrorPreviewFeedback()"
+      />
+      <app-error-notice
+        title="Changes couldn’t be saved"
+        message="Your edits are still here. Please try saving again."
+        actionLabel="Save changes"
+        [actionDisabled]="true"
+      />
     </div>
   </section>
 </div>

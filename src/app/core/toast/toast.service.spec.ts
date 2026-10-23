@@ -45,7 +45,7 @@ describe('ToastService', () => {
 
   it('keeps persistent toasts until they are dismissed', () => {
     vi.useFakeTimers();
-    const id = service.error('Unable to save', { duration: 0 });
+    const id = service.error('Unable to save');
 
     vi.advanceTimersByTime(10_000);
     expect(service.toasts()).toHaveLength(1);

@@ -196,12 +196,6 @@ button.dashboard-detail__action-button--remove-outline {
   line-height: 1.6;
 }
 
-.dashboard-detail__review-alert--error {
-  border: 1px solid var(--color-status-rejected-border);
-  background: var(--color-status-rejected-background);
-  color: var(--color-status-rejected-foreground);
-}
-
 .dashboard-detail__modal-backdrop {
   position: fixed;
   inset: 0;

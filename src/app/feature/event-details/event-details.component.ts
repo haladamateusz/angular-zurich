@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   Component,
@@ -44,7 +45,7 @@ const EMPTY_EVENT: Event = {
 
 @Component({
   selector: 'app-event-details',
-  imports: [EventDateFormatPipe, RouterLink],
+  imports: [ErrorNoticeComponent, EventDateFormatPipe, RouterLink],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.css',
   host: {

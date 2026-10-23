@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../../../ui/error-notice/error-notice.component';
 import { DOCUMENT } from '@angular/common';
 import {
   Component,
@@ -20,7 +21,7 @@ const HERO_INTRO_FALLBACK_MS = 750;
 
 @Component({
   selector: 'app-hero',
-  imports: [EventDateFormatPipe, RouterLink],
+  imports: [ErrorNoticeComponent, EventDateFormatPipe, RouterLink],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css',
 })

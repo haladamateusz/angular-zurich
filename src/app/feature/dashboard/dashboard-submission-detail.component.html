@@ -13,13 +13,7 @@
   </nav>
 
   @if (errorMessage()) {
-    <div
-      class="rounded-surface border border-primary/25 bg-primary/8 px-6 py-5 text-sm text-foreground"
-      role="alert"
-      aria-live="polite"
-    >
-      {{ errorMessage() }}
-    </div>
+    <app-error-notice [message]="errorMessage()" />
   } @else if (isLoading()) {
     <section
       class="dashboard-detail__loading"
@@ -128,9 +122,7 @@
   } @else if (submission(); as currentSubmission) {
     <header class="dashboard-detail__page-header mb-8">
       <div class="dashboard-detail__review-header flex flex-col items-start gap-5">
-        <h1
-          class="m-0 text-[clamp(1.625rem,3vw,2rem)] font-bold leading-[1.1] text-foreground"
-        >
+        <h1 class="m-0 text-[clamp(1.625rem,3vw,2rem)] font-bold leading-[1.1] text-foreground">
           Submission review
         </h1>
         <div
@@ -174,12 +166,7 @@
     </header>
 
     @if (reviewErrorMessage() && !activeMessageAction()) {
-      <div
-        class="dashboard-detail__review-alert dashboard-detail__review-alert--error mb-6"
-        role="alert"
-      >
-        {{ reviewErrorMessage() }}
-      </div>
+      <app-error-notice class="mb-6" [message]="reviewErrorMessage()" />
     }
 
     <div class="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
@@ -545,13 +532,7 @@
           ></textarea>
 
           @if (reviewErrorMessage()) {
-            <div
-              id="reviewMessageError"
-              class="dashboard-detail__review-alert dashboard-detail__review-alert--error"
-              role="alert"
-            >
-              {{ reviewErrorMessage() }}
-            </div>
+            <app-error-notice id="reviewMessageError" [message]="reviewErrorMessage()" />
           }
 
           <div class="dashboard-detail__modal-actions">
@@ -604,12 +585,7 @@
           </div>
 
           @if (reviewErrorMessage()) {
-            <div
-              class="dashboard-detail__review-alert dashboard-detail__review-alert--error"
-              role="alert"
-            >
-              {{ reviewErrorMessage() }}
-            </div>
+            <app-error-notice [message]="reviewErrorMessage()" />
           }
 
           <div class="dashboard-detail__modal-actions">

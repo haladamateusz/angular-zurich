@@ -9,13 +9,13 @@
     </header>
 
     @if (pastEvents.error()) {
-      <div class="past-events-page__state" role="alert">
-        <h2>Past events unavailable</h2>
-        <p>We couldn’t load past event details. Try again to view the talks and slides.</p>
-        <button type="button" class="app-button app-button--secondary" (click)="retryPastEvents()">
-          Try loading past events
-        </button>
-      </div>
+      <app-error-notice
+        title="Past events unavailable"
+        [headingLevel]="2"
+        actionLabel="Try loading past events"
+        (action)="retryPastEvents()"
+        message="We couldn’t load past event details. Try again to view the talks and slides."
+      />
     } @else if (pastEvents.isLoading()) {
     } @else if (pastEvents.value().length) {
       <app-past-events

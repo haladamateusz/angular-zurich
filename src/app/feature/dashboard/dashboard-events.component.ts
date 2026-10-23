@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal, type WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -21,7 +22,13 @@ type VisibilityFilter = DashboardEventVisibilityFilter | '';
 
 @Component({
   selector: 'app-dashboard-events',
-  imports: [DatePipe, NgTemplateOutlet, RouterLink, DashboardTableFilterComponent],
+  imports: [
+    ErrorNoticeComponent,
+    DatePipe,
+    NgTemplateOutlet,
+    RouterLink,
+    DashboardTableFilterComponent,
+  ],
   templateUrl: './dashboard-events.component.html',
   styleUrl: './dashboard-events.component.css',
 })

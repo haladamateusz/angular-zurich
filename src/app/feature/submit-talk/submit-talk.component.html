@@ -2,13 +2,7 @@
   <section class="px-6 py-14 lg:py-18">
     <div class="mx-auto max-w-5xl space-y-8">
       @if (isBlockingEditError()) {
-        <div
-          aria-live="assertive"
-          class="rounded-surface border border-destructive/25 bg-destructive/10 p-5 text-destructive"
-          role="alert"
-        >
-          <p class="text-sm leading-7 sm:text-base">{{ errorMessage() }}</p>
-        </div>
+        <app-error-notice [message]="errorMessage()" />
       }
 
       @if (!isBlockingEditError()) {
@@ -708,14 +702,12 @@
             </div>
 
             @if (submissionState() === 'error') {
-              <div
-                aria-live="assertive"
-                class="mt-6 rounded-surface border border-destructive/25 bg-destructive/10 p-5 text-destructive"
-                role="alert"
-              >
-                <h3 class="text-base font-bold">Submission failed</h3>
-                <p class="mt-2 text-sm leading-7">{{ errorMessage() }}</p>
-              </div>
+              <app-error-notice
+                class="mt-6"
+                title="Submission failed"
+                [headingLevel]="3"
+                [message]="errorMessage()"
+              />
             }
 
             <div class="submission-card__body relative z-[1] mt-7 space-y-5">

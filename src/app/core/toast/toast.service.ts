@@ -57,7 +57,7 @@ export class ToastService {
   }
 
   error(message: string, options: Omit<ToastOptions, 'variant'> = {}): number {
-    return this.show(message, { ...options, variant: 'error' });
+    return this.show(message, { duration: 0, ...options, variant: 'error' });
   }
 
   warning(message: string, options: Omit<ToastOptions, 'variant'> = {}): number {

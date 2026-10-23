@@ -1,3 +1,4 @@
+import { ToastService } from '../../core/toast/toast.service';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -66,12 +67,51 @@ describe('CreateEventComponent', () => {
               error: null,
             }),
             createEvent: vi.fn(),
+            updateEvent: vi.fn(),
             getEventForEdit: vi.fn().mockResolvedValue({ data: null, error: null }),
           },
         },
       ],
     });
   });
+
+  it.each([false, true])(
+    'reports save failures in a toast and preserves edits (edit: %s)',
+    async (editing) => {
+      eventId = editing ? 'event-1' : null;
+      const api = TestBed.inject(SupabaseService);
+      const save = editing ? vi.mocked(api.updateEvent) : vi.mocked(api.createEvent);
+      save.mockResolvedValue({ data: null, error: new Error('Unavailable') });
+      const fixture = TestBed.createComponent(CreateEventComponent);
+      await fixture.whenStable();
+      const component = fixture.componentInstance;
+      const model = {
+        title: 'Angular meetup',
+        startsDate: `${new Date().getFullYear() + 1}-01-15`,
+        startsTime: '18:00',
+        meetupUrl: 'https://www.meetup.com/angularzrh/',
+        venueId: 'venue-1',
+        talks: [{ talkId: 'talk-1' }, { talkId: 'talk-2' }],
+        isPublic: true,
+      };
+      component['formModel'].set(model);
+      component['featureGraphic'].set(new File(['image'], 'event.png', { type: 'image/png' }));
+      await fixture.whenStable();
+      await component['saveEvent']();
+      await fixture.whenStable();
+      const toasts = TestBed.inject(ToastService);
+      expect(save).toHaveBeenCalledTimes(1);
+      expect(toasts.toasts()).toEqual([expect.objectContaining({ variant: 'error', duration: 0 })]);
+      expect(component['formModel']()).toEqual(model);
+      expect(component['submissionState']()).toBe('idle');
+      expect(fixture.nativeElement.querySelector('app-error-notice')).toBeNull();
+      await component['saveEvent']();
+      expect(toasts.toasts().filter((toast) => !toast.dismissing)).toHaveLength(1);
+      fixture.destroy();
+      expect(toasts.toasts().filter((toast) => !toast.dismissing)).toHaveLength(0);
+      toasts.clear();
+    },
+  );
 
   it('does not show a removal action while editing an event', async () => {
     eventId = 'event-1';

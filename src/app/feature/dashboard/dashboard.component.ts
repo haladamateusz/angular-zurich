@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal, type WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -35,7 +36,7 @@ interface DashboardTalkSubmission extends OrganizerTalkSubmission {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DatePipe, RouterLink, DashboardTableFilterComponent],
+  imports: [ErrorNoticeComponent, DatePipe, RouterLink, DashboardTableFilterComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

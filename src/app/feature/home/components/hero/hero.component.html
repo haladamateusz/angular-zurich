@@ -266,16 +266,11 @@
       <span class="sponsors__label">Supported by</span>
       <div class="sponsors__marquee">
         @if (sponsorsLoadFailed()) {
-          <div class="sponsors__error" role="alert">
-            <span>Partner logos are unavailable right now.</span>
-            <button
-              type="button"
-              class="app-button app-button--ghost"
-              (click)="retrySponsors.emit()"
-            >
-              Try loading partners
-            </button>
-          </div>
+          <app-error-notice
+            message="Partner logos are unavailable right now."
+            actionLabel="Try loading partners"
+            (action)="retrySponsors.emit()"
+          />
         } @else if (sponsorsLoading() && !sponsors().length) {
           <div class="sponsors__placeholder-row" aria-hidden="true">
             @for (placeholder of [1, 2, 3, 4]; track placeholder) {

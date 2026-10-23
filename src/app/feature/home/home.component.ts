@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { Component, computed, inject, resource, signal } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
 import { PastEventsComponent } from '../../pattern/past-events/past-events.component';
@@ -33,7 +34,14 @@ const EMPTY_SPONSORS: Sponsor[] = [];
 
 @Component({
   selector: 'app-home',
-  imports: [HeroComponent, PastEventsComponent, StatsComponent, TeamComponent, PartnersComponent],
+  imports: [
+    ErrorNoticeComponent,
+    HeroComponent,
+    PastEventsComponent,
+    StatsComponent,
+    TeamComponent,
+    PartnersComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

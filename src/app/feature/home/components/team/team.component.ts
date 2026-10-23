@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../../../ui/error-notice/error-notice.component';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   afterNextRender,
@@ -19,6 +20,7 @@ const CARD_REVEAL_THRESHOLD = 0.5;
 const CARD_REVEAL_VISIBLE_HEIGHT_CAP = 200;
 
 @Component({
+  imports: [ErrorNoticeComponent],
   selector: 'app-team',
   templateUrl: './team.component.html',
   styleUrl: './team.component.css',

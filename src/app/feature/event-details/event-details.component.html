@@ -156,9 +156,7 @@
         </section>
       </section>
     } @else if (eventResource.error()) {
-      <div class="event-details__state-card" role="alert">
-        We couldn’t load this event right now.
-      </div>
+      <app-error-notice message="We couldn’t load this event right now." />
     } @else {
       @let currentEvent = event();
 
@@ -402,9 +400,7 @@
           </p>
 
           @if (removeEventErrorMessage()) {
-            <div class="event-details__modal-error" role="alert">
-              {{ removeEventErrorMessage() }}
-            </div>
+            <app-error-notice [message]="removeEventErrorMessage()" />
           }
 
           <div class="event-details__modal-actions">

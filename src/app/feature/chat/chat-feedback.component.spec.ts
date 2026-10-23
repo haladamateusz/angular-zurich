@@ -1,3 +1,4 @@
+import { ToastService } from '../../core/toast/toast.service';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from '../../core/auth/auth.service';
@@ -84,14 +85,28 @@ describe('ChatFeedbackComponent', () => {
     await service.save(context, 'not_quite');
     await fixture.whenStable();
     expect(service.rating()).toBe('useful');
-    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
-      'try again',
-    );
+    expect(
+      TestBed.inject(ToastService)
+        .toasts()
+        .filter((toast) => !toast.dismissing),
+    ).toEqual([
+      expect.objectContaining({
+        variant: 'error',
+        duration: 0,
+        message: expect.stringContaining('try again'),
+      }),
+    ]);
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(fixture.nativeElement.querySelector('button').disabled).toBe(false);
     fail = false;
     await service.save(context, 'not_quite');
     await fixture.whenStable();
     expect(service.rating()).toBe('not_quite');
+    expect(
+      TestBed.inject(ToastService)
+        .toasts()
+        .filter((toast) => !toast.dismissing),
+    ).toHaveLength(0);
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
   });
 

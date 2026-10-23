@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../../ui/error-notice/error-notice.component';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -9,15 +10,14 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
 };
 
 @Component({
+  imports: [ErrorNoticeComponent],
   selector: 'app-login',
   template: `
     <section class="mx-auto flex min-h-[calc(100vh-12rem)] max-w-3xl items-center px-6 py-16">
       <div
         class="login-card w-full rounded-surface border border-card-line bg-card px-8 py-10 sm:px-10"
       >
-        <p class="relative z-[1] text-sm font-bold text-primary-text">
-          Organizer access
-        </p>
+        <p class="relative z-[1] text-sm font-bold text-primary-text">Organizer access</p>
         <h1
           class="relative z-[1] mt-4 text-4xl font-display font-semibold tracking-[-0.04em] text-foreground"
         >
@@ -28,12 +28,7 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
         </p>
 
         @if (errorMessage()) {
-          <div
-            class="mt-6 rounded-surface border border-primary/25 bg-primary/8 px-4 py-3 text-sm text-foreground"
-            role="alert"
-          >
-            {{ errorMessage() }}
-          </div>
+          <app-error-notice class="mt-6" [message]="errorMessage() ?? ''" />
         }
 
         <div class="relative z-[1] mt-8">

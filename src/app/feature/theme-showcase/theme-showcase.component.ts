@@ -1,14 +1,19 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
 import { Component, inject } from '@angular/core';
 import { ToastService, type ToastVariant } from '../../core/toast/toast.service';
 
 @Component({
   selector: 'app-theme-showcase',
-  imports: [],
+  imports: [ErrorNoticeComponent],
   templateUrl: './theme-showcase.component.html',
   styleUrl: './theme-showcase.component.css',
 })
 export class ThemeShowcaseComponent {
   private readonly toastService = inject(ToastService);
+
+  protected showErrorPreviewFeedback(): void {
+    this.toastService.info('This is a preview. No request was sent.');
+  }
 
   protected showToast(variant: ToastVariant): void {
     switch (variant) {
@@ -27,7 +32,6 @@ export class ThemeShowcaseComponent {
         return;
       case 'error':
         this.toastService.error('We could not publish the event. Please try again.', {
-          duration: 0,
           title: 'Publishing failed',
         });
         return;

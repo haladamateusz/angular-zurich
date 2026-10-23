@@ -40,9 +40,6 @@ import { ChatFeedbackService } from './data-access/chat-feedback.service';
       }
     </div>
     <p class="feedback-status" role="status">{{ feedback.status() }}</p>
-    @if (feedback.error()) {
-      <p class="feedback-error" role="alert">{{ feedback.error() }}</p>
-    }
   `,
 })
 export class ChatFeedbackComponent {
