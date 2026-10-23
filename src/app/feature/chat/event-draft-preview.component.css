@@ -32,6 +32,12 @@ h4 {
   font-size: var(--type-sm);
 }
 
+.draft-save-status {
+  min-height: 1.5em;
+  color: var(--muted-foreground-1);
+  font-size: var(--type-sm);
+}
+
 fieldset {
   border: 0;
   min-width: 0;
@@ -137,31 +143,121 @@ button:disabled {
   outline-offset: 3px;
 }
 
-article {
-  border-left: 2px solid var(--primary);
-  padding-left: var(--space-4);
-  margin-block: var(--space-4);
-}
-
-.preserve-lines {
-  white-space: pre-wrap;
-}
-
 .draft-confirm {
-  padding: var(--space-4);
-  border-radius: var(--radius-control);
+  border-top: 1px solid var(--border-default);
+  padding-top: var(--space-4);
 }
 
-dt {
-  font-weight: var(--weight-bold);
-  margin-top: var(--space-3);
+.draft-summary-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-block: var(--space-6);
 }
 
-dd {
+.draft-summary-field {
+  min-width: 0;
+}
+
+.draft-summary-label {
+  color: var(--muted-foreground-1);
+  font-size: var(--type-sm);
+  font-weight: var(--weight-regular);
+  margin: 0 0 var(--space-2);
+}
+
+.draft-summary-field dd {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   margin: 0;
+  font-size: var(--type-base);
+  line-height: var(--leading-normal);
+}
+
+.draft-summary-field svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  color: var(--foreground-link);
+}
+
+.draft-summary-field a {
+  min-height: auto;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+
+.draft-summary-talks h4 {
+  margin: 0;
+  color: var(--foreground-primary);
+  font-size: var(--type-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+}
+
+.draft-summary-talks {
+  list-style: none;
+  padding: 0;
+  margin-bottom: var(--space-6);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-surface);
+  overflow: hidden;
+}
+
+.draft-summary-talks li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-3);
+}
+
+.draft-summary-talks li + li {
+  border-top: 1px solid var(--border-default);
+}
+
+.draft-summary-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex: none;
+  max-width: 5rem;
+}
+
+.draft-summary-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  background: var(--background-sunken);
+  font-size: var(--type-sm);
+}
+
+.draft-summary-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.draft-summary-talk-copy {
+  min-width: 0;
+}
+
+.draft-summary-speakers {
+  margin-top: var(--space-1);
+  color: var(--muted-foreground-1);
+  font-size: var(--type-sm);
 }
 
 @media (max-width: 640px) {
+  .draft-summary-field:nth-child(n + 3) {
+    grid-column: 1 / -1;
+  }
+
   .draft-grid {
     grid-template-columns: 1fr;
   }

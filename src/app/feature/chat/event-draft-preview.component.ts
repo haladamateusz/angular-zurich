@@ -1,3 +1,5 @@
+import { ErrorNoticeComponent } from '../../ui/error-notice/error-notice.component';
+import { DatePipe, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,6 +31,9 @@ import {
 
 @Component({
   imports: [
+    DatePipe,
+    NgOptimizedImage,
+    ErrorNoticeComponent,
     ReactiveFormsModule,
     RouterLink,
     CreateEventDatePickerComponent,
@@ -47,6 +52,7 @@ export class EventDraftPreviewComponent {
   private readonly api = inject(EventDraftService);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly draft = signal<EventDraft | null>(null);
+  private readonly loadedDraftId = computed(() => this.draft()?.id);
   protected readonly options = signal<EventDraftOptions>({ venues: [], speakers: [], talks: [] });
   protected readonly busy = signal(false);
   protected readonly savingDetails = signal(false);
@@ -55,6 +61,32 @@ export class EventDraftPreviewComponent {
   protected readonly notice = signal('');
   protected readonly discardConfirm = signal(false);
   protected readonly review = signal<EventDraftReview | null>(null);
+  protected readonly reviewTalks = computed(() =>
+    (this.review()?.draft.content.talks ?? []).map((talk) => {
+      const speakers = talk.speakerIds.map((id) => {
+        const speaker = this.options().speakers.find((item) => item.id === id);
+        const name =
+          [speaker?.first_name, speaker?.last_name].filter(Boolean).join(' ') ||
+          'Speaker unavailable';
+        return {
+          id,
+          name,
+          picture: speaker?.picture_url,
+          initials: speaker
+            ? [speaker.first_name, speaker.last_name]
+                .filter(Boolean)
+                .map((part) => part!.charAt(0))
+                .join('')
+            : '?',
+        };
+      });
+      return {
+        ...talk,
+        speakers,
+        names: speakers.map((speaker) => speaker.name).join(', ') || 'Speaker unavailable',
+      };
+    }),
+  );
   private pendingRefresh: string | null = null;
   private autosaveTimer: ReturnType<typeof setTimeout> | undefined;
   private pendingAutosave = false;
@@ -157,7 +189,7 @@ export class EventDraftPreviewComponent {
     });
     this.destroyRef.onDestroy(() => clearTimeout(this.autosaveTimer));
     afterRenderEffect(() => {
-      if (this.draft()) this.previewReady.emit();
+      if (this.loadedDraftId()) this.previewReady.emit();
     });
     afterRenderEffect(() => {
       const heading = this.reviewHeading();
@@ -332,6 +364,9 @@ export class EventDraftPreviewComponent {
   protected venueName(id: string) {
     const venue = this.options().venues.find((item) => item.id === id);
     return venue ? `${venue.title}, ${venue.street}, ${venue.city}` : id;
+  }
+  protected venueTitle(id: string) {
+    return this.options().venues.find((item) => item.id === id)?.title || 'Not selected';
   }
   protected speakerNames(ids: string[]) {
     return ids

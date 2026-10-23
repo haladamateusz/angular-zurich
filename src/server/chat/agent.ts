@@ -77,6 +77,7 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
   let providerCalls = 0;
   let providerFailure: Error | undefined;
   let writingAnswer = false;
+  let draftLimitReached = false;
   let usage: { inputTokens: number; outputTokens: number; estimatedCostUsd: number } | undefined;
   const provider = createOpenAI({
     apiKey,
@@ -85,12 +86,23 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
       signal.throwIfAborted();
       const approval = await client.rpc('can_current_user_chat').abortSignal(signal);
       if (approval.error || approval.data !== true) throw new Error('access_revoked');
+      const requestBytes = typeof init?.body === 'string' ? Buffer.byteLength(init.body) : 0;
       if (
         ++providerCalls > callLimit() + (writingAnswer ? 1 : 0) ||
         typeof init?.body !== 'string' ||
-        Buffer.byteLength(init.body) > MAX_PROVIDER_BYTES
-      )
+        requestBytes > MAX_PROVIDER_BYTES
+      ) {
+        console.warn(
+          JSON.stringify({
+            event: 'chat_processing_limit',
+            runId: request.runId,
+            reason: requestBytes > MAX_PROVIDER_BYTES ? 'request_size' : 'provider_calls',
+            requestBytes,
+            providerCalls,
+          }),
+        );
         throw new Error('model_budget_exceeded');
+      }
       // Enforce the price ceiling used by the 10-cent database reservation.
       const body = JSON.parse(init.body) as Record<string, unknown>;
       body['model'] = CHAT_MODEL;
@@ -292,16 +304,31 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
     signal.addEventListener('abort', abort, { once: true });
     subscription.add(() => signal.removeEventListener('abort', abort));
     if (signal.aborted) abort();
+  }).catch((error: unknown) => {
+    // Recover only a verified saved draft after our own processing guard stops
+    // further inference. Failed writes and cancelled requests still fail normally.
+    if (
+      error instanceof Error &&
+      error.message === 'model_budget_exceeded' &&
+      !signal.aborted &&
+      workflow.draft()
+    ) {
+      draftLimitReached = true;
+      return;
+    }
+    throw error;
   });
   signal.throwIfAborted();
   const draft = workflow.draft();
   if (draft) {
+    draftLimitReached ||= !workflow.ready() && providerCalls >= callLimit();
     const approval = await client.rpc('can_current_user_manage_events').abortSignal(signal);
     if (approval.error || approval.data !== true) throw new Error('access_revoked');
     const result: ChatResult = { kind: 'event_draft', draftId: draft.id, version: draft.version };
     const nextContext = { ...archive.context(), pendingEvent: undefined, eventDraftId: draft.id };
-    const text =
-      draft.state === 'discarded'
+    const text = draftLimitReached
+      ? 'Your private draft is saved, but I reached the processing limit before completing the request. It may be incomplete. Review the saved details below, then ask me to finish anything missing.'
+      : draft.state === 'discarded'
         ? 'The private draft was discarded.'
         : draft.state === 'saved'
           ? 'This event is saved with Draft visibility in the dashboard.'

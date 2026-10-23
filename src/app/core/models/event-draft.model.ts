@@ -45,7 +45,12 @@ export function eventDraftSaveIssues(draft: EventDraft): string[] {
 }
 export interface EventDraftOptions {
   venues: { id: string; title: string; street: string; city: string }[];
-  speakers: { id: string; first_name: string | null; last_name: string | null }[];
+  speakers: {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    picture_url?: string | null;
+  }[];
   talks: { id: string; title: string; speakerNames: string[] }[];
 }
 export interface EventDraftAudit {

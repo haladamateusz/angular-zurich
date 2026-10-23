@@ -63,6 +63,7 @@ for (const fromChat of [false, true]) {
               id: draft.content.talks[0].speakerIds[0],
               first_name: 'Mateusz',
               last_name: 'Halada',
+              picture_url: '/fixture-speaker.svg',
             },
           ],
           talks: [],
@@ -170,6 +171,12 @@ for (const fromChat of [false, true]) {
         body: events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(''),
       });
     });
+    await page.route('**/fixture-speaker.svg', (route) =>
+      route.fulfill({
+        contentType: 'image/svg+xml',
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><rect width="36" height="36" fill="#777"/></svg>',
+      }),
+    );
     await page.goto(fromChat ? '/chat' : `/chat?draft=${draft.id}`);
     if (fromChat) {
       await page
@@ -218,11 +225,48 @@ for (const fromChat of [false, true]) {
     await expect(editor.getByRole('button', { name: 'Review event draft' })).toBeDisabled();
     await expect(editor.getByRole('button', { name: 'Save event details' })).toHaveCount(0);
     await expect(editor.getByRole('status')).toContainText('saved privately');
+    const meetupUrl = editor.getByLabel('Meetup event URL');
+    await meetupUrl.fill('https://www.meetup.com/angularzrh/events/123456789/');
+    const transcript = page.getByRole('log');
+    await transcript.evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+      element.dispatchEvent(new Event('scroll'));
+    });
+    const scrollBeforeSave = await transcript.evaluate((element) => element.scrollTop);
+    await expect(editor.getByRole('status')).toContainText('saved privately');
+    expect(await transcript.evaluate((element) => element.scrollTop)).toBeGreaterThanOrEqual(
+      scrollBeforeSave - 48,
+    );
+    await expect(meetupUrl).toBeFocused();
     await editor.getByRole('button', { name: 'Review event draft' }).click();
     await expect(editor.getByRole('heading', { name: 'Save event as draft?' })).toBeFocused();
     await expect(editor).toContainText('Edited meetup title');
     await expect(editor.getByLabel('Description', { exact: true })).toHaveCount(0);
-    await expect(editor).toContainText('Description for talk 1');
+    await expect(editor).not.toContainText('Description for talk 1');
+    const meetupLink = editor.getByRole('link', {
+      name: /https:\/\/www.meetup.com\/angularzrh\/events\/123456789\//,
+    });
+    await expect(meetupLink).toHaveAttribute(
+      'href',
+      'https://www.meetup.com/angularzrh/events/123456789/',
+    );
+    await expect(meetupLink).toHaveAttribute('target', '_blank');
+    await expect(editor.getByRole('img', { name: 'Mateusz Halada' }).first()).toBeVisible();
+    await expect
+      .poll(() =>
+        editor
+          .getByRole('img', { name: 'Mateusz Halada' })
+          .first()
+          .evaluate((img: HTMLImageElement) => img.naturalWidth),
+      )
+      .toBe(36);
+    await expect(editor.locator('.draft-summary-meta')).toContainText('25 Nov 2026');
+    await expect(editor.locator('.draft-summary-meta')).toContainText('18:30');
+    const summaryFields = editor.locator('.draft-summary-field');
+    const titleBounds = await summaryFields.nth(0).boundingBox();
+    const startsBounds = await summaryFields.nth(1).boundingBox();
+    expect(titleBounds!.y).toBe(startsBounds!.y);
+    expect(startsBounds!.x).toBeGreaterThan(titleBounds!.x);
     expect(publishes).toBe(0);
     await page.addScriptTag({ content: axe.source });
     const violations = () =>
@@ -239,6 +283,9 @@ for (const fromChat of [false, true]) {
     expect(await violations()).toEqual([]);
     await page.screenshot({ path: 'tmp/event-draft-desktop.png', fullPage: true });
     await page.setViewportSize({ width: 390, height: 844 });
+    const mobileTitleBounds = await summaryFields.nth(0).boundingBox();
+    const mobileStartsBounds = await summaryFields.nth(1).boundingBox();
+    expect(mobileStartsBounds!.y).toBeGreaterThanOrEqual(mobileTitleBounds!.y);
     await page.evaluate(() => document.documentElement.classList.add('dark'));
     expect(await violations()).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(

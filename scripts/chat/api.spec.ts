@@ -44,6 +44,8 @@ let submissionAccess: boolean;
 let submissionReads: number;
 let submissionQuestion: boolean;
 let draftQuestion: boolean;
+let oversizedDraftStep: boolean;
+let repeatedDraftOptions: boolean;
 let planningConversation: boolean;
 let monthlyCapacityQuestion: boolean;
 let recentStartTimes: string[];
@@ -198,6 +200,8 @@ beforeEach(() => {
   submissionReads = 0;
   submissionQuestion = false;
   draftQuestion = false;
+  oversizedDraftStep = false;
+  repeatedDraftOptions = false;
   planningConversation = false;
   monthlyCapacityQuestion = false;
   recentStartTimes = [];
@@ -281,7 +285,27 @@ beforeEach(() => {
           return Response.json(currentDraft);
         }
         if (target.includes('/rest/v1/Venues')) return Response.json([]);
-        if (target.includes('/rest/v1/People')) return Response.json([]);
+        if (target.includes('/rest/v1/People'))
+          return Response.json(
+            oversizedDraftStep
+              ? [
+                  {
+                    id: USER_ID,
+                    first_name: 'x'.repeat(40_000),
+                    last_name: 'Large fixture catalogue',
+                  },
+                ]
+              : repeatedDraftOptions
+                ? [
+                    {
+                      id: USER_ID,
+                      first_name: 'CatalogueSpeaker',
+                      last_name: 'Example',
+                      picture_url: 'https://fixture.invalid/photo.jpg',
+                    },
+                  ]
+                : [],
+          );
         if (target.includes('/rest/v1/Talks')) return Response.json([]);
         if (target.includes('/save_chat_event_draft')) {
           expect(new Headers(init?.headers).get('authorization')).toBe('Bearer test-service');
@@ -499,8 +523,14 @@ beforeEach(() => {
             return toolStream('publish_event', { draftId: currentDraft.id });
           }
         }
+        if (draftQuestion && oversizedDraftStep && modelCalls === 2)
+          return toolStream('get_event_options', { query: '' });
+        if (draftQuestion && repeatedDraftOptions && modelCalls <= 2)
+          return toolStream('get_event_options', {
+            query: modelCalls === 1 ? 'Tomas' : 'signals observables',
+          });
         if (draftQuestion)
-          return modelCalls === 1
+          return modelCalls === (repeatedDraftOptions ? 3 : 1)
             ? toolStream('create_event_draft', draftFixture.content)
             : toolStream('publish_event', { draftId: draftFixture.id });
         if (submissionQuestion)
@@ -667,6 +697,31 @@ describe('protected chat API', () => {
     expect(events).toContain('RUN_FINISHED');
     expect(draftPublishes).toBe(0);
     expect(modelCalls).toBe(2);
+  });
+  it('returns a saved draft and continuation context when the next model request exceeds the size limit', async () => {
+    draftQuestion = true;
+    oversizedDraftStep = true;
+    const events = await (await post('/run')).text();
+    expect(draftMutations).toHaveLength(1);
+    expect(events).toContain('"kind":"event_draft"');
+    expect(events).toContain('It may be incomplete');
+    expect(events).toContain('contextToken');
+    expect(events).toContain('RUN_FINISHED');
+    expect(events).not.toContain('RUN_ERROR');
+    expect(draftPublishes).toBe(0);
+    expect(modelCalls).toBe(2);
+  });
+  it('sends shared options only once and excludes photo URLs from model requests', async () => {
+    draftQuestion = true;
+    repeatedDraftOptions = true;
+    const events = await (await post('/run')).text();
+    expect(events).toContain('RUN_FINISHED');
+    expect(events).not.toContain('RUN_ERROR');
+    const finalRequest = JSON.stringify(providerBodies.at(-1));
+    expect(finalRequest.match(/CatalogueSpeaker/g)).toHaveLength(1);
+    expect(finalRequest).not.toContain('photo.jpg');
+    expect(finalRequest).toContain('Reuse venues');
+    expect(modelCalls).toBe(4);
   });
   it('requires an explicit, valid UI approval and rejects stale or denied publication', async () => {
     const path = `/drafts/${draftFixture.id}`;

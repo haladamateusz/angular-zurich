@@ -406,12 +406,31 @@ chatRouter.post('/run', async (req, res) => {
         steps,
       }),
     );
+    const failureMessage =
+      category === 'model_budget_exceeded'
+        ? 'This request reached the chat processing limit. Try splitting it into smaller steps.'
+        : category === 'model_unavailable' || category === 'answer_unavailable'
+          ? 'The AI service could not finish the response. Please try again.'
+          : category === 'cancelled'
+            ? 'The request timed out or was interrupted. Please try again.'
+            : 'The request couldn’t finish. Please try again. If this continues, contact an organizer.';
+    const savedDraftChanges = steps.some(
+      (step) =>
+        step.state === 'complete' &&
+        [
+          'create_event_draft',
+          'update_event',
+          'attach_talk_to_event',
+          'create_talk_draft',
+        ].includes(step.tool),
+    );
     emit({
       type: 'RUN_ERROR',
       code: 'CHAT_UNAVAILABLE',
       message: answerStarted
         ? 'The answer was interrupted. The archive results are still available above. Retry your question for a complete answer.'
-        : 'The search couldn’t finish. Please try again. If this continues, contact an organizer.',
+        : failureMessage +
+          (savedDraftChanges ? ' Completed changes to your private event draft were saved.' : ''),
     });
   } finally {
     controller.abort();

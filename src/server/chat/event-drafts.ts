@@ -94,6 +94,93 @@ export function createEventDraftTools(
     if (error || !data) throw new DraftError('Draft not found or unavailable.', 404);
     return eventDraftSchema.parse(data);
   }
+  async function findTalkOptions(query: string) {
+    const normalize = (value: string) => value.trim().replace(/\s+/g, ' ').toLowerCase();
+    const search = normalize(query);
+    // Topic descriptions need not be contiguous title excerpts ("observables and
+    // signals" should find "From Observables to Signals"). Require every keyword
+    // so a talk about only one of the requested topics is not selected instead.
+    const connectors = new Set([
+      'a',
+      'an',
+      'the',
+      'and',
+      'to',
+      'from',
+      'with',
+      'about',
+      'of',
+      'in',
+      'on',
+      'for',
+      'by',
+    ]);
+    const keywords = (
+      search.replace(/^(?:the )?talk (?:about|on|by|from) /, '').match(/[\p{L}\p{N}]+/gu) ?? []
+    ).filter((word) => !connectors.has(word));
+    const matches: { id: string; title: string; speakerNames: string[] }[] = [];
+    const pageSize = 100;
+    // Search the linked speakers as well as the title before limiting results.
+    // Page through candidates so a speaker's talk cannot disappear after the first 100.
+    for (let offset = 0; ; offset += pageSize) {
+      const { data, error } = await client
+        .from('Talks')
+        .select(
+          `id,title,source_talk_submission_id,
+          speaker_links:SpeakerOnTalk(speaker:People(first_name,last_name))`,
+        )
+        .is('event_id', null)
+        .not('source_talk_submission_id', 'is', null)
+        .order('title')
+        .order('id')
+        .range(offset, offset + pageSize - 1)
+        .returns<AssignableTalk[]>()
+        .abortSignal(signal);
+      if (error) throw new DraftError('Event options could not be loaded.', 503);
+      const candidates = data
+        .map(({ id, title, source_talk_submission_id, speaker_links }) => ({
+          id,
+          title,
+          source_talk_submission_id,
+          speakerNames: speaker_links
+            .map(({ speaker }) =>
+              [speaker?.first_name, speaker?.last_name]
+                .filter((name): name is string => Boolean(name?.trim()))
+                .map((name) => name.trim())
+                .join(' '),
+            )
+            .filter((name) => name.length > 0),
+        }))
+        .filter(({ title, speakerNames }) =>
+          [title, ...speakerNames].some((value) => {
+            const normalized = normalize(value);
+            return (
+              normalized.includes(search) ||
+              (keywords.length > 0 && keywords.every((word) => normalized.includes(word)))
+            );
+          }),
+        );
+      if (candidates.length) {
+        const approved = await client
+          .from('organizer_talk_submissions')
+          .select('id')
+          .eq('status', 'approved')
+          .in(
+            'id',
+            candidates.map((talk) => talk.source_talk_submission_id),
+          )
+          .abortSignal(signal);
+        if (approved.error) throw new DraftError('Approved talks could not be loaded.', 503);
+        const ids = new Set(approved.data.map((item) => item.id));
+        matches.push(
+          ...candidates
+            .filter((talk) => ids.has(talk.source_talk_submission_id))
+            .map(({ id, title, speakerNames }) => ({ id, title, speakerNames })),
+        );
+      }
+      if (matches.length >= 30 || data.length < pageSize) return matches.slice(0, 30);
+    }
+  }
   return {
     get,
     async audit(draftId: string) {
@@ -110,7 +197,6 @@ export function createEventDraftTools(
     },
     async options(query: string) {
       await authorize();
-      const escaped = query.replace(/[\\%_]/g, '\\$&').replaceAll('*', '');
       const [venues, speakers, talks, recentEvents] = await Promise.all([
         client
           .from('Venues')
@@ -120,23 +206,11 @@ export function createEventDraftTools(
           .abortSignal(signal),
         client
           .from('People')
-          .select('id,first_name,last_name')
+          .select('id,first_name,last_name,picture_url')
           .order('first_name')
           .limit(100)
           .abortSignal(signal),
-        client
-          .from('Talks')
-          .select(
-            `id,title,source_talk_submission_id,
-            speaker_links:SpeakerOnTalk(speaker:People(first_name,last_name))`,
-          )
-          .is('event_id', null)
-          .not('source_talk_submission_id', 'is', null)
-          .ilike('title', `%${escaped}%`)
-          .order('title')
-          .limit(100)
-          .returns<AssignableTalk[]>()
-          .abortSignal(signal),
+        findTalkOptions(query),
         client
           .from('Events')
           .select('starts_at')
@@ -146,21 +220,8 @@ export function createEventDraftTools(
           .limit(5)
           .abortSignal(signal),
       ]);
-      if (venues.error || speakers.error || talks.error || recentEvents.error)
+      if (venues.error || speakers.error || recentEvents.error)
         throw new DraftError('Event options could not be loaded.', 503);
-      const approved = talks.data.length
-        ? await client
-            .from('organizer_talk_submissions')
-            .select('id')
-            .eq('status', 'approved')
-            .in(
-              'id',
-              talks.data.map((talk) => talk.source_talk_submission_id),
-            )
-            .abortSignal(signal)
-        : { data: [], error: null };
-      if (approved.error) throw new DraftError('Approved talks could not be loaded.', 503);
-      const ids = new Set(approved.data?.map((item) => item.id));
       const times = new Map<string, number>();
       const clock = new Intl.DateTimeFormat('en-GB', {
         timeZone: 'Europe/Zurich',
@@ -182,20 +243,7 @@ export function createEventDraftTools(
             : null,
         venues: venues.data,
         speakers: speakers.data,
-        talks: talks.data
-          .filter((talk) => ids.has(talk.source_talk_submission_id))
-          .slice(0, 30)
-          .map(({ id, title, speaker_links }) => ({
-            id,
-            title,
-            speakerNames: speaker_links
-              .map(({ speaker }) =>
-                [speaker?.first_name, speaker?.last_name]
-                  .filter((name): name is string => Boolean(name?.trim()))
-                  .join(' '),
-              )
-              .filter((name) => name.length > 0),
-          })),
+        talks,
       };
     },
     create(args: z.infer<typeof createDraftSchema>) {

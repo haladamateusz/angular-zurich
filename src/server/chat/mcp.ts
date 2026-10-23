@@ -180,7 +180,8 @@ export async function handleArchiveMcp(req: Request, res: Response, client: Supa
   server.registerTool(
     'get_event_options',
     {
-      description: 'Find venues, known speakers and unassigned approved talks for a private draft.',
+      description:
+        'Find venues, known speakers and unassigned approved talks for a private draft. Query matches all keywords in a talk title OR speaker name, case-insensitively and in any order, ignoring connecting words. Include all requested topics (e.g. observables and signals), a speaker name, or empty string to browse.',
       inputSchema: z.object({ query: z.string().max(160).default('') }).shape,
       annotations,
     },

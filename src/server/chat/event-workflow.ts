@@ -25,6 +25,7 @@ export function createEventWorkflow(
   let failed = false;
   let ready = false;
   let queue = Promise.resolve();
+  let sharedOptionsReturned = false;
   function run<T>(name: string, label: string, execute: (args: T) => Promise<unknown>) {
     return (args: T) => {
       const task = queue.then(async () => {
@@ -32,12 +33,18 @@ export function createEventWorkflow(
         if (failed) throw new Error('draft_workflow_failed');
         const id = crypto.randomUUID(),
           time = performance.now();
+        const lookup = name === 'get_event_options';
+        const query =
+          lookup && args && typeof args === 'object' && 'query' in args
+            ? String(args.query).slice(0, 160).trim()
+            : '';
+        const lookupDetail = query ? `Search: “${query}”` : 'Browse approved talks';
         onActivity({
           id,
           tool: name,
           label,
           state: 'running',
-          detail: 'Preparing a private event draft',
+          detail: lookup ? lookupDetail : 'Preparing a private event draft',
         });
         try {
           // Tool calls in one model step can carry the same version. The queue
@@ -60,7 +67,16 @@ export function createEventWorkflow(
             tool: name,
             label,
             state: 'complete',
-            detail: draft ? `Draft version ${draft.version}` : 'Options loaded',
+            detail:
+              lookup &&
+              result &&
+              typeof result === 'object' &&
+              'talks' in result &&
+              Array.isArray(result.talks)
+                ? `${lookupDetail} · ${result.talks.length} matching talks`
+                : draft
+                  ? `Draft version ${draft.version}`
+                  : 'Options loaded',
             durationMs: Math.round(performance.now() - time),
           });
           return draft && result === draft
@@ -106,12 +122,30 @@ export function createEventWorkflow(
       defineTool({
         name: 'get_event_options',
         description:
-          'Look up venue IDs, known speakers and unassigned approved talks for drafting an event. Never invent IDs. Use a short talk-title query or empty string. No writes.',
+          'Look up venue IDs, known speakers and unassigned approved talks for drafting an event. Never invent IDs. Query matches all keywords in a talk title OR speaker name, case-insensitively and in any order, ignoring connecting words. Include all requested topics (e.g. observables and signals), or use the speaker name (e.g. Tomas Trajan). Empty string browses. No writes.',
         parameters: z.object({ query: z.string().max(160).default('') }),
         execute: run(
           'get_event_options',
           'Find venues, speakers and approved talks',
-          (args: { query: string }) => tools.options(args.query),
+          async (args: { query: string }) => {
+            const options = await tools.options(args.query);
+            // The model retains earlier tool results. Send shared catalogues once,
+            // and keep presentation-only photo URLs out of its conversation.
+            if (sharedOptionsReturned)
+              return {
+                talks: options.talks,
+                note: 'Reuse venues, speakers and usualStartTime from the first get_event_options result.',
+              };
+            sharedOptionsReturned = true;
+            return {
+              ...options,
+              speakers: options.speakers.map(({ id, first_name, last_name }) => ({
+                id,
+                first_name,
+                last_name,
+              })),
+            };
+          },
         ),
       }),
       defineTool({
