@@ -153,7 +153,7 @@ export class StatsComponent {
       !this.isBrowser ||
       !this.view ||
       typeof this.view.requestAnimationFrame !== 'function' ||
-      this.view.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      this.view.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
     ) {
       this.countProgress.set(1);
       return;
