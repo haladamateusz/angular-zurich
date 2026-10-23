@@ -1,8 +1,14 @@
 :host {
-  display: block;
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
 .archive-chat {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
   max-width: 64rem;
   margin-inline: auto;
   padding: clamp(var(--space-3), 2vw, var(--space-6)) 1.25rem;
@@ -10,6 +16,7 @@
 }
 
 .archive-chat-header {
+  flex: none;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -82,11 +89,6 @@
   animation-delay: var(--duration-normal);
 }
 
-.archive-pronunciation-error {
-  font-size: var(--type-sm);
-  color: var(--foreground-secondary);
-}
-
 @keyframes pronunciation-wave {
   0%,
   100% {
@@ -155,11 +157,11 @@ h2 {
 }
 
 .archive-chat-surface {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   position: relative;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-surface);
-  background: var(--background-raised);
-  overflow: hidden;
 }
 
 .archive-chat-notice {
@@ -173,16 +175,6 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-.archive-chat-error {
-  border-left: 3px solid var(--action-primary);
-  padding: 0.75rem 1rem;
-  margin-block: 1rem;
-}
-
-.archive-chat-retry {
-  margin-bottom: var(--space-4);
-}
-
 @media (width <= 40rem) {
   .archive-chat-notice {
     padding: 1.25rem;
@@ -191,15 +183,16 @@ h2 {
 
 .archive-chat-transcript {
   position: relative;
-  min-height: 18rem;
-  max-height: 55dvh;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
   padding: clamp(1rem, 3vw, 2rem);
   scroll-padding: 1rem;
 }
 
 .archive-chat-empty {
-  min-height: 16rem;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -240,19 +233,23 @@ h2 {
   margin: 0;
   max-width: none;
   pointer-events: none;
-  transform-origin: top left;
-  will-change: transform;
-  animation: question-send var(--duration-medium) var(--ease-emphasized) both;
+  will-change: transform, opacity;
+  animation: question-send var(--duration-slow) var(--ease-emphasized) both;
 }
 
 @keyframes question-send {
-  from {
-    transform: translate(var(--flight-x), var(--flight-y))
-      scale(var(--flight-scale-x), var(--flight-scale-y));
+  0% {
+    opacity: 0;
+    transform: translate(var(--flight-x), var(--flight-y));
   }
 
-  to {
-    transform: translate(0, 0) scale(1);
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
   }
 }
 
@@ -306,20 +303,34 @@ h2 {
 }
 
 .archive-chat-composer {
-  border-top: 1px solid var(--border-default);
-  padding: 1rem 1.25rem;
+  flex: none;
+  position: relative;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-surface);
+  background: var(--background-raised);
+}
+
+.archive-chat-composer:focus-within {
+  outline: 2px solid var(--foreground-link);
+  outline-offset: 3px;
 }
 
 .archive-chat-composer textarea {
   width: 100%;
-  resize: vertical;
+  display: block;
+  resize: none;
   min-height: 5rem;
   max-height: 12rem;
-  background: var(--background-canvas);
+  background: transparent;
   color: var(--foreground-primary);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-control);
-  padding: 0.75rem;
+  border: 0;
+  border-radius: inherit;
+  padding: var(--space-4);
+  padding-inline-end: calc(2 * 2.75rem + 3 * var(--space-2));
+}
+
+.archive-chat-composer textarea:focus-visible {
+  outline: none;
 }
 
 .archive-chat-composer textarea::placeholder {
@@ -327,18 +338,26 @@ h2 {
 }
 
 .archive-chat-composer-actions {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  margin-top: 0.75rem;
-  flex-wrap: wrap;
 }
 
 .archive-chat-composer-controls {
   display: flex;
   gap: var(--space-2);
-  flex-wrap: wrap;
+}
+
+.archive-chat-composer-controls .app-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  flex: none;
 }
 
 :where(a, button, textarea, [tabindex]):focus-visible {

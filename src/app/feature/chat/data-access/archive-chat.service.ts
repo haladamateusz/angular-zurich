@@ -9,6 +9,8 @@ import { ChatActivity, chatActivitySchema } from '../../../core/models/chat-acti
 interface SearchActivity {
   steps: ChatActivity[];
   state: 'running' | 'complete' | 'failed' | 'cancelled';
+  error?: string;
+  question?: string;
 }
 
 interface ChatMessage {
@@ -100,9 +102,10 @@ export class ArchiveChatService {
       return true;
     } catch (error) {
       if (agent === this.agent && this.running()) {
-        this.error.set(
-          error instanceof Error ? error.message : 'Check your connection and try again.',
-        );
+        if (!this.error())
+          this.error.set(
+            error instanceof Error ? error.message : 'Check your connection and try again.',
+          );
         this.status.set('');
       }
       return false;
@@ -112,7 +115,7 @@ export class ArchiveChatService {
         if (this.error() && this.answerIds.has(this.questionId))
           this.interruptedAnswers.set(this.questionId, 'failed');
         this.writingAnswer.set(false);
-        if (this.searches.get(this.questionId)?.state === 'running')
+        if (this.error() || this.searches.get(this.questionId)?.state === 'running')
           this.finishActivity(this.error() ? 'failed' : 'complete');
         else this.updateMessages(agent.messages);
       }
@@ -309,7 +312,16 @@ export class ArchiveChatService {
           : item,
       ),
     );
-    this.searches.set(this.questionId, { steps: this.activity(), state });
+    this.searches.set(this.questionId, {
+      steps: this.activity(),
+      state,
+      ...(state === 'failed'
+        ? {
+            error: this.error() || 'The request could not finish. Please try again.',
+            question: this.lastQuestion(),
+          }
+        : {}),
+    });
     this.updateMessages(this.agent.messages);
   }
 }

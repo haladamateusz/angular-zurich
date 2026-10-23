@@ -1,8 +1,10 @@
 <div class="flex min-h-screen flex-col bg-background text-foreground">
-  <app-navbar />
-  <main class="flex-1">
-    <router-outlet />
-  </main>
+  <div class="app-viewport flex flex-1 flex-col">
+    <app-navbar />
+    <main class="flex-1">
+      <router-outlet />
+    </main>
+  </div>
   <app-footer />
 </div>
 <app-toast-outlet />

@@ -243,9 +243,9 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await expect(activity).toHaveAttribute('open');
   await page.locator('.archive-activity-step summary').click();
   await expect(activity).toContainText('1 matching record');
-  await expect(page.getByRole('button', { name: 'Send question', exact: true })).toHaveText(
-    'Send question',
-  );
+  await expect(
+    page.getByRole('button', { name: 'Send question', exact: true }),
+  ).toHaveAccessibleName('Send question');
   await expect(page.getByRole('heading', { name: 'Signals in practice' })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'To event page for Signals in practice' }),

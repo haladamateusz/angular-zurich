@@ -69,7 +69,7 @@ describe('ChatPageComponent', () => {
       'leading-7',
     );
     const controls = fixture.nativeElement.querySelector('.archive-chat-composer-controls');
-    expect(controls?.textContent).toContain('Send question');
+    expect(controls?.querySelector('[aria-label="Send question"]')).not.toBeNull();
     expect(controls?.textContent).not.toContain('New chat');
     expect(controls?.querySelectorAll('button > svg')).toHaveLength(1);
     expect(fixture.nativeElement.querySelector('.archive-chat-footnote')).toBeNull();
@@ -105,6 +105,89 @@ describe('ChatPageComponent', () => {
     audio.dispatchEvent(new Event('ended'));
     fixture.detectChanges();
     expect(button.classList.contains('is-playing')).toBe(false);
+  });
+
+  it('keeps the transcript, scroll and composer when the same session is re-emitted', async () => {
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const chat = fixture.debugElement.injector.get(ArchiveChatService);
+    chat.messages.set([{ id: 'question', role: 'user', text: 'Find signals', sources: [] }]);
+    await fixture.whenStable();
+    const transcript = fixture.nativeElement.querySelector('[role="log"]') as HTMLElement;
+    const input = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    input.value = 'My next question';
+    input.dispatchEvent(new Event('input'));
+    Object.defineProperty(transcript, 'scrollHeight', { value: 2000 });
+    Object.defineProperty(transcript, 'clientHeight', { value: 500 });
+    transcript.scrollTop = 160;
+    transcript.dispatchEvent(new Event('scroll'));
+
+    session.set({ ...session()!, user: { ...session()!.user } });
+    await fixture.whenStable();
+
+    expect(check).toHaveBeenCalledTimes(1);
+    expect(fixture.nativeElement.querySelector('[role="log"]')).toBe(transcript);
+    expect(transcript.scrollTop).toBe(160);
+    expect(fixture.nativeElement.querySelector('textarea')).toBe(input);
+    expect(input.value).toBe('My next question');
+    expect(chat.messages()).toHaveLength(1);
+  });
+
+  it.each(['ready', 'network-error', 'forbidden'])(
+    'revalidates refreshed credentials without a loading flash (%s)',
+    async (result) => {
+      const fixture = TestBed.createComponent(ChatPageComponent);
+      await fixture.whenStable();
+      const transcript = fixture.nativeElement.querySelector('[role="log"]');
+      let resolve!: (value: string) => void;
+      let reject!: (error: Error) => void;
+      check.mockImplementationOnce(
+        () =>
+          new Promise<string>((accept, fail) => {
+            resolve = accept;
+            reject = fail;
+          }),
+      );
+      session.set({ ...session()!, access_token: 'refreshed-token' });
+      fixture.detectChanges();
+      expect(check).toHaveBeenCalledTimes(2);
+      expect(fixture.nativeElement.querySelector('[aria-label="Loading chat"]')).toBeNull();
+      expect(fixture.nativeElement.querySelector('[role="log"]')).toBe(transcript);
+
+      if (result === 'network-error') reject(new Error('Offline'));
+      else resolve(result);
+      await Promise.resolve();
+      await fixture.whenStable();
+      if (result === 'forbidden') {
+        expect(fixture.nativeElement.querySelector('textarea')).toBeNull();
+        expect(fixture.nativeElement.textContent).toContain('Approved accounts only');
+      } else {
+        expect(fixture.nativeElement.querySelector('[role="log"]')).toBe(transcript);
+      }
+    },
+  );
+
+  it('clears the old conversation and ignores stale access checks when the account changes', async () => {
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const chat = fixture.debugElement.injector.get(ArchiveChatService);
+    chat.messages.set([{ id: 'question', role: 'user', text: 'Private question', sources: [] }]);
+    let resolveOldCheck!: (value: string) => void;
+    check.mockImplementationOnce(
+      () => new Promise<string>((resolve) => (resolveOldCheck = resolve)),
+    );
+    session.set({ ...session()!, access_token: 'refreshed-token' });
+    fixture.detectChanges();
+    check.mockResolvedValueOnce('forbidden');
+    session.set({ access_token: 'other-token', user: { id: 'other-user' } });
+    await fixture.whenStable();
+    expect(chat.messages()).toHaveLength(0);
+    expect(check.mock.calls[1][0].aborted).toBe(true);
+    resolveOldCheck('ready');
+    await Promise.resolve();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.querySelector('textarea')).toBeNull();
+    expect(fixture.nativeElement.textContent).toContain('Approved accounts only');
   });
 
   it.each(['forbidden', 'setup', 'error'])(
@@ -146,8 +229,8 @@ describe('ChatPageComponent', () => {
     const chat = fixture.debugElement.injector.get(ArchiveChatService);
     chat.messages.set([{ id: 'question', role: 'user', text: 'Find signals', sources: [] }]);
     fixture.detectChanges();
-    const button = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
-      (element as HTMLButtonElement).textContent?.includes('New chat'),
+    const button = Array.from(fixture.nativeElement.querySelectorAll('button')).find(
+      (element) => (element as HTMLButtonElement).getAttribute('aria-label') === 'New chat',
     ) as HTMLButtonElement;
     expect(button).toBeDefined();
     expect(
@@ -211,8 +294,8 @@ describe('ChatPageComponent', () => {
       expect(fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot')).toBe(
         mascot,
       );
-      const reset = Array.from(fixture.nativeElement.querySelectorAll('button')).find((element) =>
-        (element as HTMLButtonElement).textContent?.includes('New chat'),
+      const reset = Array.from(fixture.nativeElement.querySelectorAll('button')).find(
+        (element) => (element as HTMLButtonElement).getAttribute('aria-label') === 'New chat',
       ) as HTMLButtonElement;
       reset.click();
       await fixture.whenStable();
@@ -324,6 +407,11 @@ describe('ChatPageComponent', () => {
       await fixture.whenStable();
       expect(preview.parentElement?.hidden).toBe(false);
       expect(fixture.nativeElement.querySelector('app-event-draft-preview')).toBe(preview);
+      expect(titleInput.value).toBe('My unsaved event title');
+      session.set({ ...session()!, access_token: 'refreshed-token' });
+      await fixture.whenStable();
+      expect(fixture.nativeElement.querySelector('app-event-draft-preview')).toBe(preview);
+      expect(load).toHaveBeenCalledTimes(1);
       expect(titleInput.value).toBe('My unsaved event title');
     },
   );
@@ -725,6 +813,46 @@ describe('ChatPageComponent', () => {
       expect(chat.messages()[0].sources).toHaveLength(1);
     },
   );
+
+  it('keeps a failed search and its retry action inside the conversation', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ error: 'Search unavailable' }, { status: 503 })),
+    );
+    const fixture = TestBed.createComponent(ChatPageComponent);
+    await fixture.whenStable();
+    const chat = fixture.debugElement.injector.get(ArchiveChatService);
+    await chat.send('Find talks about signals');
+    await fixture.whenStable();
+    const transcript = fixture.nativeElement.querySelector(
+      '.archive-chat-transcript',
+    ) as HTMLElement;
+    const error = transcript.querySelector('app-error-notice') as HTMLElement;
+    expect(error).not.toBeNull();
+    expect(error.textContent).toContain(chat.error());
+    const messages = transcript.querySelectorAll('.archive-message');
+    expect(
+      messages[messages.length - 1].compareDocumentPosition(error) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.archive-chat > app-error-notice')).toBeNull();
+    error.querySelector('button')?.click();
+    await fixture.whenStable();
+    const input = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+    expect(input.value).toBe('Find talks about signals');
+    expect(document.activeElement).toBe(input);
+    await chat.send('Find talks about observables');
+    await fixture.whenStable();
+    const previousError = transcript.querySelector('app-error-notice') as HTMLElement;
+    expect(previousError.textContent).toContain('Search unavailable');
+    expect(transcript.querySelectorAll('app-error-notice')).toHaveLength(2);
+    previousError.querySelector('button')?.click();
+    await fixture.whenStable();
+    expect(input.value).toBe('Find talks about signals');
+    chat.reset();
+    await fixture.whenStable();
+    expect(transcript.querySelector('app-error-notice')).toBeNull();
+  });
 
   it('renders typed results and preserves context across Stop, but clears it on new chat', async () => {
     const requests: { threadId: string; contextToken?: string }[] = [];

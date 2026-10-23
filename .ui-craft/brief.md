@@ -32,6 +32,12 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-10-23** — Keep the scrollable chat history directly on the page, with only the bottom composer in a card. Put icon-only controls inside the input area on the right, with accessible names. _Why:_ the user wants a lighter conversation surface and compact input controls. This supersedes the earlier text-only send-button preference.
+
+- **2026-10-23** — Fill the available viewport with the chat on entry and keep its composer anchored below an independently scrolling transcript. Preserve the transcript and draft editor when browser focus or same-user session credentials change. _Why:_ loading flashes, lost reading position, and an input that moves with content interrupt the conversation.
+
+- **2026-10-22** — Keep sent chat bubbles and their text at their final size throughout the send animation; use translation and a brief fade instead of scaling from the composer dimensions. _Why:_ stretching text and changing the bubble's aspect ratio makes the transition feel distorted.
+
 - **2026-10-17** — Match the chat header mascot's shield height and position across Wave, Thinking, and Coding; size against the character body rather than question marks or the floating console. _Why:_ transitions between poses should not make the character visibly grow, shrink, or shift sideways.
 
 - **2026-10-17** — Keep Cheerful at full size on the ground with level, correctly oriented soles. Reveal props individually with short travel and rotation; each prop pops to 150% on entry, then settles at 100%. _Why:_ the user requested a brief individual size pop while keeping the body full size and avoiding the props behaving like one scaling background. This supersedes the earlier ban on prop scaling.

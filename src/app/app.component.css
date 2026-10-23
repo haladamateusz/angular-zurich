@@ -1,1 +1,10 @@
+.app-viewport:has(app-chat-page) {
+  flex: none;
+  height: 100dvh;
+}
 
+.app-viewport:has(app-chat-page) > main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}

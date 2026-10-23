@@ -1,3 +1,4 @@
+import { ErrorNoticeComponent } from '../../../ui/error-notice/error-notice.component';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +9,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -21,6 +23,7 @@ import { ChatFeedbackComponent } from '../chat-feedback.component';
 
 @Component({
   imports: [
+    ErrorNoticeComponent,
     ReactiveFormsModule,
     RouterLink,
     ChatFeedbackComponent,
@@ -44,12 +47,17 @@ export class ChatPageComponent {
     | { origin: DOMRect; message: HTMLElement; overlay: HTMLElement; finish: () => void }
     | undefined;
   private readonly auth = inject(AuthService);
+  private readonly sessionUserId = computed(() => this.auth.session()?.user.id);
+  private readonly sessionAccessToken = computed(() => this.auth.session()?.access_token);
   private readonly access = inject(ChatAccessService);
   private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>('questionInput');
   private readonly mascotSprite = viewChild<ElementRef<HTMLElement>>('mascotSprite');
   private readonly pronunciationAudio =
     viewChild<ElementRef<HTMLAudioElement>>('pronunciationAudio');
   protected readonly pronunciationState = signal<'idle' | 'loading' | 'playing' | 'error'>('idle');
+  private readonly searchError = viewChild<unknown, ElementRef<HTMLElement>>('searchError', {
+    read: ElementRef,
+  });
   private readonly draftPreview = viewChild<ElementRef<HTMLElement>>('draftPreview');
   protected readonly transcript = viewChild<ElementRef<HTMLElement>>('transcript');
   protected readonly chat = inject(ArchiveChatService);
@@ -134,7 +142,9 @@ export class ChatPageComponent {
       this.animateMascotToHeader();
       const transcript = this.transcript()?.nativeElement;
       if (this.scrollOnSend) this.followTranscript = true;
-      if (transcript && this.followTranscript) transcript.scrollTop = transcript.scrollHeight;
+      if (transcript && this.followTranscript)
+        transcript.scrollTop =
+          this.searchError()?.nativeElement.offsetTop ?? transcript.scrollHeight;
       this.scrollOnSend = false;
       if (transcript) this.animateSentQuestion(transcript);
       else this.clearQuestionFlight();
@@ -146,19 +156,25 @@ export class ChatPageComponent {
       if (audio && !audio.paused) audio.pause();
     });
     effect((onCleanup) => {
-      const session = this.auth.session();
-      if (this.userId !== session?.user.id) {
-        this.userId = session?.user.id;
+      const userId = this.sessionUserId();
+      const token = this.sessionAccessToken();
+      const userChanged = this.userId !== userId;
+      if (userChanged) {
+        this.userId = userId;
         this.chat.reset();
+        this.followTranscript = true;
       }
       const controller = new AbortController();
       onCleanup(() => controller.abort());
-      if (!session) {
+      if (!userId || !token) {
         this.chat.reset();
         this.state.set('forbidden');
         return;
       }
-      void this.checkAccess(controller.signal);
+      // Refocusing a tab can re-emit the same session. Only changed credentials
+      // recheck access, and token refreshes must keep the current view mounted.
+      const background = !userChanged && untracked(this.state) === 'ready';
+      untracked(() => void this.checkAccess(controller.signal, background));
     });
     effect(() => {
       if (this.chat.accessRevoked()) {
@@ -236,6 +252,7 @@ export class ChatPageComponent {
     const preview = this.draftPreview()?.nativeElement;
     if (
       this.chat.running() ||
+      !!this.chat.error() ||
       !this.followTranscript ||
       !transcript ||
       !preview?.querySelector('h2')
@@ -304,11 +321,10 @@ export class ChatPageComponent {
     const style = flight.overlay.style;
     style.left = `${destination.left - bounds.left - surface.clientLeft}px`;
     style.top = `${destination.top - bounds.top - surface.clientTop}px`;
+    // Keep the final bubble dimensions throughout the flight so text never scales or reflows.
     style.width = `${destination.width}px`;
     style.setProperty('--flight-x', `${flight.origin.left - destination.left}px`);
     style.setProperty('--flight-y', `${flight.origin.top - destination.top}px`);
-    style.setProperty('--flight-scale-x', `${flight.origin.width / destination.width}`);
-    style.setProperty('--flight-scale-y', `${flight.origin.height / destination.height}`);
   }
 
   private clearQuestionFlight() {
@@ -323,13 +339,13 @@ export class ChatPageComponent {
     if (!event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey) void this.submit();
   }
 
-  private async checkAccess(signal?: AbortSignal) {
-    this.state.set('loading');
+  private async checkAccess(signal?: AbortSignal, background = false) {
+    if (!background) this.state.set('loading');
     try {
       const state = await this.access.check(signal);
       if (!signal?.aborted) this.state.set(state);
     } catch {
-      if (!signal?.aborted) this.state.set('error');
+      if (!signal?.aborted && !background) this.state.set('error');
     }
   }
 }

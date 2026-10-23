@@ -1,11 +1,26 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
-for (const viewport of [
+const scenarios = [
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
-]) {
-  test(`question flies from composer to bubble at ${viewport.width}px`, async ({ page }) => {
+].flatMap((viewport) =>
+  [0, 5].flatMap((previousCount) =>
+    [
+      { label: 'short', question: 'And signals?' },
+      {
+        label: 'multiline',
+        question:
+          'Find talks about Angular signals, forms, and application architecture.\nWhich speakers shared practical examples and where can I find their slides?',
+      },
+    ].map((content) => ({ viewport, previousCount, ...content })),
+  ),
+);
+
+for (const { viewport, previousCount, label, question } of scenarios) {
+  test(`${label} question slides without stretching at ${viewport.width}px after ${previousCount} messages`, async ({
+    page,
+  }) => {
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const environment = await readFile('src/environments/environment.development.ts', 'utf8');
@@ -57,7 +72,7 @@ for (const viewport of [
     const input = page.getByLabel('Your question', { exact: true });
     const transcript = page.getByRole('log');
     const flight = page.locator('.archive-question-flight');
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < previousCount; i++) {
       await input.fill(`Previous question ${i}`);
       await input.press('Enter');
       await expect(page.locator('.archive-answer')).toHaveCount(i + 1);
@@ -65,7 +80,7 @@ for (const viewport of [
       await expect(flight).toHaveCount(0);
     }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await input.fill('And signals?');
+    await input.fill(question);
     await input.scrollIntoViewIfNeeded();
     await input.evaluate((element) => {
       element.closest('form')!.addEventListener('submit', () => {
@@ -114,10 +129,38 @@ for (const viewport of [
       return { ...rect, x: rect.x - scrollX, y: rect.y - scrollY };
     });
     const initial = (await flight.boundingBox())!;
+    const bubble = transcript.locator('.archive-message-user').last();
+    const finalSize = (await bubble.boundingBox())!;
     expect(initial.x).toBeCloseTo(origin!.x, 0);
     expect(initial.y).toBeCloseTo(origin!.y, 0);
-    expect(initial.width).toBeCloseTo(origin!.width, 0);
-    expect(initial.height).toBeCloseTo(origin!.height, 0);
+    expect(initial.width).toBeCloseTo(finalSize.width, 0);
+    expect(initial.height).toBeCloseTo(finalSize.height, 0);
+    // Sample the actual rendered bubble and glyphs throughout the animation.
+    const samples = await flight.evaluate((element) => {
+      const animation = element.getAnimations()[0];
+      const duration = Number(animation.effect!.getTiming().duration);
+      const bubbles = document.querySelectorAll('.archive-chat-transcript .archive-message-user');
+      const target = bubbles[bubbles.length - 1];
+      const textBounds = (parent: Element) => {
+        const range = document.createRange();
+        range.selectNodeContents(parent.querySelector('.archive-message-text')!);
+        return range.getBoundingClientRect().toJSON();
+      };
+      return [0, 0.25, 0.5, 0.75, 0.95].map((progress) => {
+        animation.currentTime = duration * progress;
+        return {
+          box: element.getBoundingClientRect().toJSON(),
+          text: textBounds(element),
+          targetText: textBounds(target),
+        };
+      });
+    });
+    for (const sample of samples) {
+      expect(sample.box.width).toBeCloseTo(finalSize.width, 0);
+      expect(sample.box.height).toBeCloseTo(finalSize.height, 0);
+      expect(sample.text.width).toBeCloseTo(sample.targetText.width, 0);
+      expect(sample.text.height).toBeCloseTo(sample.targetText.height, 0);
+    }
     await expect
       .poll(() =>
         transcript.evaluate((element) =>
@@ -125,7 +168,6 @@ for (const viewport of [
         ),
       )
       .toBeLessThan(2);
-    const bubble = transcript.locator('.archive-message-user').last();
     await expect(bubble).toHaveCSS('opacity', '0');
     const { landed, destination } = await flight.evaluate((element) => {
       const animation = element.getAnimations()[0];
@@ -140,7 +182,7 @@ for (const viewport of [
     expect(landed.y).toBeCloseTo(destination.y, 0);
     expect(landed.width).toBeCloseTo(destination.width, 0);
     expect(landed.height).toBeCloseTo(destination.height, 0);
-    expect(landed.width).toBeLessThan(initial.width);
+    expect(landed.width).toBeCloseTo(initial.width, 0);
     await expect(flight).toHaveCount(0);
     await expect(bubble).toHaveCSS('opacity', '1');
     await expect(input).toBeFocused();
