@@ -209,7 +209,7 @@ describe('ChatPageComponent', () => {
     fixture.detectChanges();
     const loading = fixture.nativeElement.querySelector('[aria-busy="true"]');
     expect(loading?.getAttribute('role')).toBe('status');
-    expect(loading?.querySelectorAll('.app-skeleton')).toHaveLength(5);
+    expect(loading?.querySelectorAll('.app-skeleton')).toHaveLength(4);
     expect(
       fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot'),
     ).toBeNull();

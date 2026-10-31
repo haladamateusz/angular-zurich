@@ -42,11 +42,14 @@ export class ChatPageComponent {
   private followTranscript = true;
   private scrollOnSend = false;
   private pendingQuestionAnimation = false;
+  private pendingComposerTop: number | undefined;
+  private composerAnimation: Animation | undefined;
   private readonly auth = inject(AuthService);
   private readonly sessionUserId = computed(() => this.auth.session()?.user.id);
   private readonly sessionAccessToken = computed(() => this.auth.session()?.access_token);
   private readonly access = inject(ChatAccessService);
   private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>('questionInput');
+  private readonly composer = viewChild<ElementRef<HTMLFormElement>>('composer');
   private readonly pronunciationAudio =
     viewChild<ElementRef<HTMLAudioElement>>('pronunciationAudio');
   protected readonly pronunciationState = signal<'idle' | 'loading' | 'playing' | 'error'>('idle');
@@ -134,6 +137,7 @@ export class ChatPageComponent {
     });
     afterRenderEffect((onCleanup) => {
       this.chat.messages();
+      this.animateComposer();
       const transcript = this.transcript()?.nativeElement;
       if (this.scrollOnSend) this.followTranscript = true;
       if (transcript && this.followTranscript)
@@ -163,6 +167,7 @@ export class ChatPageComponent {
       }
     });
     inject(DestroyRef).onDestroy(() => {
+      this.composerAnimation?.cancel();
       const audio = this.pronunciationAudio()?.nativeElement;
       if (audio && !audio.paused) audio.pause();
     });
@@ -220,6 +225,8 @@ export class ChatPageComponent {
   }
 
   protected newChat() {
+    this.pendingComposerTop = undefined;
+    this.composerAnimation?.cancel();
     this.pendingQuestionAnimation = false;
     this.chat.reset();
     this.question.reset();
@@ -238,6 +245,9 @@ export class ChatPageComponent {
     const input = this.textarea()?.nativeElement;
     if (!input?.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.pendingQuestionAnimation = true;
+      if (!this.chat.messages().length && !this.draftId()) {
+        this.pendingComposerTop = this.composer()?.nativeElement.getBoundingClientRect().top;
+      }
     }
     this.followTranscript = true;
     this.scrollOnSend = true;
@@ -278,6 +288,27 @@ export class ChatPageComponent {
     const messages = transcript.querySelectorAll<HTMLElement>('.archive-message-user');
     // Animate the actual bubble once, after it has landed in the scrolled transcript.
     messages.item(messages.length - 1)?.classList.add('archive-question-sent');
+  }
+
+  private animateComposer() {
+    const top = this.pendingComposerTop;
+    if (top === undefined || !this.chat.messages().length) return;
+    this.pendingComposerTop = undefined;
+    const composer = this.composer()?.nativeElement;
+    const window = composer?.ownerDocument.defaultView;
+    if (!composer?.animate || !window) return;
+    const styles = window.getComputedStyle(composer);
+    // Keep the live input mounted and animate only its offset from the final layout.
+    this.composerAnimation = composer.animate(
+      [
+        { transform: `translateY(${top - composer.getBoundingClientRect().top}px)` },
+        { transform: 'translateY(0)' },
+      ],
+      {
+        duration: parseFloat(styles.getPropertyValue('--duration-slow')),
+        easing: styles.getPropertyValue('--ease-standard').trim(),
+      },
+    );
   }
 
   protected onQuestionKeydown(event: KeyboardEvent) {

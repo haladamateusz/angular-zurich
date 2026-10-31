@@ -12,7 +12,9 @@ for (const viewport of [
     page,
   }) => {
     await page.setViewportSize(viewport);
-    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.emulateMedia({
+      reducedMotion: viewport.width === 1280 ? 'no-preference' : 'reduce',
+    });
     const environment = await readFile('src/environments/environment.development.ts', 'utf8');
     const url = environment.match(/supabaseUrl:\s*['"]([^'"]+)['"]/)![1];
     const storageKey = `sb-${new URL(url).hostname.split('.')[0]}-auth-token`;
@@ -122,6 +124,12 @@ for (const viewport of [
     const input = page.getByRole('textbox', { name: 'Your question', exact: true });
     await expect(input).toBeVisible();
     const initialComposer = (await composer.boundingBox())!;
+    const welcome = (await page.locator('.archive-chat-empty h2').boundingBox())!;
+    expect(initialComposer.y).toBeGreaterThan(welcome.y + welcome.height);
+    expect(initialComposer.y - welcome.y - welcome.height).toBeLessThan(40);
+    if (viewport.height > 500) {
+      expect(initialComposer.y + initialComposer.height).toBeLessThan(loadingBottom - 60);
+    }
     expect(await surface.evaluate((element) => element.getBoundingClientRect().bottom)).toBeCloseTo(
       loadingBottom,
       0,
@@ -132,7 +140,13 @@ for (const viewport of [
     const title = page.locator('app-event-draft-preview input[formcontrolname="title"]');
     await expect(title).toHaveValue(draftFixture.content.title);
     await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeVisible();
-    expect((await composer.boundingBox())!.y).toBeCloseTo(initialComposer.y, 0);
+    await expect
+      .poll(async () => {
+        const box = (await composer.boundingBox())!;
+        return box.y + box.height;
+      })
+      .toBeCloseTo(loadingBottom, 0);
+    const dockedComposer = (await composer.boundingBox())!;
     await input.fill('Keep this next question');
 
     const transcript = page.getByRole('log');
@@ -160,7 +174,7 @@ for (const viewport of [
     expect(accessChecks).toBe(checksBefore);
     expect(draftLoads).toBe(1);
     await expect(input).toHaveValue('Keep this next question');
-    expect((await composer.boundingBox())!.y).toBeCloseTo(initialComposer.y, 0);
+    expect((await composer.boundingBox())!.y).toBeCloseTo(dockedComposer.y, 0);
 
     await page.setViewportSize({ ...viewport, height: viewport.height + 120 });
     await expect
@@ -197,5 +211,9 @@ for (const viewport of [
       return (await browser.axe.run('app-chat-page')).violations;
     });
     expect(violations).toEqual([]);
+    await page.getByRole('button', { name: 'New chat', exact: true }).click();
+    await expect(page.locator('.archive-chat-empty h2')).toBeVisible();
+    expect((await composer.boundingBox())!.y).toBeLessThan(dockedComposer.y + 120);
+    await expect(input).toBeFocused();
   });
 }

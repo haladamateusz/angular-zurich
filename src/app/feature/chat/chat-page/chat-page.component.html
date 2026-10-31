@@ -84,14 +84,18 @@
 
   @switch (state()) {
     @case ('loading') {
-      <div class="archive-chat-surface" role="status" aria-label="Loading chat" aria-busy="true">
+      <div
+        class="archive-chat-surface is-empty"
+        role="status"
+        aria-label="Loading chat"
+        aria-busy="true"
+      >
         <span class="sr-only">Loading chat…</span>
         <div class="archive-chat-transcript-frame">
           <div class="archive-chat-transcript" aria-hidden="true">
             <div class="archive-chat-empty archive-chat-loading">
-              <div class="app-skeleton archive-chat-loading-mascot"></div>
+              <div class="app-skeleton archive-chat-mascot archive-chat-loading-mascot"></div>
               <div class="app-skeleton archive-chat-loading-title"></div>
-              <div class="app-skeleton archive-chat-loading-description"></div>
             </div>
           </div>
         </div>
@@ -127,7 +131,7 @@
       />
     }
     @case ('ready') {
-      <div class="archive-chat-surface">
+      <div class="archive-chat-surface" [class.is-empty]="!chat.messages().length && !draftId()">
         <div class="archive-chat-transcript-frame">
           <div
             #transcript
@@ -386,7 +390,7 @@
             }
           </div>
         </div>
-        <form class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
+        <form #composer class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
           <p class="sr-only" role="status">{{ chat.status() }}</p>
           <label class="sr-only" for="archive-question">Your question</label>
           <textarea
