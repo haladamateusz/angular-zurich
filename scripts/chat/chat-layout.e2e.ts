@@ -174,6 +174,22 @@ for (const viewport of [
           requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
         ),
     );
+    // The thumb's native scroll area stays inset inside the rounded track at both limits.
+    const gutterWidth = await transcript.evaluate(
+      (element) => (element as HTMLElement).offsetWidth - element.clientWidth,
+    );
+    if (gutterWidth > 0)
+      await expect(page.locator('.archive-chat-transcript-frame')).toHaveClass(/is-scrollable/);
+    for (const edge of ['top', 'bottom'] as const) {
+      const padding = await transcript.evaluate((element, edge) => {
+        element.scrollTop = edge === 'top' ? 0 : element.scrollHeight;
+        const frame = element.parentElement!.getBoundingClientRect();
+        const scrollArea = element.getBoundingClientRect();
+        return { top: scrollArea.top - frame.top, bottom: frame.bottom - scrollArea.bottom };
+      }, edge);
+      expect(padding.top).toBeGreaterThanOrEqual(4);
+      expect(padding.bottom).toBeGreaterThanOrEqual(4);
+    }
     await page.screenshot({ path: test.info().outputPath('chat-layout.png') });
     await page.addScriptTag({ content: axe.source });
     const violations = await page.evaluate(async () => {

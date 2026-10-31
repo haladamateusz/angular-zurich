@@ -132,7 +132,7 @@ export class ChatPageComponent {
       const timer = setTimeout(() => this.mascotThinkingComplete.set(true), 5_000);
       onCleanup(() => clearTimeout(timer));
     });
-    afterRenderEffect(() => {
+    afterRenderEffect((onCleanup) => {
       this.chat.messages();
       const transcript = this.transcript()?.nativeElement;
       if (this.scrollOnSend) this.followTranscript = true;
@@ -143,7 +143,24 @@ export class ChatPageComponent {
       if (transcript) this.animateSentQuestion(transcript);
       else this.pendingQuestionAnimation = false;
       if (!this.chat.running()) this.onDraftPreviewReady();
-
+      if (transcript) {
+        const updateTrack = () => {
+          const frame = transcript.parentElement;
+          const width = transcript.offsetWidth - transcript.clientWidth;
+          frame?.style.setProperty('--chat-scrollbar-width', `${width}px`);
+          frame?.classList.toggle(
+            'is-scrollable',
+            width > 0 && transcript.scrollHeight > transcript.clientHeight,
+          );
+        };
+        updateTrack();
+        if (typeof ResizeObserver !== 'undefined') {
+          const observer = new ResizeObserver(updateTrack);
+          observer.observe(transcript);
+          for (const child of transcript.children) observer.observe(child);
+          onCleanup(() => observer.disconnect());
+        }
+      }
     });
     inject(DestroyRef).onDestroy(() => {
       const audio = this.pronunciationAudio()?.nativeElement;

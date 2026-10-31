@@ -86,11 +86,13 @@
     @case ('loading') {
       <div class="archive-chat-surface" role="status" aria-label="Loading chat" aria-busy="true">
         <span class="sr-only">Loading chat…</span>
-        <div class="archive-chat-transcript" aria-hidden="true">
-          <div class="archive-chat-empty archive-chat-loading">
-            <div class="app-skeleton archive-chat-loading-mascot"></div>
-            <div class="app-skeleton archive-chat-loading-title"></div>
-            <div class="app-skeleton archive-chat-loading-description"></div>
+        <div class="archive-chat-transcript-frame">
+          <div class="archive-chat-transcript" aria-hidden="true">
+            <div class="archive-chat-empty archive-chat-loading">
+              <div class="app-skeleton archive-chat-loading-mascot"></div>
+              <div class="app-skeleton archive-chat-loading-title"></div>
+              <div class="app-skeleton archive-chat-loading-description"></div>
+            </div>
           </div>
         </div>
         <div class="archive-chat-composer" aria-hidden="true">
@@ -126,126 +128,209 @@
     }
     @case ('ready') {
       <div class="archive-chat-surface">
-        <div
-          #transcript
-          class="archive-chat-transcript"
-          role="log"
-          aria-label="Archive conversation"
-          aria-live="polite"
-          tabindex="0"
-          (scroll)="onTranscriptScroll()"
-        >
-          @if (!chat.messages().length && !chat.error()) {
-            <div class="archive-chat-empty" animate.leave="archive-mascot-exit">
-              <ng-container [ngTemplateOutlet]="mascot" />
-              <h2>{{ welcomeQuestion() }}</h2>
-            </div>
-          }
-          @for (message of chat.messages(); track message.id) {
-            <article class="archive-message" [class.archive-message-user]="message.role === 'user'">
-              @if (message.role === 'user') {
-                <h2 class="archive-message-label">You</h2>
-              }
-              @if (message.activity; as search) {
-                @if (search.error) {
-                  <app-error-notice
-                    class="my-4"
-                    title="Request couldn’t finish"
-                    [message]="search.error"
-                    [actionLabel]="search.question ? 'Edit and retry question' : ''"
-                    [actionDisabled]="chat.running()"
-                    (action)="useExample(search.question || '')"
-                  />
+        <div class="archive-chat-transcript-frame">
+          <div
+            #transcript
+            class="archive-chat-transcript"
+            role="log"
+            aria-label="Archive conversation"
+            aria-live="polite"
+            tabindex="0"
+            (scroll)="onTranscriptScroll()"
+          >
+            @if (!chat.messages().length && !chat.error()) {
+              <div class="archive-chat-empty" animate.leave="archive-mascot-exit">
+                <ng-container [ngTemplateOutlet]="mascot" />
+                <h2>{{ welcomeQuestion() }}</h2>
+              </div>
+            }
+            @for (message of chat.messages(); track message.id) {
+              <article
+                class="archive-message"
+                [class.archive-message-user]="message.role === 'user'"
+              >
+                @if (message.role === 'user') {
+                  <h2 class="archive-message-label">You</h2>
                 }
-                <details class="archive-activity" [open]="search.state === 'running'">
-                  <summary class="archive-activity-heading">
-                    <svg
-                      class="archive-activity-chevron"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="m9 6 6 6-6 6"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                      />
-                    </svg>
-                    <span
-                      class="archive-activity-label"
-                      [class.is-running]="search.state === 'running'"
-                      >Search activity</span
-                    >
-                    <span class="archive-activity-state">{{
-                      search.state === 'cancelled' ? 'stopped' : search.state
-                    }}</span>
-                  </summary>
-                  <div class="archive-activity-steps">
-                    @if (!search.steps.length) {
-                      <p class="archive-activity-state">
-                        {{
-                          search.state === 'running'
-                            ? 'Choosing archive tools…'
-                            : 'No tools were run.'
-                        }}
-                      </p>
-                    }
-                    @for (activity of search.steps; track activity.id) {
-                      <details class="archive-activity-step">
-                        <summary>
+                @if (message.activity; as search) {
+                  @if (search.error) {
+                    <app-error-notice
+                      class="my-4"
+                      title="Request couldn’t finish"
+                      [message]="search.error"
+                      [actionLabel]="search.question ? 'Edit and retry question' : ''"
+                      [actionDisabled]="chat.running()"
+                      (action)="useExample(search.question || '')"
+                    />
+                  }
+                  <details class="archive-activity" [open]="search.state === 'running'">
+                    <summary class="archive-activity-heading">
+                      <svg
+                        class="archive-activity-chevron"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="m9 6 6 6-6 6"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        />
+                      </svg>
+                      <span
+                        class="archive-activity-label"
+                        [class.is-running]="search.state === 'running'"
+                        >Search activity</span
+                      >
+                      <span class="archive-activity-state">{{
+                        search.state === 'cancelled' ? 'stopped' : search.state
+                      }}</span>
+                    </summary>
+                    <div class="archive-activity-steps">
+                      @if (!search.steps.length) {
+                        <p class="archive-activity-state">
+                          {{
+                            search.state === 'running'
+                              ? 'Choosing archive tools…'
+                              : 'No tools were run.'
+                          }}
+                        </p>
+                      }
+                      @for (activity of search.steps; track activity.id) {
+                        <details class="archive-activity-step">
+                          <summary>
+                            <svg
+                              class="archive-activity-chevron archive-activity-step-chevron"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              aria-hidden="true"
+                            >
+                              <path
+                                d="m9 6 6 6-6 6"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                              />
+                            </svg>
+                            <span>{{ activity.label }}</span>
+                            <span class="archive-activity-state"
+                              >{{ activity.state }}
+                              @if (activity.durationMs !== undefined) {
+                                · {{ activity.durationMs }} ms
+                              }
+                            </span>
+                          </summary>
+                          <p>
+                            <code>{{ activity.tool }}</code> · {{ activity.detail }}
+                          </p>
+                        </details>
+                      }
+                    </div>
+                  </details>
+                }
+                @if (message.role === 'user' && message.text) {
+                  <p class="archive-message-text">{{ message.text }}</p>
+                }
+                @if (message.result; as result) {
+                  @if (result.kind === 'submissions') {
+                    @for (submission of result.items; track submission.id) {
+                      <article class="archive-source">
+                        <p class="archive-source-date">
+                          Talk submission · {{ submission.status.replaceAll('_', ' ') }}
+                        </p>
+                        <h3>{{ submission.title }}</h3>
+                        <p class="archive-source-speakers">{{ submission.speaker }}</p>
+                        @if (submission.description) {
+                          <p class="archive-source-description">{{ submission.description }}</p>
+                        }
+                        <a
+                          class="archive-source-link event-meta__link"
+                          [routerLink]="['/dashboard/talk-submissions', submission.id]"
+                        >
+                          <span class="event-meta__link-label">Open submission</span>
+                          <span class="sr-only">: {{ submission.title }}</span>
                           <svg
-                            class="archive-activity-chevron archive-activity-step-chevron"
-                            viewBox="0 0 24 24"
-                            fill="none"
+                            class="archive-source-link-icon"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
                             aria-hidden="true"
                           >
                             <path
-                              d="m9 6 6 6-6 6"
-                              stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
+                              fill-rule="evenodd"
+                              d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
+                              clip-rule="evenodd"
                             />
                           </svg>
-                          <span>{{ activity.label }}</span>
-                          <span class="archive-activity-state"
-                            >{{ activity.state }}
-                            @if (activity.durationMs !== undefined) {
-                              · {{ activity.durationMs }} ms
-                            }
-                          </span>
-                        </summary>
-                        <p>
-                          <code>{{ activity.tool }}</code> · {{ activity.detail }}
-                        </p>
-                      </details>
+                        </a>
+                      </article>
                     }
-                  </div>
-                </details>
-              }
-              @if (message.role === 'user' && message.text) {
-                <p class="archive-message-text">{{ message.text }}</p>
-              }
-              @if (message.result; as result) {
-                @if (result.kind === 'submissions') {
-                  @for (submission of result.items; track submission.id) {
+                  } @else if (result.kind === 'ranking') {
+                    <table class="archive-results-table">
+                      <caption>
+                        Speaker ranking by matching past talks
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Rank</th>
+                          <th scope="col">Speaker</th>
+                          <th scope="col">Talks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (row of result.rows; track row.id) {
+                          <tr>
+                            <td>{{ row.rank }}</td>
+                            <th scope="row">{{ row.name }}</th>
+                            <td>{{ row.talkCount }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  } @else if (result.kind === 'stats') {
+                    <table class="archive-results-table">
+                      <caption>
+                        Matching talks by year
+                      </caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Year</th>
+                          <th scope="col">Past</th>
+                          <th scope="col">Upcoming</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (year of result.years; track year.year) {
+                          <tr>
+                            <th scope="row">{{ year.year }}</th>
+                            <td>{{ year.past }}</td>
+                            <td>{{ year.upcoming }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                }
+                @if (message.result?.kind !== 'ranking' && message.result?.kind !== 'stats') {
+                  @for (source of message.sources; track source.id) {
                     <article class="archive-source">
                       <p class="archive-source-date">
-                        Talk submission · {{ submission.status.replaceAll('_', ' ') }}
+                        {{ source.date }}
+                        @if (source.eventTitle) {
+                          · {{ source.eventTitle }}
+                        }
                       </p>
-                      <h3>{{ submission.title }}</h3>
-                      <p class="archive-source-speakers">{{ submission.speaker }}</p>
-                      @if (submission.description) {
-                        <p class="archive-source-description">{{ submission.description }}</p>
+                      <h3>
+                        <a [routerLink]="source.url">{{ source.title }}</a>
+                      </h3>
+                      @if (source.speakers.length) {
+                        <p class="archive-source-speakers">{{ source.speakers.join(', ') }}</p>
                       }
-                      <a
-                        class="archive-source-link event-meta__link"
-                        [routerLink]="['/dashboard/talk-submissions', submission.id]"
-                      >
-                        <span class="event-meta__link-label">Open submission</span>
-                        <span class="sr-only">: {{ submission.title }}</span>
+                      <a class="archive-source-link event-meta__link" [routerLink]="source.url">
+                        <span class="event-meta__link-label">To event page</span>
+                        <span class="sr-only"> for {{ source.title }}</span>
                         <svg
                           class="archive-source-link-icon"
                           fill="currentColor"
@@ -261,123 +346,45 @@
                       </a>
                     </article>
                   }
-                } @else if (result.kind === 'ranking') {
-                  <table class="archive-results-table">
-                    <caption>
-                      Speaker ranking by matching past talks
-                    </caption>
-                    <thead>
-                      <tr>
-                        <th scope="col">Rank</th>
-                        <th scope="col">Speaker</th>
-                        <th scope="col">Talks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (row of result.rows; track row.id) {
-                        <tr>
-                          <td>{{ row.rank }}</td>
-                          <th scope="row">{{ row.name }}</th>
-                          <td>{{ row.talkCount }}</td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                } @else if (result.kind === 'stats') {
-                  <table class="archive-results-table">
-                    <caption>
-                      Matching talks by year
-                    </caption>
-                    <thead>
-                      <tr>
-                        <th scope="col">Year</th>
-                        <th scope="col">Past</th>
-                        <th scope="col">Upcoming</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (year of result.years; track year.year) {
-                        <tr>
-                          <th scope="row">{{ year.year }}</th>
-                          <td>{{ year.past }}</td>
-                          <td>{{ year.upcoming }}</td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
                 }
-              }
-              @if (message.result?.kind !== 'ranking' && message.result?.kind !== 'stats') {
-                @for (source of message.sources; track source.id) {
-                  <article class="archive-source">
-                    <p class="archive-source-date">
-                      {{ source.date }}
-                      @if (source.eventTitle) {
-                        · {{ source.eventTitle }}
-                      }
-                    </p>
-                    <h3>
-                      <a [routerLink]="source.url">{{ source.title }}</a>
-                    </h3>
-                    @if (source.speakers.length) {
-                      <p class="archive-source-speakers">{{ source.speakers.join(', ') }}</p>
+                @if (
+                  message.role === 'assistant' && (message.text || ($last && chat.writingAnswer()))
+                ) {
+                  <p
+                    class="archive-message-text archive-answer"
+                    [attr.aria-busy]="$last && chat.writingAnswer()"
+                  >
+                    <span [textContent]="message.text"></span>
+                    @if ($last && chat.writingAnswer()) {
+                      <span class="archive-answer-cursor" aria-hidden="true"></span>
                     }
-                    <a class="archive-source-link event-meta__link" [routerLink]="source.url">
-                      <span class="event-meta__link-label">To event page</span>
-                      <span class="sr-only"> for {{ source.title }}</span>
-                      <svg
-                        class="archive-source-link-icon"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M7.22 14.78a.75.75 0 0 1 0-1.06L10.94 10 7.22 6.28a.75.75 0 1 1 1.06-1.06l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0Z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </a>
-                  </article>
+                  </p>
                 }
-              }
-              @if (
-                message.role === 'assistant' && (message.text || ($last && chat.writingAnswer()))
-              ) {
-                <p
-                  class="archive-message-text archive-answer"
-                  [attr.aria-busy]="$last && chat.writingAnswer()"
-                >
-                  <span [textContent]="message.text"></span>
-                  @if ($last && chat.writingAnswer()) {
-                    <span class="archive-answer-cursor" aria-hidden="true"></span>
-                  }
-                </p>
-              }
-              @if (message.interrupted) {
-                <p class="archive-activity-state">
-                  {{
-                    message.interrupted === 'stopped'
-                      ? 'Response stopped.'
-                      : 'Response interrupted.'
-                  }}
-                  This answer may be incomplete.
-                </p>
-              }
-              @if (message.feedback; as context) {
-                <app-chat-feedback [context]="context" />
-              }
-            </article>
-          }
-          @if (draftId(); as draftId) {
-            <div #draftPreview [hidden]="chat.running()">
-              <app-event-draft-preview
-                [draftId]="draftId"
-                [refreshVersion]="draftVersion()"
-                (previewReady)="onDraftPreviewReady()"
-              />
-            </div>
-          }
+                @if (message.interrupted) {
+                  <p class="archive-activity-state">
+                    {{
+                      message.interrupted === 'stopped'
+                        ? 'Response stopped.'
+                        : 'Response interrupted.'
+                    }}
+                    This answer may be incomplete.
+                  </p>
+                }
+                @if (message.feedback; as context) {
+                  <app-chat-feedback [context]="context" />
+                }
+              </article>
+            }
+            @if (draftId(); as draftId) {
+              <div #draftPreview [hidden]="chat.running()">
+                <app-event-draft-preview
+                  [draftId]="draftId"
+                  [refreshVersion]="draftVersion()"
+                  (previewReady)="onDraftPreviewReady()"
+                />
+              </div>
+            }
+          </div>
         </div>
         <form class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
           <p class="sr-only" role="status">{{ chat.status() }}</p>

@@ -199,14 +199,65 @@ h2 {
   }
 }
 
+.archive-chat-transcript-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: var(--space-3);
+  padding-block: var(--space-1);
+  overflow: hidden;
+}
+
+.archive-chat-transcript-frame.is-scrollable::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: var(--chat-scrollbar-width);
+  border-radius: var(--radius-pill);
+  background: var(--scrollbar-track);
+  pointer-events: none;
+}
+
 .archive-chat-transcript {
   position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
   overscroll-behavior-y: contain;
   padding: clamp(1rem, 3vw, 2rem);
   scroll-padding: 1rem;
+}
+
+.archive-chat-transcript:focus-visible {
+  outline-offset: -3px;
+}
+
+.archive-chat-transcript::-webkit-scrollbar {
+  width: var(--space-4);
+  background: transparent;
+}
+
+.archive-chat-transcript::-webkit-scrollbar-track,
+.archive-chat-transcript::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  background-clip: padding-box;
+}
+
+.archive-chat-transcript::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.archive-chat-transcript::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+}
+
+.archive-chat-transcript::-webkit-scrollbar-button {
+  display: none;
 }
 
 .archive-chat-empty {
