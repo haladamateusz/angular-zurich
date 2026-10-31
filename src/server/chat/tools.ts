@@ -223,7 +223,7 @@ export function createArchiveTools(
     return { items, hasMore: more, nextOffset: context.nextOffset ?? null };
   }
 
-  async function speakerArchive(args: z.infer<typeof speakerNameSchema>) {
+  async function speakerArchive(args: z.infer<typeof speakerNameSchema>, mode: 'talks' | 'stats') {
     const data = z
       .object({
         speakers: z.array(z.object({ id: uuid, name: z.string() })),
@@ -266,9 +266,9 @@ export function createArchiveTools(
     if (!data.stats || !data.page) throw new Error('archive_unavailable');
     const { stats, page } = data;
     context.focusSpeakerId = data.speakers[0].id;
-    result = { kind: 'stats', ...stats };
+    result = mode === 'stats' ? { kind: 'stats', ...stats } : { kind: 'talks', total: stats.total };
     context.lastQuery = archiveQuerySchema.parse({
-      mode: 'stats',
+      mode,
       speakerId: data.speakers[0].id,
       offset: args.offset,
     });
@@ -278,11 +278,12 @@ export function createArchiveTools(
     summary = `${name} has ${stats.past} talk${stats.past === 1 ? '' : 's'} at past Angular Zürich events in the published archive.`;
     if (stats.upcoming)
       summary += ` ${stats.upcoming} additional talk${stats.upcoming === 1 ? ' is' : 's are'} scheduled at upcoming events.`;
-    summary +=
-      '\n\nBy year: ' +
-      stats.years
-        .map((y) => `${y.year}: ${y.past} past${y.upcoming ? `, ${y.upcoming} upcoming` : ''}`)
-        .join(' · ');
+    if (mode === 'stats')
+      summary +=
+        '\n\nBy year: ' +
+        stats.years
+          .map((y) => `${y.year}: ${y.past} past${y.upcoming ? `, ${y.upcoming} upcoming` : ''}`)
+          .join(' · ');
     summary += `\n\nShowing ${page.items.length ? args.offset + 1 : 0}–${args.offset + page.items.length} of ${stats.total} published talks. Counts reflect stored records; older records may be incomplete.`;
     selectedSources = page.items.flatMap((t) => {
       const source = sources.get(t.id);
@@ -687,9 +688,13 @@ export function createArchiveTools(
     speakerTalks: traced(
       'get_speaker_talks',
       'Find a speaker and list their talks',
-      speakerArchive,
+      (args: z.infer<typeof speakerNameSchema>) => speakerArchive(args, 'talks'),
     ),
-    speakerStats: traced('get_speaker_stats', 'Count speaker talks across years', speakerArchive),
+    speakerStats: traced(
+      'get_speaker_stats',
+      'Count speaker talks across years',
+      (args: z.infer<typeof speakerNameSchema>) => speakerArchive(args, 'stats'),
+    ),
     rankSpeakers: traced('rank_speakers', 'Rank speakers by total past talks', rankSpeakers),
     present: traced(
       'present_results',

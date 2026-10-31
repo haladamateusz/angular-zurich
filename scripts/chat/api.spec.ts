@@ -16,7 +16,7 @@ let quotaCalls: number;
 let providerBodies: Record<string, unknown>[];
 let unknownResult: boolean;
 let offTopic: boolean;
-let speakerQuestion: boolean;
+let speakerQuestion: false | 'talks' | 'stats';
 let rankingQuestion: boolean;
 let combinedQuestion: boolean;
 let eventYearQuestion: boolean;
@@ -551,7 +551,7 @@ beforeEach(() => {
         if (offTopic) return toolStream('present_results', { status: 'off_topic', ids: [] });
         return modelCalls === 1
           ? speakerQuestion
-            ? toolStream('get_speaker_stats', { name: 'Tomas Trajan', offset: 0 })
+            ? toolStream(`get_speaker_${speakerQuestion}`, { name: 'Tomas Trajan', offset: 0 })
             : toolStream('search_talks', { query: 'signals', offset: 0 })
           : toolStream('present_results', {
               status: 'results',
@@ -1029,7 +1029,7 @@ describe('protected chat API', () => {
   });
 
   it('returns exact speaker totals and year counts with source records', async () => {
-    speakerQuestion = true;
+    speakerQuestion = 'stats';
     const response = await post();
     const events = await response.text();
     expect(events).toContain('Tomas Trajan has 13 talks');
@@ -1037,6 +1037,20 @@ describe('protected chat API', () => {
     expect(events).toContain('of 14 published talks');
     expect(events).not.toContain('nextQuestion');
     expect(events).toContain('get_speaker_stats');
+    expect(modelCalls).toBe(2);
+    expect(events).toContain('RUN_FINISHED');
+  });
+
+  it('streams speaker talk lists as talks with event links instead of yearly statistics', async () => {
+    speakerQuestion = 'talks';
+    const events = await (await post()).text();
+    expect(events).toContain('"kind":"talks","total":14');
+    expect(events).toContain('Signals in practice');
+    expect(events).toContain('/events/2019-meetup');
+    expect(events).toContain('of 14 published talks');
+    expect(events).not.toContain('"kind":"stats"');
+    expect(events).not.toContain('By year:');
+    expect(events).toContain('get_speaker_talks');
     expect(modelCalls).toBe(2);
     expect(events).toContain('RUN_FINISHED');
   });

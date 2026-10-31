@@ -4,6 +4,38 @@ import { archiveQuerySchema } from '../../src/server/chat/context';
 import { evaluationClient, TOMAS } from './eval-fixture';
 
 describe('archive query contracts', () => {
+  it.each(['talks', 'stats'] as const)(
+    'preserves the speaker %s presentation and follow-up query mode',
+    async (mode) => {
+      const tools = createArchiveTools(evaluationClient(), new AbortController().signal);
+      const args = speakerNameSchema.parse({ name: 'Tomas Trajan' });
+      await (mode === 'talks' ? tools.speakerTalks(args) : tools.speakerStats(args));
+
+      expect(tools.ready()).toBe(true);
+      expect(tools.result()).toMatchObject({ kind: mode, total: 3 });
+      expect(tools.sources()).toHaveLength(3);
+      expect(tools.sources()[0]).toMatchObject({
+        title: 'Signals at Angular Zürich',
+        speakers: ['Tomas Trajan'],
+        date: '2023-09-10',
+        url: '/events/fixture-event',
+      });
+      expect(tools.context().lastQuery).toMatchObject({ mode, speakerId: TOMAS });
+      expect(tools.summary().includes('By year:')).toBe(mode === 'stats');
+
+      const followUp = createArchiveTools(
+        evaluationClient(),
+        new AbortController().signal,
+        undefined,
+        tools.context(),
+      );
+      await followUp.queryArchive(
+        archiveQuerySchema.parse({ ...tools.context().lastQuery, query: 'signals' }),
+      );
+      expect(followUp.result()).toMatchObject({ kind: mode, total: 1 });
+    },
+  );
+
   it('accepts explicit nulls without inventing ID or year filters', async () => {
     const args = archiveQuerySchema.parse({
       mode: 'stats',
