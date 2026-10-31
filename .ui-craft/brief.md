@@ -32,6 +32,8 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-10-31** — After the first chat message, fade Chräungie out in the centered welcome, then fade it in at the header. Avoid moving or resizing it between those positions. _Why:_ the user requested a simpler transition to match the calmer message-send animation.
+
 - **2026-10-23** — Keep the scrollable chat history directly on the page, with only the bottom composer in a card. Keep icons and visible button labels inside the composer on the right, vertically centered beside the text on wider screens and below it on mobile. _Why:_ the user restored visible labels after trying icon-only controls.
 
 - **2026-10-23** — Fill the available viewport with the chat on entry and keep its composer anchored below an independently scrolling transcript. Preserve the transcript and draft editor when browser focus or same-user session credentials change. _Why:_ loading flashes, lost reading position, and an input that moves with content interrupt the conversation.

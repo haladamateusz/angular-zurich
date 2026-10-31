@@ -248,7 +248,7 @@ describe('ChatPageComponent', () => {
   });
 
   it.each([false, true])(
-    'moves the mascot to the header on first send (reduced motion: %s)',
+    'places the mascot in the header on first send (reduced motion: %s)',
     async (reducedMotion) => {
       const fixture = TestBed.createComponent(ChatPageComponent);
       await fixture.whenStable();
@@ -257,13 +257,6 @@ describe('ChatPageComponent', () => {
         'matchMedia',
         vi.fn(() => ({ matches: reducedMotion })),
       );
-      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
-        this: HTMLElement,
-      ) {
-        return this.closest('.archive-chat-empty')
-          ? new DOMRect(400, 300, 128, 128)
-          : new DOMRect(900, 100, 128, 128);
-      });
       vi.spyOn(chat, 'send').mockImplementation(async (text) => {
         chat.messages.update((messages) => [
           ...messages,
@@ -285,11 +278,6 @@ describe('ChatPageComponent', () => {
         '.archive-chat-header .archive-chat-mascot',
       ) as HTMLElement;
       expect(mascot).not.toBeNull();
-      expect(mascot.classList.contains('archive-chat-mascot-moving')).toBe(!reducedMotion);
-      expect(mascot.style.getPropertyValue('--mascot-flight-x')).toBe(
-        reducedMotion ? '' : '-500px',
-      );
-      expect(mascot.style.getPropertyValue('--mascot-flight-y')).toBe(reducedMotion ? '' : '200px');
       await send();
       expect(fixture.nativeElement.querySelector('.archive-chat-header .archive-chat-mascot')).toBe(
         mascot,
@@ -299,7 +287,6 @@ describe('ChatPageComponent', () => {
       ) as HTMLButtonElement;
       reset.click();
       await fixture.whenStable();
-      expect(fixture.nativeElement.querySelector('.archive-chat-mascot-moving')).toBeNull();
       expect(
         fixture.nativeElement.querySelector('.archive-chat-empty .archive-chat-mascot'),
       ).not.toBeNull();

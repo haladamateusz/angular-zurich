@@ -71,95 +71,104 @@ for (const { viewport, previousCount, label, question } of scenarios) {
     await page.goto('/chat');
     const input = page.getByLabel('Your question', { exact: true });
     const transcript = page.getByRole('log');
-    const flight = page.locator('.archive-question-flight');
+    const sent = transcript.locator('.archive-question-sent');
     for (let i = 0; i < previousCount; i++) {
       await input.fill(`Previous question ${i}`);
       await input.press('Enter');
       await expect(page.locator('.archive-answer')).toHaveCount(i + 1);
       await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeVisible();
-      await expect(flight).toHaveCount(0);
+      await expect(sent).toHaveCount(0);
     }
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await input.fill(question);
     await input.scrollIntoViewIfNeeded();
-    await input.evaluate((element) => {
-      element.closest('form')!.addEventListener('submit', () => {
-        const rect = element.getBoundingClientRect();
-        element.dataset['sendOrigin'] = JSON.stringify({
-          x: rect.x + scrollX,
-          y: rect.y + scrollY,
-          width: rect.width,
-          height: rect.height,
-        });
-      });
-      element.addEventListener(
-        'keydown',
-        () => {
-          const rect = element.getBoundingClientRect();
-          element.dataset['sendOrigin'] = JSON.stringify({
-            x: rect.x + scrollX,
-            y: rect.y + scrollY,
-            width: rect.width,
-            height: rect.height,
-          });
-        },
-        { capture: true },
-      );
-    });
     await transcript.evaluate((element) => {
       element.scrollTop = 0;
       element.dispatchEvent(new Event('scroll'));
       const observer = new MutationObserver(() => {
-        const overlay = document.querySelector('.archive-question-flight');
-        if (!overlay) return;
-        const animation = overlay.getAnimations()[0];
+        const bubble = element.querySelector('.archive-question-sent');
+        const animation = bubble?.getAnimations()[0];
+        if (!animation) return;
         animation.pause();
         animation.currentTime = 0;
+        document
+          .querySelectorAll('.archive-mascot-enter, .archive-mascot-exit')
+          .forEach((mascot) => {
+            mascot.getAnimations().forEach((fade) => {
+              fade.pause();
+              fade.currentTime = 0;
+            });
+          });
         observer.disconnect();
       });
-      observer.observe(element.parentElement!, { childList: true });
+      observer.observe(element, { childList: true, attributes: true, subtree: true });
     });
     if (viewport.width === 390)
       await page.getByRole('button', { name: 'Send', exact: true }).click();
     else await input.press('Enter');
-    await expect(flight).toHaveCount(1);
-    await expect(flight).toHaveAttribute('aria-hidden', 'true');
-    const origin = await input.evaluate((element) => {
-      const rect = JSON.parse(element.dataset['sendOrigin']!);
-      return { ...rect, x: rect.x - scrollX, y: rect.y - scrollY };
-    });
-    const initial = (await flight.boundingBox())!;
+    await expect(sent).toHaveCount(1);
+    if (previousCount === 0) {
+      const fades = await page.evaluate(() => {
+        const exit = document.querySelector('.archive-mascot-exit')!;
+        const enter = document.querySelector('.archive-mascot-enter')!;
+        const outgoing = exit.getAnimations()[0];
+        const incoming = enter.getAnimations()[0];
+        const exitDuration = Number(outgoing.effect!.getTiming().duration);
+        const enterDelay = incoming.effect!.getTiming().delay;
+        outgoing.currentTime = exitDuration;
+        incoming.currentTime = enterDelay;
+        const result = {
+          exitDuration,
+          enterDelay,
+          outgoingOpacity: getComputedStyle(exit).opacity,
+          incomingOpacity: getComputedStyle(enter).opacity,
+          outgoingTransform: getComputedStyle(exit).transform,
+          incomingTransform: getComputedStyle(enter).transform,
+        };
+        outgoing.finish();
+        incoming.finish();
+        return result;
+      });
+      expect(fades.enterDelay).toBeGreaterThanOrEqual(fades.exitDuration);
+      expect(fades.outgoingOpacity).toBe('0');
+      expect(fades.incomingOpacity).toBe('0');
+      expect(fades.outgoingTransform).toBe('none');
+      expect(fades.incomingTransform).toBe('none');
+    }
     const bubble = transcript.locator('.archive-message-user').last();
-    const finalSize = (await bubble.boundingBox())!;
-    expect(initial.x).toBeCloseTo(origin!.x, 0);
-    expect(initial.y).toBeCloseTo(origin!.y, 0);
-    expect(initial.width).toBeCloseTo(finalSize.width, 0);
-    expect(initial.height).toBeCloseTo(finalSize.height, 0);
-    // Sample the actual rendered bubble and glyphs throughout the animation.
-    const samples = await flight.evaluate((element) => {
+    // Sample the real bubble and glyphs to catch scaling or text reflow.
+    const { samples, finalBox, finalText, duration } = await bubble.evaluate((element) => {
       const animation = element.getAnimations()[0];
       const duration = Number(animation.effect!.getTiming().duration);
-      const bubbles = document.querySelectorAll('.archive-chat-transcript .archive-message-user');
-      const target = bubbles[bubbles.length - 1];
-      const textBounds = (parent: Element) => {
+      const textBounds = () => {
         const range = document.createRange();
-        range.selectNodeContents(parent.querySelector('.archive-message-text')!);
+        range.selectNodeContents(element.querySelector('.archive-message-text')!);
         return range.getBoundingClientRect().toJSON();
       };
-      return [0, 0.25, 0.5, 0.75, 0.95].map((progress) => {
+      const samples = [0, 0.25, 0.5, 0.75, 0.95].map((progress) => {
         animation.currentTime = duration * progress;
         return {
           box: element.getBoundingClientRect().toJSON(),
-          text: textBounds(element),
-          targetText: textBounds(target),
+          text: textBounds(),
         };
       });
+      animation.currentTime = duration;
+      return {
+        samples,
+        finalBox: element.getBoundingClientRect().toJSON(),
+        finalText: textBounds(),
+        duration,
+      };
     });
+    expect(duration).toBeLessThanOrEqual(150);
+    expect(samples[0].box.x).toBeCloseTo(finalBox.x, 0);
+    expect(samples[0].box.y - finalBox.y).toBeGreaterThan(0);
+    expect(samples[0].box.y - finalBox.y).toBeLessThanOrEqual(16);
     for (const sample of samples) {
-      expect(sample.box.width).toBeCloseTo(finalSize.width, 0);
-      expect(sample.box.height).toBeCloseTo(finalSize.height, 0);
-      expect(sample.text.width).toBeCloseTo(sample.targetText.width, 0);
-      expect(sample.text.height).toBeCloseTo(sample.targetText.height, 0);
+      expect(sample.box.width).toBeCloseTo(finalBox.width, 0);
+      expect(sample.box.height).toBeCloseTo(finalBox.height, 0);
+      expect(sample.text.width).toBeCloseTo(finalText.width, 0);
+      expect(sample.text.height).toBeCloseTo(finalText.height, 0);
     }
     await expect
       .poll(() =>
@@ -168,30 +177,14 @@ for (const { viewport, previousCount, label, question } of scenarios) {
         ),
       )
       .toBeLessThan(2);
-    await expect(bubble).toHaveCSS('opacity', '0');
-    const { landed, destination } = await flight.evaluate((element) => {
-      const animation = element.getAnimations()[0];
-      animation.currentTime = Number(animation.effect!.getTiming().duration);
-      const bubbles = document.querySelectorAll('.archive-chat-transcript .archive-message-user');
-      return {
-        landed: element.getBoundingClientRect().toJSON(),
-        destination: bubbles[bubbles.length - 1].getBoundingClientRect().toJSON(),
-      };
-    });
-    expect(landed.x).toBeCloseTo(destination.x, 0);
-    expect(landed.y).toBeCloseTo(destination.y, 0);
-    expect(landed.width).toBeCloseTo(destination.width, 0);
-    expect(landed.height).toBeCloseTo(destination.height, 0);
-    expect(landed.width).toBeCloseTo(initial.width, 0);
-    await expect(flight).toHaveCount(0);
     await expect(bubble).toHaveCSS('opacity', '1');
     await expect(input).toBeFocused();
 
-    // Resetting during a flight must reveal/remove both visual layers cleanly.
+    // Resetting during an entrance must remove the bubble cleanly.
     await input.fill('One more question');
     await input.press('Enter');
     await page.getByRole('button', { name: 'New chat', exact: true }).click();
-    await expect(flight).toHaveCount(0);
+    await expect(sent).toHaveCount(0);
     await expect(transcript.locator('.archive-message-user')).toHaveCount(0);
   });
 }

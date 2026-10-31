@@ -1,7 +1,7 @@
 <section class="archive-chat" aria-labelledby="chat-title">
   @let activeMascot = respondingMascot();
   <ng-template #mascot>
-    <div #mascotSprite class="archive-chat-mascot" [class.is-active]="!!activeMascot">
+    <div class="archive-chat-mascot" [class.is-active]="!!activeMascot">
       <picture>
         <source
           media="(prefers-reduced-motion: reduce)"
@@ -75,7 +75,9 @@
     </div>
     <div class="archive-chat-header-mascot" aria-hidden="true">
       @if (state() === 'ready' && chat.messages().length) {
-        <ng-container [ngTemplateOutlet]="mascot" />
+        <div animate.enter="archive-mascot-enter">
+          <ng-container [ngTemplateOutlet]="mascot" />
+        </div>
       }
     </div>
   </header>
@@ -134,7 +136,7 @@
           (scroll)="onTranscriptScroll()"
         >
           @if (!chat.messages().length && !chat.error()) {
-            <div class="archive-chat-empty">
+            <div class="archive-chat-empty" animate.leave="archive-mascot-exit">
               <ng-container [ngTemplateOutlet]="mascot" />
               <h2>{{ welcomeQuestion() }}</h2>
             </div>

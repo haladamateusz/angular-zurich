@@ -41,17 +41,12 @@ export class ChatPageComponent {
   private userId: string | undefined;
   private followTranscript = true;
   private scrollOnSend = false;
-  private pendingQuestionOrigin: DOMRect | undefined;
-  private pendingMascotOrigin: DOMRect | undefined;
-  private questionFlight:
-    | { origin: DOMRect; message: HTMLElement; overlay: HTMLElement; finish: () => void }
-    | undefined;
+  private pendingQuestionAnimation = false;
   private readonly auth = inject(AuthService);
   private readonly sessionUserId = computed(() => this.auth.session()?.user.id);
   private readonly sessionAccessToken = computed(() => this.auth.session()?.access_token);
   private readonly access = inject(ChatAccessService);
   private readonly textarea = viewChild<ElementRef<HTMLTextAreaElement>>('questionInput');
-  private readonly mascotSprite = viewChild<ElementRef<HTMLElement>>('mascotSprite');
   private readonly pronunciationAudio =
     viewChild<ElementRef<HTMLAudioElement>>('pronunciationAudio');
   protected readonly pronunciationState = signal<'idle' | 'loading' | 'playing' | 'error'>('idle');
@@ -139,7 +134,6 @@ export class ChatPageComponent {
     });
     afterRenderEffect(() => {
       this.chat.messages();
-      this.animateMascotToHeader();
       const transcript = this.transcript()?.nativeElement;
       if (this.scrollOnSend) this.followTranscript = true;
       if (transcript && this.followTranscript)
@@ -147,11 +141,11 @@ export class ChatPageComponent {
           this.searchError()?.nativeElement.offsetTop ?? transcript.scrollHeight;
       this.scrollOnSend = false;
       if (transcript) this.animateSentQuestion(transcript);
-      else this.clearQuestionFlight();
+      else this.pendingQuestionAnimation = false;
       if (!this.chat.running()) this.onDraftPreviewReady();
+
     });
     inject(DestroyRef).onDestroy(() => {
-      this.clearQuestionFlight();
       const audio = this.pronunciationAudio()?.nativeElement;
       if (audio && !audio.paused) audio.pause();
     });
@@ -209,8 +203,7 @@ export class ChatPageComponent {
   }
 
   protected newChat() {
-    this.pendingMascotOrigin = undefined;
-    this.clearQuestionFlight();
+    this.pendingQuestionAnimation = false;
     this.chat.reset();
     this.question.reset();
     this.textarea()?.nativeElement.focus();
@@ -224,12 +217,10 @@ export class ChatPageComponent {
   protected async submit() {
     if (this.question.invalid || this.chat.running() || !this.question.value.trim()) return;
     const question = this.question.value;
-    this.clearQuestionFlight();
+    this.pendingQuestionAnimation = false;
     const input = this.textarea()?.nativeElement;
     if (!input?.ownerDocument.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.pendingQuestionOrigin = input?.getBoundingClientRect();
-      if (!this.chat.messages().length)
-        this.pendingMascotOrigin = this.mascotSprite()?.nativeElement.getBoundingClientRect();
+      this.pendingQuestionAnimation = true;
     }
     this.followTranscript = true;
     this.scrollOnSend = true;
@@ -244,7 +235,6 @@ export class ChatPageComponent {
     if (transcript)
       this.followTranscript =
         transcript.scrollHeight - transcript.scrollTop - transcript.clientHeight < 48;
-    if (!this.followTranscript) this.clearQuestionFlight();
   }
 
   protected onDraftPreviewReady() {
@@ -262,74 +252,15 @@ export class ChatPageComponent {
     transcript.scrollTop +=
       preview.getBoundingClientRect().top - transcript.getBoundingClientRect().top;
     this.followTranscript = false;
-    this.clearQuestionFlight();
-  }
-
-  private animateMascotToHeader() {
-    const mascot = this.mascotSprite()?.nativeElement;
-    const origin = this.pendingMascotOrigin;
-    if (!origin) return;
-    this.pendingMascotOrigin = undefined;
-    if (!mascot || !this.chat.messages().length || this.state() !== 'ready') return;
-    const destination = mascot.getBoundingClientRect();
-    if (!origin.width || !destination.width) return;
-    // Animate the wrapper so pose alignment on the image remains independent.
-    mascot.style.setProperty('--mascot-flight-x', `${origin.left - destination.left}px`);
-    mascot.style.setProperty('--mascot-flight-y', `${origin.top - destination.top}px`);
-    mascot.style.setProperty('--mascot-flight-scale', `${origin.width / destination.width}`);
-    mascot.classList.add('archive-chat-mascot-moving');
+    this.pendingQuestionAnimation = false;
   }
 
   private animateSentQuestion(transcript: HTMLElement) {
-    const surface = transcript.parentElement;
-    if (!surface) return;
-    if (this.pendingQuestionOrigin) {
-      const origin = this.pendingQuestionOrigin;
-      this.pendingQuestionOrigin = undefined;
-      const messages = transcript.querySelectorAll<HTMLElement>('.archive-message-user');
-      const message = messages.item(messages.length - 1);
-      if (!message) return;
-      const overlay = message.cloneNode(true) as HTMLElement;
-      overlay.classList.add('archive-question-flight');
-      overlay.setAttribute('aria-hidden', 'true');
-      const finish = () => {
-        overlay.removeEventListener('animationend', finish);
-        overlay.removeEventListener('animationcancel', finish);
-        overlay.remove();
-        message.style.removeProperty('opacity');
-        this.questionFlight = undefined;
-      };
-      this.questionFlight = { origin, message, overlay, finish };
-      overlay.addEventListener('animationend', finish);
-      overlay.addEventListener('animationcancel', finish);
-      message.style.opacity = '0';
-      surface.append(overlay);
-    }
-    const flight = this.questionFlight;
-    if (!flight) return;
-    if (!transcript.contains(flight.message)) {
-      this.clearQuestionFlight();
-      return;
-    }
-    // Measure after scrolling; keep the landing point aligned as streamed content grows.
-    const destination = flight.message.getBoundingClientRect();
-    const bounds = surface.getBoundingClientRect();
-    if (!destination.width || !destination.height) {
-      this.clearQuestionFlight();
-      return;
-    }
-    const style = flight.overlay.style;
-    style.left = `${destination.left - bounds.left - surface.clientLeft}px`;
-    style.top = `${destination.top - bounds.top - surface.clientTop}px`;
-    // Keep the final bubble dimensions throughout the flight so text never scales or reflows.
-    style.width = `${destination.width}px`;
-    style.setProperty('--flight-x', `${flight.origin.left - destination.left}px`);
-    style.setProperty('--flight-y', `${flight.origin.top - destination.top}px`);
-  }
-
-  private clearQuestionFlight() {
-    this.pendingQuestionOrigin = undefined;
-    this.questionFlight?.finish();
+    if (!this.pendingQuestionAnimation) return;
+    this.pendingQuestionAnimation = false;
+    const messages = transcript.querySelectorAll<HTMLElement>('.archive-message-user');
+    // Animate the actual bubble once, after it has landed in the scrolled transcript.
+    messages.item(messages.length - 1)?.classList.add('archive-question-sent');
   }
 
   protected onQuestionKeydown(event: KeyboardEvent) {
