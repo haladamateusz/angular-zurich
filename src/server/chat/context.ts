@@ -47,7 +47,7 @@ export const eventSearchSchema = z.object({
   toYear: archiveFiltersSchema.shape.toYear,
 });
 const entity = z.object({ id: z.string().uuid(), name: z.string().max(500) });
-const archiveContextSchema = z.object({
+export const archiveContextSchema = z.object({
   speakers: z.array(entity).max(10).default([]),
   events: z.array(entity).max(10).default([]),
   focusSpeakerId: z.string().uuid().optional(),

@@ -165,11 +165,8 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
         value: {
           messageId: id,
           result: {
-            kind: 'stats',
+            kind: 'talks',
             total: 1,
-            past: 1,
-            upcoming: 0,
-            years: [{ year: 2019, past: 1, upcoming: 0 }],
           },
           sources: [
             {
@@ -317,14 +314,19 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await expect(useful).toHaveAttribute('aria-pressed', 'false');
   await expect(notQuite).toHaveAttribute('aria-pressed', 'false');
   expect(feedbackRatings).toEqual(['useful', 'not_quite', 'useful', null]);
+  let expectedMessages = 2;
+  const responses = page.locator('.archive-message');
   for (const htmlMode of ['html-error', 'html-success'] as const) {
     mode = htmlMode;
     await question.fill('Do we have any talk submissions awaiting review?');
     await page.getByRole('button', { name: 'Send' }).click();
-    await expect(page.getByRole('alert')).toContainText('try again');
-    await expect(page.getByRole('alert')).not.toContainText('JSON');
-    await expect(page.getByRole('alert')).not.toContainText('<html>');
-    await expect(page.getByRole('button', { name: 'Edit and retry question' })).toBeEnabled();
+    expectedMessages += 2;
+    await expect(responses).toHaveCount(expectedMessages);
+    const latest = responses.last();
+    await expect(latest.getByRole('alert')).toContainText('try again');
+    await expect(latest.getByRole('alert')).not.toContainText('JSON');
+    await expect(latest.getByRole('alert')).not.toContainText('<html>');
+    await expect(latest.getByRole('button', { name: 'Edit and retry question' })).toBeEnabled();
   }
   mode = 'submissions';
   await question.fill('Do we have any talk submissions awaiting review?');
@@ -332,7 +334,9 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   await expect(
     page.getByRole('link', { name: /Open submission\s*: A submitted talk/ }),
   ).toHaveAttribute('href', `/dashboard/talk-submissions/${id}`);
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  // Prior failed turns stay in the transcript; the new answer has no error.
+  await expect(responses.last().getByRole('alert')).toHaveCount(0);
+  await expect(page.getByRole('alert')).toHaveCount(2);
   await page.screenshot({ path: 'tmp/chat-submissions-mobile.png', fullPage: true });
   expect(
     await page.evaluate(
@@ -349,7 +353,7 @@ test('approved archive chat: zero-cost open, source cards, keyboard, mobile, dar
   mode = 'quota';
   await page.getByLabel('Your question', { exact: true }).fill('What about testing?');
   await page.getByRole('button', { name: 'Send' }).click();
-  await expect(page.getByRole('alert')).toContainText('allowance');
+  await expect(responses.last().getByRole('alert')).toContainText('allowance');
   mode = 'revoked';
   await page.getByLabel('Your question', { exact: true }).fill('Another question');
   await page.getByRole('button', { name: 'Send' }).click();

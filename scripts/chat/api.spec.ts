@@ -1191,7 +1191,11 @@ describe('protected chat API', () => {
     const response = await nativeFetch(`${origin}/api/chat/access`, {
       headers: { Authorization: 'Bearer test-token' },
     });
-    expect(await response.json()).toEqual({ approved: true, available: true });
+    expect(await response.json()).toEqual({
+      approved: true,
+      available: true,
+      historyEnabled: false,
+    });
     expect(modelCalls).toBe(0);
     expect(quotaCalls).toBe(0);
   });

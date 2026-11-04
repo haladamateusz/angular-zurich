@@ -14,7 +14,11 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { ChatHistoryService } from '../data-access/chat-history.service';
+import { HistorySidebarComponent } from '../history-sidebar/history-sidebar.component';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventDraftPreviewComponent } from '../event-draft-preview.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ChatAccessService } from '../../../core/auth/chat-access.service';
@@ -24,6 +28,7 @@ import { ChatFeedbackComponent } from '../chat-feedback.component';
 @Component({
   imports: [
     ErrorNoticeComponent,
+    HistorySidebarComponent,
     ReactiveFormsModule,
     RouterLink,
     ChatFeedbackComponent,
@@ -31,13 +36,19 @@ import { ChatFeedbackComponent } from '../chat-feedback.component';
     NgTemplateOutlet,
     EventDraftPreviewComponent,
   ],
-  providers: [ArchiveChatService],
+  providers: [ArchiveChatService, ChatHistoryService],
   selector: 'app-chat-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './chat-page.component.css',
   templateUrl: './chat-page.component.html',
 })
 export class ChatPageComponent {
+  protected readonly history = inject(ChatHistoryService);
+  private readonly router = inject(Router);
+  protected readonly inferenceAvailable = signal(true);
+  private restoreScroll: number | undefined;
+  private previousThread: string | null = null;
+  private readonly viewStates = new Map<string, { text: string; scroll: number }>();
   private userId: string | undefined;
   private followTranscript = true;
   private scrollOnSend = false;
@@ -85,6 +96,14 @@ export class ChatPageComponent {
     };
   });
   private readonly route = inject(ActivatedRoute);
+  private readonly routeThread = toSignal(
+    this.route.paramMap.pipe(map((params) => params.get('threadId'))),
+    { initialValue: null },
+  );
+  private readonly routeDraft = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('draft'))),
+    { initialValue: null },
+  );
   protected readonly latestDraft = computed(() =>
     this.chat
       .messages()
@@ -97,7 +116,7 @@ export class ChatPageComponent {
     const result = this.latestDraft();
     return result?.kind === 'event_draft'
       ? result.draftId
-      : this.route.snapshot.queryParamMap.get('draft');
+      : (this.chat.recoveredDraftId() ?? this.routeDraft());
   });
   protected readonly draftVersion = computed(() => {
     const result = this.latestDraft();
@@ -135,6 +154,33 @@ export class ChatPageComponent {
       const timer = setTimeout(() => this.mascotThinkingComplete.set(true), 5_000);
       onCleanup(() => clearTimeout(timer));
     });
+    effect(() => {
+      const id = this.routeThread();
+      if (this.state() !== 'ready') return;
+      untracked(() => {
+        if (id === this.chat.threadId() && !this.chat.loadError()) return;
+        const old = this.previousThread ?? 'new';
+        this.viewStates.set(old, {
+          text: this.question.value,
+          scroll: this.transcript()?.nativeElement.scrollTop ?? 0,
+        });
+        this.previousThread = id;
+        const view = this.viewStates.get(id ?? 'new');
+        this.question.setValue(view?.text ?? '');
+        this.restoreScroll = view?.scroll;
+        this.followTranscript = !view;
+        this.pendingQuestionAnimation = false;
+        if (id) void this.chat.open(id);
+        else this.chat.reset();
+      });
+    });
+    effect(() => {
+      const id = this.chat.threadId();
+      if (id && !this.chat.loading() && !this.chat.loadError() && this.routeThread() !== id) {
+        this.previousThread = id;
+        void this.router.navigate(['/chat', id], { replaceUrl: true });
+      }
+    });
     afterRenderEffect((onCleanup) => {
       this.chat.messages();
       this.animateComposer();
@@ -147,6 +193,11 @@ export class ChatPageComponent {
       if (transcript) this.animateSentQuestion(transcript);
       else this.pendingQuestionAnimation = false;
       if (!this.chat.running()) this.onDraftPreviewReady();
+      if (transcript && this.restoreScroll !== undefined && !this.chat.loading()) {
+        transcript.scrollTop = this.restoreScroll;
+        this.restoreScroll = undefined;
+        this.followTranscript = false;
+      }
       if (transcript) {
         const updateTrack = () => {
           const frame = transcript.parentElement;
@@ -177,13 +228,16 @@ export class ChatPageComponent {
       const userChanged = this.userId !== userId;
       if (userChanged) {
         this.userId = userId;
-        this.chat.reset();
+        this.chat.setOwner(userId);
+        this.viewStates.clear();
         this.followTranscript = true;
       }
       const controller = new AbortController();
       onCleanup(() => controller.abort());
       if (!userId || !token) {
         this.chat.reset();
+        this.history.reset();
+        this.viewStates.clear();
         this.state.set('forbidden');
         return;
       }
@@ -193,8 +247,10 @@ export class ChatPageComponent {
       untracked(() => void this.checkAccess(controller.signal, background));
     });
     effect(() => {
-      if (this.chat.accessRevoked()) {
+      if (this.chat.accessRevoked() || this.history.revoked()) {
         this.chat.reset();
+        this.history.reset();
+        this.viewStates.clear();
         this.state.set('forbidden');
       }
     });
@@ -229,6 +285,9 @@ export class ChatPageComponent {
     this.composerAnimation?.cancel();
     this.pendingQuestionAnimation = false;
     this.chat.reset();
+    this.previousThread = null;
+    this.viewStates.delete('new');
+    if (this.history.enabled() || this.routeThread()) void this.router.navigate(['/chat']);
     this.question.reset();
     this.textarea()?.nativeElement.focus();
   }
@@ -239,7 +298,16 @@ export class ChatPageComponent {
   }
 
   protected async submit() {
-    if (this.question.invalid || this.chat.running() || !this.question.value.trim()) return;
+    if (
+      this.question.invalid ||
+      this.chat.running() ||
+      this.chat.loading() ||
+      this.chat.loadError() ||
+      this.chat.remoteRun() ||
+      !this.inferenceAvailable() ||
+      !this.question.value.trim()
+    )
+      return;
     const question = this.question.value;
     this.pendingQuestionAnimation = false;
     const input = this.textarea()?.nativeElement;
@@ -254,6 +322,27 @@ export class ChatPageComponent {
     this.question.reset();
     await this.chat.send(question);
     this.textarea()?.nativeElement.focus();
+  }
+
+  protected reloadConversation() {
+    const id = this.chat.threadId();
+    if (id) void this.chat.open(id, true);
+  }
+
+  protected async loadEarlier() {
+    const transcript = this.transcript()?.nativeElement;
+    const height = transcript?.scrollHeight ?? 0;
+    const top = transcript?.scrollTop ?? 0;
+    this.followTranscript = false;
+    await this.chat.loadEarlier();
+    requestAnimationFrame(() => {
+      if (transcript) transcript.scrollTop = top + transcript.scrollHeight - height;
+    });
+  }
+
+  protected conversationDeleted(id: string) {
+    this.viewStates.delete(id);
+    if (id === this.chat.threadId()) this.newChat();
   }
 
   protected onTranscriptScroll() {
@@ -322,7 +411,18 @@ export class ChatPageComponent {
     if (!background) this.state.set('loading');
     try {
       const state = await this.access.check(signal);
-      if (!signal?.aborted) this.state.set(state);
+      if (!signal?.aborted) {
+        this.inferenceAvailable.set(state === 'ready');
+        if (state === 'forbidden') {
+          this.chat.reset();
+          this.history.reset();
+          this.viewStates.clear();
+        }
+        if (state !== 'forbidden' && !background && this.access.historyEnabled())
+          await this.history.refresh();
+        if (!signal?.aborted)
+          this.state.set(state === 'setup' && this.history.enabled() ? 'ready' : state);
+      }
     } catch {
       if (!signal?.aborted && !background) this.state.set('error');
     }

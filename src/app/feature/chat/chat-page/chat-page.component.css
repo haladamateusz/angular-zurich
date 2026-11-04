@@ -1,10 +1,13 @@
 :host {
+  overflow: hidden;
   display: flex;
   flex: 1;
   min-height: 0;
 }
 
 .archive-chat {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -282,7 +285,8 @@ h2 {
 
 .archive-chat-surface.is-empty > .archive-chat-transcript-frame,
 .archive-chat-surface.is-empty > .archive-chat-composer {
-  inset-block-start: calc(-1 * (var(--space-20) * 3));
+  /* Keep the raised welcome layout clear of the header on shorter viewports. */
+  inset-block-start: clamp(-15rem, calc((48rem - 100dvh) / 2), 0rem);
 }
 
 .archive-chat-surface.is-empty .archive-chat-transcript-frame {
@@ -662,5 +666,12 @@ summary:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .app-skeleton::after {
     animation: none;
+  }
+}
+
+/* The history rail sits outside the bounded reading column. */
+@media (width < 64rem) {
+  :host {
+    flex-direction: column;
   }
 }

@@ -48,7 +48,10 @@ export async function runArchiveAgent(
   signal: AbortSignal,
   onActivity: (activity: ChatActivity) => void = () => undefined,
   context: ArchiveContext = { speakers: [], events: [] },
-  onAnswerReady: (answer: ArchivePresentation, context: ArchiveContext) => void = () => undefined,
+  onAnswerReady: (
+    answer: ArchivePresentation,
+    context: ArchiveContext,
+  ) => void | Promise<void> = () => undefined,
   onText: (delta: string) => void = () => undefined,
 ) {
   const now = new Date();
@@ -336,7 +339,7 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
             ? 'This draft has already been published.'
             : 'Your event draft is saved privately. Review and edit it below. Confirm in the preview to save it as a Draft event in the dashboard.';
     const presentation = { sources: [], summary: text, result };
-    onAnswerReady(presentation, nextContext);
+    await onAnswerReady(presentation, nextContext);
     onText(text);
     return { ...presentation, text, evidence: text, context: nextContext, providerCalls, usage };
   }
@@ -353,7 +356,7 @@ talks earlier in the current year are past, not upcoming. Preserve supplied past
     const organizer = await client.rpc('can_current_user_manage_events').abortSignal(signal);
     if (organizer.error || organizer.data !== true) throw new Error('access_revoked');
   }
-  onAnswerReady(presentation, archive.context());
+  await onAnswerReady(presentation, archive.context());
   let text = fallback;
   if (['talks', 'stats', 'ranking'].includes(presentation.result.kind)) {
     writingAnswer = true;

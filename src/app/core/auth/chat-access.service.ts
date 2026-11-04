@@ -1,9 +1,10 @@
-import { Service, inject } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 import { AuthService } from './auth.service';
 
 @Service()
 export class ChatAccessService {
   private readonly auth = inject(AuthService);
+  readonly historyEnabled = signal(false);
 
   async check(signal?: AbortSignal): Promise<'ready' | 'setup' | 'forbidden'> {
     const token = this.auth.session()?.access_token;
@@ -22,6 +23,7 @@ export class ChatAccessService {
       data.approved !== true
     )
       return 'forbidden';
+    this.historyEnabled.set('historyEnabled' in data && data.historyEnabled === true);
     return 'available' in data && data.available === true ? 'ready' : 'setup';
   }
 }

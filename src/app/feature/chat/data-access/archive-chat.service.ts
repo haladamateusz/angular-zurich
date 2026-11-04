@@ -1,3 +1,5 @@
+import { ChatHistoryService } from './chat-history.service';
+import { HistoryPage } from '../../../core/models/chat-history.model';
 import { ChatResult } from '../../../core/models/chat-result.model';
 import { ChatFeedbackContext } from '../../../core/models/chat-feedback.model';
 import { DestroyRef, Service, inject, signal } from '@angular/core';
@@ -27,6 +29,24 @@ interface ChatMessage {
 @Service()
 export class ArchiveChatService {
   private readonly auth = inject(AuthService);
+  private readonly history = inject(ChatHistoryService);
+  private loadController: AbortController | undefined;
+  private runId: string | undefined;
+  readonly threadId = signal<string | null>(null);
+  readonly revision = signal(0);
+  readonly loading = signal(false);
+  readonly loadError = signal('');
+  readonly before = signal<number | null>(null);
+  readonly remoteRun = signal<string | null>(null);
+  readonly recoveredDraftId = signal<string | undefined>(undefined);
+  private owner: string | undefined;
+
+  setOwner(userId: string | undefined) {
+    if (this.owner === userId) return;
+    this.owner = userId;
+    this.reset();
+    this.history.reset();
+  }
   private readonly sources = new Map<string, ChatSource[]>();
   private readonly answerIds = new Map<string, string>();
   private readonly interruptedAnswers = new Map<string, 'stopped' | 'failed'>();
@@ -50,8 +70,19 @@ export class ArchiveChatService {
   }
 
   reset() {
+    if (this.running()) this.stop();
+    this.loadController?.abort();
+    this.loadController = undefined;
     this.agent.abortRun();
     this.agent = this.createAgent();
+    this.threadId.set(null);
+    this.revision.set(0);
+    this.before.set(null);
+    this.loading.set(false);
+    this.loadError.set('');
+    this.remoteRun.set(null);
+    this.recoveredDraftId.set(undefined);
+    this.runId = undefined;
     this.contextToken = undefined;
     this.results.clear();
     this.sources.clear();
@@ -71,6 +102,17 @@ export class ArchiveChatService {
   }
 
   stop() {
+    const stoppedThread = this.threadId();
+    if (this.history.enabled() && stoppedThread && this.runId) {
+      void this.history.stop(this.threadId()!, this.runId).catch((error: unknown) => {
+        if (this.threadId() === stoppedThread)
+          this.status.set(
+            error instanceof Error
+              ? error.message
+              : 'Stop could not be confirmed. Reload the conversation.',
+          );
+      });
+    }
     if (this.writingAnswer()) this.interruptedAnswers.set(this.questionId, 'stopped');
     const previous = this.agent;
     this.agent = this.createAgent([...previous.messages], previous.threadId);
@@ -84,7 +126,15 @@ export class ArchiveChatService {
 
   async send(question: string): Promise<boolean> {
     const text = question.trim();
-    if (this.running() || !text || text.length > 2_000) return false;
+    if (
+      this.running() ||
+      this.loading() ||
+      this.loadError() ||
+      this.remoteRun() ||
+      !text ||
+      text.length > 2_000
+    )
+      return false;
     const agent = this.agent;
     this.lastQuestion.set(text);
     this.error.set('');
@@ -120,6 +170,97 @@ export class ArchiveChatService {
         else this.updateMessages(agent.messages);
       }
     }
+  }
+
+  async open(threadId: string, reload = false) {
+    if (!reload && threadId === this.threadId() && !this.loadError()) return;
+    this.reset();
+    this.threadId.set(threadId);
+    this.loading.set(true);
+    const controller = new AbortController();
+    this.loadController = controller;
+    try {
+      const page = await this.history.read(threadId, undefined, controller.signal);
+      if (controller.signal.aborted) return;
+      this.hydrate(page);
+    } catch (error) {
+      if (!controller.signal.aborted)
+        this.loadError.set(
+          error instanceof Error ? error.message : 'This conversation could not be opened.',
+        );
+    } finally {
+      if (!controller.signal.aborted) this.loading.set(false);
+    }
+  }
+
+  async loadEarlier() {
+    const before = this.before(),
+      threadId = this.threadId();
+    if (!before || !threadId || this.loading() || this.running()) return;
+    this.loading.set(true);
+    try {
+      const page = await this.history.read(threadId, before, this.loadController?.signal);
+      if (threadId !== this.threadId()) return;
+      if (page.thread.revision !== this.revision())
+        throw new Error('This conversation changed in another tab. Reload it before continuing.');
+      const existing = [...this.agent.messages];
+      this.hydrate(page);
+      const earlier = [...this.agent.messages];
+      const ids = new Set(earlier.map((message) => message.id));
+      this.agent = this.createAgent(
+        [...earlier, ...existing.filter((message) => !ids.has(message.id))],
+        threadId,
+      );
+      this.updateMessages(this.agent.messages);
+    } catch (error) {
+      if (threadId === this.threadId())
+        this.error.set(
+          error instanceof Error ? error.message : 'Earlier messages could not be loaded.',
+        );
+    } finally {
+      if (threadId === this.threadId()) this.loading.set(false);
+    }
+  }
+
+  private hydrate(page: HistoryPage) {
+    this.revision.set(page.thread.revision);
+    this.before.set(page.before);
+    this.remoteRun.set(page.activeRun);
+    this.recoveredDraftId.set(page.draftId);
+    const messages: Message[] = [];
+    for (const message of page.messages) {
+      messages.push({ id: message.id, role: message.role, content: message.text });
+      if (message.role !== 'assistant' || !message.reply_to) continue;
+      const questionId = message.reply_to;
+      this.answerIds.set(questionId, message.id);
+      this.sources.set(message.id, message.payload.sources);
+      if (message.payload.result) this.results.set(message.id, message.payload.result);
+      const complete = message.status === 'complete';
+      this.searches.set(questionId, {
+        steps: message.payload.activity.map((step) =>
+          step.state === 'running' && message.status !== 'running'
+            ? { ...step, state: 'cancelled' }
+            : step,
+        ),
+        state: complete
+          ? 'complete'
+          : message.status === 'running'
+            ? 'running'
+            : message.status === 'failed'
+              ? 'failed'
+              : 'cancelled',
+        error: message.payload.error,
+        question: page.messages.find((item) => item.id === questionId)?.text,
+      });
+      if (complete) this.completedAnswers.add(questionId);
+      else if (message.status !== 'running')
+        this.interruptedAnswers.set(
+          questionId,
+          message.status === 'stopped' ? 'stopped' : 'failed',
+        );
+    }
+    this.agent = this.createAgent(messages, page.thread.id);
+    this.updateMessages(messages);
   }
 
   private updateMessages(messages: readonly Readonly<Message>[]) {
@@ -198,6 +339,7 @@ export class ArchiveChatService {
         // Only recent user questions are context. Never resend rendered records,
         // tool output, or an ever-growing transcript to the backend.
         const input = JSON.parse(String(init.body)) as { runId: string };
+        this.runId = input.runId;
         let remaining = 6_000;
         const messages = agent.messages
           .filter((message) => message.role === 'user')
@@ -215,7 +357,9 @@ export class ArchiveChatService {
           runId: input.runId,
           threadId: agent.threadId,
           contextToken: this.contextToken,
-          messages,
+          questionId: this.questionId,
+          revision: this.revision(),
+          messages: this.history.enabled() ? messages.slice(-1) : messages,
         });
         const response = await fetch(url, { ...init, headers, body });
         if (!response.ok) {
@@ -274,6 +418,14 @@ export class ArchiveChatService {
       },
       onCustomEvent: ({ event }) => {
         if (agent !== this.agent || !this.running()) return;
+        if (event.name === 'history_saved') {
+          const value = event.value as { threadId?: unknown; revision?: unknown };
+          if (value.threadId === agent.threadId && typeof value.revision === 'number') {
+            this.threadId.set(agent.threadId);
+            this.revision.set(value.revision);
+            void this.history.refresh();
+          }
+        }
         if (event.name === 'archive_sources') {
           const parsed = chatSourcesEventSchema.safeParse(event.value);
           if (parsed.success) {

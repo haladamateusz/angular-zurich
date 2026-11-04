@@ -83,7 +83,7 @@ not prove remote provider availability, configured prices, or deployed streaming
   independent overall spending limit; set it before enabling the feature.
 - Only the last six user questions, capped at 6,000 characters in total, are forwarded
   as context. Client system messages, tool results, model choices and instructions
-  are discarded. There is no saved conversation history or server-side thread replay.
+  are discarded. Without `CHAT_HISTORY_ENABLED`, there is no saved conversation history. With history enabled, the server persists conversations and restores bounded verified context; it never replays old tool calls.
 - The agent selects retrieved IDs; the server validates the result and publishes source
   cards/tables first. One separate, tool-free model call then writes a short answer using
   only those published records and verified totals. Actual text deltas stream below the
@@ -475,7 +475,7 @@ feedback-derived prompt correction or paid live feedback evaluation was made.
 
 #### Existing archive evaluations
 
-No additional account or secret is required for short-lived search context. The existing server-only service credential derives the context encryption key. A new chat/account resets context; Stop preserves it. Context expires after 30 minutes and no transcript is persisted. Never remove server approval checks based on possession of a context token.
+No additional account or secret is required for short-lived search context. The existing server-only service credential derives the context encryption key. A new chat/account resets context; Stop preserves it. With history disabled, context expires after 30 minutes and no transcript is persisted. Saved conversations use durable server context instead, as described below. Never remove server approval checks based on possession of a context token.
 
 Apply `20260923210337_chat_combined_filters.sql` before using combined speaker/topic/year filters. The RPC is invoker-security, approved-user-only and read-only.
 
@@ -491,3 +491,37 @@ CHAT_EVAL_LIMIT=20 CHAT_EVAL_BUDGET_CENTS=200 npm run eval:chat
 The first command runs six fixed-data cases with a conservative 60-cent reservation. The full catalogue reserves $2 maximum; the normal three retrieval calls plus one answer call, 40 KB request and 800-output-token caps and provider price ceiling still apply. Evaluations use the configured OpenRouter key and a synthetic read-only archive, not production user accounts or database mutations. Do not add these paid calls to automatic CI without a separately agreed budget.
 
 Verification on 24 September 2026: the migration was applied locally and to the linked Supabase project; transactional archive/access/quota regressions passed and the local security advisor reported no issues. The 20-case real-model evaluation pass succeeded after correcting nullable filter schemas and filtered-speaker tool guidance. Ordinary counts/rankings completed in one model call in that pass. Model evaluations are samples, not guarantees for every phrasing. Desktop/mobile light/dark browser checks and AXE checks passed using installed Chrome (`PLAYWRIGHT_CHANNEL=chrome npm run test:chat:browser`). Production still reports the existing initial-bundle warning and server dependency CommonJS warnings.
+
+## Saved conversations
+
+Apply `20261031222732_add_saved_chat_history.sql`, then set the server-only
+`CHAT_HISTORY_ENABLED=true` and redeploy (or restart the local server). Leave it
+false until the migration is present. This is additive and does not reconstruct
+old conversations from feedback or event drafts.
+
+Approved users get a recent-chat sidebar on desktop and a History drawer on mobile.
+Chats are private to their owner, retained until deleted, and available across devices.
+Titles come from the first question; users can rename or delete chats. Deleting a
+chat removes its messages, server context and associated feedback, but leaves event
+drafts/events and their audit records intact. Previously exported evaluation files
+are separate copies: do not retain identifiable feedback exports beyond their manual
+review, and remove existing exports containing a deleted conversation.
+
+History reads and deletion do not invoke the model. `CHAT_ENABLED=false` disables
+inference while saved conversations remain readable when history is enabled;
+`CHAT_HISTORY_ENABLED=false` disables all history endpoints. Both still require a
+valid session and live account approval. Never expose the persistence RPC to browser
+roles. It uses explicit owner checks because the backend service role bypasses RLS.
+The model tools retain the caller's JWT.
+
+Responses checkpoint approximately once per second. Switching chats stops the old
+response; the saved partial result is available on return. A process crash can lose
+the text since the last checkpoint. Abandoned runs become interrupted after the
+existing two-minute lease expires. A second tab must refresh the saved conversation
+before continuing after a conflict. There is no background generation or live
+cross-device stream subscription.
+
+Run `supabase/tests/chat_history.sql` against local Supabase after applying migrations,
+`npm run test:chat`, and `npm run test:chat:browser -- history.e2e.ts` before enabling
+history. The browser suite uses synthetic authentication and mocked API responses;
+verify the actual deployed Supabase RPCs and streaming in a preview environment too.

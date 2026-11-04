@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ChatAccessService } from '../../../core/auth/chat-access.service';
 import { ArchiveChatService } from '../data-access/archive-chat.service';
 import { ChatPageComponent } from './chat-page.component';
+import { ChatHistoryService } from '../data-access/chat-history.service';
 import { EventDraftService } from '../data-access/event-draft.service';
 import { EventDraft } from '../../../core/models/event-draft.model';
 
@@ -24,12 +25,13 @@ describe('ChatPageComponent', () => {
       user: { id: 'test-user', user_metadata: { given_name: 'Ada' } },
     });
     check.mockReset().mockResolvedValue('ready');
+    vi.spyOn(ChatHistoryService.prototype, 'refresh').mockResolvedValue(undefined);
     TestBed.configureTestingModule({
       imports: [ChatPageComponent],
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: { session } },
-        { provide: ChatAccessService, useValue: { check } },
+        { provide: ChatAccessService, useValue: { check, historyEnabled: signal(false) } },
       ],
     });
   });

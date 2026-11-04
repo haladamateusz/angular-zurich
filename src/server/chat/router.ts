@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { ArchiveContext, openContext, sealContext } from './context';
 import { parseChatRequest } from './policy';
+import { ChatHistory, HistoryWriter, HistoryError } from './history';
 import { chatFeedbackSchema } from '../../app/core/models/chat-feedback.model';
 import { z } from 'zod';
 import { eventDraftSchema, eventDraftSaveIssues } from '../../app/core/models/event-draft.model';
@@ -33,6 +34,7 @@ function serverConfig() {
     serviceKey: process.env['SUPABASE_SERVICE_ROLE_KEY'],
     openRouterKey: process.env['OPENROUTER_API_KEY'],
     enabled: process.env['CHAT_ENABLED'] === 'true',
+    historyEnabled: process.env['CHAT_HISTORY_ENABLED'] === 'true',
     dailyBudget: Number.isSafeInteger(budget) && budget >= 10 && budget <= 10_000 ? budget : 0,
   };
 }
@@ -79,6 +81,16 @@ async function authenticate(req: Request, res: Response) {
   return { client, user: data.user, config };
 }
 
+function historyFor(auth: NonNullable<Awaited<ReturnType<typeof authenticate>>>) {
+  if (!auth.config.historyEnabled || !auth.config.serviceKey)
+    throw new HistoryError('Saved conversations are not enabled yet.', 503);
+  return new ChatHistory(
+    createClient(auth.config.url, auth.config.serviceKey, { auth: authOptions }),
+    auth.client,
+    auth.user.id,
+  );
+}
+
 export const chatRouter = express.Router();
 chatRouter.use((_req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
@@ -93,10 +105,58 @@ chatRouter.get('/access', async (req, res) => {
   const { config } = auth;
   res.json({
     approved: true,
+    historyEnabled: config.historyEnabled,
     available: Boolean(
       config.enabled && config.serviceKey && config.openRouterKey && config.dailyBudget,
     ),
   });
+});
+
+chatRouter.get('/threads', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  if (!auth.config.historyEnabled) {
+    res.json({ enabled: false, items: [], cursor: null });
+    return;
+  }
+  const cursor = z.string().max(500).optional().parse(req.query['cursor']);
+  res.json(await historyFor(auth).list(cursor));
+});
+chatRouter.get('/threads/:threadId/messages', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  const id = z.string().uuid().parse(req.params['threadId']);
+  const before = z.coerce.number().int().positive().optional().parse(req.query['before']);
+  res.json(await historyFor(auth).read(id, before));
+});
+chatRouter.patch('/threads/:threadId', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  const threadId = z.string().uuid().parse(req.params['threadId']);
+  const input = z
+    .object({ title: z.string().trim().min(1).max(100), revision: z.number().int().nonnegative() })
+    .strict()
+    .parse(req.body);
+  const history = historyFor(auth);
+  await history.read(threadId);
+  res.json(await history.call('rename', { threadId, ...input }));
+});
+chatRouter.delete('/threads/:threadId', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  const threadId = z.string().uuid().parse(req.params['threadId']);
+  const history = historyFor(auth);
+  await history.read(threadId);
+  await history.call('delete', { threadId });
+  res.sendStatus(204);
+});
+chatRouter.post('/threads/:threadId/runs/:runId/stop', async (req, res) => {
+  const auth = await authenticate(req, res);
+  if (!auth) return;
+  const threadId = z.string().uuid().parse(req.params['threadId']);
+  const runId = z.string().uuid().parse(req.params['runId']);
+  await historyFor(auth).call('stop', { threadId, runId });
+  res.sendStatus(204);
 });
 
 chatRouter.all(
@@ -216,6 +276,7 @@ chatRouter.post('/feedback', async (req, res) => {
     return;
   }
   const { threadId, messageId, question, answer, sourceIds, result, rating } = parsed.data;
+  if (auth.config.historyEnabled) await historyFor(auth).read(threadId);
   // Use the caller's session so RLS enforces ownership and current approval.
   // Context is a user-submitted snapshot, not a verified agent execution log.
   const query =
@@ -228,6 +289,7 @@ chatRouter.post('/feedback', async (req, res) => {
       : auth.client.from('chat_feedback').upsert(
           {
             user_id: auth.user.id,
+            ...(auth.config.historyEnabled ? { saved_thread_id: threadId } : {}),
             thread_id: threadId,
             message_id: messageId,
             question,
@@ -263,7 +325,9 @@ chatRouter.post('/run', async (req, res) => {
   let context: ArchiveContext;
   try {
     input = parseChatRequest(req.body as unknown);
-    context = openContext(input.contextToken, user.id, input.threadId, config.serviceKey);
+    context = config.historyEnabled
+      ? { speakers: [], events: [] }
+      : openContext(input.contextToken, user.id, input.threadId, config.serviceKey);
   } catch {
     res.status(400).json({
       error:
@@ -276,15 +340,53 @@ chatRouter.post('/run', async (req, res) => {
     auth: authOptions,
     global: { fetch: (url, init) => fetch(url, { ...init, signal: AbortSignal.timeout(10_000) }) },
   });
-  const reservation = await ledger.rpc('reserve_chat_run', {
-    p_user_id: user.id,
-    p_run_id: input.runId,
-    p_daily_budget_cents: config.dailyBudget,
-  });
-  if (reservation.error || reservation.data !== 'ok') {
-    const code = typeof reservation.data === 'string' ? reservation.data : '';
+  const history = config.historyEnabled ? historyFor(auth) : undefined;
+  let saved: { messageId: string; revision: number } | undefined;
+  let code: string;
+  if (history) {
+    const fields = z
+      .object({ questionId: z.string().uuid(), revision: z.number().int().nonnegative() })
+      .parse(req.body);
+    try {
+      const accepted = await history.begin({
+        ...fields,
+        threadId: input.threadId,
+        runId: input.runId,
+        question: input.messages.at(-1)!.content,
+        budget: config.dailyBudget,
+      });
+      code = accepted.code;
+      if ('messageId' in accepted) {
+        saved = accepted;
+        context = accepted.context;
+        input = { ...input, messages: accepted.messages };
+      }
+    } catch (error) {
+      // Acceptance can succeed before a source-permission check fails.
+      await history
+        .call('release', { threadId: input.threadId, runId: input.runId })
+        .catch(() => undefined);
+      throw error;
+    }
+  } else {
+    const reservation = await ledger.rpc('reserve_chat_run', {
+      p_user_id: user.id,
+      p_run_id: input.runId,
+      p_daily_budget_cents: config.dailyBudget,
+    });
+    code = reservation.error ? 'unavailable' : String(reservation.data);
+  }
+  if (code !== 'ok') {
     res
-      .status(code === 'forbidden' ? 403 : reservation.error ? 503 : 429)
+      .status(
+        code === 'forbidden'
+          ? 403
+          : code === 'unavailable'
+            ? 503
+            : code === 'duplicate'
+              ? 409
+              : 429,
+      )
       .setHeader('Retry-After', '60');
     res.json({
       error: quotaMessages[code] ?? 'Chat is unavailable for this account. Please try again later.',
@@ -293,6 +395,7 @@ chatRouter.post('/run', async (req, res) => {
   }
 
   if (res.destroyed) {
+    if (history) await history.call('release', { threadId: input.threadId, runId: input.runId });
     await ledger.rpc('finish_chat_run', { p_user_id: user.id, p_run_id: input.runId });
     return;
   }
@@ -306,12 +409,22 @@ chatRouter.post('/run', async (req, res) => {
     if (!res.destroyed && !res.writableEnded) res.write(`data: ${JSON.stringify(event)}\n\n`);
   };
   emit({ type: 'RUN_STARTED', threadId: input.threadId, runId: input.runId });
+  if (saved)
+    emit({
+      type: 'CUSTOM',
+      name: 'history_saved',
+      value: { threadId: input.threadId, revision: saved.revision },
+    });
+  const writer = history
+    ? new HistoryWriter(history, input.threadId, input.runId, () => controller.abort())
+    : undefined;
+  const checkpointTimer = writer ? setInterval(() => void writer.checkpoint(), 1000) : undefined;
   const heartbeat = setInterval(() => {
     if (!res.destroyed) res.write(': searching published archive\n\n');
   }, 10_000);
   const started = performance.now();
   const steps: { tool: string; state: string; durationMs?: number }[] = [];
-  const messageId = crypto.randomUUID();
+  const messageId = saved?.messageId ?? crypto.randomUUID();
   let answerStarted = false;
   try {
     const { runArchiveAgent } = await import('./agent');
@@ -321,6 +434,12 @@ chatRouter.post('/run', async (req, res) => {
       config.openRouterKey,
       controller.signal,
       (activity) => {
+        if (writer) {
+          const previous = writer.payload.activity;
+          writer.payload.activity = previous.some((item) => item.id === activity.id)
+            ? previous.map((item) => (item.id === activity.id ? activity : item))
+            : [...previous, activity].slice(-12);
+        }
         if (activity.state === 'running') {
           emit({ type: 'TOOL_CALL_START', toolCallId: activity.id, toolCallName: activity.tool });
           emit({ type: 'TOOL_CALL_ARGS', toolCallId: activity.id, delta: activity.detail });
@@ -348,7 +467,15 @@ chatRouter.post('/run', async (req, res) => {
         });
       },
       context,
-      (presentation, verifiedContext) => {
+      async (presentation, verifiedContext) => {
+        if (writer) {
+          writer.payload.sources = presentation.sources;
+          writer.payload.result = presentation.result;
+          writer.context = verifiedContext;
+          await writer.checkpoint('running', true);
+          if (writer.error) throw writer.error;
+          controller.signal.throwIfAborted();
+        }
         emit({
           type: 'CUSTOM',
           name: 'archive_sources',
@@ -363,11 +490,19 @@ chatRouter.post('/run', async (req, res) => {
         emit({ type: 'TEXT_MESSAGE_START', messageId, role: 'assistant' });
         answerStarted = true;
       },
-      (delta) => emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta }),
+      (delta) => {
+        if (writer) writer.text += delta;
+        emit({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta });
+      },
     );
     // Recheck approval before marking the streamed answer complete.
     const approval = await client.rpc('can_current_user_chat').abortSignal(controller.signal);
     if (approval.error || approval.data !== true) throw new Error('access_revoked');
+    if (writer) {
+      await writer.checkpoint('complete');
+      if (writer.error) throw writer.error;
+      controller.signal.throwIfAborted();
+    }
     emit({ type: 'TEXT_MESSAGE_END', messageId });
     console.info(
       JSON.stringify({
@@ -424,21 +559,32 @@ chatRouter.post('/run', async (req, res) => {
           'create_talk_draft',
         ].includes(step.tool),
     );
+    if (writer) {
+      writer.payload.error = writer.error
+        ? 'The latest progress could not be saved. Copy any text you need, then reload this conversation.'
+        : failureMessage;
+      await writer.checkpoint(controller.signal.aborted ? 'interrupted' : 'failed');
+    }
     emit({
       type: 'RUN_ERROR',
       code: 'CHAT_UNAVAILABLE',
-      message: answerStarted
-        ? 'The answer was interrupted. The archive results are still available above. Retry your question for a complete answer.'
-        : failureMessage +
-          (savedDraftChanges ? ' Completed changes to your private event draft were saved.' : ''),
+      message: writer?.error
+        ? 'The latest progress could not be saved. Copy any text you need, then reload this conversation.'
+        : answerStarted
+          ? 'The answer was interrupted. The archive results are still available above. Retry your question for a complete answer.'
+          : failureMessage +
+            (savedDraftChanges ? ' Completed changes to your private event draft were saved.' : ''),
     });
   } finally {
     controller.abort();
     clearTimeout(timeout);
     clearInterval(heartbeat);
+    clearInterval(checkpointTimer);
     res.off('close', disconnected);
     // On a failed release the two-minute lease expires; the reservation stays.
     try {
+      if (writer) await writer.checkpoint('interrupted');
+      if (history) await history.call('release', { threadId: input.threadId, runId: input.runId });
       await ledger.rpc('finish_chat_run', { p_user_id: user.id, p_run_id: input.runId });
     } finally {
       if (!res.writableEnded) res.end();
@@ -463,6 +609,17 @@ chatRouter.use((error: unknown, _req: Request, res: Response, next: express.Next
   }
   if (!res.headersSent)
     res
-      .status(error instanceof SyntaxError ? 400 : 503)
-      .json({ error: 'The chat request could not be processed.' });
+      .status(
+        error instanceof HistoryError
+          ? error.status
+          : error instanceof SyntaxError || error instanceof z.ZodError
+            ? 400
+            : 503,
+      )
+      .json({
+        error:
+          error instanceof HistoryError
+            ? error.message
+            : 'The chat request could not be processed.',
+      });
 });

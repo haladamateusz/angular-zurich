@@ -1,3 +1,11 @@
+@if (state() === 'ready' && (history.enabled() || history.error())) {
+  <app-chat-history
+    [activeId]="chat.threadId()"
+    (newChat)="newChat()"
+    (renamed)="chat.threadId() === $event.id && chat.revision.set($event.revision)"
+    (deleted)="conversationDeleted($event)"
+  />
+}
 <section class="archive-chat" aria-labelledby="chat-title">
   @let activeMascot = respondingMascot();
   <ng-template #mascot>
@@ -131,7 +139,12 @@
       />
     }
     @case ('ready') {
-      <div class="archive-chat-surface" [class.is-empty]="!chat.messages().length && !draftId()">
+      <div
+        class="archive-chat-surface"
+        [class.is-empty]="
+          !chat.messages().length && !draftId() && !chat.loading() && !chat.loadError()
+        "
+      >
         <div class="archive-chat-transcript-frame">
           <div
             #transcript
@@ -142,7 +155,34 @@
             tabindex="0"
             (scroll)="onTranscriptScroll()"
           >
-            @if (!chat.messages().length && !chat.error()) {
+            @if (chat.loading()) {
+              <p role="status">Loading conversation…</p>
+            }
+            @if (chat.loadError()) {
+              <app-error-notice
+                [message]="chat.loadError()"
+                actionLabel="Retry"
+                (action)="reloadConversation()"
+              />
+            }
+            @if (chat.remoteRun()) {
+              <app-error-notice
+                message="This conversation has a response in progress. Refresh to see its saved progress."
+                actionLabel="Refresh"
+                (action)="reloadConversation()"
+              />
+            }
+            @if (chat.before()) {
+              <button
+                class="app-button app-button--secondary"
+                type="button"
+                [disabled]="chat.loading() || chat.running()"
+                (click)="loadEarlier()"
+              >
+                Load earlier messages
+              </button>
+            }
+            @if (!chat.messages().length && !chat.error() && !chat.loading() && !chat.loadError()) {
               <div class="archive-chat-empty" animate.leave="archive-mascot-exit">
                 <ng-container [ngTemplateOutlet]="mascot" />
                 <h2>{{ welcomeQuestion() }}</h2>
@@ -390,6 +430,11 @@
             }
           </div>
         </div>
+        @if (!inferenceAvailable()) {
+          <p role="status">
+            Saved conversations are available. Sending messages is temporarily unavailable.
+          </p>
+        }
         <form #composer class="archive-chat-composer" [formGroup]="form" (ngSubmit)="submit()">
           <p class="sr-only" role="status">{{ chat.status() }}</p>
           <label class="sr-only" for="archive-question">Your question</label>
@@ -404,7 +449,7 @@
           ></textarea>
           <div class="archive-chat-composer-actions">
             <div class="archive-chat-composer-controls">
-              @if (chat.messages().length) {
+              @if (chat.messages().length && !history.enabled()) {
                 <button
                   class="app-button app-button--secondary"
                   type="button"
@@ -443,7 +488,14 @@
                   class="app-button app-button--primary"
                   aria-label="Send"
                   title="Send"
-                  [disabled]="question.invalid || !question.value.trim()"
+                  [disabled]="
+                    question.invalid ||
+                    !question.value.trim() ||
+                    chat.loading() ||
+                    !!chat.loadError() ||
+                    !!chat.remoteRun() ||
+                    !inferenceAvailable()
+                  "
                 >
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path

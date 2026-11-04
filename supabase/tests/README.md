@@ -195,3 +195,10 @@ produce an actionable form error without creating a submission. Organizer
 submission photos reference existing profile images; they are neither uploaded
 again nor promoted on approval. Speaker changes through the edit endpoint are
 ignored for linked proposals; only talk content changes.
+
+## Saved chat history
+
+After applying `20261031222732_add_saved_chat_history.sql`, run
+`supabase/tests/chat_history.sql` as postgres. It rolls back its fixtures and checks
+service-only grants, ownership isolation, duplicate acceptance, stale checkpoints,
+stop/release, revisions, revocation and deletion of transcript/feedback copies.
