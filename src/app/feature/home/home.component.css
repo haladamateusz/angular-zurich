@@ -8,7 +8,6 @@
 
 .home-state--event {
   display: grid;
-  min-height: calc(85svh - 4.5rem);
   place-items: center;
   background: linear-gradient(
     to bottom,

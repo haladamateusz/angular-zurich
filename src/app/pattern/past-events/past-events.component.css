@@ -5,7 +5,7 @@
 
 .past-events {
   overflow: clip;
-  padding: 4.5rem 1.5rem;
+  padding: var(--space-8) var(--space-6) var(--space-18);
 }
 
 .past-events--compact {
