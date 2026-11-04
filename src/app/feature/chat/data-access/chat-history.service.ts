@@ -8,7 +8,7 @@ import {
   chatThreadSchema,
 } from '../../../core/models/chat-history.model';
 
-export class ChatHistoryRequestError extends Error {
+class ChatHistoryRequestError extends Error {
   constructor(
     message: string,
     readonly status: number,
