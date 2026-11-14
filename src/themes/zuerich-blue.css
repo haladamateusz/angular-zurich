@@ -44,6 +44,13 @@
   --color-zuerich-blue-gray-800: oklch(26.9% 0.006 251);
   --color-zuerich-blue-gray-900: oklch(20.5% 0.004 251);
   --color-zuerich-blue-gray-950: oklch(14.1% 0.002 251);
+
+  /* Deep neutral surfaces for dark mode. */
+  --color-zuerich-neutral-1000: #080808;
+  --color-zuerich-neutral-950: #101010;
+  --color-zuerich-neutral-900: #181818;
+  --color-zuerich-neutral-800: #242424;
+  --color-zuerich-neutral-700: #343434;
 }
 
 :root[data-theme="theme-zuerich-blue"],
@@ -562,9 +569,9 @@
 
   /* SEMANTIC ALIASES — DARK */
   --background-canvas: var(--background);
-  --background-raised: var(--color-zuerich-blue-gray-800);
+  --background-raised: var(--color-zuerich-neutral-900);
   --background-overlay: var(--overlay);
-  --background-sunken: var(--dropdown-1);
+  --background-sunken: var(--color-zuerich-neutral-1000);
   --foreground-primary: var(--foreground);
   --foreground-secondary: var(--muted-foreground-1);
   --foreground-tertiary: var(--muted-foreground);
@@ -581,25 +588,25 @@
   --elevation-floating: 0 0 0 1px var(--border-default);
 
   /* ============================================ */
-  /* DARK MODE - Blue-tinted (zuerich-blue-gray)  */
+  /* DARK MODE - Deep neutral surfaces            */
   /* ============================================ */
   
   /* BACKGROUNDS */
-  --background: var(--color-zuerich-blue-gray-900);
-  --background-1: var(--color-zuerich-blue-gray-900);
-  --background-2: var(--color-zuerich-blue-gray-900);
-  --background-plain: var(--color-zuerich-blue-gray-900);
+  --background: var(--color-zuerich-neutral-950);
+  --background-1: var(--color-zuerich-neutral-900);
+  --background-2: var(--color-zuerich-neutral-800);
+  --background-plain: var(--color-zuerich-neutral-950);
   
   /* TEXT */
   --foreground: var(--color-zuerich-blue-gray-200);
   
-  --inverse: var(--color-zuerich-blue-gray-950);
+  --inverse: var(--color-zuerich-neutral-1000);
   
   /* BORDERS */
-  --border: var(--color-zuerich-blue-gray-700);
+  --border: var(--color-zuerich-neutral-700);
   --border-line-inverse: var(--color-zuerich-blue-gray-200);
-  --border-line-1: var(--color-zuerich-blue-gray-800);
-  --border-line-2: var(--color-zuerich-blue-gray-700);
+  --border-line-1: var(--color-zuerich-neutral-800);
+  --border-line-2: var(--color-zuerich-neutral-700);
   --border-line-3: var(--color-zuerich-blue-gray-600);
   --border-line-4: var(--color-zuerich-blue-gray-500);
   --border-line-5: var(--color-zuerich-blue-gray-400);
@@ -619,39 +626,43 @@
   
   /* SECONDARY */
   --secondary: var(--color-white);
-  --secondary-foreground: var(--color-zuerich-blue-gray-800);
+  --secondary-foreground: var(--color-zuerich-neutral-900);
   --secondary-hover: var(--color-zuerich-blue-gray-100);
   --secondary-focus: var(--color-zuerich-blue-gray-100);
   --secondary-active: var(--color-zuerich-blue-gray-100);
   
   /* LAYER */
-  --layer: var(--color-zuerich-blue-gray-800);
-  --layer-line: var(--color-zuerich-blue-gray-700);
+  --layer: var(--color-zuerich-neutral-900);
+  --layer-line: var(--color-zuerich-neutral-700);
   --layer-foreground: var(--color-white);
-  --layer-hover: var(--color-zuerich-blue-gray-700);
-  --layer-focus: var(--color-zuerich-blue-gray-700);
-  --layer-active: var(--color-zuerich-blue-gray-700);
+  --layer-hover: var(--color-zuerich-neutral-700);
+  --layer-focus: var(--color-zuerich-neutral-700);
+  --layer-active: var(--color-zuerich-neutral-700);
   
   /* SURFACE */
-  --surface: var(--color-zuerich-blue-gray-700);
-  --surface-1: var(--color-zuerich-blue-gray-600);
-  --surface-2: var(--color-zuerich-blue-gray-500);
+  --surface: var(--color-zuerich-neutral-800);
+  --surface-1: var(--color-zuerich-neutral-700);
+  --surface-2: var(--color-zuerich-blue-gray-600);
   --surface-3: var(--color-zuerich-blue-gray-600);
   --surface-4: var(--color-zuerich-blue-gray-500);
   --surface-5: var(--color-zuerich-blue-gray-400);
   --surface-foreground: var(--color-zuerich-blue-gray-200);
-  --surface-hover: var(--color-zuerich-blue-gray-600);
-  --surface-focus: var(--color-zuerich-blue-gray-600);
-  --surface-active: var(--color-zuerich-blue-gray-600);
+  --surface-hover: var(--color-zuerich-neutral-700);
+  --surface-focus: var(--color-zuerich-neutral-700);
+  --surface-active: var(--color-zuerich-neutral-700);
   
   /* MUTED */
-  --muted: var(--color-zuerich-blue-gray-800);
-  --muted-foreground: var(--color-zuerich-blue-gray-500);
+  --muted: var(--color-zuerich-neutral-900);
+  --muted-foreground: color-mix(
+    in oklch,
+    var(--color-zuerich-blue-gray-500) 80%,
+    var(--color-zuerich-blue-gray-400)
+  );
   --muted-foreground-1: var(--color-zuerich-blue-gray-400);
   --muted-foreground-2: var(--color-zuerich-blue-gray-300);
-  --muted-hover: var(--color-zuerich-blue-gray-700);
-  --muted-focus: var(--color-zuerich-blue-gray-700);
-  --muted-active: var(--color-zuerich-blue-gray-700);
+  --muted-hover: var(--color-zuerich-neutral-700);
+  --muted-focus: var(--color-zuerich-neutral-700);
+  --muted-active: var(--color-zuerich-neutral-700);
   
   /* DESTRUCTIVE */
   --destructive: #ff7a91;
@@ -740,7 +751,7 @@
   --color-status-rejected-foreground: var(--color-red-300);
   
   /* NAVBAR */
-  --navbar: var(--background-raised);
+  --navbar: var(--background-canvas);
   --navbar-line: var(--border-default);
   --navbar-divider: var(--border-default);
   --navbar-nav-foreground: var(--foreground-primary);
@@ -750,52 +761,52 @@
   --navbar-nav-list-divider: var(--border-default);
   --navbar-inverse: var(--color-zuerich-blue-950);
   
-  --navbar-1: var(--color-zuerich-blue-gray-900);
-  --navbar-1-line: var(--color-zuerich-blue-gray-700);
-  --navbar-1-divider: var(--color-zuerich-blue-gray-700);
+  --navbar-1: var(--color-zuerich-neutral-950);
+  --navbar-1-line: var(--color-zuerich-neutral-700);
+  --navbar-1-divider: var(--color-zuerich-neutral-700);
   --navbar-1-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --navbar-1-nav-hover: var(--color-zuerich-blue-gray-700);
-  --navbar-1-nav-focus: var(--color-zuerich-blue-gray-700);
-  --navbar-1-nav-active: var(--color-zuerich-blue-gray-700);
-  --navbar-1-nav-list-divider: var(--color-zuerich-blue-gray-700);
+  --navbar-1-nav-hover: var(--color-zuerich-neutral-700);
+  --navbar-1-nav-focus: var(--color-zuerich-neutral-700);
+  --navbar-1-nav-active: var(--color-zuerich-neutral-700);
+  --navbar-1-nav-list-divider: var(--color-zuerich-neutral-700);
   
-  --navbar-2: var(--color-zuerich-blue-gray-900);
+  --navbar-2: var(--color-zuerich-neutral-950);
   --navbar-2-line: transparent;
-  --navbar-2-divider: var(--color-zuerich-blue-gray-700);
+  --navbar-2-divider: var(--color-zuerich-neutral-700);
   --navbar-2-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --navbar-2-nav-hover: var(--color-zuerich-blue-gray-800);
-  --navbar-2-nav-focus: var(--color-zuerich-blue-gray-800);
-  --navbar-2-nav-active: var(--color-zuerich-blue-gray-800);
-  --navbar-2-nav-list-divider: var(--color-zuerich-blue-gray-800);
+  --navbar-2-nav-hover: var(--color-zuerich-neutral-900);
+  --navbar-2-nav-focus: var(--color-zuerich-neutral-900);
+  --navbar-2-nav-active: var(--color-zuerich-neutral-900);
+  --navbar-2-nav-list-divider: var(--color-zuerich-neutral-900);
   
   /* SIDEBAR */
-  --sidebar: var(--color-zuerich-blue-gray-800);
-  --sidebar-line: var(--color-zuerich-blue-gray-700);
-  --sidebar-divider: var(--color-zuerich-blue-gray-700);
+  --sidebar: var(--color-zuerich-neutral-900);
+  --sidebar-line: var(--color-zuerich-neutral-700);
+  --sidebar-divider: var(--color-zuerich-neutral-700);
   --sidebar-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --sidebar-nav-hover: var(--color-zuerich-blue-gray-700);
-  --sidebar-nav-focus: var(--color-zuerich-blue-gray-700);
-  --sidebar-nav-active: var(--color-zuerich-blue-gray-700);
-  --sidebar-nav-list-divider: var(--color-zuerich-blue-gray-700);
+  --sidebar-nav-hover: var(--color-zuerich-neutral-700);
+  --sidebar-nav-focus: var(--color-zuerich-neutral-700);
+  --sidebar-nav-active: var(--color-zuerich-neutral-700);
+  --sidebar-nav-list-divider: var(--color-zuerich-neutral-700);
   --sidebar-inverse: var(--color-zuerich-blue-950);
   
-  --sidebar-1: var(--color-zuerich-blue-gray-900);
-  --sidebar-1-line: var(--color-zuerich-blue-gray-700);
-  --sidebar-1-divider: var(--color-zuerich-blue-gray-700);
+  --sidebar-1: var(--color-zuerich-neutral-950);
+  --sidebar-1-line: var(--color-zuerich-neutral-700);
+  --sidebar-1-divider: var(--color-zuerich-neutral-700);
   --sidebar-1-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --sidebar-1-nav-hover: var(--color-zuerich-blue-gray-700);
-  --sidebar-1-nav-focus: var(--color-zuerich-blue-gray-700);
-  --sidebar-1-nav-active: var(--color-zuerich-blue-gray-700);
-  --sidebar-1-nav-list-divider: var(--color-zuerich-blue-gray-700);
+  --sidebar-1-nav-hover: var(--color-zuerich-neutral-700);
+  --sidebar-1-nav-focus: var(--color-zuerich-neutral-700);
+  --sidebar-1-nav-active: var(--color-zuerich-neutral-700);
+  --sidebar-1-nav-list-divider: var(--color-zuerich-neutral-700);
   
-  --sidebar-2: var(--color-zuerich-blue-gray-900);
+  --sidebar-2: var(--color-zuerich-neutral-950);
   --sidebar-2-line: transparent;
-  --sidebar-2-divider: var(--color-zuerich-blue-gray-800);
+  --sidebar-2-divider: var(--color-zuerich-neutral-900);
   --sidebar-2-nav-foreground: var(--color-zuerich-blue-gray-200);
-  --sidebar-2-nav-hover: var(--color-zuerich-blue-gray-800);
-  --sidebar-2-nav-focus: var(--color-zuerich-blue-gray-800);
-  --sidebar-2-nav-active: var(--color-zuerich-blue-gray-800);
-  --sidebar-2-nav-list-divider: var(--color-zuerich-blue-gray-800);
+  --sidebar-2-nav-hover: var(--color-zuerich-neutral-900);
+  --sidebar-2-nav-focus: var(--color-zuerich-neutral-900);
+  --sidebar-2-nav-active: var(--color-zuerich-neutral-900);
+  --sidebar-2-nav-list-divider: var(--color-zuerich-neutral-900);
   
   /* CARD */
   --card: var(--background-raised);
@@ -803,64 +814,64 @@
   --card-divider: var(--border-default);
   --card-header: var(--border-default);
   --card-footer: var(--border-default);
-  --card-inverse: var(--color-zuerich-blue-gray-900);
+  --card-inverse: var(--color-zuerich-neutral-950);
   
   /* DROPDOWN */
-  --dropdown: var(--color-zuerich-blue-gray-900);
-  --dropdown-1: var(--color-zuerich-blue-gray-950);
+  --dropdown: var(--background-raised);
+  --dropdown-1: var(--color-zuerich-neutral-1000);
   --dropdown-line: transparent;
-  --dropdown-divider: var(--color-zuerich-blue-gray-800);
-  --dropdown-header: var(--color-zuerich-blue-gray-700);
-  --dropdown-footer: var(--color-zuerich-blue-gray-700);
+  --dropdown-divider: var(--color-zuerich-neutral-900);
+  --dropdown-header: var(--color-zuerich-neutral-700);
+  --dropdown-footer: var(--color-zuerich-neutral-700);
   --dropdown-item-foreground: var(--color-zuerich-blue-gray-200);
-  --dropdown-item-hover: var(--color-zuerich-blue-gray-800);
-  --dropdown-item-focus: var(--color-zuerich-blue-gray-800);
-  --dropdown-item-active: var(--color-zuerich-blue-gray-800);
-  --dropdown-inverse: var(--color-zuerich-blue-gray-900);
+  --dropdown-item-hover: var(--color-zuerich-neutral-900);
+  --dropdown-item-focus: var(--color-zuerich-neutral-900);
+  --dropdown-item-active: var(--color-zuerich-neutral-900);
+  --dropdown-inverse: var(--color-zuerich-neutral-950);
   
   /* SELECT */
-  --select: var(--color-zuerich-blue-gray-900);
-  --select-1: var(--color-zuerich-blue-gray-950);
+  --select: var(--background-raised);
+  --select-1: var(--color-zuerich-neutral-1000);
   --select-line: transparent;
   --select-item-foreground: var(--color-zuerich-blue-gray-200);
-  --select-item-hover: var(--color-zuerich-blue-gray-800);
-  --select-item-focus: var(--color-zuerich-blue-gray-800);
-  --select-item-active: var(--color-zuerich-blue-gray-800);
-  --select-inverse: var(--color-zuerich-blue-gray-900);
+  --select-item-hover: var(--color-zuerich-neutral-900);
+  --select-item-focus: var(--color-zuerich-neutral-900);
+  --select-item-active: var(--color-zuerich-neutral-900);
+  --select-inverse: var(--color-zuerich-neutral-950);
   
   /* OVERLAY */
-  --overlay: var(--color-zuerich-blue-gray-800);
+  --overlay: var(--color-zuerich-neutral-800);
   --overlay-line: transparent;
-  --overlay-divider: var(--color-zuerich-blue-gray-700);
-  --overlay-header: var(--color-zuerich-blue-gray-700);
-  --overlay-footer: var(--color-zuerich-blue-gray-700);
-  --overlay-inverse: var(--color-zuerich-blue-gray-900);
+  --overlay-divider: var(--color-zuerich-neutral-700);
+  --overlay-header: var(--color-zuerich-neutral-700);
+  --overlay-footer: var(--color-zuerich-neutral-700);
+  --overlay-inverse: var(--color-zuerich-neutral-950);
   
   /* POPOVER */
-  --popover: var(--color-zuerich-blue-gray-900);
-  --popover-line: var(--color-zuerich-blue-gray-700);
+  --popover: var(--background-raised);
+  --popover-line: var(--color-zuerich-neutral-700);
   
   /* TOOLTIP */
   --tooltip: var(--color-white);
-  --tooltip-foreground: var(--color-zuerich-blue-gray-800);
+  --tooltip-foreground: var(--color-zuerich-neutral-900);
   --tooltip-line: transparent;
   
   /* TABLE */
-  --table-line: var(--color-zuerich-blue-gray-700);
+  --table-line: var(--color-zuerich-neutral-700);
   
   /* SWITCH */
   --switch: var(--color-white);
   
   /* FOOTER */
-  --footer: var(--color-zuerich-blue-gray-800);
-  --footer-line: var(--color-zuerich-blue-gray-700);
-  --footer-inverse: var(--color-zuerich-blue-gray-900);
+  --footer: var(--background-canvas);
+  --footer-line: var(--color-zuerich-neutral-700);
+  --footer-inverse: var(--color-zuerich-neutral-950);
   
   /* SCROLLBAR */
-  --scrollbar-track: var(--color-zuerich-blue-gray-700);
+  --scrollbar-track: var(--background-canvas);
   --scrollbar-thumb: var(--color-zuerich-blue-gray-500);
   --scrollbar-track-inverse: var(--color-zuerich-blue-gray-500);
-  --scrollbar-thumb-inverse: var(--color-zuerich-blue-gray-700);
+  --scrollbar-thumb-inverse: var(--color-zuerich-neutral-700);
   
   /* CHARTS - dark mode adjustments */
   --chart-colors-background-inverse: var(--color-zuerich-blue-gray-100);
@@ -868,10 +879,10 @@
   --chart-colors-labels: var(--color-zuerich-blue-gray-400);
   --chart-colors-xaxis-labels: var(--color-zuerich-blue-gray-400);
   --chart-colors-yaxis-labels: var(--color-zuerich-blue-gray-400);
-  --chart-colors-grid-border: var(--color-zuerich-blue-gray-700);
-  --chart-colors-bar-ranges: var(--color-zuerich-blue-gray-700);
+  --chart-colors-grid-border: var(--color-zuerich-neutral-700);
+  --chart-colors-bar-ranges: var(--color-zuerich-neutral-700);
   
   /* MAPS - dark mode adjustments */
-  --map-colors-default: var(--color-zuerich-blue-gray-700);
+  --map-colors-default: var(--color-zuerich-neutral-700);
   --map-colors-border: var(--color-zuerich-blue-gray-600);
 }

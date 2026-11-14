@@ -4,7 +4,7 @@
 }
 
 .stats {
-  padding: 4rem 1.5rem 4.5rem;
+  padding: 4rem var(--home-content-gutter, var(--space-6)) 4.5rem;
 }
 
 .stats__container {

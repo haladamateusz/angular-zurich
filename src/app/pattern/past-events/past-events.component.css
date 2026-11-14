@@ -5,7 +5,7 @@
 
 .past-events {
   overflow: clip;
-  padding: var(--space-8) var(--space-6) var(--space-18);
+  padding: var(--space-8) var(--home-content-gutter, var(--space-6)) var(--space-18);
 }
 
 .past-events--compact {
@@ -19,7 +19,7 @@
 }
 
 .past-events__container {
-  max-width: 94rem;
+  max-width: var(--home-content-max-width, 94rem);
   margin: 0 auto;
 }
 
@@ -322,6 +322,10 @@
   height: 0.95rem;
   flex: none;
   transform: translateY(0.02rem);
+}
+
+:host-context(.dark) .past-event-card__graphic {
+  filter: brightness(0.8);
 }
 
 :host-context(.dark) .past-event-card__talks {

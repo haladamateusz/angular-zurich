@@ -4,11 +4,11 @@
 }
 
 .partners {
-  padding: 4.5rem 1.5rem 5rem;
+  padding: 4.5rem var(--home-content-gutter, var(--space-6)) 5rem;
 }
 
 .partners__container {
-  max-width: 94rem;
+  max-width: var(--home-content-max-width, 94rem);
   margin: 0 auto;
 }
 

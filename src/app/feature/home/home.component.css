@@ -2,8 +2,15 @@
   display: block;
 }
 
+@media (min-width: 64rem) {
+  :host {
+    --home-content-max-width: 80rem;
+    --home-content-gutter: clamp(var(--space-8), 4vw, var(--space-16));
+  }
+}
+
 .home-state {
-  padding: var(--space-16) var(--space-6);
+  padding: var(--space-16) var(--home-content-gutter, var(--space-6));
 }
 
 .home-state--event {
@@ -25,11 +32,7 @@
 }
 
 :host-context(.dark) .home-state--event {
-  background: linear-gradient(
-    to top,
-    var(--color-zuerich-blue-gray-800),
-    var(--color-zuerich-blue-gray-900)
-  );
+  background: linear-gradient(to bottom, var(--background-sunken), var(--background-canvas));
 }
 
 @media (max-width: 45rem) {

@@ -2,6 +2,7 @@
 
 ## Colors
 
+- Dark surfaces: `--color-zuerich-neutral-1000` (#080808) for inset surfaces, `950` (#101010) for the canvas, `900` (#181818) for cards, `800` (#242424) for overlays and controls, and `700` (#343434) for borders and hover states. Light-mode colors retain the blue-tinted neutral ramp.
 - Primitive palette: `--color-zuerich-blue-50` through `--color-zuerich-blue-950`, plus the blue-tinted neutral ramp in `src/themes/zuerich-blue.css`.
 - Semantic surfaces: `--background-*`, `--card`, `--overlay`, `--surface-*`, and the stable aliases `--background-canvas`, `--background-raised`, `--background-overlay`, and `--background-sunken`.
 - Text and borders: `--foreground-*`, `--muted-foreground-*`, `--border-*`, and semantic aliases including `--foreground-primary` and `--border-default`.
@@ -17,6 +18,7 @@
 
 ## Spacing
 
+- Homepage desktop layout: `--home-content-max-width` (80rem) and `--home-content-gutter` (fluid 32–64px), scoped to the homepage from 64rem. Section backgrounds remain full width.
 - Base scale: `--space-1` (4px), `--space-2` (8px), `--space-3` (12px), `--space-4` (16px), `--space-5` (20px), `--space-6` (24px), `--space-8` (32px), `--space-12` (48px), `--space-16` (64px), `--space-18` (72px), and `--space-20` (80px).
 
 ## Radius

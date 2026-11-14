@@ -32,6 +32,14 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-11-15** — Keep the dark homepage hero at least as dark as the page canvas, fading from the sunken black surface into the canvas, with a subdued blue cross pattern. Avoid a lighter gray hero panel.
+
+- **2026-11-15** — Use deep neutral black backgrounds in dark mode, with subtly lighter cards and subdued borders, matching the supplied reference. Keep Zürich blue for the accent.
+
+- **2026-11-14** — Keep all four team cards in one desktop row, with each card’s social icons together on one line. Adapt the card internals to the narrower space instead of stacking the cards.
+
+- **2026-11-14** — Add homepage desktop gutters inside the sections and constrain their content, keeping the hero background full width. _Why:_ constraining the page host produces visible side strips and boxes in the hero.
+
 - **2026-11-04** — Keep the homepage hero spacious while showing the past-events heading and card tops in the first desktop viewport. Use a partial-viewport hero, with content-sized spacing on mobile. _Why:_ the user wants the next section to visibly invite scrolling, as in the supplied Angular, Supabase, and ngxtension references.
 
 - **2026-10-31** — After the first chat message, fade Chräungie out in the centered welcome, then fade it in at the header. Avoid moving or resizing it between those positions. _Why:_ the user requested a simpler transition to match the calmer message-send animation.
