@@ -7,10 +7,7 @@ import { App } from './app.component';
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { SupabaseService } from './core/data-access/supabase/supabase.service';
-import {
-  AssignableTalk,
-  VenueOption,
-} from './core/models/event-management.interface';
+import { AssignableTalk, VenueOption } from './core/models/event-management.interface';
 import { DashboardEvent, Event } from './core/models/event.interface';
 import { OrganizerTalkSubmission } from './core/models/organizer-talk-submission.interface';
 import { Person } from './core/models/person.interface';
@@ -131,7 +128,8 @@ function createEventResponse(event: Event | null): PostgrestSingleResponse<Event
 }
 
 describe('App', () => {
-  let upcomingPublicEventResponse: PostgrestSingleResponse<Event | null> = createEventResponse(DEFAULT_EVENT);
+  let upcomingPublicEventResponse: PostgrestSingleResponse<Event | null> =
+    createEventResponse(DEFAULT_EVENT);
   const isAuthenticated = signal(false);
   const userProfile = signal<{ avatarUrl: string | null; displayName: string } | null>(null);
 
@@ -212,14 +210,26 @@ describe('App', () => {
     expect(router.url).toBe(`/events/${DEFAULT_EVENT.slug}`);
   });
 
-  it('preserves the archive route title and renders the archive', async () => {
+  it('updates the browser title when navigating from the archive to other pages', async () => {
     const fixture = TestBed.createComponent(App);
 
     await TestBed.inject(Router).navigateByUrl('/events');
     await fixture.whenStable();
 
     expect(TestBed.inject(Title).getTitle()).toBe('Past events | Angular Zürich');
-    expect((fixture.nativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Past events');
+    expect((fixture.nativeElement as HTMLElement).querySelector('h1')?.textContent).toContain(
+      'Past events',
+    );
+
+    await TestBed.inject(Router).navigateByUrl('/');
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Angular Zürich');
+
+    await TestBed.inject(Router).navigateByUrl(`/events/${DEFAULT_EVENT.slug}`);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe('Event details | Angular Zürich');
   });
 
   it('completes the lazy auth callback and preserves the login error query parameter', async () => {
@@ -231,9 +241,10 @@ describe('App', () => {
 
     expect(TestBed.inject(AuthService).completeGoogleSignIn).toHaveBeenCalledOnce();
     expect(router.url).toBe('/login?error=access-denied');
-    expect((fixture.nativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent).toContain(
-      'doesn’t have organizer access',
-    );
+    expect(TestBed.inject(Title).getTitle()).toBe('Organizer sign in | Angular Zürich');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('[role="alert"]')?.textContent,
+    ).toContain('doesn’t have organizer access');
   });
 
   it('shows the hero event preview and details link for a future event', async () => {
@@ -290,7 +301,9 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('.event-preview')).toBeNull();
-    expect(compiled.querySelector('.hero-content')?.classList.contains('hero-content--solo')).toBe(true);
+    expect(compiled.querySelector('.hero-content')?.classList.contains('hero-content--solo')).toBe(
+      true,
+    );
   });
 
   it('redirects unauthenticated users away from the dashboard route', async () => {
@@ -324,6 +337,7 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(router.url).toBe('/dashboard/talk-submissions');
+    expect(TestBed.inject(Title).getTitle()).toBe('Talk submissions | Angular Zürich');
     await vi.waitFor(() => {
       fixture.detectChanges();
       expect(compiled.textContent).toContain('Talk submissions');

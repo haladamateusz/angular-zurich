@@ -4,14 +4,14 @@ import { talkSubmissionExistsGuard } from './talk-submission-exists.guard';
 export const SUBMIT_TALK_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./submit-talk.component').then((m) => m.SubmitTalkComponent),
+    title: 'Submit a talk | Angular Zürich',
+    loadComponent: () => import('./submit-talk.component').then((m) => m.SubmitTalkComponent),
   },
   {
     path: ':submissionId/edit',
+    title: 'Edit talk submission | Angular Zürich',
     canActivate: [talkSubmissionExistsGuard],
-    loadComponent: () =>
-      import('./submit-talk.component').then((m) => m.SubmitTalkComponent),
+    loadComponent: () => import('./submit-talk.component').then((m) => m.SubmitTalkComponent),
   },
   {
     path: ':submissionId',
