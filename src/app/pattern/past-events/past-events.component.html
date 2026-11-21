@@ -2,6 +2,7 @@
   class="past-events"
   [class.past-events--reveal]="revealAfterHero()"
   [class.past-events--compact]="compact()"
+  [attr.aria-busy]="loading() ? 'true' : null"
   [attr.aria-hidden]="revealAfterHero() ? null : 'true'"
   [attr.inert]="revealAfterHero() ? null : ''"
   [attr.aria-labelledby]="showHeading() ? 'past-events-heading' : null"
@@ -187,6 +188,20 @@
           </a>
         </div>
       }
+    } @else {
+      <div class="past-events__reservation" aria-hidden="true">
+        <div class="past-events__grid">
+          @for (card of [0, 1, 2]; track card) {
+            <div class="past-events__reserved-card">
+              <div class="past-event-card__graphic-shell"></div>
+              <div class="past-events__reserved-content"></div>
+            </div>
+          }
+        </div>
+        @if (showBrowseAction()) {
+          <div class="past-events__actions past-events__reserved-actions"></div>
+        }
+      </div>
     }
   </div>
 </section>

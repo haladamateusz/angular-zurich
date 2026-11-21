@@ -134,7 +134,7 @@ describe('PastEventsComponent', () => {
     expect(section?.hasAttribute('inert')).toBe(false);
   });
 
-  it('waits to render cards until the past events have loaded', async () => {
+  it('reserves a hidden card grid while loading and replaces it with event cards', async () => {
     fixture.componentRef.setInput('events', []);
     fixture.componentRef.setInput('loading', true);
     await fixture.whenStable();
@@ -142,5 +142,18 @@ describe('PastEventsComponent', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     expect(root.querySelector('.past-event-card')).toBeNull();
+    expect(root.querySelector('.past-events')?.getAttribute('aria-busy')).toBe('true');
+    expect(root.querySelector('.past-events__reservation')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    );
+    expect(root.querySelectorAll('.past-events__reserved-card')).toHaveLength(3);
+
+    fixture.componentRef.setInput('events', [TEST_EVENT]);
+    fixture.componentRef.setInput('loading', false);
+    await fixture.whenStable();
+
+    expect(root.querySelector('.past-events__reservation')).toBeNull();
+    expect(root.querySelector('.past-event-card')).not.toBeNull();
+    expect(root.querySelector('.past-events')?.hasAttribute('aria-busy')).toBe(false);
   });
 });

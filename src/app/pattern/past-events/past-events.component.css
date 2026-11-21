@@ -18,6 +18,19 @@
   opacity: 0;
 }
 
+/* Keep the card grid's footprint while data loads, without visible skeletons. */
+.past-events__reservation {
+  visibility: hidden;
+}
+
+.past-events__reserved-content {
+  min-height: 22rem;
+}
+
+.past-events__reserved-actions {
+  min-height: 3rem;
+}
+
 .past-events__container {
   max-width: var(--home-content-max-width, 94rem);
   margin: 0 auto;
