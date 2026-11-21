@@ -60,7 +60,7 @@
           </div>
         }
       </nav>
-    } @else if (showPastEventsArchiveBackLink()) {
+    } @else {
       <nav class="event-details__back-nav" aria-label="Event navigation">
         <a routerLink="/events" class="event-details__back-link app-button app-button--ghost">
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -70,7 +70,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span>Back to past events</span>
+          <span>To all events</span>
         </a>
       </nav>
     }

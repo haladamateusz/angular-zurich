@@ -171,12 +171,7 @@ describe('EventDetailsComponent', () => {
     ).toBeNull();
   });
 
-  it('links back to the public archive for archive visits', async () => {
-    const component = fixture.componentInstance as unknown as {
-      showPastEventsArchiveBackLink: WritableSignal<boolean>;
-    };
-    component.showPastEventsArchiveBackLink.set(true);
-
+  it('links to all events without requiring archive navigation state', async () => {
     await fixture.whenStable();
 
     const backLink = (fixture.nativeElement as HTMLElement).querySelector<HTMLAnchorElement>(
@@ -184,7 +179,7 @@ describe('EventDetailsComponent', () => {
     );
 
     expect(backLink?.getAttribute('href')).toBe('/events');
-    expect(backLink?.textContent).toContain('Back to past events');
+    expect(backLink?.textContent).toContain('To all events');
   });
 
   it('shows a removal action with a confirmation dialog for dashboard visits', async () => {
@@ -198,6 +193,10 @@ describe('EventDetailsComponent', () => {
     const root = fixture.nativeElement as HTMLElement;
     const removeButton = root.querySelector<HTMLButtonElement>('.event-details__remove-button');
 
+    expect(root.querySelector('.event-details__back-link')?.getAttribute('href')).toBe(
+      '/dashboard/events',
+    );
+    expect(root.querySelector('a[href="/events"]')).toBeNull();
     expect(removeButton).not.toBeNull();
     expect(root.querySelector('.event-details__modal')).toBeNull();
 
