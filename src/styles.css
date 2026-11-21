@@ -139,6 +139,8 @@
 
 :root {
   color-scheme: light;
+  /* Keep centered content fixed when route loading adds or removes the scrollbar. */
+  scrollbar-gutter: stable;
 
   /* Primitive spacing */
   --space-1: 0.25rem;
