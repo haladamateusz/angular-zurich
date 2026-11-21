@@ -11,16 +11,23 @@ describe('splitTextIntoParagraphs', () => {
     ]);
   });
 
-  it('splits multiple sentences into separate paragraphs', () => {
-    expect(
-      splitTextIntoParagraphs('First sentence. Second sentence. Third sentence.'),
-    ).toEqual(['First sentence.', 'Second sentence.', 'Third sentence.']);
+  it('groups three sentences into one paragraph', () => {
+    expect(splitTextIntoParagraphs('First sentence. Second sentence. Third sentence.')).toEqual([
+      'First sentence. Second sentence. Third sentence.',
+    ]);
   });
 
-  it('respects explicit paragraph breaks before sentence splitting', () => {
+  it('regroups existing one-sentence paragraphs', () => {
     expect(splitTextIntoParagraphs('Intro sentence.\n\nSecond block sentence.')).toEqual([
-      'Intro sentence.',
-      'Second block sentence.',
+      'Intro sentence. Second block sentence.',
+    ]);
+  });
+
+  it('starts a new paragraph after three sentences and keeps the remaining text', () => {
+    expect(splitTextIntoParagraphs('One.\nTwo!\n\nThree? Four. Five. Six. Seven')).toEqual([
+      'One. Two! Three?',
+      'Four. Five. Six.',
+      'Seven',
     ]);
   });
 

@@ -1,6 +1,6 @@
 /**
- * Splits prose into display paragraphs.
- * Respects explicit blank-line breaks, then splits each block into sentences.
+ * Groups prose into display paragraphs of up to three sentences.
+ * Normalizes existing line breaks so one-sentence paragraphs are grouped too.
  */
 export function splitTextIntoParagraphs(text: string): string[] {
   const dottedWordPlaceholder = '__DOT__';
@@ -10,28 +10,20 @@ export function splitTextIntoParagraphs(text: string): string[] {
     return [];
   }
 
-  const blocks = trimmed
-    .split(/\n\s*\n/)
-    .map((block) => block.trim())
-    .filter(Boolean);
   const paragraphs: string[] = [];
+  const singleLine = trimmed.replace(/\s*\n\s*/g, ' ');
+  const protectedLine = singleLine.replace(/\b[\p{L}\p{N}+-]+(?:\.[\p{L}\p{N}+-]+)+\b/gu, (match) =>
+    match.replaceAll('.', dottedWordPlaceholder),
+  );
+  const sentences = protectedLine.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/gu) ?? [protectedLine];
 
-  for (const block of blocks) {
-    const singleLine = block.replace(/\s*\n\s*/g, ' ');
-    const protectedLine = singleLine.replace(
-      /\b[\p{L}\p{N}+-]+(?:\.[\p{L}\p{N}+-]+)+\b/gu,
-      (match) => match.replaceAll('.', dottedWordPlaceholder),
+  for (let index = 0; index < sentences.length; index += 3) {
+    paragraphs.push(
+      sentences
+        .slice(index, index + 3)
+        .map((sentence) => sentence.trim().replaceAll(dottedWordPlaceholder, '.'))
+        .join(' '),
     );
-    const sentences =
-      protectedLine.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/gu) ?? [protectedLine];
-
-    for (const sentence of sentences) {
-      const normalized = sentence.trim().replaceAll(dottedWordPlaceholder, '.');
-
-      if (normalized) {
-        paragraphs.push(normalized);
-      }
-    }
   }
 
   return paragraphs;
