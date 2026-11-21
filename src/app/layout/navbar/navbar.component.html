@@ -138,6 +138,7 @@
         }
       } @else {
         <div class="hidden items-center gap-2 min-[721px]:flex">
+          <a routerLink="/events" class="app-button app-button--ghost">Events</a>
           <a routerLink="/login" class="app-button app-button--ghost"> Sign in </a>
           <a routerLink="/talk-submission" class="app-button"> Submit Talk </a>
         </div>
@@ -255,6 +256,16 @@
 
             <div class="flex flex-1 flex-col">
               <div>
+                @if (!isAuthenticated()) {
+                  <a
+                    routerLink="/events"
+                    (click)="closeGuestMenu()"
+                    class="app-button app-button--ghost app-button--menu"
+                  >
+                    Events
+                  </a>
+                }
+
                 @if (isAuthenticated()) {
                   <a
                     routerLink="/chat"
