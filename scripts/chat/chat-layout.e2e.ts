@@ -118,8 +118,17 @@ for (const viewport of [
     const loadingBottom = await surface.evaluate(
       (element) => element.getBoundingClientRect().bottom,
     );
-    expect(loadingBottom).toBeGreaterThan(viewport.height - 30);
-    expect(loadingBottom).toBeLessThanOrEqual(viewport.height);
+    const footer = page.getByRole('contentinfo');
+    expect(await page.evaluate(() => document.documentElement.getBoundingClientRect().width)).toBe(
+      viewport.width,
+    );
+    const footerBox = (await footer.boundingBox())!;
+    expect(footerBox.y + footerBox.height).toBeLessThanOrEqual(viewport.height);
+    expect(loadingBottom).toBeGreaterThan(footerBox.y - 30);
+    expect(loadingBottom).toBeLessThanOrEqual(footerBox.y);
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+      viewport.height,
+    );
     releaseAccess();
     const input = page.getByRole('textbox', { name: 'Your question', exact: true });
     await expect(input).toBeVisible();

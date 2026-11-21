@@ -6,14 +6,24 @@ import type { ChatThread, SavedMessage } from '../../src/app/core/models/chat-hi
 const userId = '11111111-1111-4111-8111-111111111111';
 const otherThread = '22222222-2222-4222-8222-222222222222';
 
-for (const mobile of [false, true]) {
-  test(`saved conversations: refresh, resume, rename, delete and accessible ${mobile ? 'drawer' : 'sidebar'}`, async ({
+for (const width of [1920, 1440, 390]) {
+  const mobile = width < 1600;
+  test(`saved conversations: refresh, resume, rename, delete and accessible ${mobile ? 'drawer' : 'sidebar'} at ${width}px`, async ({
     page,
   }) => {
-    await page.setViewportSize(
-      mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
-    );
+    await page.setViewportSize({ width, height: width < 640 ? 844 : 1000 });
     await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+    const expectCenteredDialog = async (name: string) => {
+      const dialog = page.getByRole('dialog', { name, exact: true });
+      await expect(dialog).toBeVisible();
+      const box = (await dialog.boundingBox())!;
+      const viewport = await page.evaluate(() => ({
+        width: document.documentElement.getBoundingClientRect().width,
+        height: window.innerHeight,
+      }));
+      expect(box.x + box.width / 2).toBeCloseTo(viewport.width / 2, 0);
+      expect(box.y + box.height / 2).toBeCloseTo(viewport.height / 2, 0);
+    };
     const environment = await readFile('src/environments/environment.development.ts', 'utf8');
     const url = environment.match(/supabaseUrl:\s*['"]([^'"]+)['"]/)![1];
     const project = new URL(url).hostname.split('.')[0];
@@ -56,13 +66,19 @@ for (const mobile of [false, true]) {
       messages: [],
     });
     let runs = 0;
+    let releaseAccess!: () => void;
+    const accessReady = new Promise<void>((resolve) => {
+      releaseAccess = resolve;
+    });
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.route('**/api/chat/**', async (route) => {
       const path = new URL(route.request().url()).pathname.replace('/api/chat', '');
       const method = route.request().method();
-      if (path === '/access')
+      if (path === '/access') {
+        await accessReady;
         return route.fulfill({ json: { approved: true, available: true, historyEnabled: true } });
+      }
       if (path === '/threads')
         return route.fulfill({
           json: {
@@ -152,8 +168,51 @@ for (const mobile of [false, true]) {
       }
       return route.fulfill({ status: 204 });
     });
+    await page.goto('/events');
+    await page.evaluate(() => document.fonts.ready);
+    // Exercise a page scrollbar even when the event fixture has no results.
+    await page.locator('main').evaluate((element) => {
+      element.style.minHeight = '200vh';
+    });
+    const navbarBox = (await page.locator('app-navbar nav > div').boundingBox())!;
     await page.goto('/chat');
+    const placeholder = page.locator('.archive-chat-loading-mascot');
+    await expect(placeholder).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    const placeholderBox = (await placeholder.boundingBox())!;
+    const pageBox = (await page.locator('app-chat-page').boundingBox())!;
+    expect(placeholderBox.x + placeholderBox.width / 2).toBeCloseTo(
+      pageBox.x + pageBox.width / 2,
+      0,
+    );
+    releaseAccess();
     await expect(page.getByRole('textbox', { name: 'Your question' })).toBeVisible();
+    expect(await page.locator('app-navbar nav > div').boundingBox()).toEqual(navbarBox);
+    const welcome = page.locator('.archive-chat-empty .archive-chat-mascot');
+    const welcomeBox = (await welcome.boundingBox())!;
+    const footerBox = (await page.getByRole('contentinfo').boundingBox())!;
+    const viewportHeight = await page.evaluate(() => window.innerHeight);
+    expect(footerBox.y + footerBox.height).toBeLessThanOrEqual(viewportHeight);
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+      viewportHeight,
+    );
+    expect(welcomeBox.x).toBeCloseTo(placeholderBox.x, 0);
+    expect(welcomeBox.y).toBeCloseTo(placeholderBox.y, 0);
+    if (!mobile) {
+      const sidebar = page.getByRole('complementary', { name: 'Chat history' });
+      const sidebarBox = (await sidebar.boundingBox())!;
+      const chatBox = (await page.locator('.archive-chat').boundingBox())!;
+      expect(sidebarBox.x).toBeGreaterThan(0);
+      expect(sidebarBox.x + sidebarBox.width).toBeLessThan(chatBox.x);
+      const conversationBox = (await page.locator('.archive-chat-surface').boundingBox())!;
+      expect(sidebarBox.y).toBeCloseTo(conversationBox.y, 0);
+    } else {
+      await page.getByRole('button', { name: 'History', exact: true }).click();
+      await expect(page.getByRole('dialog', { name: 'Your chats' })).toBeVisible();
+      expect(await welcome.boundingBox()).toEqual(welcomeBox);
+      await page.keyboard.press('Escape');
+    }
+    await page.screenshot({ path: `tmp/chat-history-welcome-${width}.png` });
     expect(runs).toBe(0);
     await page
       .getByRole('textbox', { name: 'Your question' })
@@ -175,6 +234,7 @@ for (const mobile of [false, true]) {
     await expect(nav.getByRole('link', { name: 'Find talks about Angular signals' })).toBeVisible();
     await nav.getByRole('button', { name: 'Actions for Find talks about Angular signals' }).click();
     await nav.getByRole('button', { name: 'Rename', exact: true }).click();
+    await expectCenteredDialog('Rename conversation');
     await page.getByRole('textbox', { name: 'Conversation title' }).fill('Signals research');
     await page.getByRole('button', { name: 'Save name' }).click();
     await expect(nav.getByRole('link', { name: 'Signals research' })).toBeVisible();
@@ -199,7 +259,7 @@ for (const mobile of [false, true]) {
       })),
     ).toEqual([]);
     await page.screenshot({
-      path: `tmp/chat-history-${mobile ? 'mobile' : 'desktop'}.png`,
+      path: `tmp/chat-history-${width}.png`,
       fullPage: true,
     });
     if (mobile) {
@@ -218,12 +278,16 @@ for (const mobile of [false, true]) {
     }
     await nav.getByRole('button', { name: 'Actions for Signals research' }).click();
     await nav.getByRole('button', { name: 'Delete', exact: true }).click();
+    await expectCenteredDialog('Delete conversation?');
+    await page.screenshot({ path: `tmp/chat-history-delete-${width}.png` });
     await page.getByRole('button', { name: 'Delete conversation', exact: true }).click();
     await expect(page).toHaveURL(/\/chat$/);
     await expect(page.getByRole('textbox', { name: 'Your question' })).toBeVisible();
     await page.goto(savedUrl);
     await expect(page.getByText('This conversation is unavailable.')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeDisabled();
+    await page.goto('/events');
+    expect(await page.locator('app-navbar nav > div').boundingBox()).toEqual(navbarBox);
     expect(errors).toEqual([]);
   });
 }

@@ -205,6 +205,10 @@
     font-synthesis: none;
   }
 
+  html:has(app-chat-page) {
+    overflow: hidden;
+  }
+
   h1,
   h2,
   h3,

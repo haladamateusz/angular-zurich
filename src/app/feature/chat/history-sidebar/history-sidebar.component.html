@@ -2,37 +2,36 @@
   <button type="button" class="history-control" (click)="openDrawer()" aria-haspopup="dialog">
     History
   </button>
-  <button type="button" class="history-control" (click)="create()">New chat</button>
+  <ng-container [ngTemplateOutlet]="newChatButton" />
 </div>
-<aside class="history-desktop" [class.is-collapsed]="collapsed()" aria-label="Chat history">
-  <button
-    type="button"
-    class="history-toggle"
-    [attr.aria-expanded]="!collapsed()"
-    (click)="collapsed.set(!collapsed())"
-    [attr.aria-label]="collapsed() ? 'Expand chat history' : 'Collapse chat history'"
-  >
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d="M9 4v16" />
-    </svg>
-  </button>
-  @if (!collapsed()) {
-    <ng-container [ngTemplateOutlet]="list" />
-  }
+<aside class="history-desktop" aria-label="Chat history">
+  <div class="history-toolbar">
+    <ng-container [ngTemplateOutlet]="newChatButton" />
+  </div>
+  <ng-container [ngTemplateOutlet]="list" />
 </aside>
-<dialog #drawer class="history-drawer" aria-labelledby="history-drawer-title">
+<dialog
+  #drawer
+  class="history-drawer"
+  aria-labelledby="history-drawer-title"
+  (close)="drawerOpen.set(false)"
+>
   <div class="drawer-heading">
     <h2 id="history-drawer-title">Your chats</h2>
     <button type="button" class="history-control" (click)="closeDrawer()">Close</button>
   </div>
-  <ng-container [ngTemplateOutlet]="list" />
+  <ng-container [ngTemplateOutlet]="newChatButton" />
+  @if (drawerOpen()) {
+    <ng-container [ngTemplateOutlet]="list" />
+  }
 </dialog>
-<ng-template #list>
-  <button type="button" class="history-new" (click)="create()">
+<ng-template #newChatButton>
+  <button type="button" class="history-new app-button app-button--secondary" (click)="create()">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
     New chat
   </button>
+</ng-template>
+<ng-template #list>
   <nav class="history-list" aria-label="Recent conversations" [attr.aria-busy]="history.loading()">
     @if (history.loading() && !history.items().length) {
       <div role="status" class="history-loading">
@@ -51,35 +50,67 @@
     @if (!history.loading() && !history.error() && !history.items().length) {
       <p class="history-empty">Your conversations will appear here after your first message.</p>
     }
-    @for (group of groups(); track group.label) {
-      <h3>{{ group.label }}</h3>
-      @for (thread of group.items; track thread.id) {
-        <div class="history-row" [class.is-active]="activeId() === thread.id">
-          <a
-            [routerLink]="['/chat', thread.id]"
-            [attr.aria-current]="activeId() === thread.id ? 'page' : null"
-            [title]="thread.title"
-            (click)="closeDrawer()"
-            >{{ thread.title }}</a
-          >
-          <button
-            type="button"
-            class="history-menu-toggle"
-            [attr.aria-label]="'Actions for ' + thread.title"
-            [attr.aria-expanded]="menu() === thread.id"
-            (click)="menu.set(menu() === thread.id ? null : thread.id)"
-          >
-            ⋯
-          </button>
-          @if (menu() === thread.id) {
-            <div class="history-actions">
-              <button type="button" (click)="edit(thread)">Rename</button>
-              <button type="button" (click)="edit(thread, true)">Delete</button>
+    <cdk-virtual-scroll-viewport
+      class="history-viewport"
+      [itemSize]="rowHeight"
+      [minBufferPx]="rowHeight * 3"
+      [maxBufferPx]="rowHeight * 6"
+      tabindex="0"
+      role="region"
+      aria-label="Past conversations"
+      (scroll)="closeActions()"
+    >
+      <div *cdkVirtualFor="let row of rows(); trackBy: trackRow" [style.height.px]="rowHeight">
+        @switch (row.kind) {
+          @case ('heading') {
+            <h2 class="history-group-heading">{{ row.label }}</h2>
+          }
+          @case ('thread') {
+            <div class="history-row" [class.is-active]="activeId() === row.thread.id">
+              <a
+                [routerLink]="['/chat', row.thread.id]"
+                [attr.aria-current]="activeId() === row.thread.id ? 'page' : null"
+                [title]="row.thread.title"
+                (click)="closeDrawer()"
+                >{{ row.thread.title }}</a
+              >
+              <button
+                type="button"
+                class="history-menu-toggle"
+                [attr.aria-label]="'Actions for ' + row.thread.title"
+                [attr.aria-expanded]="menu() === row.thread.id"
+                (click)="toggleActions($event, actionsPopup)"
+              >
+                ⋯
+              </button>
+              <div
+                #actionsPopup
+                popover="auto"
+                class="history-actions"
+                role="group"
+                [attr.aria-label]="'Actions for ' + row.thread.title"
+                (toggle)="onMenuToggle($event, row.thread.id)"
+              >
+                <button
+                  type="button"
+                  class="app-button app-button--ghost app-button--block"
+                  (click)="edit(row.thread)"
+                >
+                  Rename
+                </button>
+                <button
+                  type="button"
+                  class="app-button app-button--ghost app-button--block"
+                  (click)="edit(row.thread, true)"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           }
-        </div>
-      }
-    }
+        }
+      </div>
+    </cdk-virtual-scroll-viewport>
     @if (history.cursor()) {
       <button
         type="button"
@@ -91,7 +122,6 @@
       </button>
     }
   </nav>
-  <p class="history-retention">Private to you. Saved until you delete them.</p>
 </ng-template>
 <dialog
   #editor

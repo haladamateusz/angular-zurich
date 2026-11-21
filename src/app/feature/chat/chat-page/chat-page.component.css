@@ -1,8 +1,16 @@
 :host {
+  --chat-content-width: 64rem;
+
+  position: relative;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
+}
+
+.archive-chat-history-placeholder {
+  display: none;
 }
 
 .archive-chat {
@@ -12,7 +20,7 @@
   flex-direction: column;
   width: 100%;
   min-height: 0;
-  max-width: 64rem;
+  max-width: var(--chat-content-width);
   margin-inline: auto;
   padding: clamp(var(--space-3), 2vw, var(--space-6)) 1.25rem;
   color: var(--foreground-primary);
@@ -25,6 +33,14 @@
   align-items: center;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
+}
+
+.archive-chat-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .archive-chat-title {
@@ -304,12 +320,26 @@ h2 {
 }
 
 @media (height <= 40rem) {
+  .archive-chat-header-mascot {
+    width: 3rem;
+  }
+
   .archive-chat-surface.is-empty .archive-chat-mascot {
-    width: clamp(2rem, 12dvh, 5rem);
+    width: 2rem;
+  }
+
+  .archive-chat-surface.is-empty .archive-chat-transcript-frame {
+    margin-bottom: var(--space-3);
   }
 
   .archive-chat-surface.is-empty .archive-chat-transcript {
-    padding-top: var(--space-3);
+    padding-top: 0;
+  }
+}
+
+@media (height <= 35rem) {
+  .archive-chat-surface.is-empty .archive-chat-mascot {
+    display: none;
   }
 }
 
@@ -650,8 +680,11 @@ summary:focus-visible {
 }
 
 .archive-chat-loading-title {
-  width: 28rem;
-  height: 2.25rem;
+  max-width: 100%;
+}
+
+.archive-chat-loading-title span {
+  visibility: hidden;
 }
 
 .archive-chat-loading-input {
@@ -669,9 +702,10 @@ summary:focus-visible {
   }
 }
 
-/* The history rail sits outside the bounded reading column. */
-@media (width < 64rem) {
-  :host {
-    flex-direction: column;
+/* Match the drawer toolbar while access is checked, without shifting the welcome. */
+@media (width < 100rem) {
+  .archive-chat-history-placeholder {
+    display: block;
+    flex-basis: calc(2.75rem + 1px);
   }
 }

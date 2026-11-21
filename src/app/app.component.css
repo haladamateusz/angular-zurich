@@ -1,6 +1,18 @@
-.app-viewport:has(app-chat-page) {
-  flex: none;
+.app-shell:has(app-chat-page) {
+  --footer-margin-top: 0px;
+
   height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-viewport:has(app-chat-page) {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-shell:has(app-chat-page) > app-footer {
+  flex: none;
 }
 
 .app-viewport:has(app-chat-page) > main {

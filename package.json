@@ -39,6 +39,7 @@
     "@ag-ui/client": "0.0.59",
     "@ag-ui/core": "0.0.59",
     "@ai-sdk/openai": "3.0.113",
+    "@angular/cdk": "22.1.6",
     "@angular/common": "^22.1.6",
     "@angular/compiler": "^22.1.6",
     "@angular/core": "^22.1.6",

@@ -1,3 +1,7 @@
 :host {
   display: block;
 }
+
+footer {
+  margin-block-start: var(--footer-margin-top, 2.5rem);
+}

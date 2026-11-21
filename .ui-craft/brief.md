@@ -32,6 +32,14 @@ A visitor opens the upcoming event, verifies the essential details, and continue
 
 ## Learned constraints
 
+- **2026-11-21** — Fit the navbar, chat, and footer within one dynamic viewport on chat routes. Keep the footer visible on entry and scroll only the transcript and conversation history. Compact the welcome on short screens so it stays clear of the composer.
+
+- **2026-11-21** — Keep “+ New chat” as a full-width standalone button above the virtualized past-conversations area. Align this history block with the conversation area below the Chräungie header. Scrolling history must keep the action accessible and must not move the centered chat. Omit the privacy/retention note and desktop expand/collapse control.
+
+- **2026-11-21** — Center Chräungie and the chat reading column on the whole page. Place history independently in the adjacent left gutter, with no full-height rail; folding it must not recenter the chat. Use a drawer below 100rem so history does not crowd the conversation. This supersedes reserving a sidebar column inside the chat layout.
+
+- **2026-11-21** — Reserve the drawer toolbar during chat loading on narrower screens and match the welcome placeholder to the actual heading dimensions. _Why:_ replacing the placeholder with Chräungie must not shift the welcome layout.
+
 - **2026-11-15** — Keep the dark homepage hero at least as dark as the page canvas, fading from the sunken black surface into the canvas, with a subdued blue cross pattern. Avoid a lighter gray hero panel.
 
 - **2026-11-15** — Use deep neutral black backgrounds in dark mode, with subtly lighter cards and subdued borders, matching the supplied reference. Keep Zürich blue for the accent.
