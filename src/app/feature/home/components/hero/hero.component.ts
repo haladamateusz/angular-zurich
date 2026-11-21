@@ -5,6 +5,7 @@ import {
   afterNextRender,
   computed,
   DestroyRef,
+  effect,
   inject,
   input,
   output,
@@ -40,9 +41,11 @@ export class HeroComponent {
   private readonly hasRendered = signal(false);
   private introHasCompleted = false;
   private introCompletionFallback: number | null = null;
-  protected readonly animateHeroIntro = computed(() => this.hasRendered());
-  protected readonly animateEventContent = computed(() => this.hasRendered() && !!this.event());
-  protected readonly usesSoloLayout = computed(() => !this.event() && !this.eventLoading());
+  protected readonly animateHeroIntro = computed(() => this.hasRendered() && !this.eventLoading());
+  protected readonly animateEventContent = computed(
+    () => this.animateHeroIntro() && !!this.event(),
+  );
+  protected readonly usesSoloLayout = computed(() => !this.event());
 
   protected readonly previewTalks = computed(() =>
     (this.event()?.talks ?? []).slice(0, 3).map((talk) => {
@@ -67,14 +70,21 @@ export class HeroComponent {
     afterNextRender({
       write: () => {
         this.hasRendered.set(true);
-
-        if (this.prefersReducedMotion()) {
-          this.markIntroCompleted();
-          return;
-        }
-
-        this.scheduleIntroCompletionFallback();
       },
+    });
+
+    effect(() => {
+      if (!this.animateHeroIntro()) {
+        this.cancelIntroCompletionFallback();
+        return;
+      }
+
+      if (this.prefersReducedMotion()) {
+        this.markIntroCompleted();
+        return;
+      }
+
+      this.scheduleIntroCompletionFallback();
     });
     this.destroyRef.onDestroy(() => this.cancelIntroCompletionFallback());
   }
@@ -105,7 +115,7 @@ export class HeroComponent {
   }
 
   private markIntroCompleted(): void {
-    if (this.introHasCompleted) {
+    if (!this.animateHeroIntro() || this.introHasCompleted) {
       return;
     }
 

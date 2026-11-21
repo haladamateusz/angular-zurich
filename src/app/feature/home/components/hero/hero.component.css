@@ -170,6 +170,9 @@
 
 .hero-title__segment-content {
   display: block;
+}
+
+.hero-copy--enter .hero-title__segment-content {
   transform: translateY(110%);
   animation: hero-title-line-reveal var(--duration-slow) var(--ease-emphasized) both;
   animation-delay: var(--_hero-title-segment-delay);
@@ -616,7 +619,7 @@
     animation: none;
   }
 
-  .hero-title__segment-content {
+  .hero-copy--enter .hero-title__segment-content {
     transform: none;
     animation: none;
   }

@@ -191,9 +191,46 @@ describe('HeroComponent', () => {
     const root = fixture.nativeElement as HTMLElement;
     expect(root.querySelector('.event-preview')).toBeNull();
     expect(root.querySelector('.hero-content')?.classList.contains('hero-content--solo')).toBe(
-      false,
+      true,
     );
-    expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--solo')).toBe(false);
+    expect(root.querySelector('.hero-copy')?.classList.contains('hero-copy--solo')).toBe(true);
+    expect(root.querySelector('.hero-content--pre-enter')).not.toBeNull();
+    expect(root.querySelector('.hero-copy--enter')).toBeNull();
+    expect(root.querySelector('.hero-description--enter')).toBeNull();
+    expect(root.querySelector('.sponsors--enter')).toBeNull();
+  });
+
+  it.each([
+    { label: 'no event', event: null },
+    { label: 'upcoming event', event: TEST_EVENT },
+  ])('waits for a slow response before revealing the final layout ($label)', async ({ event }) => {
+    fixture.destroy();
+    fixture = TestBed.createComponent(HeroComponent);
+    fixture.componentRef.setInput('sponsors', TEST_SPONSORS);
+    fixture.componentRef.setInput('eventLoading', true);
+    const introCompleted = vi.fn();
+    fixture.componentInstance.introCompleted.subscribe(introCompleted);
+    await fixture.whenStable();
+
+    // A slow response must not let the intro fallback reveal subsequent sections.
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('.hero-content--pre-enter')).not.toBeNull();
+    expect(root.querySelector('.hero-copy--enter')).toBeNull();
+    expect(introCompleted).not.toHaveBeenCalled();
+
+    fixture.componentRef.setInput('event', event);
+    fixture.componentRef.setInput('eventLoading', false);
+    await fixture.whenStable();
+
+    expect(root.querySelector('.hero-content--pre-enter')).toBeNull();
+    expect(root.querySelector('.hero-copy--enter')).not.toBeNull();
+    expect(root.querySelector('.hero-content--solo') !== null).toBe(event === null);
+    expect(root.querySelector('.event-preview--enter') !== null).toBe(event !== null);
+    expect(introCompleted).not.toHaveBeenCalled();
+
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    expect(introCompleted).toHaveBeenCalledOnce();
   });
 
   it('labels the program as a preview when talks are truncated', async () => {
