@@ -73,7 +73,7 @@
 }
 
 .partners__grid--reveal-active .partner-card {
-  animation: partner-card-reveal 620ms var(--ease-emphasized) both;
+  animation: partner-card-reveal 720ms var(--ease-emphasized) both;
 }
 
 @keyframes partner-card-reveal {

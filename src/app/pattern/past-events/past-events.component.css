@@ -74,7 +74,7 @@
 }
 
 .past-events--reveal .past-event-card.viewport-reveal--active {
-  animation: past-event-card-reveal 760ms var(--ease-emphasized) both;
+  animation: past-event-card-reveal 650ms var(--ease-emphasized) both;
 }
 
 @media (min-width: 768px) {
@@ -85,15 +85,15 @@
   }
 
   .past-events--reveal .past-event-card.viewport-reveal--active {
-    animation-delay: 80ms;
+    animation-delay: 0ms;
   }
 
   .past-events--reveal .past-event-card:nth-child(2).viewport-reveal--active {
-    animation-delay: 160ms;
+    animation-delay: 100ms;
   }
 
   .past-events--reveal .past-event-card:nth-child(3).viewport-reveal--active {
-    animation-delay: 240ms;
+    animation-delay: 200ms;
   }
 }
 

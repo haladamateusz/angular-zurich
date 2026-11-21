@@ -229,7 +229,10 @@ describe('HeroComponent', () => {
     expect(root.querySelector('.event-preview--enter') !== null).toBe(event !== null);
     expect(introCompleted).not.toHaveBeenCalled();
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(introCompleted).not.toHaveBeenCalled();
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
     expect(introCompleted).toHaveBeenCalledOnce();
   });
 

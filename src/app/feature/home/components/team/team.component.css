@@ -140,7 +140,7 @@
 }
 
 .team__grid--reveal-active .member-card {
-  animation: team-card-reveal 620ms var(--ease-emphasized) both;
+  animation: team-card-reveal 720ms var(--ease-emphasized) both;
 }
 
 @keyframes team-card-reveal {

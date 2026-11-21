@@ -78,32 +78,7 @@
     @if (!eventResource.error() && !hasCurrentEvent()) {
       <section class="event-details__loading" aria-label="Loading event details" aria-busy="true">
         <div class="event-details__hero event-details__hero--loading">
-          <div class="event-details__hero-content event-details__hero-content--loading">
-            <div class="event-details__skeleton event-details__skeleton--title"></div>
-
-            <div class="event-details__meta">
-              <div class="event-details__meta-item event-details__meta-item--loading">
-                <div class="event-details__skeleton event-details__skeleton--icon"></div>
-                <div
-                  class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-date"
-                ></div>
-              </div>
-
-              <div class="event-details__meta-item event-details__meta-item--loading">
-                <div class="event-details__skeleton event-details__skeleton--icon"></div>
-                <div
-                  class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-time"
-                ></div>
-              </div>
-
-              <div class="event-details__meta-item event-details__meta-item--loading">
-                <div class="event-details__skeleton event-details__skeleton--icon"></div>
-                <div
-                  class="event-details__skeleton event-details__skeleton--meta-text event-details__skeleton--meta-location"
-                ></div>
-              </div>
-            </div>
-          </div>
+          <div class="event-details__hero-content--loading" aria-hidden="true"></div>
 
           <div class="event-details__hero-graphic-shell event-details__hero-graphic-shell--loading">
             <div class="event-details__skeleton event-details__skeleton--graphic"></div>
@@ -111,7 +86,7 @@
         </div>
 
         <section class="event-details__talks">
-          <div class="event-details__talks-header">
+          <div class="event-details__talks-header" aria-hidden="true">
             <h2 class="event-details__talks-heading">Talks</h2>
           </div>
 
@@ -161,7 +136,7 @@
       @let currentEvent = event();
 
       <div class="event-details__hero">
-        <div class="event-details__hero-content">
+        <div class="event-details__hero-content event-details__hero-content--enter">
           <h1 class="event-details__title">{{ pageTitle() }}</h1>
 
           <div class="event-details__meta">
@@ -302,7 +277,7 @@
 
       <section class="event-details__talks">
         <div class="event-details__talks-header">
-          <h2 class="event-details__talks-heading">Talks</h2>
+          <h2 class="event-details__talks-heading event-details__talks-heading--enter">Talks</h2>
         </div>
 
         <div class="event-details__talk-grid">

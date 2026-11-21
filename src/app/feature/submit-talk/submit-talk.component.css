@@ -18,7 +18,7 @@
 }
 
 .submission-card.viewport-reveal--active {
-  animation: submission-card-reveal 620ms var(--ease-emphasized) both;
+  animation: submission-card-reveal 770ms var(--ease-emphasized) both;
 }
 
 @keyframes submission-card-reveal {

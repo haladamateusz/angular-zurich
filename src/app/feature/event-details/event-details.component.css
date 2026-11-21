@@ -117,6 +117,33 @@ button.event-details__remove-button {
   align-self: start;
 }
 
+.event-details__hero-content--loading {
+  min-height: 7rem;
+}
+
+.event-details__hero-content--enter,
+.event-details__talks-heading--enter {
+  animation: event-details-intro-reveal 600ms var(--ease-emphasized) both;
+}
+
+.event-details__talks-heading--enter {
+  opacity: 0;
+  transform: translateY(0.625rem);
+  animation-delay: 100ms;
+}
+
+@keyframes event-details-intro-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.625rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .event-details__title {
   margin: 0;
   color: var(--color-foreground);
@@ -196,6 +223,10 @@ button.event-details__remove-button {
   margin-top: 2.75rem;
 }
 
+.event-details__loading .event-details__talks-header {
+  visibility: hidden;
+}
+
 .event-details__talks-heading {
   margin: 0 0 1.5rem;
   color: var(--color-foreground);
@@ -213,7 +244,8 @@ button.event-details__remove-button {
 }
 
 .talk-detail-card:not(.talk-detail-card--loading) {
-  animation: talk-detail-card-reveal 960ms var(--ease-emphasized) both;
+  animation: talk-detail-card-reveal 1060ms var(--ease-emphasized) both;
+  animation-delay: 100ms;
 }
 
 .talk-detail-card {
@@ -311,10 +343,6 @@ button.event-details__remove-button {
   gap: 0.8rem;
 }
 
-.event-details__meta-item--loading {
-  gap: 0.65rem;
-}
-
 .event-details__skeleton {
   position: relative;
   overflow: hidden;
@@ -340,33 +368,6 @@ button.event-details__remove-button {
   width: 100%;
   min-height: clamp(14rem, 30vw, 24rem);
   border-radius: var(--radius-surface);
-}
-
-.event-details__skeleton--title {
-  width: min(26rem, 100%);
-  height: clamp(2.25rem, 5vw, 3.25rem);
-}
-
-.event-details__skeleton--icon {
-  width: 1rem;
-  height: 1rem;
-  flex: none;
-}
-
-.event-details__skeleton--meta-text {
-  height: 1rem;
-}
-
-.event-details__skeleton--meta-date {
-  width: 7rem;
-}
-
-.event-details__skeleton--meta-time {
-  width: 3.25rem;
-}
-
-.event-details__skeleton--meta-location {
-  width: min(13rem, 48vw);
 }
 
 .event-details__skeleton--button {
@@ -446,12 +447,16 @@ button.event-details__remove-button {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .event-details__hero-content--enter,
+  .event-details__talks-heading--enter,
   .event-details__skeleton::after,
   .event-details__hero-graphic-shell--loaded .event-details__hero-graphic,
   .talk-detail-card:not(.talk-detail-card--loading) {
     animation: none;
   }
 
+  .event-details__hero-content--enter,
+  .event-details__talks-heading--enter,
   .talk-detail-card:not(.talk-detail-card--loading) {
     opacity: 1;
     transform: none;
@@ -479,15 +484,15 @@ button.event-details__remove-button {
 
 @media (min-width: 768px) {
   .talk-detail-card:not(.talk-detail-card--loading) {
-    animation-delay: 80ms;
+    animation-delay: 180ms;
   }
 
   .talk-detail-card:nth-child(2):not(.talk-detail-card--loading) {
-    animation-delay: 160ms;
+    animation-delay: 360ms;
   }
 
   .talk-detail-card:nth-child(3):not(.talk-detail-card--loading) {
-    animation-delay: 240ms;
+    animation-delay: 540ms;
   }
 }
 
@@ -499,14 +504,6 @@ button.event-details__remove-button {
 
   .event-details__dashboard-actions {
     justify-content: flex-start;
-  }
-
-  .event-details__skeleton--title {
-    width: 100%;
-  }
-
-  .event-details__skeleton--meta-location {
-    width: min(100%, 11rem);
   }
 
   .event-details__talk-grid {

@@ -17,7 +17,11 @@
     @if (!loading() || cards().length) {
       <div class="past-events__grid">
         @for (card of cards(); track card.id) {
-          <article class="past-event-card" [appViewportReveal]="'desktop-immediate'">
+          <article
+            class="past-event-card"
+            [appViewportReveal]="'desktop-immediate'"
+            [style.animation-delay.ms]="fromArchive() ? $index * 100 : null"
+          >
             <a
               [routerLink]="['/events', card.slug]"
               [state]="fromArchive() ? pastEventsArchiveNavigationState : undefined"

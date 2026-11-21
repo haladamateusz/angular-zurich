@@ -4,15 +4,16 @@
 }
 
 .hero {
-  --_hero-enter-delay: 180ms;
-  --_hero-enter-stagger: 120ms;
-  --_hero-title-word-stagger: 60ms;
-  --_hero-event-enter-delay: 440ms;
-  --_hero-event-enter-duration: 560ms;
-  --_hero-sponsors-card-gap: 30ms;
-  --_hero-description-delay: 400ms;
-  --_hero-solo-description-delay: 400ms;
-  --_hero-solo-sponsors-delay: 500ms;
+  --_hero-enter-delay: 0ms;
+  --_hero-enter-duration: 600ms;
+  --_hero-enter-stagger: 200ms;
+  --_hero-title-word-stagger: 100ms;
+  --_hero-event-enter-delay: 300ms;
+  --_hero-event-enter-duration: 840ms;
+  --_hero-sponsors-delay: 560ms;
+  --_hero-description-delay: 420ms;
+  --_hero-solo-description-delay: var(--_hero-description-delay);
+  --_hero-solo-sponsors-delay: var(--_hero-sponsors-delay);
 
   position: relative;
   width: 100%;
@@ -121,7 +122,7 @@
 
 .hero-copy--enter {
   opacity: 0;
-  animation: hero-copy-enter var(--duration-slow) var(--ease-emphasized) both;
+  animation: hero-copy-enter var(--_hero-enter-duration) var(--ease-emphasized) both;
   animation-delay: var(--_hero-enter-delay);
 }
 
@@ -165,7 +166,7 @@
 .hero-copy--enter .hero-title__segment {
   overflow: clip;
   animation: hero-title-segment-unclip 1ms steps(1, end) both;
-  animation-delay: calc(var(--_hero-title-segment-delay) + var(--duration-slow));
+  animation-delay: calc(var(--_hero-title-segment-delay) + var(--_hero-enter-duration));
 }
 
 .hero-title__segment-content {
@@ -174,7 +175,7 @@
 
 .hero-copy--enter .hero-title__segment-content {
   transform: translateY(110%);
-  animation: hero-title-line-reveal var(--duration-slow) var(--ease-emphasized) both;
+  animation: hero-title-line-reveal var(--_hero-enter-duration) var(--ease-emphasized) both;
   animation-delay: var(--_hero-title-segment-delay);
   will-change: transform;
 }
@@ -212,7 +213,7 @@
 .sponsors--enter {
   opacity: 0;
   transform: translateY(0.625rem);
-  animation: hero-intro-reveal var(--duration-slow) var(--ease-emphasized) both;
+  animation: hero-intro-reveal var(--_hero-enter-duration) var(--ease-emphasized) both;
 }
 
 .hero-description--enter {
@@ -220,7 +221,7 @@
 }
 
 .sponsors--enter {
-  animation-delay: calc(var(--_hero-event-enter-duration) + var(--_hero-sponsors-card-gap));
+  animation-delay: var(--_hero-sponsors-delay);
 }
 
 .hero-content--solo .sponsors--enter {

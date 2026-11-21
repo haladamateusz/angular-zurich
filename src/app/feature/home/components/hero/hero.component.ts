@@ -18,7 +18,8 @@ import { EventDateFormatPipe } from '../../../../ui/date-format/event-date-forma
 
 const EVENT_PREVIEW_ENTER_ANIMATION = 'event-preview-enter';
 const SOLO_HERO_ENTER_ANIMATION = 'hero-intro-reveal';
-const HERO_INTRO_FALLBACK_MS = 750;
+// Reveal past events as the headline settles, overlapping the remaining hero entrances.
+const HERO_INTRO_REVEAL_DELAY_MS = 800;
 
 @Component({
   selector: 'app-hero',
@@ -132,7 +133,7 @@ export class HeroComponent {
     this.introCompletionFallback = this.view.setTimeout(() => {
       this.introCompletionFallback = null;
       this.markIntroCompleted();
-    }, HERO_INTRO_FALLBACK_MS);
+    }, HERO_INTRO_REVEAL_DELAY_MS);
   }
 
   private cancelIntroCompletionFallback(): void {
