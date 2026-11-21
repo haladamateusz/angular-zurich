@@ -1,3 +1,43 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-dropdown);
+  display: block;
+  flex: none;
+  /* Keep navigation aligned when a route adds or removes the page scrollbar. */
+  width: 100vw;
+}
+
+.navbar {
+  position: relative;
+  isolation: isolate;
+  min-height: var(--navbar-height);
+}
+
+/* Keep the filter off the nav itself so the fixed mobile drawer stays viewport-sized. */
+.navbar::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--navbar);
+  content: '';
+  pointer-events: none;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .navbar::before {
+    background: color-mix(in srgb, var(--navbar) 72%, transparent);
+    backdrop-filter: blur(3px);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .navbar::before {
+    background: var(--navbar);
+    backdrop-filter: none;
+  }
+}
+
 :host ::ng-deep summary::-webkit-details-marker {
   display: none;
 }
@@ -11,6 +51,8 @@
 }
 
 .navbar-profile-menu {
+  /* Clear the navbar's 1px bottom border, then leave a 5px gap. */
+  top: calc(100% + 1px + 5px);
   transform-origin: top right;
 }
 
@@ -56,10 +98,8 @@ details[open] .navbar-profile-menu {
 }
 
 .navbar-mobile-panel {
-  padding:
-    max(var(--space-5), env(safe-area-inset-top))
-    max(var(--space-5), env(safe-area-inset-right))
-    max(var(--space-6), env(safe-area-inset-bottom))
+  padding: max(var(--space-5), env(safe-area-inset-top))
+    max(var(--space-5), env(safe-area-inset-right)) max(var(--space-6), env(safe-area-inset-bottom))
     max(var(--space-5), env(safe-area-inset-left));
   opacity: 0;
   transform: translateX(100%);

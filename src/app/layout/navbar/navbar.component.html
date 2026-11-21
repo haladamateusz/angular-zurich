@@ -1,7 +1,5 @@
-<nav
-  class="bg-navbar border-b border-navbar-line px-6 py-0 max-[720px]:px-4 max-[420px]:px-[0.9rem]"
->
-  <div class="mx-auto flex max-w-[94rem] items-center justify-between">
+<nav class="navbar border-b border-navbar-line px-6 py-0 max-[720px]:px-4 max-[420px]:px-[0.9rem]">
+  <div class="relative mx-auto flex max-w-[94rem] items-center justify-between">
     <a class="flex items-center gap-2" routerLink="/">
       <img src="logo-flat.svg" alt="Angular Zürich logo" class="h-20 w-20" width="80" height="80" />
       <span class="text-primary-500 text-2xl font-inter-tight tracking-[-0.03em] whitespace-nowrap"
@@ -81,7 +79,7 @@
             </a>
           </div>
 
-          <details #navMenu class="relative hidden min-[721px]:block">
+          <details #navMenu class="hidden min-[721px]:block">
             <summary class="navbar-profile-trigger app-button app-button--secondary list-none">
               <span class="max-w-40 truncate">{{ profile.displayName }}</span>
               @if (shouldShowAvatarImage) {
@@ -120,16 +118,12 @@
             </summary>
 
             <div
-              class="navbar-profile-menu absolute right-0 top-[calc(100%+0.65rem)] z-20 min-w-52 rounded-surface border bg-card p-2"
-              [class.border-navbar-line]="!dark()"
-              [ngClass]="{
-                'border-primary/30': dark(),
-              }"
+              class="navbar-profile-menu absolute right-0 z-20 min-w-52 rounded-surface border border-navbar-line bg-card p-2"
             >
               <button
                 type="button"
                 (click)="signOut(); closeMenu($event)"
-                class="app-button app-button--ghost app-button--block mt-1"
+                class="app-button app-button--ghost app-button--block"
               >
                 Log out
               </button>

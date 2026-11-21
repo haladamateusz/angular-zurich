@@ -17,6 +17,9 @@
 
   position: relative;
   width: 100%;
+  /* Let the animated backdrop reach behind the glass header without moving the content. */
+  margin-block-start: calc(-1 * var(--navbar-height));
+  padding-block-start: var(--navbar-height);
   padding-inline: var(--home-content-gutter, var(--space-6));
   overflow: hidden;
 }

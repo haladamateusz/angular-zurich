@@ -42,5 +42,6 @@
 
 ## Layering
 
+- Sticky navbar: `--navbar-height` (5rem + 1px), with a 72% semantic navbar surface and 3px backdrop blur. Browsers without backdrop-filter and reduced-transparency preferences use the opaque surface.
 - `--z-base` (0), `--z-raised` (1), `--z-dropdown` (40), `--z-modal` (50), `--z-popover` (70), and `--z-toast` (100).
 - New overlays must use these semantic levels rather than introducing raw `z-index` values.
